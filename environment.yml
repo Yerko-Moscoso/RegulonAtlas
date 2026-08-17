@@ -1,0 +1,29 @@
+name: tf-networks
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  # Bioinformática y secuencias
+  - meme >=5.5.0          # FIMO y MAST
+  - blast >=2.14.0        # Verificación de ortólogos
+  - biopython
+  # Redes y ciencia de datos
+  - networkx
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  # Ingesta web y scraping
+  - requests
+  - beautifulsoup4
+  - lxml
+  - tqdm
+  # Dashboard y visualización
+  - streamlit
+  - matplotlib
+  - seaborn
+  # Orquestación y base de datos
+  - snakemake
+  - sqlite

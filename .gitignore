@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+*.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Datos crudos, procesados y SQLite
+data/raw/
+data/processed/
+data/*.sqlite
+data/*.db
+data/*.sqlite3
+
+# Salidas de herramientas bioinformáticas
+*.log
+fimo_out/
+blast_out/
+*.fai
+*.bt2
+
+# Streamlit / VS Code
+.streamlit/secrets.toml
+.vscode/
+.DS_Store
+Thumbs.db
