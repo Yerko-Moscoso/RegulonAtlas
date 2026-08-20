@@ -10,40 +10,50 @@ logging.basicConfig(
 )
 
 BASE_URL = "https://prodoric.de/api"
-RAW_DATA_DIR = Path("data/raw/prodoric")
+RAW_PRODORIC_DIR = Path("data/raw/prodoric")
+MATRICES_DIR = RAW_PRODORIC_DIR / "matrices"
 
 
-def fetch_prodoric_organisms():
-    """Descarga la lista de organismos disponibles en PRODORIC."""
-    RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
+def fetch_prodoric_data():
+    RAW_PRODORIC_DIR.mkdir(parents=True, exist_ok=True)
+    MATRICES_DIR.mkdir(parents=True, exist_ok=True)
+
+    logging.info("Descargando catálogo completo de matrices desde PRODORIC...")
+    response = requests.get(f"{BASE_URL}/matrix", timeout=30)
+    response.raise_for_status()
+    matrix_list = response.json()
+
+    # 1. Guardar el catálogo crudo completo con metadatos de procedencia
+    snapshot = {
+        "source": "PRODORIC",
+        "endpoint": f"{BASE_URL}/matrix",
+        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "total_matrices": len(matrix_list),
+        "data": matrix_list
+    }
     
-    url = f"{BASE_URL}/organisms"
-    logging.info(f"Consultando organismos en: {url}")
-    
-    try:
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
-        data = response.json()
+    index_file = RAW_PRODORIC_DIR / "matrices_complete.json"
+    with open(index_file, "w", encoding="utf-8") as f:
+        json.dump(snapshot, f, indent=2, ensure_ascii=False)
+
+    logging.info(f"Catálogo completo guardado en: {index_file}")
+
+    # 2. Guardar cada matriz individualmente como MX00000X.json
+    saved_count = 0
+    for item in matrix_list:
+        mx_id = item.get("mx")
+        if mx_id is None:
+            continue
         
-        # Envoltorio con metadatos de procedencia
-        snapshot = {
-            "source": "PRODORIC",
-            "endpoint": url,
-            "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
-            "data": data
-        }
+        acc = f"MX{int(mx_id):06d}"
+        matrix_file = MATRICES_DIR / f"{acc}.json"
         
-        output_file = RAW_DATA_DIR / "organisms_index.json"
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(snapshot, f, indent=2, ensure_ascii=False)
-            
-        logging.info(f"Índice guardado exitosamente en: {output_file}")
-        return data
-        
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Error al conectar con la API de PRODORIC: {e}")
-        return None
+        with open(matrix_file, "w", encoding="utf-8") as f:
+            json.dump(item, f, indent=2, ensure_ascii=False)
+        saved_count += 1
+
+    logging.info(f"Se exportaron exitosamente {saved_count} archivos de matrices a {MATRICES_DIR}")
 
 
 if __name__ == "__main__":
-    fetch_prodoric_organisms()
+    fetch_prodoric_data()
