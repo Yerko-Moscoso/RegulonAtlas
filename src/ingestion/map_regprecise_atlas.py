@@ -23,7 +23,6 @@ regulon_meta = {}
 html_files = list(PAGES_DIR.glob("*.html"))
 
 for p in tqdm(html_files, desc="Extrayendo metadatos desde archivos HTML"):
-    # Extraer ID directamente del nombre de archivo
     id_m = re.search(r"regulon_id_(\d+)_", p.name)
     if not id_m:
         continue
@@ -68,37 +67,32 @@ for idx, row in df_motifs.iterrows():
 
 df_motifs.to_csv(MOTIFS_FILE, sep="\t", index=False)
 
-# 3. Cruce taxonómico contra el Atlas (selected_genomes.tsv)
+# 3. Cruce taxonómico avanzado por Género y Especie contra el Atlas
 atlas = pd.read_csv(ATLAS_FILE, sep="\t") if ATLAS_FILE.exists() else pd.DataFrame()
 
-def normalize_name(name):
+def get_genus_species(name):
     if pd.isna(name) or not name:
         return ""
     s = str(name).strip().lower()
     s = re.sub(r"^(str\.|strain|sp\.)\s*", "", s)
     s = re.sub(r"[\[\]()_,-]", " ", s)
-    return re.sub(r"\s+", " ", s).strip()
+    tokens = s.split()
+    if len(tokens) >= 2:
+        return f"{tokens[0]} {tokens[1]}"
+    return tokens[0] if tokens else ""
 
 matched_count = 0
 if not atlas.empty and "ncbi_organism_name" in atlas.columns:
-    atlas["clean_name"] = atlas["ncbi_organism_name"].apply(normalize_name)
-    df_curated["clean_name"] = df_curated["genome_name"].apply(normalize_name)
+    atlas["genus_sp"] = atlas["ncbi_organism_name"].apply(get_genus_species)
+    df_curated["genus_sp"] = df_curated["genome_name"].apply(get_genus_species)
 
-    # Cruce por nombre normalizado
-    merged = df_curated.merge(atlas[["accession", "clean_name"]], on="clean_name", how="left")
-    
-    # Respaldo por género y especie (primeras 2 palabras)
-    unmatched_mask = merged["accession"].isna()
-    atlas["genus_sp"] = atlas["clean_name"].apply(lambda x: " ".join(x.split()[:2]))
-    df_curated["genus_sp"] = df_curated["clean_name"].apply(lambda x: " ".join(x.split()[:2]))
-
-    merged_gsp = df_curated[unmatched_mask].merge(
+    # Cruce por las primeras 2 palabras (Género y Especie) para maximizar matches biológicos
+    merged = df_curated.merge(
         atlas[["accession", "genus_sp"]].drop_duplicates(subset=["genus_sp"]),
         on="genus_sp",
         how="left"
     )
-    merged.loc[unmatched_mask, "accession"] = merged_gsp["accession"].values
-
+    
     matched = merged[merged["accession"].notna()]
     matched_count = len(matched)
 
@@ -116,5 +110,5 @@ print("=" * 65)
 print(f"[*] Total interacciones procesadas:          {len(df_curated):,}")
 print(f"[*] Organismos únicos recuperados:           {df_curated['genome_name'].nunique():,}")
 print(f"[*] Interacciones vinculadas al Atlas:       {matched_count:,}")
-print(f"[*] Archivo de salida generado:              {OUT_REGULONS}")
+print(f"[*] Archivo de regulones final:              {OUT_REGULONS}")
 print("=" * 65 + "\n")
