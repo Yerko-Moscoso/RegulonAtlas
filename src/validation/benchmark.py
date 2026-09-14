@@ -11,17 +11,13 @@ TRANSFER_MAP = Path("data/processed/transfer_map.tsv")
 OUT_METRICS = Path("data/processed/validation_metrics.tsv")
 
 def normalize_id(text):
-    """Limpia caracteres especiales para que RefSeq y RegPrecise coincidan (ej. BSU_0010 -> BSU0010).
-    También elimina el prefijo 'gene-' que usan los IDs estilo GFF3 de NCBI
-    (ej. gene-BSU_00010 -> BSU00010), para que coincidan con los locus_tag
-    reales que vienen de RegPrecise (ej. BSU_00010 -> BSU00010)."""
     s = str(text).strip()
     s = re.sub(r'(?i)^gene[-_]', '', s)
     return re.sub(r'[^A-Z0-9]', '', s.upper())
 
 def main():
     print("\n" + "=" * 65)
-    print("      MÓDULO DE VALIDACIÓN CIENTÍFICA (OE5) - Bacillus subtilis")
+    print("      CURVAS DE CALIBRACIÓN MATEMÁTICA - Bacillus subtilis")
     print("=" * 65)
 
     predicted_candidates = list(PREDICTED_DIR.glob("*000009045.1*_expanded_network.tsv"))
@@ -35,65 +31,68 @@ def main():
         logging.error(f"Falta el mapa de transferencia: {TRANSFER_MAP}")
         return
 
+    # Traductor de motivos
     df_map = pd.read_csv(TRANSFER_MAP, sep="\t")
-    motif_to_tf = {}
-    for _, row in df_map.iterrows():
-        clean_motif = str(row["motif_key"]).replace("RG_", "").replace("MX_", "")
-        motif_to_tf[clean_motif] = normalize_id(row["tf_name"])
+    motif_to_tf = {
+        str(row["motif_key"]).replace("RG_", "").replace("MX_", ""): normalize_id(row["tf_name"])
+        for _, row in df_map.iterrows()
+    }
 
+    # Estándar de Oro
     df_curated = pd.read_csv(CURATED_FILE, sep="\t")
     df_curated_bsub = df_curated[df_curated["genome_name"].str.contains("Bacillus subtilis", case=False, na=False)]
-    
-    gold_standard_edges = set(
-        zip(
-            df_curated_bsub["tf_name"].apply(normalize_id), 
-            df_curated_bsub["locus_tag"].apply(normalize_id)
-        )
-    )
+    gold_standard_edges = set(zip(
+        df_curated_bsub["tf_name"].apply(normalize_id), 
+        df_curated_bsub["locus_tag"].apply(normalize_id)
+    ))
 
+    # Red Predicha Base
     df_predicted = pd.read_csv(PREDICTED_FILE, sep="\t")
-    
     df_predicted["tf_name_translated"] = df_predicted["motif_id"].astype(str).map(motif_to_tf)
     df_predicted = df_predicted.dropna(subset=["tf_name_translated"])
     
-    predicted_edges = set(
-        zip(
-            df_predicted["tf_name_translated"], 
-            df_predicted["target_gene"].apply(normalize_id)
-        )
-    )
+    # Umbrales a evaluar
+    thresholds = [1e-4, 5e-5, 1e-5, 5e-6, 1e-6, 5e-7, 1e-7]
+    metrics_data = []
 
-    true_positives = len(predicted_edges.intersection(gold_standard_edges))
-    false_positives = len(predicted_edges - gold_standard_edges)
-    false_negatives = len(gold_standard_edges - predicted_edges)
+    print(f"[*] Evaluando {len(thresholds)} umbrales estadísticos...\n")
 
-    precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
-    recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
+    for thresh in thresholds:
+        col_p = "p-value" if "p-value" in df_predicted.columns else "pvalue"
+        if col_p in df_predicted.columns:
+            df_filtered = df_predicted[df_predicted[col_p] <= thresh]
+        else:
+            df_filtered = df_predicted 
 
-    metrics_data = [{
-        "genome_acc": "GCF_000009045.1",
-        "threshold": "1e-4",
-        "true_positives": true_positives,
-        "false_positives": false_positives,
-        "false_negatives": false_negatives,
-        "precision": round(precision, 6),
-        "recall": round(recall, 6)
-    }]
-    
+        predicted_edges = set(zip(
+            df_filtered["tf_name_translated"], 
+            df_filtered["target_gene"].apply(normalize_id)
+        ))
+
+        tp = len(predicted_edges.intersection(gold_standard_edges))
+        fp = len(predicted_edges - gold_standard_edges)
+        fn = len(gold_standard_edges - predicted_edges)
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+
+        metrics_data.append({
+            "genome_acc": "GCF_000009045.1",
+            "threshold": f"{thresh:.1e}",
+            "true_positives": tp,
+            "false_positives": fp,
+            "false_negatives": fn,
+            "precision": round(precision, 6),
+            "recall": round(recall, 6)
+        })
+
+        print(f"  > Umbral: {thresh:.1e} | TP: {tp:<4} | FP: {fp:<7} | Precisión: {precision:.4%} | Recall: {recall:.4%}")
+
     df_metrics = pd.DataFrame(metrics_data)
     df_metrics.to_csv(OUT_METRICS, sep="\t", index=False)
 
     print("\n" + "-" * 65)
     print(f"[*] Interacciones Curadas (Gold Standard): {len(gold_standard_edges):,}")
-    print(f"[*] Interacciones Predichas (Pipeline):    {len(predicted_edges):,}")
-    print("-" * 65)
-    print(f"[*] Verdaderos Positivos (TP): {true_positives:,}")
-    print(f"[*] Falsos Positivos (FP):     {false_positives:,}")
-    print(f"[*] Falsos Negatives (FN):     {false_negatives:,}")
-    print("-" * 65)
-    print(f"[*] Precisión:                 {precision:.4%}")
-    print(f"[*] Sensibilidad (Recall):     {recall:.4%}")
-    print("-" * 65)
     print(f"[*] Métricas exportadas a:     {OUT_METRICS}")
     print("=" * 65 + "\n")
 

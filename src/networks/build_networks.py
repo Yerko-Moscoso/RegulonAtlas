@@ -73,7 +73,7 @@ def main():
         all_metrics.append(metrics)
         
         json_out = NETWORKS_OUT_DIR / f"{genome_acc}_graph.json"
-        graph_data = nx.node_link_data(G)
+        graph_data = nx.node_link_data(G, edges="links")
         with open(json_out, "w", encoding="utf-8") as f:
             json.dump(graph_data, f, ensure_ascii=False)
             
