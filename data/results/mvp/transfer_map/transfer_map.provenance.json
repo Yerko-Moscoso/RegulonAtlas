@@ -1,0 +1,270 @@
+{
+  "stage": "build_transfer_map",
+  "git": {
+    "commit": "83362ec421f2e32d023839abb7b63fee8a2b7a2f",
+    "dirty": false
+  },
+  "started_utc": "2026-09-23T20:54:43.429766+00:00",
+  "finished_utc": "2026-09-23T20:54:53.215222+00:00",
+  "params_file": "config/mvp_params.json",
+  "params": {
+    "subset_name": "mvp",
+    "description": "Enterobacteriaceae con regulones curados en RegPrecise (gtdb_family = 'Enterobacteriaceae' AND selection IN ('forced','regprecise_source'))",
+    "accessions_file": "config/mvp_genomes.txt",
+    "cache_dir": "data/cache/mvp",
+    "results_dir": "data/results/mvp",
+    "min_neg_log10_p": 5.0,
+    "network_neg_log10_p": 5.0,
+    "eligible_rules": [
+      "source_genome",
+      "ortholog"
+    ],
+    "propagate_operons": true,
+    "hub_degree_threshold": 20,
+    "validation_thresholds": [
+      5.0,
+      5.5,
+      6.0,
+      6.5,
+      7.0
+    ],
+    "reference_accession": "GCF_000005845.2",
+    "gold_standard": "RegPrecise 3.2 (curated_regulons)",
+    "graph_max_edges": 800
+  },
+  "inputs": {
+    "genomes": {
+      "file": "data/cache/mvp/genomes.tsv",
+      "sha256": "142514b1342092fb9a0c114e5bdc6adc1f800c5b25203da8c204dc9ab663b6d7"
+    },
+    "motifs": {
+      "file": "data/cache/mvp/motifs.tsv",
+      "sha256": "c0cba6ed6dd09811e892a52a655ec9732de99e1c95e877815c131d0b592105fb"
+    },
+    "regprecise_genome_map": {
+      "file": "data/cache/mvp/regprecise_genome_map.tsv",
+      "sha256": "4031b1cdbd6961d9077815e319b4f7b3f7c1337ff6b49542b6a298fa5861a0e5"
+    },
+    "regprecise_regulogs": {
+      "file": "data/cache/mvp/regprecise_regulogs.tsv",
+      "sha256": "65c62e185b6b3fdf9202d6caaa8fa4cc283e26e43f3ba25630f4334ba5d8f8dc"
+    },
+    "curated_regulons": {
+      "file": "data/cache/mvp/curated_regulons.tsv",
+      "sha256": "c141364b7f58df22f03b021caf015b1090ecd020abb1d755afc2b3ce40d54cc0"
+    },
+    "gene_index": {
+      "file": "data/cache/mvp/gene_index.tsv.gz",
+      "sha256": "54a69efbeba47efc9b9e0ad8209afc37b87eabd84b1549fc90f11f9ddd069a6e"
+    }
+  },
+  "outputs": {
+    "transfer_map": {
+      "file": "data/results/mvp/transfer_map/transfer_map.tsv",
+      "sha256": "2b72525e253b471bd912fcc24fdd3ecb765c57214f5c1c65fd60272c1688d59c"
+    }
+  },
+  "rules_priority": [
+    "source_genome",
+    "ortholog",
+    "ortholog_og",
+    "name_match"
+  ],
+  "source_resolution": {
+    "prodoric:source_taxon": 252,
+    "prodoric:unresolved": 81,
+    "regprecise:regulog": 1800,
+    "regprecise:unresolved": 8
+  },
+  "genes_indexed": {
+    "genes": 1294126,
+    "genes_with_og": 1279223
+  },
+  "diagnostics": {
+    "anchor_source": 1210,
+    "motifs_tf_not_found_in_source": 792,
+    "anchor_name": 454,
+    "anchor_none": 477
+  },
+  "motifs_tf_not_found_in_source_examples": [
+    {
+      "motif_key": "MX000008",
+      "tf_name": "GlpR",
+      "source_taxon": "Escherichia coli K12 MG1655"
+    },
+    {
+      "motif_key": "MX000010",
+      "tf_name": "IHF",
+      "source_taxon": "Pseudomonas aeruginosa PAO1"
+    },
+    {
+      "motif_key": "MX000025",
+      "tf_name": "DinR",
+      "source_taxon": "Bacillus subtilis 168"
+    },
+    {
+      "motif_key": "MX000028",
+      "tf_name": "IHF",
+      "source_taxon": "Escherichia coli K12 MG1655"
+    },
+    {
+      "motif_key": "MX000043",
+      "tf_name": "AhrC",
+      "source_taxon": "Bacillus subtilis 168"
+    },
+    {
+      "motif_key": "MX000050",
+      "tf_name": "Hpr",
+      "source_taxon": "Bacillus subtilis 168"
+    },
+    {
+      "motif_key": "MX000126",
+      "tf_name": "FlhD-FlhC",
+      "source_taxon": "Escherichia coli K12 MG1655"
+    },
+    {
+      "motif_key": "MX000176",
+      "tf_name": "YdiH",
+      "source_taxon": "Bacillus subtilis 168"
+    },
+    {
+      "motif_key": "MX000225",
+      "tf_name": "YkvE",
+      "source_taxon": "Bacillus subtilis 168"
+    },
+    {
+      "motif_key": "MX000234",
+      "tf_name": "Sigma54",
+      "source_taxon": "Pseudomonas aeruginosa PAO1"
+    },
+    {
+      "motif_key": "MX000289",
+      "tf_name": "VqsR",
+      "source_taxon": "Pseudomonas aeruginosa PAO1"
+    },
+    {
+      "motif_key": "MX000300",
+      "tf_name": "Crp",
+      "source_taxon": "Synechocystis sp. PCC 6803"
+    },
+    {
+      "motif_key": "MX000317",
+      "tf_name": "AdhR",
+      "source_taxon": "Clostridium beijerinckii"
+    },
+    {
+      "motif_key": "MX000327",
+      "tf_name": "ErfA",
+      "source_taxon": "Pseudomonas aeruginosa PAO1"
+    },
+    {
+      "motif_key": "MX000349",
+      "tf_name": "GluR",
+      "source_taxon": "Thermotoga maritima MSB8"
+    },
+    {
+      "motif_key": "MX000350",
+      "tf_name": "ManR",
+      "source_taxon": "Thermotoga maritima MSB8"
+    },
+    {
+      "motif_key": "MX000352",
+      "tf_name": "TreR",
+      "source_taxon": "Thermotoga maritima MSB8"
+    },
+    {
+      "motif_key": "MX000353",
+      "tf_name": "UxaR",
+      "source_taxon": "Thermotoga maritima MSB8"
+    },
+    {
+      "motif_key": "MX000354",
+      "tf_name": "XylR",
+      "source_taxon": "Thermotoga maritima MSB8"
+    },
+    {
+      "motif_key": "MX000405",
+      "tf_name": "RicR",
+      "source_taxon": "Mycobacterium tuberculosis"
+    },
+    {
+      "motif_key": "MX000406",
+      "tf_name": "NdhR",
+      "source_taxon": "Synechocystis sp. PCC 6803"
+    },
+    {
+      "motif_key": "MX000407",
+      "tf_name": "RirA",
+      "source_taxon": "Dinoroseobacter shibae"
+    },
+    {
+      "motif_key": "MX000415",
+      "tf_name": "FabT",
+      "source_taxon": "Streptococcus agalactiae"
+    },
+    {
+      "motif_key": "MX000152",
+      "tf_name": "NtrC",
+      "source_taxon": "Escherichia coli K12 MG1655"
+    },
+    {
+      "motif_key": "MX000160",
+      "tf_name": "RcsA-RcsB",
+      "source_taxon": "Escherichia coli K12 MG1655"
+    },
+    {
+      "motif_key": "MX000199",
+      "tf_name": "CovR",
+      "source_taxon": "Streptococcus agalactiae"
+    },
+    {
+      "motif_key": "MX000217",
+      "tf_name": "YycF",
+      "source_taxon": "Bacillus subtilis 168"
+    },
+    {
+      "motif_key": "MX000320",
+      "tf_name": "CzcR",
+      "source_taxon": "Pseudomonas aeruginosa PAO1"
+    },
+    {
+      "motif_key": "MX000400",
+      "tf_name": "YedW",
+      "source_taxon": "Escherichia coli K12 MG1655"
+    },
+    {
+      "motif_key": "RG572",
+      "tf_name": "AraR",
+      "source_taxon": "Shewanellaceae"
+    }
+  ],
+  "reference_check": {
+    "reference": "GCF_000005845.2",
+    "rules": [
+      "source_genome",
+      "ortholog"
+    ],
+    "curated_tfs_without_eligible_motif": [
+      "YihL"
+    ]
+  },
+  "summary": {
+    "pairs": 9753,
+    "by_rule": {
+      "source_genome": 628,
+      "ortholog": 4592,
+      "ortholog_og": 4434,
+      "name_match": 99
+    },
+    "by_tier": {
+      "cross_phylum": 4130,
+      "same_class": 1726,
+      "same_order": 1381,
+      "same_family": 842,
+      "same_phylum": 779,
+      "same_genome": 628,
+      "unknown": 267
+    },
+    "pairs_used_by_network": 5220
+  }
+}

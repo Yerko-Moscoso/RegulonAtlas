@@ -1,0 +1,97 @@
+{
+  "stage": "validate",
+  "git": {
+    "commit": "83362ec421f2e32d023839abb7b63fee8a2b7a2f",
+    "dirty": false
+  },
+  "started_utc": "2026-09-23T20:54:59.886883+00:00",
+  "finished_utc": "2026-09-23T20:55:00.635524+00:00",
+  "params_file": "config/mvp_params.json",
+  "params": {
+    "subset_name": "mvp",
+    "description": "Enterobacteriaceae con regulones curados en RegPrecise (gtdb_family = 'Enterobacteriaceae' AND selection IN ('forced','regprecise_source'))",
+    "accessions_file": "config/mvp_genomes.txt",
+    "cache_dir": "data/cache/mvp",
+    "results_dir": "data/results/mvp",
+    "min_neg_log10_p": 5.0,
+    "network_neg_log10_p": 5.0,
+    "eligible_rules": [
+      "source_genome",
+      "ortholog"
+    ],
+    "propagate_operons": true,
+    "hub_degree_threshold": 20,
+    "validation_thresholds": [
+      5.0,
+      5.5,
+      6.0,
+      6.5,
+      7.0
+    ],
+    "reference_accession": "GCF_000005845.2",
+    "gold_standard": "RegPrecise 3.2 (curated_regulons)",
+    "graph_max_edges": 800
+  },
+  "inputs": {
+    "curated_regulons": {
+      "file": "data/cache/mvp/curated_regulons.tsv",
+      "sha256": "c141364b7f58df22f03b021caf015b1090ecd020abb1d755afc2b3ce40d54cc0"
+    },
+    "genomes": {
+      "file": "data/cache/mvp/genomes.tsv",
+      "sha256": "142514b1342092fb9a0c114e5bdc6adc1f800c5b25203da8c204dc9ab663b6d7"
+    },
+    "edges:GCF_000005845.2": {
+      "file": "data/results/mvp/networks/GCF_000005845.2.edges.tsv",
+      "sha256": "3cad610d96e09c5cffc4ee7147fb4b01fc5937035809963a421c4ab9bea05f0d"
+    },
+    "edges:GCF_000016305.1": {
+      "file": "data/results/mvp/networks/GCF_000016305.1.edges.tsv",
+      "sha256": "7be8d70234fb0030472b77dfb6d74eba95f276e9ada1701d044c5ec4e880db97"
+    },
+    "edges:GCF_000011605.1": {
+      "file": "data/results/mvp/networks/GCF_000011605.1.edges.tsv",
+      "sha256": "0953cd48afbfd4e46cfaf2731cec14a7279b475083c61adcfffa922eb1aeb974"
+    },
+    "edges:GCF_000006945.2": {
+      "file": "data/results/mvp/networks/GCF_000006945.2.edges.tsv",
+      "sha256": "d62a6f03c9edcba9c11e5e6b41aeb66ec7c1d1cfd6f8ef7055781ad69e67b002"
+    },
+    "edges:GCF_000016325.1": {
+      "file": "data/results/mvp/networks/GCF_000016325.1.edges.tsv",
+      "sha256": "8968ef686408d622ad37940334520b88fe5f9c6d0345e80a3881e0c203e50dca"
+    },
+    "edges:GCF_000196155.1": {
+      "file": "data/results/mvp/networks/GCF_000196155.1.edges.tsv",
+      "sha256": "4c59fda6100fceb580afcc5a8b15d79a091ffd2ad1602081eb86f0e4e402008b"
+    },
+    "edges:GCF_000027205.1": {
+      "file": "data/results/mvp/networks/GCF_000027205.1.edges.tsv",
+      "sha256": "e04cd136a9e908dfaed17c068d1d41b70203b3b9d1e650c2d84f44875a932949"
+    },
+    "edges:GCF_000069965.1": {
+      "file": "data/results/mvp/networks/GCF_000069965.1.edges.tsv",
+      "sha256": "d52bfe8a4119db1f2e05039333f1020daf0258df1619b7ede5a93e4b8bc6d84b"
+    }
+  },
+  "outputs": {
+    "validation_json": {
+      "file": "data/results/mvp/validation/validation.json",
+      "sha256": "fc8269994879f191eb03affb2bd8a9f5a3408db087786e573d5ba372648a6c6c"
+    },
+    "validation_tsv": {
+      "file": "data/results/mvp/validation/validation.tsv",
+      "sha256": "7293c47498bdca616c0a6fe718411bf0105c0e1e371107a399319ba21953758b"
+    }
+  },
+  "status": {
+    "GCF_000005845.2": "ok",
+    "GCF_000016305.1": "no_overlap",
+    "GCF_000011605.1": "no_overlap",
+    "GCF_000006945.2": "ok",
+    "GCF_000016325.1": "no_overlap",
+    "GCF_000196155.1": "no_overlap",
+    "GCF_000027205.1": "no_overlap",
+    "GCF_000069965.1": "no_overlap"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "stage": "build_networks",
+  "git": {
+    "commit": "83362ec421f2e32d023839abb7b63fee8a2b7a2f",
+    "dirty": false
+  },
+  "started_utc": "2026-09-23T20:54:53.842005+00:00",
+  "finished_utc": "2026-09-23T20:54:58.615109+00:00",
+  "params_file": "config/mvp_params.json",
+  "params": {
+    "subset_name": "mvp",
+    "description": "Enterobacteriaceae con regulones curados en RegPrecise (gtdb_family = 'Enterobacteriaceae' AND selection IN ('forced','regprecise_source'))",
+    "accessions_file": "config/mvp_genomes.txt",
+    "cache_dir": "data/cache/mvp",
+    "results_dir": "data/results/mvp",
+    "min_neg_log10_p": 5.0,
+    "network_neg_log10_p": 5.0,
+    "eligible_rules": [
+      "source_genome",
+      "ortholog"
+    ],
+    "propagate_operons": true,
+    "hub_degree_threshold": 20,
+    "validation_thresholds": [
+      5.0,
+      5.5,
+      6.0,
+      6.5,
+      7.0
+    ],
+    "reference_accession": "GCF_000005845.2",
+    "gold_standard": "RegPrecise 3.2 (curated_regulons)",
+    "graph_max_edges": 800
+  },
+  "inputs": {
+    "genomes": {
+      "file": "data/cache/mvp/genomes.tsv",
+      "sha256": "142514b1342092fb9a0c114e5bdc6adc1f800c5b25203da8c204dc9ab663b6d7"
+    },
+    "motifs": {
+      "file": "data/cache/mvp/motifs.tsv",
+      "sha256": "c0cba6ed6dd09811e892a52a655ec9732de99e1c95e877815c131d0b592105fb"
+    },
+    "genes": {
+      "file": "data/cache/mvp/genes.tsv.gz",
+      "sha256": "e8e9e73534f3e545280b96d988e22da97a56a0f5c8a04e649a472c48efa6fbb5"
+    },
+    "fimo_hits": {
+      "file": "data/cache/mvp/fimo_hits.tsv.gz",
+      "sha256": "58a239f5b4dd85dd2ca5ea9bcf2ccdce2635876994ee8d25f711f63be6bc78bf"
+    },
+    "transfer_map": {
+      "file": "data/results/mvp/transfer_map/transfer_map.tsv",
+      "sha256": "2b72525e253b471bd912fcc24fdd3ecb765c57214f5c1c65fd60272c1688d59c"
+    }
+  },
+  "outputs": {
+    "GCF_000005845.2": {
+      "file": "data/results/mvp/networks/GCF_000005845.2.edges.tsv",
+      "sha256": "3cad610d96e09c5cffc4ee7147fb4b01fc5937035809963a421c4ab9bea05f0d"
+    },
+    "GCF_000016305.1": {
+      "file": "data/results/mvp/networks/GCF_000016305.1.edges.tsv",
+      "sha256": "7be8d70234fb0030472b77dfb6d74eba95f276e9ada1701d044c5ec4e880db97"
+    },
+    "GCF_000011605.1": {
+      "file": "data/results/mvp/networks/GCF_000011605.1.edges.tsv",
+      "sha256": "0953cd48afbfd4e46cfaf2731cec14a7279b475083c61adcfffa922eb1aeb974"
+    },
+    "GCF_000006945.2": {
+      "file": "data/results/mvp/networks/GCF_000006945.2.edges.tsv",
+      "sha256": "d62a6f03c9edcba9c11e5e6b41aeb66ec7c1d1cfd6f8ef7055781ad69e67b002"
+    },
+    "GCF_000016325.1": {
+      "file": "data/results/mvp/networks/GCF_000016325.1.edges.tsv",
+      "sha256": "8968ef686408d622ad37940334520b88fe5f9c6d0345e80a3881e0c203e50dca"
+    },
+    "GCF_000196155.1": {
+      "file": "data/results/mvp/networks/GCF_000196155.1.edges.tsv",
+      "sha256": "4c59fda6100fceb580afcc5a8b15d79a091ffd2ad1602081eb86f0e4e402008b"
+    },
+    "GCF_000027205.1": {
+      "file": "data/results/mvp/networks/GCF_000027205.1.edges.tsv",
+      "sha256": "e04cd136a9e908dfaed17c068d1d41b70203b3b9d1e650c2d84f44875a932949"
+    },
+    "GCF_000069965.1": {
+      "file": "data/results/mvp/networks/GCF_000069965.1.edges.tsv",
+      "sha256": "d52bfe8a4119db1f2e05039333f1020daf0258df1619b7ede5a93e4b8bc6d84b"
+    }
+  },
+  "per_genome": {
+    "GCF_000005845.2": {
+      "eligible_motifs": 764,
+      "hits": 28709,
+      "hits_eligible": 19656,
+      "edges_direct": 7452,
+      "edges_total": 14453,
+      "edges_from_operon_propagation": 7001
+    },
+    "GCF_000016305.1": {
+      "eligible_motifs": 723,
+      "hits": 39612,
+      "hits_eligible": 24919,
+      "edges_direct": 9258,
+      "edges_total": 18809,
+      "edges_from_operon_propagation": 9551
+    },
+    "GCF_000011605.1": {
+      "eligible_motifs": 603,
+      "hits": 28844,
+      "hits_eligible": 16252,
+      "edges_direct": 5603,
+      "edges_total": 10443,
+      "edges_from_operon_propagation": 4840
+    },
+    "GCF_000006945.2": {
+      "eligible_motifs": 670,
+      "hits": 27794,
+      "hits_eligible": 16510,
+      "edges_direct": 6099,
+      "edges_total": 11928,
+      "edges_from_operon_propagation": 5829
+    },
+    "GCF_000016325.1": {
+      "eligible_motifs": 702,
+      "hits": 27242,
+      "hits_eligible": 17299,
+      "edges_direct": 6197,
+      "edges_total": 12925,
+      "edges_from_operon_propagation": 6728
+    },
+    "GCF_000196155.1": {
+      "eligible_motifs": 580,
+      "hits": 25835,
+      "hits_eligible": 13714,
+      "edges_direct": 5634,
+      "edges_total": 10471,
+      "edges_from_operon_propagation": 4837
+    },
+    "GCF_000027205.1": {
+      "eligible_motifs": 601,
+      "hits": 22734,
+      "hits_eligible": 12349,
+      "edges_direct": 4324,
+      "edges_total": 8258,
+      "edges_from_operon_propagation": 3934
+    },
+    "GCF_000069965.1": {
+      "eligible_motifs": 577,
+      "hits": 22508,
+      "hits_eligible": 12445,
+      "edges_direct": 4231,
+      "edges_total": 8275,
+      "edges_from_operon_propagation": 4044
+    }
+  }
+}
