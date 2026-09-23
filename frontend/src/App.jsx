@@ -6,21 +6,29 @@ import Organisms from "./pages/Organisms";
 import OrganismDetail from "./pages/OrganismDetail";
 import RegulatoryNetwork from "./pages/RegulatoryNetwork";
 import Metrics from "./pages/Metrics";
-import Fingerprints from "./pages/Fingerprints";
 import Validation from "./pages/Validation";
-import Robustness from "./pages/Robustness";
-import Comparison from "./pages/Comparison";
-import Pipeline from "./pages/Pipeline";
-import DataProvenance from "./pages/DataProvenance";
-import MVP from "./pages/MVP";
+
+// Referencia con gold standard (RegulonDB); también es el organismo por defecto.
+const DEFAULT_ORGANISM = "GCF_000005845.2";
+
+// Rutas del MVP. Si llega una página no registrada, se vuelve al Dashboard
+// en vez de mostrar una pantalla vacía.
+const MVP_PAGES = new Set([
+  "dashboard",
+  "organisms",
+  "organism-detail",
+  "networks",
+  "metrics",
+  "validation",
+]);
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
-  const [selectedOrganism, setSelectedOrganism] = useState("ecoli");
+  const [selectedOrganism, setSelectedOrganism] = useState(DEFAULT_ORGANISM);
 
   function navigate(newPage, organism) {
     if (organism) setSelectedOrganism(organism);
-    setPage(newPage);
+    setPage(MVP_PAGES.has(newPage) ? newPage : "dashboard");
   }
 
   return (
@@ -31,24 +39,12 @@ export default function App() {
         <main className="flex-1 overflow-auto p-6">
           {page === "dashboard" && <Dashboard navigate={navigate} />}
           {page === "organisms" && <Organisms navigate={navigate} />}
-          {page === "motifs" && <Motifs navigate={navigate} />}
           {page === "organism-detail" && (
             <OrganismDetail navigate={navigate} organismId={selectedOrganism} />
           )}
           {page === "networks" && <RegulatoryNetwork />}
           {page === "metrics" && <Metrics />}
-          {page === "fingerprints" && <Fingerprints />}
           {page === "validation" && <Validation />}
-          {page === "robustness" && <Robustness />}
-          {page === "comparison" && <Comparison navigate={navigate} />}
-          {page === "pipeline" && <Pipeline />}
-          {page === "provenance" && <DataProvenance />}
-          {page === "mvp" && <MVP />}
-          {page === "settings" && (
-            <div className="flex items-center justify-center h-64 text-[#64748B] text-sm">
-              Settings panel — coming soon.
-            </div>
-          )}
         </main>
       </div>
     </div>

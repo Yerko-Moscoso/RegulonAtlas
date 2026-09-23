@@ -1,17 +1,11 @@
-import {
-  LayoutDashboard,
-  Dna,
-  Network,
-  BarChart3,
-  Radar,
-  CircleCheck,
-  ShieldCheck,
-  GitCompare,
-  Workflow,
-  Database,
-  Settings,
-} from "lucide-react";
+import { LayoutDashboard, Dna, Network, BarChart3, CircleCheck } from "lucide-react";
 import { PROJECT_NAME } from "../config/constants";
+
+// Menú del MVP (propuesta, sección 5): seleccionar organismo, ver su red,
+// sus 5 métricas básicas y la validación de E. coli contra RegulonDB.
+// Las páginas fuera del alcance (Fingerprints, Robustness, Comparison,
+// Pipeline, Data Provenance, Settings) siguen en /pages y vuelven al menú
+// cuando se implementen en la segunda mitad del semestre.
 const navGroups = [
   {
     title: "OVERVIEW",
@@ -23,18 +17,7 @@ const navGroups = [
       { id: "organisms", label: "Organisms", icon: Dna },
       { id: "networks", label: "Regulatory Networks", icon: Network },
       { id: "metrics", label: "Metrics", icon: BarChart3 },
-      { id: "fingerprints", label: "Fingerprints", icon: Radar },
       { id: "validation", label: "Validation", icon: CircleCheck },
-      { id: "robustness", label: "Robustness", icon: ShieldCheck },
-      { id: "comparison", label: "Comparison", icon: GitCompare },
-    ],
-  },
-  {
-    title: "SYSTEM",
-    items: [
-      { id: "pipeline", label: "Pipeline", icon: Workflow },
-      { id: "provenance", label: "Data Provenance", icon: Database },
-      { id: "settings", label: "Settings", icon: Settings },
     ],
   },
 ];

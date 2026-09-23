@@ -35,6 +35,15 @@ export const api = {
     return apiClient.get(`/metrics/topology/${accession}`);
   },
 
+  // Métricas de varios genomas en una sola llamada (?accessions=A&accessions=B).
+  // Se arma la query a mano porque axios, por defecto, serializa los arrays
+  // como accessions[]=A, que FastAPI no reconoce.
+  getTopologySummary: (accessions) => {
+    const params = new URLSearchParams();
+    accessions.forEach((acc) => params.append('accessions', acc));
+    return apiClient.get(`/metrics/topology-summary?${params.toString()}`);
+  },
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');

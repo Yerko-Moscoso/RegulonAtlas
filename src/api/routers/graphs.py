@@ -1,81 +1,105 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, bindparam
 from src.database.connection import get_db
-import math
+from src.api.network_params import NETWORK_NEG_LOG10_P, EDGES_SQL, check_threshold
 
 router = APIRouter(prefix="/graphs", tags=["Graphs"])
 
+# Máximo de aristas enviadas al navegador (las de mejor p-value). La red
+# completa se mide en /metrics/topology; aquí solo se dibuja un subgrafo.
+MAX_EDGES = 800
+
+
 @router.get("/{genome_acc}")
 async def get_network_graph(
-    genome_acc: str, 
-    threshold: float = 1e-4,
-    db: Session = Depends(get_db)
+    genome_acc: str,
+    threshold: float = NETWORK_NEG_LOG10_P,  # en -log10(p), igual que /metrics
+    max_edges: int = MAX_EDGES,
+    db: Session = Depends(get_db),
 ):
     """
-    Retorna la topología de red consultando directamente MariaDB (Esquema v3).
+    Subgrafo TF -> gen para Cytoscape: las `max_edges` aristas más fuertes de
+    la misma red que miden /metrics/topology y /metrics/validation.
     """
+    check_threshold(threshold)
     try:
-        min_weight = -math.log10(threshold) if threshold > 0 else 0
-        
-        # Consulta SQL optimizada: JOIN cuádruple con límite de seguridad integrado
-        query = text("""
-            SELECT 
-                m.motif_key, 
-                g.locus_tag, 
-                fh.neg_log10_p
-            FROM fimo_hits fh
-            JOIN genomes gen ON fh.genome_id = gen.genome_id
-            JOIN genes g ON fh.gene_id = g.gene_id
-            JOIN motifs m ON fh.motif_id = m.motif_id
-            WHERE gen.accession = :genome_acc 
-              AND fh.neg_log10_p >= :min_weight
-            ORDER BY fh.neg_log10_p DESC
-            LIMIT 800
-        """)
+        # Una arista por par (TF, gen), con su mejor p-value y los motivos
+        # (PWM) que la sustentan. Antes se devolvían hits crudos, por lo que
+        # un mismo par podía aparecer varias veces.
+        rows = db.execute(
+            text("""
+                SELECT m.tf_name AS tf,
+                       g.locus_tag,
+                       MAX(fh.neg_log10_p) AS best,
+                       GROUP_CONCAT(DISTINCT m.motif_key ORDER BY m.motif_key) AS motifs
+                FROM fimo_hits fh
+                JOIN genomes gen ON fh.genome_id = gen.genome_id
+                JOIN genes g ON fh.gene_id = g.gene_id
+                JOIN motifs m ON fh.motif_id = m.motif_id
+                WHERE gen.accession = :genome_acc
+                  AND fh.neg_log10_p >= :threshold
+                  AND m.tf_name IS NOT NULL
+                GROUP BY m.tf_name, g.locus_tag
+                ORDER BY best DESC
+                LIMIT :max_edges
+            """),
+            {"genome_acc": genome_acc, "threshold": threshold, "max_edges": max_edges},
+        ).fetchall()
 
-        results = db.execute(query, {
-            "genome_acc": genome_acc, 
-            "min_weight": min_weight
-        }).fetchall()
+        if not rows:
+            raise HTTPException(
+                status_code=404, detail=f"No se encontraron interacciones para {genome_acc}"
+            )
 
-        if not results:
-            raise HTTPException(status_code=404, detail=f"No se encontraron interacciones para {genome_acc}")
+        total_edges = db.execute(
+            text(f"SELECT COUNT(*) FROM ({EDGES_SQL}) AS e").bindparams(
+                bindparam("accs", expanding=True)
+            ),
+            {"accs": [genome_acc], "threshold": threshold},
+        ).scalar()
 
-        active_nodes = set()
-        cytoscape_edges = []
-        
-        for row in results:
-            source_id = str(row[0])
-            target_id = str(row[1])
-            weight = float(row[2])
-            
-            active_nodes.add(source_id)
-            active_nodes.add(target_id)
-            
-            cytoscape_edges.append({
+        tf_motifs = {}
+        targets = set()
+        edges = []
+        for tf, locus_tag, best, motifs in rows:
+            tf_motifs.setdefault(tf, set()).update((motifs or "").split(","))
+            targets.add(locus_tag)
+            edges.append({
                 "data": {
-                    "source": source_id,
-                    "target": target_id,
-                    "weight": weight,
-                    "is_leader": True
+                    "source": tf,
+                    "target": locus_tag,
+                    "weight": float(best),
                 }
             })
 
-        cytoscape_nodes = []
-        for node_id in active_nodes:
-            cytoscape_nodes.append({
+        # El tipo de nodo sale de la consulta (lado TF o lado blanco), no de
+        # adivinar por prefijos del nombre.
+        nodes = [
+            {
                 "data": {
-                    "id": node_id,
-                    "label": node_id,
-                    "node_type": "TF" if any(prefix in node_id for prefix in ["TF", "MX", "RG", "LexA", "Fur"]) else "Gene"
+                    "id": tf,
+                    "label": tf,
+                    "node_type": "TF",
+                    "motifs": sorted(m for m in motif_set if m),
                 }
-            })
+            }
+            for tf, motif_set in tf_motifs.items()
+        ]
+        nodes += [
+            {"data": {"id": t, "label": t, "node_type": "Gene"}}
+            for t in targets
+            if t not in tf_motifs
+        ]
 
         return {
             "graph_id": genome_acc,
-            "elements": {"nodes": cytoscape_nodes, "edges": cytoscape_edges}
+            "neg_log10_p_threshold": threshold,
+            "shown_edges": len(edges),
+            "total_edges": total_edges,
+            "elements": {"nodes": nodes, "edges": edges},
         }
-        
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
