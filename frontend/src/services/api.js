@@ -17,8 +17,17 @@ export const api = {
     return apiClient.get('/genomes/', { params: { skip, limit } });
   },
   
+  // Ficha completa (taxonomía, tamaño, genes, operones, TF, aristas, curadas).
   getGenomeByAccession: (accession) => {
     return apiClient.get(`/genomes/${accession}`);
+  },
+
+  // Solo los genomas pedidos, con su ficha completa. Usar en vez de
+  // getGenomes(0, 3000) + filtro en el navegador.
+  getGenomesByAccessions: (accessions) => {
+    const params = new URLSearchParams();
+    accessions.forEach((acc) => params.append('accessions', acc));
+    return apiClient.get(`/genomes/?${params.toString()}`);
   },
 
   // === REDES REGULATORIAS (GRAFOS) ===

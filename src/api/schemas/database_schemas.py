@@ -40,6 +40,18 @@ class GenomeItem(BaseModel):
     completeness: Optional[float] = None
     contamination: Optional[float] = None
     assembly_level: Optional[str] = None
+    # Solo se llenan al pedir genomas por accession (?accessions= o /{accession}).
+    gtdb_family: Optional[str] = None
+    gtdb_genus: Optional[str] = None
+    gtdb_species: Optional[str] = None
+    selection: Optional[str] = None
+    genome_size_mb: Optional[float] = None      # aprox.: fin del último gen por contig
+    n_genes: Optional[int] = None
+    n_operons: Optional[int] = None
+    n_tfs: Optional[int] = None                 # TF con al menos un blanco predicho
+    predicted_edges: Optional[int] = None       # pares TF-gen al umbral de la red
+    curated_interactions: Optional[int] = None  # pares TF-gen curados (RegPrecise)
+    network_threshold: Optional[float] = None   # -log10(p) de la red
 
 class PaginatedGenomes(BaseModel):
     total: int
