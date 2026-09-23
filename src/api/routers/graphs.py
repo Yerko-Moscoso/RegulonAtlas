@@ -1,111 +1,49 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
-from sqlalchemy import text, bindparam
-from src.database.connection import get_db
-from src.api.network_params import (
-    NETWORK_NEG_LOG10_P,
-    EDGES_SQL,
-    ELIGIBILITY_FILTER,
-    check_threshold,
-)
+from fastapi import APIRouter, HTTPException
+
+from src.api import results
 
 router = APIRouter(prefix="/graphs", tags=["Graphs"])
 
-# Máximo de aristas enviadas al navegador (las de mejor p-value). La red
-# completa se mide en /metrics/topology; aquí solo se dibuja un subgrafo.
-MAX_EDGES = 800
-
 
 @router.get("/{genome_acc}")
-async def get_network_graph(
-    genome_acc: str,
-    threshold: float = NETWORK_NEG_LOG10_P,  # en -log10(p), igual que /metrics
-    max_edges: int = MAX_EDGES,
-    db: Session = Depends(get_db),
-):
+async def get_network_graph(genome_acc: str, max_edges: int | None = None):
     """
-    Subgrafo TF -> gen para Cytoscape: las `max_edges` aristas más fuertes de
-    la misma red que miden /metrics/topology y /metrics/validation.
+    Subgrafo TF -> gen para Cytoscape: las `max_edges` aristas de mejor p-value
+    de la misma red que miden /metrics/topology y /metrics/validation.
     """
-    check_threshold(threshold)
-    try:
-        # Una arista por par (TF, gen), con su mejor p-value y los motivos
-        # (PWM) que la sustentan. Antes se devolvían hits crudos, por lo que
-        # un mismo par podía aparecer varias veces.
-        rows = db.execute(
-            text(f"""
-                SELECT m.tf_name AS tf,
-                       g.locus_tag,
-                       MAX(fh.neg_log10_p) AS best,
-                       GROUP_CONCAT(DISTINCT m.motif_key ORDER BY m.motif_key) AS motifs
-                FROM fimo_hits fh
-                JOIN genomes gen ON fh.genome_id = gen.genome_id
-                JOIN genes g ON fh.gene_id = g.gene_id
-                JOIN motifs m ON fh.motif_id = m.motif_id
-                WHERE gen.accession = :genome_acc
-                  AND fh.neg_log10_p >= :threshold
-                  AND m.tf_name IS NOT NULL
-                  {ELIGIBILITY_FILTER}
-                GROUP BY m.tf_name, g.locus_tag
-                ORDER BY best DESC
-                LIMIT :max_edges
-            """),
-            {"genome_acc": genome_acc, "threshold": threshold, "max_edges": max_edges},
-        ).fetchall()
+    params = results.params()
+    thr = params["network_neg_log10_p"]
+    limit = max_edges or params["graph_max_edges"]
 
-        if not rows:
-            raise HTTPException(
-                status_code=404, detail=f"No se encontraron interacciones para {genome_acc}"
-            )
+    df = results.edges(genome_acc)
+    net = df[df["neg_log10_p"] >= thr]
+    if net.empty:
+        raise HTTPException(status_code=404, detail=f"No hay interacciones para {genome_acc}.")
 
-        total_edges = db.execute(
-            text(f"SELECT COUNT(*) FROM ({EDGES_SQL}) AS e").bindparams(
-                bindparam("accs", expanding=True)
-            ),
-            {"accs": [genome_acc], "threshold": threshold},
-        ).scalar()
+    # Motivos de cada TF sobre la red completa, no solo sobre lo dibujado.
+    tf_motifs = (net.dropna(subset=["motifs"]).groupby("tf")["motifs"]
+                    .apply(lambda s: sorted({m for v in s for m in v.split(",") if m})))
+    shown = net.sort_values("neg_log10_p", ascending=False, kind="mergesort").head(limit)
 
-        tf_motifs = {}
-        targets = set()
-        edges = []
-        for tf, locus_tag, best, motifs in rows:
-            tf_motifs.setdefault(tf, set()).update((motifs or "").split(","))
-            targets.add(locus_tag)
-            edges.append({
-                "data": {
-                    "source": tf,
-                    "target": locus_tag,
-                    "weight": float(best),
-                }
-            })
+    nodes, seen_genes = [], set()
+    for tf in sorted(shown["tf"].unique()):
+        nodes.append({"data": {"id": f"tf:{tf}", "label": tf, "node_type": "TF",
+                               "motifs": tf_motifs.get(tf, [])}})
+    edges = []
+    for r in shown.itertuples(index=False):
+        gid = f"gene:{r.target_locus_tag}"
+        if gid not in seen_genes:
+            seen_genes.add(gid)
+            label = r.target_gene_name if isinstance(r.target_gene_name, str) and r.target_gene_name else r.target_locus_tag
+            nodes.append({"data": {"id": gid, "label": label, "node_type": "Gene",
+                                   "locus_tag": r.target_locus_tag}})
+        edges.append({"data": {"source": f"tf:{r.tf}", "target": gid, "weight": float(r.neg_log10_p),
+                               "evidence": r.evidence}})
 
-        # El tipo de nodo sale de la consulta (lado TF o lado blanco), no de
-        # adivinar por prefijos del nombre.
-        nodes = [
-            {
-                "data": {
-                    "id": tf,
-                    "label": tf,
-                    "node_type": "TF",
-                    "motifs": sorted(m for m in motif_set if m),
-                }
-            }
-            for tf, motif_set in tf_motifs.items()
-        ]
-        nodes += [
-            {"data": {"id": t, "label": t, "node_type": "Gene"}}
-            for t in targets
-            if t not in tf_motifs
-        ]
-
-        return {
-            "graph_id": genome_acc,
-            "neg_log10_p_threshold": threshold,
-            "shown_edges": len(edges),
-            "total_edges": total_edges,
-            "elements": {"nodes": nodes, "edges": edges},
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "graph_id": genome_acc,
+        "neg_log10_p_threshold": thr,
+        "shown_edges": len(edges),
+        "total_edges": int(len(net)),
+        "elements": {"nodes": nodes, "edges": edges},
+    }

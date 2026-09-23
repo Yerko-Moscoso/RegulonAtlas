@@ -1,0 +1,106 @@
+{
+  "stage": "export_cache",
+  "git": {
+    "commit": "9e0b73c006add897b22b100cc3b020fd30fa8499",
+    "dirty": true
+  },
+  "started_utc": "2026-09-23T20:51:57.041764+00:00",
+  "finished_utc": "2026-09-23T20:52:10.387725+00:00",
+  "params_file": "config/mvp_params.json",
+  "params": {
+    "subset_name": "mvp",
+    "description": "Enterobacteriaceae con regulones curados en RegPrecise (gtdb_family = 'Enterobacteriaceae' AND selection IN ('forced','regprecise_source'))",
+    "accessions_file": "config/mvp_genomes.txt",
+    "cache_dir": "data/cache/mvp",
+    "results_dir": "data/results/mvp",
+    "min_neg_log10_p": 5.0,
+    "network_neg_log10_p": 5.0,
+    "eligible_rules": [
+      "source_genome",
+      "ortholog"
+    ],
+    "propagate_operons": true,
+    "hub_degree_threshold": 20,
+    "validation_thresholds": [
+      5.0,
+      5.5,
+      6.0,
+      6.5,
+      7.0
+    ],
+    "reference_accession": "GCF_000005845.2",
+    "gold_standard": "RegPrecise 3.2 (curated_regulons)",
+    "graph_max_edges": 800
+  },
+  "inputs": {},
+  "outputs": {
+    "genomes": {
+      "file": "data/cache/mvp/genomes.tsv",
+      "sha256": "142514b1342092fb9a0c114e5bdc6adc1f800c5b25203da8c204dc9ab663b6d7"
+    },
+    "motifs": {
+      "file": "data/cache/mvp/motifs.tsv",
+      "sha256": "c0cba6ed6dd09811e892a52a655ec9732de99e1c95e877815c131d0b592105fb"
+    },
+    "regprecise_genome_map": {
+      "file": "data/cache/mvp/regprecise_genome_map.tsv",
+      "sha256": "4031b1cdbd6961d9077815e319b4f7b3f7c1337ff6b49542b6a298fa5861a0e5"
+    },
+    "regprecise_regulogs": {
+      "file": "data/cache/mvp/regprecise_regulogs.tsv",
+      "sha256": "65c62e185b6b3fdf9202d6caaa8fa4cc283e26e43f3ba25630f4334ba5d8f8dc"
+    },
+    "curated_regulons": {
+      "file": "data/cache/mvp/curated_regulons.tsv",
+      "sha256": "c141364b7f58df22f03b021caf015b1090ecd020abb1d755afc2b3ce40d54cc0"
+    },
+    "genes": {
+      "file": "data/cache/mvp/genes.tsv.gz",
+      "sha256": "e8e9e73534f3e545280b96d988e22da97a56a0f5c8a04e649a472c48efa6fbb5"
+    },
+    "fimo_hits": {
+      "file": "data/cache/mvp/fimo_hits.tsv.gz",
+      "sha256": "58a239f5b4dd85dd2ca5ea9bcf2ccdce2635876994ee8d25f711f63be6bc78bf"
+    },
+    "gene_index": {
+      "file": "data/cache/mvp/gene_index.tsv.gz",
+      "sha256": "54a69efbeba47efc9b9e0ad8209afc37b87eabd84b1549fc90f11f9ddd069a6e"
+    }
+  },
+  "database": {
+    "url": "mysql+pymysql://ymoscoso:***@127.0.0.1:3306/regulon_atlas?charset=utf8mb4",
+    "server_version": "10.6.23-MariaDB-0ubuntu0.22.04.1",
+    "access": "SELECT only"
+  },
+  "target_accessions": [
+    "GCF_000005845.2",
+    "GCF_000016305.1",
+    "GCF_000011605.1",
+    "GCF_000006945.2",
+    "GCF_000016325.1",
+    "GCF_000196155.1",
+    "GCF_000027205.1",
+    "GCF_000069965.1"
+  ],
+  "source_genomes_for_gene_index": 377,
+  "row_counts": {
+    "genomes": 2644,
+    "motifs": 2141,
+    "regprecise_genome_map": 488,
+    "regprecise_regulogs": 10932,
+    "curated_regulons": 8204,
+    "genes": 35678,
+    "fimo_hits": 223278,
+    "gene_index": 1294126
+  },
+  "queries": {
+    "genomes": "SELECT genome_id, accession, ncbi_organism, gtdb_domain, gtdb_phylum, gtdb_class, gtdb_order, gtdb_family, gtdb_genus, gtdb_species, completeness, contamination, assembly_level, selection FROM genomes",
+    "motifs": "SELECT motif_id, motif_key, source, tf_name, tf_family, source_taxon, length FROM motifs",
+    "regprecise_genome_map": "SELECT genome_name, accession, source, resolved_name, assembly_level FROM regprecise_genome_map",
+    "regprecise_regulogs": "SELECT DISTINCT cr.regulog_id, rm.accession FROM curated_regulons cr JOIN regprecise_genome_map rm ON cr.genome_name = rm.genome_name WHERE rm.accession IS NOT NULL",
+    "curated_regulons": "SELECT rm.accession, cr.regulog_id, cr.tf_name, cr.locus_tag, cr.gene_name FROM curated_regulons cr JOIN regprecise_genome_map rm ON cr.genome_name = rm.genome_name WHERE rm.accession IN :accs",
+    "genes": "SELECT gene_id, genome_id, locus_tag, contig, start_pos, end_pos, strand, protein_id, gene_name, biotype, operon_id, operon_role FROM genes WHERE genome_id IN :ids",
+    "fimo_hits": "SELECT genome_id, gene_id, motif_id, neg_log10_p FROM fimo_hits WHERE genome_id IN :ids AND neg_log10_p >= :min_p",
+    "gene_index": "SELECT g.genome_id, g.gene_name, ann.preferred_name, ann.og FROM genes g LEFT JOIN annotations ann ON ann.gene_id = g.gene_id WHERE g.genome_id IN :ids AND g.protein_id IS NOT NULL"
+  }
+}

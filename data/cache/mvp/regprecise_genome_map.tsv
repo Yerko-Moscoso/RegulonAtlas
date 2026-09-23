@@ -1,0 +1,489 @@
+genome_name	accession	source	resolved_name	assembly_level
+Escherichia coli str. K-12 substr. MG1655	GCF_000005845.2	atlas		
+Corynebacterium jeikeium K411	GCF_000006605.1	ncbi	Corynebacterium jeikeium K411	Complete Genome
+Chlamydia muridarum Nigg	GCF_000006685.1	ncbi	Chlamydia muridarum str. Nigg	Complete Genome
+Xylella fastidiosa 9a5c	GCF_000006725.1	ncbi	Xylella fastidiosa 9a5c	Complete Genome
+Vibrio cholerae O1 biovar eltor str. N16961	GCF_000006745.1	ncbi	Vibrio cholerae O1 biovar El Tor str. N16961	Complete Genome
+Pseudomonas aeruginosa PAO1	GCF_000006765.1	atlas		
+Streptococcus pyogenes M1 GAS	GCF_000006785.2	ncbi	Streptococcus pyogenes M1 GAS	Complete Genome
+Halobacterium sp. NRC-1	GCF_000006805.1	ncbi	Halobacterium salinarum NRC-1	Complete Genome
+Pasteurella multocida subsp. multocida str. Pm70	GCF_000006825.1	ncbi	Pasteurella multocida subsp. multocida str. Pm70	Complete Genome
+Lactococcus lactis subsp. lactis Il1403	GCF_000006865.1	ncbi	Lactococcus lactis subsp. lactis Il1403	Complete Genome
+Streptococcus pneumoniae TIGR4	GCF_000006885.1	ncbi	Streptococcus pneumoniae TIGR4	Complete Genome
+Caulobacter crescentus CB15	GCF_000006905.1	ncbi	Caulobacter vibrioides CB15	Complete Genome
+Salmonella typhimurium LT2	GCF_000006945.2	ncbi	Salmonella enterica subsp. enterica serovar Typhimurium str. LT2	Complete Genome
+Sinorhizobium meliloti 1021	GCF_000006965.1	ncbi	Sinorhizobium meliloti 1021	Complete Genome
+Sulfolobus solfataricus P2	GCF_000007005.1	ncbi	Saccharolobus solfataricus P2	Complete Genome
+Thermoanaerobacter tengcongensis MB4	GCF_000007085.1	ncbi	Caldanaerobacter subterraneus subsp. tengcongensis MB4	Complete Genome
+Zymomonas mobilis subsp. mobilis ZM4	GCF_000007105.1	ncbi	Zymomonas mobilis subsp. mobilis ZM4 = ATCC 31821	Complete Genome
+Xanthomonas campestris pv. campestris str. ATCC 33913	GCF_000007145.1	atlas		
+Xanthomonas axonopodis pv. citri str. 306	GCF_000007165.1	ncbi	Xanthomonas citri subsp. citri 306	Complete Genome
+Pyrobaculum aerophilum str. IM2	GCF_000007225.1	ncbi	Pyrobaculum aerophilum str. IM2	Complete Genome
+Streptococcus agalactiae 2603V/R	GCF_000007265.1	ncbi	Streptococcus agalactiae 2603V/R	Complete Genome
+Methanosarcina acetivorans C2A	GCF_000007345.1	ncbi	Methanosarcina acetivorans C2A	Complete Genome
+Streptococcus mutans UA159	GCF_000007465.2	ncbi	Streptococcus mutans UA159	Complete Genome
+Tropheryma whipplei str. Twist	GCF_000007485.1	atlas		
+Bifidobacterium longum NCC2705	GCF_000007525.1	ncbi	Bifidobacterium longum NCC2705	Complete Genome
+Pseudomonas putida KT2440	GCF_000007565.2	ncbi	Pseudomonas putida KT2440	Complete Genome
+Chlamydophila caviae GPIC	GCF_000007605.1	ncbi	Chlamydia caviae GPIC	Complete Genome
+Clostridium tetani E88	GCF_000007625.1	ncbi	Clostridium tetani E88	Complete Genome
+Staphylococcus epidermidis ATCC 12228	GCF_000007645.1	ncbi	Staphylococcus epidermidis ATCC 12228	Complete Genome
+Leifsonia xyli subsp. xyli str. CTCB07	GCF_000007665.1	ncbi	Leifsonia xyli subsp. xyli str. CTCB07	Complete Genome
+Chromobacterium violaceum ATCC 12472	GCF_000007705.1	atlas		
+Mannheimia succiniciproducens MBEL55E	GCF_000007745.1	ncbi	[Mannheimia] succiniciproducens MBEL55E	Complete Genome
+Enterococcus faecalis V583	GCF_000007785.1	ncbi	Enterococcus faecalis V583	Complete Genome
+Pseudomonas syringae pv. tomato str. DC3000	GCF_000007805.1	ncbi	Pseudomonas syringae pv. tomato str. DC3000	Complete Genome
+Haemophilus ducreyi 35000HP	GCF_000007945.1	ncbi	[Haemophilus] ducreyi 35000HP	Complete Genome
+Geobacter sulfurreducens PCA	GCF_000007985.2	ncbi	Geobacter sulfurreducens PCA	Complete Genome
+Lactobacillus johnsonii NCC 533	GCF_000008065.1	ncbi	Lactobacillus johnsonii NCC 533	Complete Genome
+Thermus thermophilus HB27	GCF_000008125.1	ncbi	Thermus thermophilus HB27	Complete Genome
+Propionibacterium acnes KPA171202	GCF_000008345.1	ncbi	Cutibacterium acnes KPA171202	Complete Genome
+Bacillus licheniformis DSM 13	GCF_000008425.1	ncbi	Bacillus licheniformis DSM 13 = ATCC 14580	Complete Genome
+Idiomarina loihiensis L2TR	GCF_000008465.1	ncbi	Idiomarina loihiensis L2TR	Complete Genome
+Methanothermobacter thermautotrophicus str. Delta H	GCF_000008645.1	ncbi	Methanothermobacter thermautotrophicus str. Delta H	Complete Genome
+Archaeoglobus fulgidus DSM 4304	GCF_000008665.1	ncbi	Archaeoglobus fulgidus DSM 4304	Complete Genome
+Chlamydia trachomatis D/UW-3/CX	GCF_000008725.1	ncbi	Chlamydia trachomatis D/UW-3/CX	Complete Genome
+Clostridium acetobutylicum ATCC 824	GCF_000008765.1	atlas		
+Neisseria meningitidis MC58	GCF_000008805.1	ncbi	Neisseria meningitidis MC58	Complete Genome
+Lactobacillus salivarius subsp. salivarius UCC118	GCF_000008925.1	ncbi	Ligilactobacillus salivarius UCC118	Complete Genome
+Francisella tularensis subsp. tularensis SCHU S4	GCF_000008985.1	ncbi	Francisella tularensis subsp. tularensis SCHU S4	Complete Genome
+Bacillus subtilis subsp. subtilis str. 168	GCF_000009045.1	atlas		
+Ralstonia solanacearum GMI1000	GCF_000009125.1	ncbi	Ralstonia pseudosolanacearum GMI1000	Complete Genome
+Nitrosomonas europaea ATCC 19718	GCF_000009145.1	ncbi	Nitrosomonas europaea ATCC 19718	Complete Genome
+Haloquadratum walsbyi DSM 16790	GCF_000009185.1	ncbi	Haloquadratum walsbyi DSM 16790	Complete Genome
+Clostridium difficile 630	GCF_000009205.2	ncbi	Clostridioides difficile 630	Complete Genome
+Rhizobium leguminosarum bv. viciae 3841	GCF_000009265.1	ncbi	Rhizobium johnstonii 3841	Complete Genome
+Ralstonia eutropha H16	GCF_000009285.1	ncbi	Cupriavidus necator H16	Complete Genome
+Alcanivorax borkumensis SK2	GCF_000009365.1	ncbi	Alcanivorax borkumensis SK2	Complete Genome
+Staphylococcus carnosus subsp. carnosus TM300	GCF_000009405.1	ncbi	Staphylococcus carnosus subsp. carnosus TM300	Complete Genome
+Streptococcus uberis 0140J	GCF_000009545.1	ncbi	Streptococcus uberis 0140J	Complete Genome
+Staphylococcus aureus subsp. aureus N315	GCF_000009645.1	ncbi	Staphylococcus aureus subsp. aureus N315	Complete Genome
+Nostoc sp. PCC 7120	GCF_000009705.1	ncbi	Nostoc sp. PCC 7120 = FACHB-418	Complete Genome
+Synechocystis sp. PCC 6803	GCF_000009725.1	ncbi	Synechocystis sp. PCC 6803	Complete Genome
+Streptomyces avermitilis MA-4680	GCF_000009765.2	ncbi	Streptomyces avermitilis MA-4680 = NBRC 14893	Complete Genome
+Geobacillus kaustophilus HTA426	GCF_000009785.1	ncbi	Geobacillus kaustophilus HTA426	Complete Genome
+Nocardia farcinica IFM 10152	GCF_000009805.1	ncbi	Nocardia farcinica IFM 10152	Complete Genome
+Bacillus clausii KSM-K16	GCF_000009825.1	ncbi	Shouchella clausii KSM-K16	Complete Genome
+Staphylococcus haemolyticus JCSC1435	GCF_000009865.1	ncbi	Staphylococcus haemolyticus JCSC1435	Complete Genome
+Chlamydophila felis Fe/C-56	GCF_000009945.1	ncbi	Chlamydia felis Fe/C-56	Complete Genome
+Thermococcus kodakaraensis KOD1	GCF_000009965.1	ncbi	Thermococcus kodakarensis KOD1	Complete Genome
+Magnetospirillum magneticum AMB-1	GCF_000009985.1	ncbi	Paramagnetospirillum magneticum AMB-1	Complete Genome
+Lactobacillus reuteri JCM 1112	GCF_000010005.1	ncbi	Limosilactobacillus reuteri subsp. reuteri JCM 1112 = DSM 20016	Complete Genome
+Rhodococcus erythropolis PR4	GCF_000010105.1	ncbi	Rhodococcus erythropolis PR4	Complete Genome
+Staphylococcus saprophyticus subsp. saprophyticus ATCC 15305	GCF_000010125.1	ncbi	Staphylococcus saprophyticus subsp. saprophyticus ATCC 15305 = NCTC 7292	Complete Genome
+Lactobacillus fermentum IFO 3956	GCF_000010145.1	ncbi	Limosilactobacillus fermentum IFO 3956	Complete Genome
+Kocuria rhizophila DC2201	GCF_000010285.1	atlas		
+Bifidobacterium adolescentis ATCC 15703	GCF_000010425.1	ncbi	Bifidobacterium adolescentis ATCC 15703	Complete Genome
+Azorhizobium caulinodans ORS 571	GCF_000010525.1	atlas		
+Macrococcus caseolyticus JCSC5402	GCF_000010585.1	ncbi	Macrococcoides caseolyticum JCSC5402	Complete Genome
+Streptomyces griseus subsp. griseus NBRC 13350	GCF_000010605.1	ncbi	Streptomyces griseus subsp. griseus NBRC 13350	Complete Genome
+Microcystis aeruginosa NIES-843	GCF_000010625.1	ncbi	Microcystis aeruginosa NIES-843	Complete Genome
+Streptococcus dysgalactiae subsp. equisimilis GGS_124	GCF_000010705.1	ncbi	Streptococcus dysgalactiae subsp. equisimilis GGS_124	Complete Genome
+Azospirillum sp. B510	GCF_000010725.1	ncbi	Azospirillum sp. B510	Complete Genome
+Rhodococcus opacus B4	GCF_000010805.1	ncbi	Rhodococcus opacus B4	Complete Genome
+Acetobacter pasteurianus IFO 3283-01	GCF_000010825.1	ncbi	Acetobacter pasteurianus IFO 3283-01	Complete Genome
+Bacteroides thetaiotaomicron VPI-5482	GCF_000011065.1	ncbi	Bacteroides thetaiotaomicron VPI-5482	Complete Genome
+Haloarcula marismortui ATCC 43049	GCF_000011085.1	ncbi	Haloarcula marismortui ATCC 43049	Complete Genome
+Pyrococcus horikoshii OT3	GCF_000011105.1	ncbi	Pyrococcus horikoshii OT3	Complete Genome
+Bacillus halodurans C-125	GCF_000011145.1	ncbi	Halalkalibacterium halodurans C-125	Complete Genome
+Thermoplasma volcanium GSS1	GCF_000011185.1	ncbi	Thermoplasma volcanium GSS1	Complete Genome
+Sulfolobus tokodaii str. 7	GCF_000011205.1	ncbi	Sulfurisphaera tokodaii str. 7	Complete Genome
+Oceanobacillus iheyensis HTE831	GCF_000011245.1	atlas		
+Corynebacterium efficiens YS-314	GCF_000011305.1	ncbi	Corynebacterium efficiens YS-314	Complete Genome
+Corynebacterium glutamicum ATCC 13032	GCF_000011325.1	ncbi	Corynebacterium glutamicum ATCC 13032	Complete Genome
+Gloeobacter violaceus PCC 7421	GCF_000011385.1	atlas		
+Prochlorococcus marinus str. MIT 9313	GCF_000011485.1	ncbi	Prochlorococcus marinus str. MIT 9313	Complete Genome
+Burkholderia pseudomallei K96243	GCF_000011545.1	ncbi	Burkholderia pseudomallei K96243	Complete Genome
+Parachlamydia sp. UWE25	GCF_000011565.2	ncbi	Candidatus Protochlamydia amoebophila UWE25	Complete Genome
+Erwinia carotovora subsp. atroseptica SCRI1043	GCF_000011605.1	ncbi	Pectobacterium atrosepticum SCRI1043	Complete Genome
+Gluconobacter oxydans 621H	GCF_000011685.1	ncbi	Gluconobacter oxydans 621H	Complete Genome
+Burkholderia mallei ATCC 23344	GCF_000011705.1	ncbi	Burkholderia mallei ATCC 23344	Complete Genome
+Vibrio fischeri ES114	GCF_000011805.1	ncbi	Aliivibrio fischeri ES114	Complete Genome
+Streptococcus thermophilus CNRZ1066	GCF_000011845.1	ncbi	Streptococcus thermophilus CNRZ1066	Complete Genome
+Silicibacter pomeroyi DSS-3	GCF_000011965.2	ncbi	Ruegeria pomeroyi DSS-3	Complete Genome
+Lactobacillus acidophilus NCFM	GCF_000011985.1	ncbi	Lactobacillus acidophilus NCFM	Complete Genome
+Pseudomonas fluorescens Pf-5	GCF_000012265.1	ncbi	Pseudomonas protegens Pf-5	Complete Genome
+Sulfolobus acidocaldarius DSM 639	GCF_000012285.1	ncbi	Sulfolobus acidocaldarius DSM 639	Complete Genome
+Psychrobacter arcticum 273-4	GCF_000012305.1	ncbi	Psychrobacter arcticus 273-4	Complete Genome
+Colwellia psychrerythraea 34H	GCF_000012325.1	ncbi	Colwellia psychrerythraea 34H	Complete Genome
+Dechloromonas aromatica RCB	GCF_000012425.1	ncbi	Dechloromonas aromatica RCB	Complete Genome
+Pelodictyon luteolum DSM 273	GCF_000012485.1	ncbi	Pelodictyon luteolum DSM 273	Complete Genome
+Synechococcus elongatus PCC 7942	GCF_000012525.1	ncbi	Synechococcus elongatus PCC 7942 = FACHB-805	Complete Genome
+Methanosphaera stadtmanae DSM 3091	GCF_000012545.1	ncbi	Methanosphaera stadtmanae DSM 3091	Complete Genome
+Desulfovibrio desulfuricans G20	GCF_000012665.1	ncbi	Oleidesulfovibrio alaskensis G20	Complete Genome
+Nitrobacter winogradskyi Nb-255	GCF_000012725.1	atlas		
+Bacteroides vulgatus ATCC 8482	GCF_000012825.1	ncbi	Phocaeicola vulgatus ATCC 8482	Complete Genome
+Carboxydothermus hydrogenoformans Z-2901	GCF_000012865.1	atlas		
+Pelobacter carbinolicus str. DSM 2380	GCF_000012885.1	ncbi	Syntrophotalea carbinolica DSM 2380	Complete Genome
+Geobacter metallireducens GS-15	GCF_000012925.1	ncbi	Geobacter metallireducens GS-15	Complete Genome
+Burkholderia sp. 383	GCF_000012945.1	ncbi	Burkholderia lata 383	Complete Genome
+Hahella chejuensis KCTC 2396	GCF_000012985.1	ncbi	Hahella chejuensis KCTC 2396	Complete Genome
+Erythrobacter litoralis HTCC2594	GCF_000013005.1	ncbi	Erythrobacter litoralis HTCC2594	Complete Genome
+Hyphomonas neptunium ATCC 15444	GCF_000013025.1	atlas		
+Rhodospirillum rubrum ATCC 11170	GCF_000013085.1	atlas		
+Synechococcus sp. JA-3-3Ab	GCF_000013205.1	ncbi	Synechococcus sp. JA-3-3Ab	Complete Genome
+Clostridium perfringens ATCC 13124	GCF_000013285.1	ncbi	Clostridium perfringens ATCC 13124	Complete Genome
+Novosphingobium aromaticivorans DSM 12444	GCF_000013325.1	ncbi	Novosphingobium aromaticivorans DSM 12444	Complete Genome
+Frankia sp. CcI3	GCF_000013345.1	ncbi	Frankia casuarinae CcI3	Complete Genome
+Methanospirillum hungatei JF-1	GCF_000013445.1	ncbi	Methanospirillum hungatei JF-1	Complete Genome
+Jannaschia sp. CCS1	GCF_000013565.1	atlas		
+Rhodoferax ferrireducens DSM 15236	GCF_000013605.1	ncbi	Rhodoferax ferrireducens T118 DSM 15236	Complete Genome
+Burkholderia xenovorans LB400	GCF_000013645.1	ncbi	Paraburkholderia xenovorans LB400	Complete Genome
+Saccharophagus degradans 2-40	GCF_000013665.1	atlas		
+Methylobacillus flagellatus KT	GCF_000013705.1	atlas		
+Methanococcoides burtonii DSM 6242	GCF_000013725.1	ncbi	Methanococcoides burtonii DSM 6242	Complete Genome
+Shewanella denitrificans OS217	GCF_000013765.1	ncbi	Shewanella denitrificans OS217	Complete Genome
+Pseudomonas stutzeri A1501	GCF_000013785.1	ncbi	Stutzerimonas stutzeri A1501	Complete Genome
+Polaromonas sp. JS666	GCF_000013865.1	ncbi	Polaromonas sp. JS666	Complete Genome
+Mycobacterium ulcerans Agy99	GCF_000013925.1	ncbi	Mycobacterium ulcerans Agy99	Complete Genome
+Sphingopyxis alaskensis RB2256	GCF_000013985.1	ncbi	Sphingopyxis alaskensis RB2256	Complete Genome
+Silicibacter TM1040	GCF_000014065.1	ncbi	Ruegeria sp. TM1040	Complete Genome
+Clostridium novyi NT	GCF_000014125.1	atlas		
+Cytophaga hutchinsonii ATCC 33406	GCF_000014145.1	atlas		
+Streptococcus sanguinis SK36	GCF_000014205.1	ncbi	Streptococcus sanguinis SK36	Complete Genome
+Pseudoalteromonas atlantica T6c	GCF_000014225.1	ncbi	Paraglaciecola sp. T6c	Complete Genome
+Trichodesmium erythraeum IMS101	GCF_000014265.1	atlas		
+Granulibacter bethesdensis CGDNIH1	GCF_000014285.2	ncbi	Granulibacter bethesdensis CGDNIH1	Complete Genome
+Streptococcus suis 05ZYH33	GCF_000014305.1	ncbi	Streptococcus suis 05ZYH33	Complete Genome
+Oenococcus oeni PSU-1	GCF_000014385.1	ncbi	Oenococcus oeni PSU-1	Complete Genome
+Lactobacillus delbrueckii subsp. bulgaricus ATCC BAA-365	GCF_000014405.1	ncbi	Lactobacillus delbrueckii subsp. bulgaricus ATCC BAA-365	Complete Genome
+Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293	GCF_000014445.1	ncbi	Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293	Complete Genome
+Lactobacillus brevis ATCC 367	GCF_000014465.1	ncbi	Levilactobacillus brevis ATCC 367	Complete Genome
+Pediococcus pentosaceus ATCC 25745	GCF_000014505.1	ncbi	Pediococcus pentosaceus ATCC 25745	Complete Genome
+Lactobacillus casei ATCC 334	GCF_000014525.1	ncbi	Lacticaseibacillus paracasei ATCC 334	Complete Genome
+Lactococcus lactis subsp. cremoris SK11	GCF_000014545.1	ncbi	Lactococcus cremoris subsp. cremoris SK11	Complete Genome
+Rhodococcus sp. RHA1	GCF_000014565.1	ncbi	Rhodococcus jostii RHA1	Complete Genome
+Shewanella sp MR-4	GCF_000014685.1	ncbi	Shewanella sp. MR-4	Complete Genome
+Shewanella frigidimarina NCIMB 400	GCF_000014705.1	ncbi	Shewanella frigidimarina NCIMB 400	Complete Genome
+Aeromonas hydrophila subsp. hydrophila ATCC 7966	GCF_000014805.1	ncbi	Aeromonas hydrophila subsp. hydrophila ATCC 7966	Complete Genome
+Shewanella piezotolerans WP3	GCF_000014885.1	ncbi	Shewanella piezotolerans WP3	Complete Genome
+Arthrobacter aurescens TC1	GCF_000014925.1	ncbi	Paenarthrobacter aurescens TC1	Complete Genome
+Methanosaeta thermophila PT	GCF_000014945.1	ncbi	Methanothrix thermoacetophila PT	Complete Genome
+Mycobacterium avium 104	GCF_000014985.1	ncbi	Mycobacterium avium 104	Complete Genome
+Acidothermus cellulolyticus 11B	GCF_000015025.1	atlas		
+Pelobacter propionicus DSM 2379	GCF_000015045.1	atlas		
+Chlorobium phaeobacteroides DSM 266	GCF_000015125.1	ncbi	Chlorobium phaeobacteroides DSM 266	Complete Genome
+Bradyrhizobium sp. BTAi1	GCF_000015165.1	ncbi	Bradyrhizobium sp. BTAi1	Complete Genome
+Shewanella sp W3-18-1	GCF_000015185.1	ncbi	Shewanella sp. W3-18-1	Complete Genome
+Pyrobaculum islandicum DSM 4184	GCF_000015205.1	ncbi	Pyrobaculum islandicum DSM 4184	Complete Genome
+Shewanella amazonensis SB2B	GCF_000015245.1	ncbi	Shewanella amazonensis SB2B	Complete Genome
+Nocardioides sp. JS614	GCF_000015265.1	ncbi	Nocardioides sp. JS614	Complete Genome
+Psychromonas ingrahamii 37	GCF_000015285.1	ncbi	Psychromonas ingrahamii 37	Complete Genome
+Mycobacterium vanbaalenii PYR-1	GCF_000015305.1	ncbi	Mycolicibacterium vanbaalenii PYR-1	Complete Genome
+Acidovorax avenae subsp. citrulli AAC00-1	GCF_000015325.1	ncbi	Paracidovorax citrulli AAC00-1	Complete Genome
+Lactobacillus helveticus DPC 4571	GCF_000015385.1	ncbi	Lactobacillus helveticus DPC 4571	Complete Genome
+Polaromonas naphthalenivorans CJ2	GCF_000015505.1	ncbi	Polaromonas naphthalenivorans CJ2	Complete Genome
+Acidovorax sp. JS42	GCF_000015545.1	ncbi	Acidovorax sp. JS42	Complete Genome
+Verminephrobacter eiseniae EF01-2	GCF_000015565.1	ncbi	Verminephrobacter eiseniae EF01-2	Complete Genome
+Methylibium petroleiphilum PM1	GCF_000015725.1	atlas		
+Methanocorpusculum labreanum Z	GCF_000015765.1	ncbi	Methanocorpusculum labreanum Z	Complete Genome
+Bacillus amyloliquefaciens FZB42	GCF_000015785.2	ncbi	Bacillus velezensis FZB42	Complete Genome
+Pyrobaculum calidifontis JCM 11548	GCF_000015805.1	ncbi	Pyrobaculum calidifontis JCM 11548	Complete Genome
+Methanoculleus marisnigri JR1	GCF_000015825.1	ncbi	Methanoculleus marisnigri JR1	Complete Genome
+Shewanella baltica OS155	GCF_000015845.1	ncbi	Shewanella baltica OS155	Complete Genome
+Shewanella loihica PV-4	GCF_000016065.1	ncbi	Shewanella loihica PV-4	Complete Genome
+Rhodospirillum centenum SW	GCF_000016185.1	atlas		
+Burkholderia vietnamiensis G4	GCF_000016205.1	ncbi	Burkholderia vietnamiensis G4	Complete Genome
+Klebsiella pneumoniae subsp. pneumoniae MGH 78578	GCF_000016305.1	ncbi	Klebsiella pneumoniae subsp. pneumoniae MGH 78578	Complete Genome
+Enterobacter sp. 638	GCF_000016325.1	ncbi	Enterobacter sp. 638	Complete Genome
+Pyrobaculum arsenaticum DSM 13514	GCF_000016385.1	ncbi	Pyrobaculum arsenaticum DSM 13514	Complete Genome
+Clostridium kluyveri DSM 555	GCF_000016505.1	ncbi	Clostridium kluyveri DSM 555	Complete Genome
+Methanobrevibacter smithii ATCC 35061	GCF_000016525.1	ncbi	Methanobrevibacter smithii ATCC 35061	Complete Genome
+Caldicellulosiruptor saccharolyticus DSM 8903	GCF_000016545.1	ncbi	Caldicellulosiruptor saccharolyticus DSM 8903	Complete Genome
+Metallosphaera sedula DSM 5348	GCF_000016605.1	ncbi	Metallosphaera sedula DSM 5348	Complete Genome
+Flavobacterium johnsoniae UW101	GCF_000016645.1	ncbi	Flavobacterium johnsoniae UW101	Complete Genome
+Roseiflexus sp. RS-1	GCF_000016665.1	atlas		
+Geobacter uraniumreducens Rf4	GCF_000016745.1	ncbi	Geotalea uraniireducens Rf4	Complete Genome
+Sphingomonas wittichii RW1	GCF_000016765.1	ncbi	Rhizorhabdus wittichii RW1	Complete Genome
+Thermotoga petrophila RKU-1	GCF_000016785.1	atlas		
+Thermosipho melanesiensis BI429	GCF_000016905.1	atlas		
+Clostridium beijerincki NCIMB 8052	GCF_000016965.1	ncbi	Clostridium beijerinckii NCIMB 8052	Complete Genome
+Streptococcus gordonii str. Challis substr. CH1	GCF_000017005.1	ncbi	Streptococcus gordonii str. Challis substr. CH1	Complete Genome
+Actinobacillus succinogenes 130Z	GCF_000017245.1	atlas		
+Phenylobacterium zucineum HLK1	GCF_000017265.1	ncbi	Phenylobacterium zucineum HLK1	Complete Genome
+Fervidobacterium nodosum Rt17-B1	GCF_000017545.1	ncbi	Fervidobacterium nodosum Rt17-B1	Complete Genome
+Candidatus Methanoregula boonei 6A8	GCF_000017625.1	ncbi	Methanoregula boonei 6A8	Complete Genome
+Vibrio harveyi ATCC BAA-1116	GCF_000017705.1	ncbi	Vibrio campbellii ATCC BAA-1116	Complete Genome
+Roseiflexus castenholzii DSM 13941	GCF_000017805.1	ncbi	Roseiflexus castenholzii DSM 13941	Complete Genome
+Cyanothece sp. ATCC 51142	GCF_000017845.1	ncbi	Crocosphaera subtropica ATCC 51142	Complete Genome
+Thermotoga lettingae TMO	GCF_000017865.1	ncbi	Pseudothermotoga lettingae TMO	Complete Genome
+Bacillus pumilus SAFR-032	GCF_000017885.4	ncbi	Bacillus pumilus SAFR-032	Complete Genome
+Shewanella sediminis HAW-EB3	GCF_000018025.1	ncbi	Shewanella sediminis HAW-EB3	Complete Genome
+Citrobacter koseri ATCC BAA-895	GCF_000018045.1	atlas		
+Shewanella pealeana ATCC 700345	GCF_000018285.1	ncbi	Shewanella pealeana ATCC 700345	Complete Genome
+Mycobacterium marinum M	GCF_000018345.1	ncbi	Mycobacterium marinum M	Complete Genome
+Thermococcus onnurineus NA1	GCF_000018365.1	ncbi	Thermococcus onnurineus NA1	Complete Genome
+Rhizobium sp. NGR234	GCF_000018545.1	ncbi	Sinorhizobium fredii NGR234	Complete Genome
+Petrotoga mobilis SJ95	GCF_000018605.1	atlas		
+Delftia acidovorans SPH-1	GCF_000018665.1	ncbi	Delftia acidovorans SPH-1	Complete Genome
+Renibacterium salmoninarum ATCC 33209	GCF_000018885.1	ncbi	Renibacterium salmoninarum ATCC 33209	Complete Genome
+Thermotoga neapolitana DSM 4359	GCF_000018945.1	ncbi	Thermotoga neapolitana DSM 4359	Complete Genome
+Anoxybacillus flavithermus WK1	GCF_000019045.1	ncbi	Anoxybacillus flavithermus WK1	Complete Genome
+Thermoanaerobacter ethanolicus X514	GCF_000019065.1	ncbi	Thermoanaerobacter sp. X514	Complete Genome
+Shewanella halifaxensis HAW-EB4	GCF_000019185.1	ncbi	Shewanella halifaxensis HAW-EB4	Complete Genome
+Cellvibrio japonicus Ueda107	GCF_000019225.1	ncbi	Cellvibrio japonicus Ueda107	Complete Genome
+Haemophilus somnus 2336	GCF_000019405.1	ncbi	Histophilus somni 2336	Complete Genome
+Synechococcus sp. PCC 7002	GCF_000019485.1	ncbi	Picosynechococcus sp. PCC 7002	Complete Genome
+Shewanella woodyi ATCC 51908	GCF_000019525.1	ncbi	Shewanella woodyi ATCC 51908	Complete Genome
+Thermotoga sp. RQ2	GCF_000019625.1	ncbi	Thermotoga sp. RQ2	Complete Genome
+Leptothrix cholodnii SP-6	GCF_000019785.1	atlas		
+Thermoproteus neutrophilus V24Sta	GCF_000019805.1	ncbi	Pyrobaculum neutrophilum V24Sta	Complete Genome
+Burkholderia phymatum STM815	GCF_000020045.1	ncbi	Paraburkholderia phymatum STM815	Complete Genome
+Geobacter lovleyi SZ	GCF_000020385.1	ncbi	Trichlorobacter lovleyi SZ	Complete Genome
+Actinobacillus pleuropneumoniae serovar 7 str. AP76	GCF_000020405.1	ncbi	Actinobacillus pleuropneumoniae serovar 7 str. AP76	Complete Genome
+Bifidobacterium longum subsp. infantis ATCC 15697	GCF_000020425.1	ncbi	Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222 = DSM 20088	Complete Genome
+Chlorobium limicola DSM 245	GCF_000020465.1	atlas		
+Chlorobaculum parvum NCIB 8327	GCF_000020505.1	ncbi	Chlorobaculum parvum NCIB 8327	Complete Genome
+Chloroherpeton thalassium ATCC 35110	GCF_000020525.1	atlas		
+Eubacterium rectale ATCC 33656	GCF_000020605.1	ncbi	Agathobacter rectalis ATCC 33656	Complete Genome
+Prosthecochloris aestuarii DSM 271	GCF_000020625.1	atlas		
+Pelodictyon phaeoclathratiforme BU-1	GCF_000020645.1	ncbi	Pelodictyon phaeoclathratiforme BU-1	Complete Genome
+Deinococcus deserti VCD115	GCF_000020685.1	ncbi	Deinococcus deserti VCD115	Complete Genome
+Streptococcus equi subsp. zooepidemicus MGCS10565	GCF_000020765.1	ncbi	Streptococcus equi subsp. zooepidemicus MGCS10565	Complete Genome
+Laribacter hongkongensis HLHK9	GCF_000021025.1	ncbi	Laribacter hongkongensis HLHK9	Complete Genome
+Acinetobacter baumannii AB0057	GCF_000021245.2	ncbi	Acinetobacter baumannii AB0057	Complete Genome
+Thermosipho africanus TCF52B	GCF_000021285.1	ncbi	Thermosipho africanus TCF52B	Complete Genome
+Bifidobacterium animalis subsp. lactis AD011	GCF_000021425.1	ncbi	Bifidobacterium animalis subsp. lactis AD011	Complete Genome
+Thauera sp. MZ1T	GCF_000021765.1	ncbi	Thauera aminoaromatica MZ1T	Complete Genome
+Cyanothece sp. PCC 8801	GCF_000021805.1	ncbi	Rippkaea orientalis PCC 8801	Complete Genome
+Haemophilus parasuis SH0165	GCF_000021885.1	ncbi	Glaesserella parasuis SH0165	Complete Genome
+Chloroflexus aggregans DSM 9485	GCF_000021945.1	ncbi	Chloroflexus aggregans DSM 9485	Complete Genome
+Candidatus Methanosphaerula palustris E1-9c	GCF_000021965.1	ncbi	Methanosphaerula palustris E1-9c	Complete Genome
+Arthrobacter chlorophenolicus A6	GCF_000022025.1	ncbi	Pseudarthrobacter chlorophenolicus A6	Complete Genome
+Halorubrum lacusprofundi ATCC 49239	GCF_000022205.1	ncbi	Halorubrum lacusprofundi ATCC 49239	Complete Genome
+Geobacter sp. FRC-32	GCF_000022265.1	ncbi	Geotalea daltonii FRC-32	Complete Genome
+Anaerocellum thermophilum DSM 6725	GCF_000022325.1	ncbi	Caldicellulosiruptor bescii DSM 6725	Complete Genome
+Thermococcus gammatolerans EJ3	GCF_000022365.1	ncbi	Thermococcus gammatolerans EJ3	Complete Genome
+Sulfolobus islandicus Y.N.15.51	GCF_000022485.1	ncbi	Saccharolobus islandicus Y.N.15.51	Complete Genome
+Thermococcus sibiricus MM 739	GCF_000022545.1	ncbi	Thermococcus sibiricus MM 739	Complete Genome
+Burkholderia glumae BGR1	GCF_000022645.2	ncbi	Burkholderia glumae BGR1	Complete Genome
+Corynebacterium aurimucosum ATCC 700975	GCF_000022905.1	ncbi	Corynebacterium aurimucosum ATCC 700975	Complete Genome
+Aggregatibacter aphrophilus NJ8700	GCF_000022985.1	ncbi	Aggregatibacter aphrophilus NJ8700	Complete Genome
+Teredinibacter turnerae T7901	GCF_000023025.1	ncbi	Teredinibacter turnerae T7901	Complete Genome
+Tolumonas auensis DSM 9187	GCF_000023065.1	atlas		
+Beutenbergia cavernae DSM 12333	GCF_000023105.1	atlas		
+Dyadobacter fermentans DSM 18053	GCF_000023125.1	ncbi	Dyadobacter fermentans DSM 18053	Complete Genome
+Corynebacterium kroppenstedtii DSM 44385	GCF_000023145.1	ncbi	Corynebacterium kroppenstedtii DSM 44385	Complete Genome
+Desulfomicrobium baculatum DSM 4028	GCF_000023225.1	ncbi	Desulfomicrobium baculatum DSM 4028	Complete Genome
+Actinosynnema mirum DSM 43827	GCF_000023245.1	atlas		
+Thermotogales bacterium TBF 19.5.1	GCF_000023325.1	ncbi	Kosmotoga olearia TBF 19.5.1	Complete Genome
+Brachybacterium faecium DSM 4810	GCF_000023405.1	ncbi	Brachybacterium faecium DSM 4810	Complete Genome
+Desulfovibrio salexigens DSM 2638	GCF_000023445.1	ncbi	Maridesulfovibrio salexigens DSM 2638	Complete Genome
+Paenibacillus sp. JDR-2	GCF_000023585.1	ncbi	Paenibacillus sp. JDR-2	Complete Genome
+Methylotenera mobilis JLW8	GCF_000023705.1	atlas		
+Pedobacter heparinus DSM 2366	GCF_000023825.1	ncbi	Pedobacter heparinus DSM 2366	Complete Genome
+Saccharomonospora viridis DSM 43017	GCF_000023865.1	atlas		
+Kytococcus sedentarius DSM 20547	GCF_000023925.1	ncbi	Kytococcus sedentarius DSM 20547	Complete Genome
+Halorhabdus utahensis DSM 12940	GCF_000023945.1	ncbi	Halorhabdus utahensis DSM 12940	Complete Genome
+Halomicrobium mukohataei DSM 12286	GCF_000023965.1	ncbi	Halomicrobium mukohataei DSM 12286	Complete Genome
+Chitinophaga pinensis DSM 2588	GCF_000024005.1	ncbi	Chitinophaga pinensis DSM 2588	Complete Genome
+Jonesia denitrificans DSM 20603	GCF_000024065.1	atlas		
+Methanobrevibacter ruminantium M1	GCF_000024185.1	ncbi	Methanobrevibacter ruminantium M1	Complete Genome
+Desulfohalobium retbaense DSM 5692	GCF_000024325.1	atlas		
+Nakamurella multipartita DSM 44233	GCF_000024365.1	ncbi	Nakamurella multipartita DSM 44233	Complete Genome
+Bifidobacterium dentium Bd1	GCF_000024445.1	ncbi	Bifidobacterium dentium Bd1	Complete Genome
+Thermotoga naphthophila RKU-10	GCF_000025105.1	ncbi	Thermotoga petrophila RKU-10	Complete Genome
+Pirellula staleyi DSM 6068	GCF_000025185.1	ncbi	Pirellula staleyi DSM 6068	Complete Genome
+Gardnerella vaginalis 409-05	GCF_000025205.1	ncbi	Gardnerella vaginalis 409-05	Complete Genome
+Archaeoglobus profundus DSM 5631	GCF_000025285.1	ncbi	Archaeoglobus profundus DSM 5631	Complete Genome
+Haloterrigena turkmenica DSM 5511	GCF_000025325.1	ncbi	Haloterrigena turkmenica DSM 5511	Complete Genome
+Ferroglobus placidus DSM 10642	GCF_000025505.1	ncbi	Ferroglobus placidus DSM 10642	Complete Genome
+Natrialba magadii ATCC 43099	GCF_000025625.1	ncbi	Natrialba magadii ATCC 43099	Complete Genome
+Thermoanaerobacter italicus Ab9	GCF_000025645.1	ncbi	Thermoanaerobacter italicus Ab9	Complete Genome
+Haloferax volcanii DS2	GCF_000025685.1	ncbi	Haloferax volcanii DS2	Complete Genome
+Methanohalophilus mahii DSM 5219	GCF_000025865.1	ncbi	Methanohalophilus mahii DSM 5219	Complete Genome
+Azoarcus sp. EbN1	GCF_000025965.1	ncbi	Aromatoleum aromaticum EbN1	Complete Genome
+Bacteroides fragilis NCTC 9343	GCF_000025985.1	ncbi	Bacteroides fragilis NCTC 9343	Complete Genome
+Chlamydophila abortus S26/3	GCF_000026025.1	ncbi	Chlamydia abortus S26/3	Complete Genome
+Natronomonas pharaonis DSM 2160	GCF_000026045.1	ncbi	Natronomonas pharaonis DSM 2160	Complete Genome
+Lactobacillus sakei subsp. sakei 23K	GCF_000026065.1	ncbi	Latilactobacillus sakei subsp. sakei 23K	Complete Genome
+Pseudomonas entomophila L48	GCF_000026105.1	ncbi	Pseudomonas entomophila L48	Complete Genome
+Listeria seeligeri serovar 1/2b str. SLCC3954	GCF_000027145.1	ncbi	Listeria seeligeri serovar 1/2b str. SLCC3954	Complete Genome
+Streptococcus mitis B6	GCF_000027165.1	ncbi	Streptococcus mitis B6	Complete Genome
+Streptococcus gallolyticus UCN34	GCF_000027185.1	ncbi	Streptococcus gallolyticus UCN34	Complete Genome
+Erwinia amylovora ATCC 49946	GCF_000027205.1	ncbi	Erwinia amylovora ATCC 49946	Complete Genome
+Haemophilus influenzae Rd KW20	GCF_000027305.1	ncbi	Haemophilus influenzae Rd KW20	Complete Genome
+Vibrio vulnificus CMCP6	GCF_000039765.1	ncbi	Vibrio vulnificus CMCP6	Complete Genome
+Bartonella quintana str. Toulouse	GCF_000046685.1	ncbi	Bartonella quintana str. Toulouse	Complete Genome
+Acinetobacter sp. ADP1	GCF_000046845.1	ncbi	Acinetobacter baylyi ADP1	Complete Genome
+Chromohalobacter salexigens DSM 3043	GCF_000055785.1	ncbi	Chromohalobacter israelensis DSM 3043	Complete Genome
+Lawsonia intracellularis PHE/MN1-00	GCF_000055945.1	atlas		
+Listeria welshimeri serovar 6b str. SLCC5334	GCF_000060285.1	ncbi	Listeria welshimeri serovar 6b str. SLCC5334	Complete Genome
+Gramella forsetii KT0803	GCF_000060345.1	ncbi	Christiangramia forsetii KT0803	Complete Genome
+Saccharopolyspora erythraea NRRL 2338	GCF_000062885.1	atlas		
+Clavibacter michiganensis subsp. michiganensis NCPPB 382	GCF_000063485.1	ncbi	Clavibacter michiganensis subsp. michiganensis NCPPB 382	Complete Genome
+Clostridium botulinum A str. ATCC 3502	GCF_000063585.1	ncbi	Clostridium botulinum A str. ATCC 3502	Complete Genome
+Halobacterium salinarum R1	GCF_000069025.1	ncbi	Halobacterium salinarum R1	Complete Genome
+Mycobacterium abscessus ATCC 19977	GCF_000069185.1	ncbi	Mycobacteroides abscessus ATCC 19977	Complete Genome
+Corynebacterium urealyticum DSM 7109	GCF_000069945.1	ncbi	Corynebacterium urealyticum DSM 7109	Complete Genome
+Proteus mirabilis HI4320	GCF_000069965.1	ncbi	Proteus mirabilis HI4320	Complete Genome
+Bordetella avium 197N	GCF_000070465.1	ncbi	Bordetella avium 197N	Complete Genome
+Stenotrophomonas maltophilia K279a	GCF_000072485.1	ncbi	Stenotrophomonas maltophilia K279a	Complete Genome
+Chlamydophila pneumoniae AR39	GCF_000091085.2	ncbi	Chlamydia pneumoniae AR39	Complete Genome
+Sphingobium japonicum UT26S	GCF_000091125.1	ncbi	Sphingobium indicum UT26S	Complete Genome
+Streptomyces scabiei 87.22	GCF_000091305.1	ncbi	Streptomyces scabiei 87.22	Complete Genome
+Agrobacterium tumefaciens str. C58 (Cereon)	GCF_000092025.1	ncbi	Agrobacterium fabrum str. C58	Complete Genome
+Rhizobium etli CFN 42	GCF_000092045.1	ncbi	Rhizobium etli CFN 42	Complete Genome
+Caulobacter segnis ATCC 21756	GCF_000092285.1	ncbi	Caulobacter segnis ATCC 21756	Complete Genome
+Shewanella oneidensis MR-1	GCF_000146165.2	ncbi	Shewanella oneidensis MR-1	Complete Genome
+Eubacterium eligens ATCC 27750	GCF_000146185.1	ncbi	Lachnospira eligens ATCC 27750	Complete Genome
+Methanobrevibacter smithii DSM 2375	GCF_000151245.1	ncbi	Methanobrevibacter smithii DSM 2375	Scaffold
+Ferroplasma acidarmanus fer1	GCF_000152265.2	ncbi	Ferroplasma acidarmanus Fer1	Complete Genome
+Sulfitobacter sp. EE-36	GCF_000152605.1	ncbi	Sulfitobacter sp. EE-36	Scaffold
+Roseovarius nubinhibens ISM	GCF_000152625.1	ncbi	Roseovarius nubinhibens ISM	Scaffold
+Janibacter sp. HTCC2649	GCF_000152705.1	ncbi	Janibacter sp. HTCC2649	Scaffold
+Oceanicola batsensis HTCC2597	GCF_000152725.1	ncbi	Pseudooceanicola batsensis HTCC2597	Scaffold
+Oceanicaulis alexandrii HTCC2633	GCF_000152745.1	ncbi	Oceanicaulis sp. HTCC2633	Scaffold
+Loktanella vestfoldensis SKA53	GCF_000152785.1	ncbi	Yoonia vestfoldensis SKA53	Scaffold
+Roseovarius sp. 217	GCF_000152845.1	ncbi	Roseovarius sp. 217	Scaffold
+Erythrobacter sp. NAP1	GCF_000152865.1	ncbi	Erythrobacter sp. NAP1	Scaffold
+Idiomarina baltica OS145	GCF_000152885.1	ncbi	Idiomarina baltica OS145	Scaffold
+Cellulophaga sp. MED134	GCF_000152925.2	ncbi	Dokdonia sp. MED134	Complete Genome
+Tenacibaculum sp. MED152	GCF_000152945.2	ncbi	Polaribacter sp. MED152	Complete Genome
+Roseobacter sp. MED193	GCF_000152965.1	ncbi	Roseobacter sp. MED193	Scaffold
+Leeuwenhoekiella blandensis MED217	GCF_000152985.1	ncbi	Leeuwenhoekiella blandensis MED217	Scaffold
+Blastopirellula marina DSM 3645	GCF_000153105.1	ncbi	Blastopirellula marina DSM 3645	Scaffold
+Flavobacteriales bacterium HTCC2170	GCF_000153165.2	ncbi	Maribacter sp. HTCC2170	Complete Genome
+Reinekea sp. MED297	GCF_000153185.1	ncbi	Reinekea blandensis MED297	Scaffold
+Polaribacter irgensii 23-P	GCF_000153225.1	ncbi	Polaribacter irgensii 23-P	Scaffold
+Pseudoalteromonas tunicata D2	GCF_000153245.1	ncbi	Pseudoalteromonas tunicata D2	Scaffold
+Vibrio angustum S14	GCF_000153265.1	ncbi	Photobacterium angustum S14	Scaffold
+Oceanicola granulosus HTCC2516	GCF_000153305.1	ncbi	Oceanicola granulosus HTCC2516	Scaffold
+Oceanospirillum sp. MED92	GCF_000153345.1	ncbi	Neptuniibacter caesariensis MED92	Scaffold
+Flavobacteria bacterium BBFL7	GCF_000153385.1	ncbi	Flavobacteria bacterium BBFL7	Scaffold
+Psychromonas sp. CNPT3	GCF_000153405.2	ncbi	Psychromonas sp. CNPT3	Complete Genome
+Psychroflexus torquis ATCC 700755	GCF_000153485.2	ncbi	Psychroflexus torquis ATCC 700755	Complete Genome
+Dorea longicatena DSM 13814	GCF_000154065.1	ncbi	Dorea longicatena DSM 13814	Scaffold
+Bacteroides ovatus ATCC 8483	GCF_000154125.1	ncbi	Bacteroides ovatus ATCC 8483	Scaffold
+Bacteroides uniformis ATCC 8492	GCF_000154205.1	ncbi	Bacteroides uniformis ATCC 8492	Scaffold
+Clostridium bolteae ATCC BAA-613	GCF_000154365.1	ncbi	Enterocloster bolteae ATCC BAA-613	Scaffold
+Clostridium bartlettii DSM 16795	GCF_000154445.1	ncbi	Intestinibacter bartlettii DSM 16795	Scaffold
+Bifidobacterium bifidum NCIMB 41171	GCF_000155395.1	ncbi	Bifidobacterium bifidum NCIMB 41171	Scaffold
+Francisella novicida FTE	GCF_000155755.1	ncbi	Francisella tularensis subsp. novicida FTE	Scaffold
+Glaciecola sp. HTCC2999	GCF_000155775.1	ncbi	Glaciecola sp. HTCC2999	Scaffold
+Bacteroides eggerthii DSM 20697	GCF_000155815.1	ncbi	Bacteroides eggerthii DSM 20697	Scaffold
+Bacteroides pectinophilus ATCC 43243	GCF_000155855.1	ncbi	[Bacteroides] pectinophilus ATCC 43243	Scaffold
+Clostridium hiranonis DSM 13275	GCF_000156055.1	ncbi	Peptacetobacter hiranonis DSM 13275	Scaffold
+Bacteroides dorei DSM 17855	GCF_000156075.1	ncbi	Phocaeicola dorei DSM 17855	Scaffold
+Desulfovibrio piger ATCC 29098	GCF_000156375.1	ncbi	Desulfovibrio piger ATCC 29098	Scaffold
+Bacteroides coprophilus DSM 18228	GCF_000157915.1	ncbi	Phocaeicola coprophilus DSM 18228 = JCM 13818	Scaffold
+Desulfuromonas acetoxidans DSM 684	GCF_000167355.1	ncbi	Desulfuromonas acetoxidans DSM 684	Scaffold
+Chlorobium ferrooxidans DSM 13031	GCF_000168715.1	ncbi	Chlorobium ferrooxidans DSM 13031	Contig
+Comamonas testosteroni KF-1	GCF_000168855.1	ncbi	Comamonas testosteroni KF-1	Contig
+Methylophilales bacterium HTCC2181	GCF_000168995.1	ncbi	Methylophilales bacterium HTCC2181	Contig
+Alteromonadales bacterium TW-7	GCF_000169055.1	ncbi	Alteromonadales bacterium TW-7	Contig
+Microscilla marina ATCC 23134	GCF_000169175.1	ncbi	Microscilla marina ATCC 23134	Contig
+Dorea formicigenerans ATCC 27755	GCF_000169235.1	ncbi	Dorea formicigenerans ATCC 27755	Contig
+Flavobacteria bacterium BAL38	GCF_000169355.1	ncbi	Flavobacteria bacterium BAL38	Contig
+Marinobacter sp. ELB17	GCF_000169375.1	ncbi	Marinobacter sp. ELB17	Contig
+Pedobacter sp. BAL39	GCF_000170795.1	ncbi	Pedobacter sp. BAL39	Contig
+Moritella sp. PE36	GCF_000170855.1	ncbi	Moritella sp. PE36	Contig
+Clostridium butyricum 5521	GCF_000171115.1	ncbi	Clostridium butyricum 5521	Contig
+Flavobacteriales bacterium ALC-1	GCF_000171875.1	ncbi	Flavobacteriales bacterium ALC-1	Contig
+Corynebacterium amycolatum SK46	GCF_000173655.1	ncbi	Corynebacterium amycolatum SK46	Contig
+Staphylococcus capitis SK14	GCF_000174135.1	ncbi	Staphylococcus capitis SK14	Contig
+Enterococcus faecium DO	GCF_000174395.2	ncbi	Enterococcus faecium DO	Complete Genome
+Planctomyces maris DSM 8797	GCF_000181475.1	ncbi	Gimesia maris DSM 8797	Contig
+Vibrio shilonii AK1	GCF_000181535.1	ncbi	Vibrio mediterranei AK1	Contig
+Yersinia pestis KIM	GCF_000182705.1	ncbi	Yersinia pestis KIM D27	Scaffold
+Bacteroides plebeius DSM 17135	GCF_000187895.1	ncbi	Phocaeicola plebeius DSM 17135	Scaffold
+Bordetella bronchiseptica RB50	GCF_000195675.1	ncbi	Bordetella bronchiseptica RB50	Complete Genome
+Rhodopseudomonas palustris CGA009	GCF_000195775.2	ncbi	Rhodopseudomonas palustris CGA009	Complete Genome
+Listeria innocua Clip11262	GCF_000195795.1	ncbi	Listeria innocua Clip11262	Complete Genome
+Corynebacterium diphtheriae NCTC 13129	GCF_000195815.1	ncbi	Corynebacterium diphtheriae NCTC 13129	Complete Genome
+Mycobacterium bovis AF2122/97	GCF_000195835.3	ncbi	Mycobacterium tuberculosis variant bovis AF2122/97	Complete Genome
+Mycobacterium leprae TN	GCF_000195855.1	ncbi	Mycobacterium leprae TN	Complete Genome
+Thermoplasma acidophilum DSM 1728	GCF_000195915.1	ncbi	Thermoplasma acidophilum DSM 1728	Complete Genome
+Pyrococcus abyssi GE5	GCF_000195935.2	ncbi	Pyrococcus abyssi GE5	Complete Genome
+Mycobacterium tuberculosis H37Rv	GCF_000195955.2	ncbi	Mycobacterium tuberculosis H37Rv	Complete Genome
+Synechococcus sp. WH 8102	GCF_000195975.1	ncbi	Parasynechococcus marenigrum WH 8102	Complete Genome
+Ralstonia metallidurans CH34	GCF_000196015.1	ncbi	Cupriavidus metallidurans CH34	Complete Genome
+Listeria monocytogenes EGD-e	GCF_000196035.1	ncbi	Listeria monocytogenes EGD-e	Complete Genome
+Vibrio parahaemolyticus RIMD 2210633	GCF_000196095.1	ncbi	Vibrio parahaemolyticus RIMD 2210633	Complete Genome
+Pirellula sp. 1	GCF_000196115.1	ncbi	Rhodopirellula baltica SH 1	Complete Genome
+Photorhabdus luminescens subsp. laumondii TTO1	GCF_000196155.1	ncbi	Photorhabdus laumondii subsp. laumondii TTO1	Complete Genome
+Arthrobacter sp. FB24	GCF_000196235.1	ncbi	Arthrobacter sp. FB24	Complete Genome
+Photobacterium profundum SS9	GCF_000196255.1	ncbi	Photobacterium profundum SS9	Complete Genome
+Deinococcus geothermalis DSM 11300	GCF_000196275.1	atlas		
+Croceibacter atlanticus HTCC2559	GCF_000196315.1	atlas		
+Nitrosospira multiformis ATCC 25196	GCF_000196355.1	ncbi	Nitrosospira multiformis ATCC 25196	Complete Genome
+Aeromonas salmonicida subsp. salmonicida A449	GCF_000196395.1	ncbi	Aeromonas salmonicida subsp. salmonicida A449	Complete Genome
+Vibrio salmonicida LFI1238	GCF_000196495.1	ncbi	Aliivibrio salmonicida LFI1238	Complete Genome
+Streptomyces coelicolor A3(2)	GCF_000203835.1	ncbi	Streptomyces coelicolor A3(2)	Complete Genome
+Lactobacillus plantarum WCFS1	GCF_000203855.3	ncbi	Lactiplantibacillus plantarum WCFS1	Complete Genome
+Paracoccus denitrificans PD1222	GCF_000203895.1	ncbi	Paracoccus denitrificans PD1222	Complete Genome
+Shewanella sp ANA-3	GCF_000203935.1	ncbi	Shewanella sp. ANA-3	Complete Genome
+Thermotoga maritima MSB8	GCF_000230655.2	ncbi	Thermotoga maritima MSB8	Complete Genome
+Brucella melitensis 16M	GCF_000740415.1	ncbi	Brucella melitensis bv. 1 str. 16M	Complete Genome
+Bifidobacterium gallicum DSM 20093	GCF_000741205.1	ncbi	Bifidobacterium gallicum DSM 20093 = LMG 11596	Contig
+Magnetospirillum magnetotacticum MS-1	GCF_000829825.1	ncbi	Paramagnetospirillum magnetotacticum MS-1	Contig
+Burkholderia cepacia AMMD	GCF_000959545.1	ncbi	Burkholderia ambifaria AMMD	Complete Genome
+Bifidobacterium angulatum DSM 20098	GCF_001025155.1	ncbi	Bifidobacterium angulatum DSM 20098 = JCM 7096	Complete Genome
+Bifidobacterium breve DSM 20213	GCF_001025175.1	ncbi	Bifidobacterium breve DSM 20213 = JCM 1192	Complete Genome
+Thermus aquaticus Y51MC23	GCF_001399775.1	ncbi	Thermus aquaticus Y51MC23	Complete Genome
+Thiobacillus denitrificans	GCF_001530125.1	ncbi	Thiobacillus denitrificans	Scaffold
+Alteromonas macleodii 'Deep ecotype'	GCF_001562235.1	ncbi	Alteromonas macleodii	Complete Genome
+Bradyrhizobium japonicum USDA 110	GCF_001642675.1	ncbi	Bradyrhizobium diazoefficiens USDA 110	Complete Genome
+Blautia hansenii DSM 20583	GCF_002222595.2	atlas		
+Rhodobacter sphaeroides 2.4.1	GCF_003324715.1	ncbi	Cereibacter sphaeroides 2.4.1	Complete Genome
+Clostridium scindens ATCC 35704	GCF_004295125.1	ncbi	[Clostridium] scindens ATCC 35704	Complete Genome
+Bacillus cereus ATCC 14579	GCF_006094295.1	ncbi	Bacillus cereus ATCC 14579	Complete Genome
+Rhodobacterales bacterium HTCC2654	GCF_008124775.1	ncbi	Maritimibacter alkaliphilus HTCC2654	Contig
+Pyrococcus furiosus DSM 3638	GCF_008245085.1	ncbi	Pyrococcus furiosus DSM 3638	Complete Genome
+Desulfovibrio magneticus RS-1	GCF_009712225.1	ncbi	Desulfovibrio sp.	Scaffold
+Desulfovibrio vulgaris Hildenborough	GCF_009712225.1	ncbi	Desulfovibrio sp.	Scaffold
+Desulfovibrio vulgaris str. Miyazaki F	GCF_009712225.1	ncbi	Desulfovibrio sp.	Scaffold
+Ruminococcus gnavus ATCC 29149	GCF_009831375.1	ncbi	Mediterraneibacter gnavus ATCC 29149	Complete Genome
+Oceanobacter sp. RED65	GCF_012295615.1	ncbi	Bermanella marisrubri RED65	Complete Genome
+Cupriavidus taiwanensis	GCF_013314905.1	ncbi	Cupriavidus taiwanensis	Contig
+Deinococcus radiodurans R1	GCF_020546685.1	ncbi	Deinococcus radiodurans R1 = ATCC 13939 = DSM 20539	Complete Genome
+Shewanella sp MR-7	GCF_022549295.1	ncbi	Aeromonas sp. MR7	Contig
+Bacteroides stercoris ATCC 43183	GCF_025147325.1	ncbi	Bacteroides stercoris ATCC 43183	Complete Genome
+Bryantella formatexigens DSM 14469	GCF_025148285.1	ncbi	Marvinbryantia formatexigens DSM 14469	Complete Genome
+Ruminococcus lactaris ATCC 29176	GCF_025152405.1	ncbi	[Ruminococcus] lactaris ATCC 29176	Complete Genome
+Thermosynechococcus elongatus BP-1	GCF_025999095.1	ncbi	Thermosynechococcus sp.	Complete Genome
+Lactobacillus rhamnosus GG	GCF_028475085.1	ncbi	Lacticaseibacillus rhamnosus GG	Complete Genome
+Methanosarcina barkeri str. fusaro	GCF_028693135.1	ncbi	Methanosarcina sp.	Scaffold
+Kordia algicida OT-1	GCF_051013375.1	atlas		
+Azotobacter vinelandii AvOP	GCF_055386615.1	ncbi	Azotobacter vinelandii	Complete Genome
+Brevibacterium linens BL2	GCF_056680015.1	ncbi	Sphingomonas sp. BL2	Complete Genome
+Bacteroides cellulosilyticus DSM 14838	GCF_057368395.1	ncbi	Bacteroides cellulosilyticus DSM 14838	Complete Genome
+Gluconacetobacter diazotrophicus PAl 5	GCF_059512305.1	ncbi	Gluconacetobacter diazotrophicus	Complete Genome
+Clostridium nexile DSM 1787	GCF_059731855.1	ncbi	[Clostridium] nexile DSM 1787	Complete Genome
+Mycobacterium smegmatis str. MC2 155	GCF_060301525.1	ncbi	Mycolicibacterium smegmatis MC2 155	Complete Genome
+Roseburia intestinalis L1-82	GCF_900537995.1	ncbi	Roseburia intestinalis L1-82	Complete Genome
+Gemmata obscuriglobus UQM 2246	GCF_901538385.1	ncbi	Gemmata obscuriglobus UQM 2246	Chromosome
+Marinobacter aqueolei	GCF_988201685.1	ncbi	Marinobacter sp.	Complete Genome
+Bordetella petrii DSM 12804				
+Caulobacter sp. K31				
+Chlorobium chlorochromatii CaD3				
+Chlorobium phaeobacteroides BS1				
+Chloroflexus sp. Y-400-fl				
+Clostridiales bacterium 1_7_47_FAA				
+Cyanothece sp. PCC 7425				
+Desulfovibrio desulfuricans subsp. desulfuricans str. ATCC 27774				
+Edwardsiella tarda EIB202				
+Francisella philomiragia subsp. philomiragia ATCC 25017				
+Frankia sp. EAN1pec				
+Geobacter sp. M21				
+Herpetosiphon aurantiacus ATCC 23779				
+Marinomonas sp. MWYL1				
+Mesorhizobium loti MAFF303099				
+Mesorhizobium sp. BNC1				
+Methanosarcina mazei Goe1				
+Moorella thermoacetica ATCC 39073				
+Mycobacterium flavescens PYR-GCK				
+Mycobacterium sp. JLS				
+Mycobacterium sp. MCS				
+Picrophilus torridus DSM 9790				
+Prosthecochloris vibrioformis DSM 265				
+Pseudoalteromonas haloplanktis TAC125				
+Pseudomonas mendocina ymp				
+Psychrobacter sp. PRwf-1				
+Ralstonia eutropha JMP134				
+Ralstonia pickettii 12J				
+Serratia proteamaculans 568				
+Shewanella putrefaciens CN-32				
+Variovorax paradoxus S110				
+Vibrio splendidus LGP32				
+Xanthobacter autotrophicus Py2				

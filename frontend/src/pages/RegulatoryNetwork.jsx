@@ -8,8 +8,8 @@ import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
 
 cytoscape.use(fcose);
 
-// La red es TF -> gen. (Las aristas a operones vendrán cuando la red use
-// operon_id; por ahora no hay nodos de operón y no se muestran en la leyenda.)
+// La red es TF -> gen. Las aristas "operon" vienen de propagar un sitio a los
+// genes que se transcriben después de él en el mismo operón (línea punteada).
 const NODE_COLOR = { TF: "#3A9D7C", Gene: "#3B82B8" };
 const NODE_BORDER = { TF: "#176B57", Gene: "#2563A0" };
 
@@ -62,6 +62,10 @@ const CYTOSCAPE_STYLESHEET = [
       "arrow-scale": 0.7,
       opacity: 0.6,
     },
+  },
+  {
+    selector: 'edge[evidence = "operon"]',
+    style: { "line-style": "dashed" },
   },
   {
     selector: "edge:selected",
@@ -189,7 +193,12 @@ export default function RegulatoryNetwork({ initialOrganism }) {
       .filter((e) => (isTF ? e.data.source : e.data.target) === selected.id)
       .map((e) => {
         const otherId = isTF ? e.data.target : e.data.source;
-        return { id: otherId, label: nodeById.get(otherId)?.label ?? otherId, weight: e.data.weight };
+        return {
+          id: otherId,
+          label: nodeById.get(otherId)?.label ?? otherId,
+          weight: e.data.weight,
+          viaOperon: e.data.evidence === "operon",
+        };
       })
       .sort((a, b) => b.weight - a.weight);
   }, [selected, graph]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -291,11 +300,19 @@ export default function RegulatoryNetwork({ initialOrganism }) {
               { type: "TF", label: "Transcription factor" },
               { type: "Gene", label: "Target gene" },
             ].map((l) => (
-              <div key={l.type} className="flex items-center gap-2 mb-1.5 last:mb-0">
+              <div key={l.type} className="flex items-center gap-2 mb-1.5">
                 <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: NODE_COLOR[l.type] }} />
                 <span className="text-xs text-[#64748B]">{l.label}</span>
               </div>
             ))}
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-5 border-t-2 border-[#94A3B8]" />
+              <span className="text-xs text-[#64748B]">Site upstream of the gene</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 border-t-2 border-dashed border-[#94A3B8]" />
+              <span className="text-xs text-[#64748B]">Propagated through the operon</span>
+            </div>
           </div>
         </div>
 
@@ -367,6 +384,11 @@ export default function RegulatoryNetwork({ initialOrganism }) {
                     <span className="text-[13px] font-mono text-[#334155] truncate flex-1" title={c.label}>
                       {c.label}
                     </span>
+                    {c.viaOperon && (
+                      <span className="text-[10px] text-[#94A3B8]" title="Propagated from a site upstream in the same operon">
+                        operon
+                      </span>
+                    )}
                     <span className="text-[11px] font-mono text-[#94A3B8]">{c.weight.toFixed(1)}</span>
                   </button>
                 ))}

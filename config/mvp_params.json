@@ -1,0 +1,16 @@
+{
+  "subset_name": "mvp",
+  "description": "Enterobacteriaceae con regulones curados en RegPrecise (gtdb_family = 'Enterobacteriaceae' AND selection IN ('forced','regprecise_source'))",
+  "accessions_file": "config/mvp_genomes.txt",
+  "cache_dir": "data/cache/mvp",
+  "results_dir": "data/results/mvp",
+  "min_neg_log10_p": 5.0,
+  "network_neg_log10_p": 5.0,
+  "eligible_rules": ["source_genome", "ortholog"],
+  "propagate_operons": true,
+  "hub_degree_threshold": 20,
+  "validation_thresholds": [5.0, 5.5, 6.0, 6.5, 7.0],
+  "reference_accession": "GCF_000005845.2",
+  "gold_standard": "RegPrecise 3.2 (curated_regulons)",
+  "graph_max_edges": 800
+}

@@ -28,3 +28,15 @@ blast_out/
 .vscode/
 .DS_Store
 Thumbs.db
+# Agregar a .gitignore
+__pycache__/
+*.pyc
+node_modules/
+logs/
+
+# Datos: se versiona solo el caché del MVP (lo necesita `make mvp`).
+# Los resultados se regeneran; para incluir el informe: git add -f data/results/mvp/report.md
+data/*
+!data/cache/
+data/cache/*
+!data/cache/mvp/

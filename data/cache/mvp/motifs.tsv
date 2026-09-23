@@ -1,0 +1,2142 @@
+motif_id	motif_key	source	tf_name	tf_family	source_taxon	length
+1	MX000001	prodoric	MexR		Pseudomonas aeruginosa PAO1	15
+2	MX000002	prodoric	Anr		Pseudomonas aeruginosa PAO1	14
+3	MX000004	prodoric	Fnr		Escherichia coli K12 MG1655	14
+4	MX000005	prodoric	Fnr		Bacillus subtilis 168	16
+5	MX000006	prodoric	SpoIIID		Bacillus subtilis 168	10
+6	MX000007	prodoric	ArgR		Pseudomonas aeruginosa PAO1	16
+7	MX000008	prodoric	GlpR		Escherichia coli K12 MG1655	17
+8	MX000010	prodoric	IHF		Pseudomonas aeruginosa PAO1	8
+9	MX000011	prodoric	RhlR		Pseudomonas aeruginosa PAO1	16
+10	MX000012	prodoric	LasR		Pseudomonas aeruginosa PAO1	20
+11	MX000013	prodoric	Fur		Pseudomonas aeruginosa PAO1	19
+12	MX000016	prodoric	Fur		Helicobacter pylori 26695	17
+13	MX000017	prodoric	CtsR		Bacillus subtilis 168	17
+14	MX000018	prodoric	CtsR		Listeria monocytogenes EGD-e	17
+15	MX000020	prodoric	AraR		Bacillus subtilis 168	16
+16	MX000022	prodoric	CcpA		Bacillus subtilis 168	14
+17	MX000023	prodoric	ComK		Bacillus subtilis 168	13
+18	MX000024	prodoric	CcpC		Bacillus subtilis 168	6
+19	MX000025	prodoric	DinR		Bacillus subtilis 168	14
+20	MX000026	prodoric	TnrA		Bacillus subtilis 168	17
+21	MX000027	prodoric	GlnR		Bacillus subtilis 168	17
+22	MX000028	prodoric	IHF		Escherichia coli K12 MG1655	13
+23	MX000029	prodoric	Fis		Escherichia coli K12 MG1655	15
+24	MX000039	prodoric	RofA		Streptococcus pyogenes	12
+25	MX000043	prodoric	AhrC		Bacillus subtilis 168	18
+26	MX000045	prodoric	CodY		Bacillus subtilis 168	15
+27	MX000047	prodoric	GerE		Bacillus subtilis 168	12
+28	MX000048	prodoric	GltC		Bacillus subtilis 168	15
+29	MX000049	prodoric	GltR		Bacillus subtilis 168	15
+30	MX000050	prodoric	Hpr		Bacillus subtilis 168	9
+31	MX000051	prodoric	IolR		Bacillus subtilis 168	11
+32	MX000052	prodoric	LevR		Bacillus subtilis 168	8
+33	MX000053	prodoric	LicT		Bacillus subtilis 168	29
+34	MX000054	prodoric	MntR		Bacillus subtilis 168	18
+35	MX000055	prodoric	Mta		Bacillus subtilis 168	22
+36	MX000058	prodoric	PucR		Bacillus subtilis 168	11
+37	MX000059	prodoric	PurR		Bacillus subtilis 168	14
+38	MX000060	prodoric	PrfA		Listeria monocytogenes EGD-e	14
+39	MX000062	prodoric	RocR		Bacillus subtilis 168	21
+40	MX000086	prodoric	SinR		Bacillus subtilis 168	12
+41	MX000087	prodoric	TreR		Bacillus subtilis 168	14
+42	MX000088	prodoric	Xre		Bacillus subtilis 168	15
+43	MX000089	prodoric	XylR		Bacillus subtilis 168	10
+44	MX000090	prodoric	Zur		Bacillus subtilis 168	18
+45	MX000092	prodoric	CaiF		Escherichia coli K12 MG1655	34
+46	MX000093	prodoric	CRP		Escherichia coli K12 MG1655	16
+47	MX000094	prodoric	CysB		Escherichia coli K12 MG1655	15
+48	MX000095	prodoric	MhpR		Escherichia coli K12 MG1655	17
+49	MX000096	prodoric	Lrp		Escherichia coli K12 MG1655	12
+50	MX000097	prodoric	Mlc		Escherichia coli K12 MG1655	21
+51	MX000098	prodoric	DnaA		Escherichia coli K12 MG1655	9
+52	MX000099	prodoric	PhoB		Escherichia coli K12 MG1655	22
+53	MX000101	prodoric	AlgR		Pseudomonas aeruginosa PAO1	9
+54	MX000102	prodoric	Dnr		Pseudomonas aeruginosa PAO1	14
+55	MX000103	prodoric	ExsA		Pseudomonas aeruginosa PAO1	8
+56	MX000104	prodoric	FleQ		Pseudomonas aeruginosa PAO1	14
+57	MX000105	prodoric	GlpR		Pseudomonas aeruginosa PAO1	20
+58	MX000106	prodoric	NarL		Pseudomonas aeruginosa PAO1	7
+59	MX000107	prodoric	OxyR		Pseudomonas aeruginosa PAO1	15
+60	MX000108	prodoric	PhhR		Pseudomonas aeruginosa PAO1	18
+61	MX000109	prodoric	TrpI		Pseudomonas aeruginosa PAO1	15
+62	MX000110	prodoric	Vfr		Pseudomonas aeruginosa PAO1	16
+63	MX000114	prodoric	Ada		Escherichia coli K12 MG1655	13
+64	MX000115	prodoric	AraC		Escherichia coli K12 MG1655	15
+65	MX000116	prodoric	ArgR		Escherichia coli K12 MG1655	14
+66	MX000118	prodoric	CynR		Escherichia coli K12 MG1655	9
+67	MX000121	prodoric	CytR		Escherichia coli K12 MG1655	5
+68	MX000123	prodoric	DeoR		Escherichia coli K12 MG1655	16
+69	MX000124	prodoric	FadR		Escherichia coli K12 MG1655	12
+70	MX000125	prodoric	Cra		Escherichia coli K12 MG1655	12
+71	MX000126	prodoric	FlhD-FlhC		Escherichia coli K12 MG1655	16
+72	MX000127	prodoric	FhlA		Escherichia coli K12 MG1655	16
+73	MX000128	prodoric	Fur		Escherichia coli K12 MG1655	19
+74	MX000129	prodoric	GalR		Escherichia coli K12 MG1655	16
+75	MX000130	prodoric	GalS		Escherichia coli K12 MG1655	12
+76	MX000131	prodoric	EmrR		Escherichia coli K12 MG1655	9
+77	MX000133	prodoric	GntR		Escherichia coli K12 MG1655	16
+78	MX000134	prodoric	ArgP		Escherichia coli K12 MG1655	8
+79	MX000135	prodoric	GadX		Escherichia coli K12 MG1655	18
+80	MX000136	prodoric	IlvY		Escherichia coli K12 MG1655	21
+81	MX000137	prodoric	LacI		Escherichia coli K12 MG1655	21
+82	MX000138	prodoric	MalI		Escherichia coli K12 MG1655	16
+83	MX000139	prodoric	MalT		Escherichia coli K12 MG1655	10
+84	MX000140	prodoric	LexA		Escherichia coli K12 MG1655	16
+85	MX000143	prodoric	GcvA		Escherichia coli K12 MG1655	17
+86	MX000144	prodoric	MarR		Escherichia coli K12 MG1655	23
+87	MX000145	prodoric	MetJ		Escherichia coli K12 MG1655	8
+88	MX000148	prodoric	ModE		Escherichia coli K12 MG1655	23
+89	MX000149	prodoric	Nac		Escherichia coli K12 MG1655	11
+90	MX000150	prodoric	NagC		Escherichia coli K12 MG1655	23
+91	MX000151	prodoric	NhaR		Escherichia coli K12 MG1655	13
+92	MX000154	prodoric	OxyR		Escherichia coli K12 MG1655	15
+93	MX000156	prodoric	MngR		Escherichia coli K12 MG1655	14
+94	MX000157	prodoric	PdhR		Escherichia coli K12 MG1655	17
+95	MX000158	prodoric	MetR		Escherichia coli K12 MG1655	13
+96	MX000165	prodoric	MarA		Escherichia coli K12 MG1655	20
+97	MX000170	prodoric	Rob		Escherichia coli K12 MG1655	20
+98	MX000171	prodoric	RhaS		Escherichia coli K12 MG1655	16
+99	MX000172	prodoric	RhaR		Escherichia coli K12 MG1655	18
+100	MX000173	prodoric	SoxR		Escherichia coli K12 MG1655	10
+101	MX000174	prodoric	SoxS		Escherichia coli K12 MG1655	20
+102	MX000175	prodoric	SdiA		Escherichia coli K12 MG1655	18
+103	MX000176	prodoric	YdiH		Bacillus subtilis 168	22
+104	MX000177	prodoric	TreR		Escherichia coli K12 MG1655	15
+105	MX000179	prodoric	XapR		Escherichia coli K12 MG1655	13
+106	MX000182	prodoric	TyrR		Escherichia coli K12 MG1655	18
+107	MX000183	prodoric	TrpR		Escherichia coli K12 MG1655	20
+108	MX000184	prodoric	PlaR		Escherichia coli K12 MG1655	21
+109	MX000185	prodoric	XylR		Escherichia coli K12 MG1655	13
+110	MX000186	prodoric	AmrZ		Pseudomonas aeruginosa PAO1	14
+111	MX000187	prodoric	LsrR		Escherichia coli K12 MG1655	20
+112	MX000188	prodoric	SarA		Staphylococcus aureus 533 R4	12
+113	MX000189	prodoric	PsrA		Pseudomonas aeruginosa PAO1	14
+114	MX000190	prodoric	FnrL		Rhodobacter sphaeroides ATH 2.4.1	14
+115	MX000191	prodoric	PpsR		Rhodobacter sphaeroides ATH 2.4.1	18
+116	MX000192	prodoric	NnrR		Rhodobacter sphaeroides ATH 2.4.1	14
+117	MX000193	prodoric	KdgR		Bacillus subtilis 168	18
+118	MX000195	prodoric	FadR		Bacillus subtilis 168	20
+119	MX000196	prodoric	RghR		Bacillus subtilis 168	6
+120	MX000198	prodoric	CymR		Bacillus subtilis 168	25
+121	MX000200	prodoric	MelR		Escherichia coli K12 MG1655	18
+122	MX000201	prodoric	LeuO		Escherichia coli K12 MG1655	9
+123	MX000204	prodoric	MurR		Escherichia coli K12 MG1655	8
+124	MX000205	prodoric	CmeR		Campylobacter jejuni 5636/77 Lucitt	7
+125	MX000206	prodoric	AbrB		Bacillus subtilis 168	19
+126	MX000207	prodoric	McbR		Corynebacterium glutamicum 534	16
+127	MX000209	prodoric	NtcA		Synechocystis sp. PCC 6803	14
+128	MX000210	prodoric	NtcA		Synechococcus sp. PCC 7002	14
+129	MX000211	prodoric	SdpR		Bacillus subtilis 168	7
+130	MX000212	prodoric	Abh		Bacillus subtilis 168	11
+131	MX000216	prodoric	YodB		Bacillus subtilis 168	15
+132	MX000220	prodoric	ChbR		Escherichia coli K12 MG1655	19
+133	MX000222	prodoric	LmrA		Bacillus subtilis 168	18
+134	MX000223	prodoric	PurR		Escherichia coli K12 MG1655	16
+135	MX000224	prodoric	NsrR		Escherichia coli K12 MG1655	11
+136	MX000225	prodoric	YkvE		Bacillus subtilis 168	18
+137	MX000231	prodoric	CcpN		Bacillus subtilis 168	10
+138	MX000234	prodoric	Sigma54		Pseudomonas aeruginosa PAO1	15
+139	MX000236	prodoric	SlyA		Escherichia coli K12 MG1655	12
+140	MX000237	prodoric	RelB		Escherichia coli K12 MG1655	12
+141	MX000239	prodoric	NemR		Escherichia coli K12 MG1655	14
+142	MX000243	prodoric	AmtR		Corynebacterium glutamicum 534	9
+143	MX000245	prodoric	FnrL		Dinoroseobacter shibae	14
+144	MX000246	prodoric	DnrD		Dinoroseobacter shibae	14
+145	MX000247	prodoric	DnrE		Dinoroseobacter shibae	14
+146	MX000248	prodoric	DnrF		Dinoroseobacter shibae	14
+147	MX000249	prodoric	PpsR		Dinoroseobacter shibae	18
+148	MX000250	prodoric	Rex		Clostridium acetobutylicum 2291 W	18
+149	MX000251	prodoric	Rex		Clostridium beijerinckii	18
+150	MX000252	prodoric	Spo0A		Clostridium beijerinckii	7
+151	MX000253	prodoric	Spo0A		Clostridium acetobutylicum 2291 W	7
+152	MX000254	prodoric	Spo0A		Clostridioides difficile 630	7
+153	MX000255	prodoric	RgaR		Clostridioides difficile 630	27
+154	MX000256	prodoric	CodY		Clostridioides difficile 630	15
+155	MX000257	prodoric	Fur		Clostridioides difficile 630	19
+156	MX000258	prodoric	PerR		Clostridium acetobutylicum 2291 W	12
+157	MX000259	prodoric	Fur		Bradyrhizobium japonicum 5038	6
+158	MX000260	prodoric	CosR		Campylobacter jejuni 5636/77 Lucitt	21
+159	MX000261	prodoric	CcpA		Clostridioides difficile 630	16
+160	MX000262	prodoric	ClgR		Corynebacterium glutamicum 534	15
+161	MX000263	prodoric	GlxR		Corynebacterium glutamicum 534	16
+162	MX000264	prodoric	LexA		Corynebacterium glutamicum 534	16
+163	MX000265	prodoric	Zur		Corynebacterium glutamicum 534	21
+164	MX000266	prodoric	CsgD		Escherichia coli K12 MG1655	14
+165	MX000268	prodoric	NikR		Helicobacter pylori 26695	25
+166	MX000269	prodoric	Fur		Listeria monocytogenes EGD-e	19
+167	MX000270	prodoric	LexA		Listeria monocytogenes EGD-e	21
+168	MX000271	prodoric	MogR		Listeria monocytogenes EGD-e	13
+169	MX000273	prodoric	IdeR		Mycobacterium tuberculosis	19
+170	MX000274	prodoric	LexA		Mycobacterium tuberculosis	18
+171	MX000275	prodoric	Zur		Mycobacterium tuberculosis	21
+172	MX000276	prodoric	AmpR		Pseudomonas aeruginosa PAO1	14
+173	MX000277	prodoric	AlgZ		Pseudomonas aeruginosa PAO1	10
+174	MX000278	prodoric	CueR		Pseudomonas aeruginosa PAO1	17
+175	MX000279	prodoric	DesT		Pseudomonas aeruginosa PAO1	16
+176	MX000280	prodoric	IscR		Pseudomonas aeruginosa PAO1	25
+177	MX000281	prodoric	LexA		Pseudomonas aeruginosa PAO1	16
+178	MX000282	prodoric	MexT		Pseudomonas aeruginosa PAO1	15
+179	MX000283	prodoric	OhrR		Pseudomonas aeruginosa PAO1	11
+180	MX000284	prodoric	PchR		Pseudomonas aeruginosa PAO1	28
+181	MX000285	prodoric	PtxR		Pseudomonas aeruginosa PAO1	10
+182	MX000286	prodoric	PtxS		Pseudomonas aeruginosa PAO1	14
+183	MX000287	prodoric	RsaL		Pseudomonas aeruginosa PAO1	15
+184	MX000288	prodoric	VqsM		Pseudomonas aeruginosa PAO1	15
+185	MX000289	prodoric	VqsR		Pseudomonas aeruginosa PAO1	18
+186	MX000290	prodoric	LexA		Rhodobacter sphaeroides ATH 2.4.1	15
+187	MX000299	prodoric	LexA		Staphylococcus aureus 533 R4	14
+188	MX000300	prodoric	Crp		Synechocystis sp. PCC 6803	16
+189	MX000301	prodoric	LexA		Synechocystis sp. PCC 6803	15
+190	MX000302	prodoric	OxyR		Rhodobacter sphaeroides ATH 2.4.1	11
+191	MX000303	prodoric	XylR		Bacillus licheniformis Gibson 46	9
+192	MX000304	prodoric	PenI		Bacillus licheniformis Gibson 46	12
+193	MX000305	prodoric	ArgR		Bacillus licheniformis Gibson 46	19
+194	MX000306	prodoric	CcpA		Bacillus megaterium	14
+195	MX000308	prodoric	Bm3R1		Bacillus megaterium	15
+196	MX000309	prodoric	LitR		Bacillus megaterium	28
+197	MX000310	prodoric	BkdR		Bacillus subtilis 168	14
+198	MX000311	prodoric	NiaR		Bacillus subtilis 168	22
+199	MX000312	prodoric	PerR		Bacillus subtilis 168	15
+200	MX000313	prodoric	YxaF		Bacillus subtilis 168	18
+201	MX000314	prodoric	HrcA		Campylobacter jejuni 5636/77 Lucitt	10
+202	MX000315	prodoric	HspR		Campylobacter jejuni 5636/77 Lucitt	21
+203	MX000316	prodoric	Cap37		Clostridium acetobutylicum 2291 W	16
+204	MX000317	prodoric	AdhR		Clostridium beijerinckii	18
+205	MX000318	prodoric	SsuR		Corynebacterium glutamicum 534	21
+206	MX000319	prodoric	Cbl		Escherichia coli K12 MG1655	21
+207	MX000321	prodoric	PhoB		Pseudomonas aeruginosa PAO1	22
+208	MX000322	prodoric	CodY		Listeria monocytogenes EGD-e	16
+209	MX000323	prodoric	DegU		Listeria monocytogenes EGD-e	5
+210	MX000325	prodoric	PilR		Pseudomonas aeruginosa PAO1	9
+211	MX000326	prodoric	QscR		Pseudomonas aeruginosa PAO1	20
+212	MX000327	prodoric	ErfA		Pseudomonas aeruginosa PAO1	17
+213	MX000329	prodoric	MvaT		Pseudomonas aeruginosa PAO1	19
+214	MX000330	prodoric	ArcA		Salmonella enterica	9
+215	MX000331	prodoric	CpxR		Salmonella enterica	15
+216	MX000332	prodoric	CsgD		Salmonella enterica	11
+217	MX000333	prodoric	Fis		Salmonella enterica	15
+218	MX000334	prodoric	Fur		Salmonella enterica	6
+219	MX000335	prodoric	H-NS		Salmonella enterica	9
+220	MX000336	prodoric	HilC		Salmonella enterica	28
+221	MX000337	prodoric	HilD		Salmonella enterica	28
+222	MX000339	prodoric	PhoP		Salmonella enterica	16
+223	MX000340	prodoric	RamA		Salmonella enterica	20
+224	MX000341	prodoric	Rgg3		Streptococcus pyogenes	23
+225	MX000342	prodoric	SlyA		Salmonella enterica	12
+226	MX000343	prodoric	CysB		Salmonella enterica	6
+227	MX000344	prodoric	FruR		Salmonella enterica	12
+228	MX000345	prodoric	MetR		Salmonella enterica	13
+229	MX000347	prodoric	PerR		Streptococcus pyogenes	15
+230	MX000348	prodoric	Rgg2		Streptococcus pyogenes	23
+231	MX000349	prodoric	GluR		Thermotoga maritima MSB8	23
+232	MX000350	prodoric	ManR		Thermotoga maritima MSB8	23
+233	MX000351	prodoric	NiaR		Thermotoga maritima MSB8	17
+234	MX000352	prodoric	TreR		Thermotoga maritima MSB8	23
+235	MX000353	prodoric	UxaR		Thermotoga maritima MSB8	17
+236	MX000354	prodoric	XylR		Thermotoga maritima MSB8	23
+237	MX000355	prodoric	HspR		Helicobacter pylori 26695	21
+238	MX000356	prodoric	HrcA		Helicobacter pylori 26695	28
+239	MX000359	prodoric	Fur		Vibrio cholerae 10432-62	19
+240	MX000360	prodoric	HapR		Vibrio cholerae 10432-62	14
+241	MX000361	prodoric	ToxR		Vibrio cholerae 10432-62	10
+242	MX000362	prodoric	ToxT		Vibrio cholerae 10432-62	13
+243	MX000363	prodoric	AphA		Vibrio cholerae 10432-62	16
+244	MX000364	prodoric	AphB		Vibrio cholerae 10432-62	17
+245	MX000365	prodoric	IgrB		Vibrio cholerae 10432-62	18
+246	MX000366	prodoric	CRP		Vibrio cholerae 10432-62	16
+247	MX000367	prodoric	HlyU		Vibrio cholerae 10432-62	11
+248	MX000369	prodoric	Fur		Yersinia pestis	19
+249	MX000370	prodoric	YbtA		Yersinia pestis	13
+250	MX000371	prodoric	CRP		Yersinia pestis	16
+251	MX000372	prodoric	PhoP		Yersinia pestis	18
+252	MX000373	prodoric	RovA		Yersinia pestis	12
+253	MX000374	prodoric	Zur		Yersinia pestis	17
+254	MX000376	prodoric	NodD		Rhizobium leguminosarum 3D1K2	15
+255	MX000377	prodoric	Px		Rhizobium leguminosarum 3D1K2	19
+256	MX000378	prodoric	Mur		Rhizobium leguminosarum 3D1K2	21
+257	MX000379	prodoric	CRP		Rhizobium leguminosarum 3D1K2	17
+258	MX000380	prodoric	RosR		Rhizobium leguminosarum 3D1K2	22
+259	MX000382	prodoric	Fnr		Rhizobium leguminosarum 3D1K2	14
+260	MX000383	prodoric	NifA		Klebsiella pneumoniae Kp52.145	16
+261	MX000384	prodoric	NAC		Klebsiella pneumoniae Kp52.145	15
+262	MX000386	prodoric	Fur		Klebsiella pneumoniae Kp52.145	19
+263	MX000387	prodoric	RcsA-RcsB		Klebsiella pneumoniae Kp52.145	13
+264	MX000389	prodoric	CRP		Klebsiella pneumoniae Kp52.145	16
+265	MX000390	prodoric	PecS		Klebsiella pneumoniae Kp52.145	16
+266	MX000391	prodoric	UlaR		Klebsiella pneumoniae Kp52.145	16
+267	MX000392	prodoric	GadW		Escherichia coli K12 MG1655	18
+268	MX000393	prodoric	Lrp		Salmonella enterica	10
+269	MX000394	prodoric	ArsR		Helicobacter pylori 26695	13
+270	MX000395	prodoric	CitB		Escherichia coli K12 MG1655	20
+271	MX000396	prodoric	DcuR		Escherichia coli K12 MG1655	15
+272	MX000398	prodoric	CueR		Escherichia coli K12 MG1655	20
+273	MX000401	prodoric	VarR		Vibrio cholerae 10432-62	13
+274	MX000402	prodoric	Irr		Bradyrhizobium japonicum 5038	21
+275	MX000403	prodoric	BlaI		Bacillus licheniformis Gibson 46	23
+276	MX000404	prodoric	CbbR		Rhodobacter sphaeroides ATH 2.4.1	15
+277	MX000405	prodoric	RicR		Mycobacterium tuberculosis	15
+278	MX000406	prodoric	NdhR		Synechocystis sp. PCC 6803	13
+279	MX000407	prodoric	RirA		Dinoroseobacter shibae	14
+280	MX000408	prodoric	RstA		Clostridioides difficile 630	9
+281	MX000409	prodoric	FapR		Bacillus subtilis 168	17
+282	MX000410	prodoric	ExuR		Escherichia coli K12 MG1655	16
+283	MX000411	prodoric	UxuR		Escherichia coli K12 MG1655	16
+284	MX000412	prodoric	BioQ		Corynebacterium glutamicum 534	13
+285	MX000413	prodoric	CsoR		Corynebacterium glutamicum 534	17
+286	MX000414	prodoric	NanR		Corynebacterium glutamicum 534	21
+287	MX000415	prodoric	FabT		Streptococcus agalactiae	17
+288	MX000416	prodoric	Rex		Clostridioides difficile 630	18
+289	MX000417	prodoric	PapR2		Streptomyces pristinaespiralis	29
+290	MX000003	prodoric	NarL		Escherichia coli K12 MG1655	7
+291	MX000009	prodoric	ResD		Bacillus subtilis 168	21
+292	MX000014	prodoric	HP166		Helicobacter pylori 26695	12
+293	MX000019	prodoric	Spo0A		Bacillus subtilis 168	12
+294	MX000030	prodoric	DegU		Bacillus subtilis 168	20
+295	MX000031	prodoric	PhoP		Escherichia coli K12 MG1655	17
+296	MX000038	prodoric	CovR		Streptococcus pyogenes	11
+297	MX000041	prodoric	CsrR		Streptococcus pyogenes	13
+298	MX000042	prodoric	RegR		Bradyrhizobium japonicum 5038	16
+299	MX000044	prodoric	CitT		Bacillus subtilis 168	6
+300	MX000046	prodoric	ComA		Bacillus subtilis 168	16
+301	MX000057	prodoric	PhoP		Bacillus subtilis 168	6
+302	MX000091	prodoric	ArcA		Escherichia coli K12 MG1655	10
+303	MX000119	prodoric	CpxR		Escherichia coli K12 MG1655	14
+304	MX000141	prodoric	OmpR		Escherichia coli K12 MG1655	18
+305	MX000152	prodoric	NtrC		Escherichia coli K12 MG1655	13
+306	MX000160	prodoric	RcsA-RcsB		Escherichia coli K12 MG1655	14
+307	MX000169	prodoric	NarP		Escherichia coli K12 MG1655	7
+308	MX000178	prodoric	TorR		Escherichia coli K12 MG1655	10
+309	MX000180	prodoric	ZraR		Escherichia coli K12 MG1655	17
+310	MX000197	prodoric	NatR		Bacillus subtilis 168	9
+311	MX000199	prodoric	CovR		Streptococcus agalactiae	9
+312	MX000203	prodoric	DevR		Mycobacterium tuberculosis	18
+313	MX000208	prodoric	PrrA		Rhodobacter sphaeroides ATH 2.4.1	9
+314	MX000217	prodoric	YycF		Bacillus subtilis 168	17
+315	MX000233	prodoric	YrkP		Bacillus subtilis 168	10
+316	MX000235	prodoric	EvgA		Escherichia coli K12 MG1655	18
+317	MX000244	prodoric	CtrA		Dinoroseobacter shibae	16
+318	MX000272	prodoric	DevR		Mycobacterium tuberculosis	14
+319	MX000320	prodoric	CzcR		Pseudomonas aeruginosa PAO1	5
+320	MX000324	prodoric	BfmR		Pseudomonas aeruginosa PAO1	14
+321	MX000328	prodoric	GacA		Pseudomonas aeruginosa PAO1	18
+322	MX000338	prodoric	OmpR		Salmonella enterica	12
+323	MX000346	prodoric	MgrA		Staphylococcus aureus 533 R4	6
+324	MX000357	prodoric	AgrA		Staphylococcus aureus 533 R4	30
+325	MX000358	prodoric	SaeR		Staphylococcus aureus 533 R4	16
+326	MX000368	prodoric	PhoB		Vibrio cholerae 10432-62	18
+327	MX000375	prodoric	RcsA-RcsB		Yersinia pestis	14
+328	MX000381	prodoric	PhoB		Rhizobium leguminosarum 3D1K2	18
+329	MX000385	prodoric	CitB		Klebsiella pneumoniae Kp52.145	20
+330	MX000388	prodoric	CpxR		Klebsiella pneumoniae Kp52.145	15
+331	MX000397	prodoric	CopR		Pseudomonas aeruginosa PAO1	16
+332	MX000399	prodoric	CusR		Escherichia coli K12 MG1655	16
+333	MX000400	prodoric	YedW		Escherichia coli K12 MG1655	18
+334	RG568	regprecise	LexA	LexA	Shewanellaceae	20
+335	RG569	regprecise	MetR	LysR	Shewanellaceae	15
+336	RG570	regprecise	NikR	NikR	Shewanellaceae	27
+337	RG571	regprecise	AgaR	DeoR	Shewanellaceae	15
+338	RG572	regprecise	AraR	GntR/Others	Shewanellaceae	19
+339	RG573	regprecise	ArgR	ArgR	Shewanellaceae	18
+340	RG574	regprecise	AzrR	[Other]	Shewanellaceae	20
+341	RG575	regprecise	BetI	TetR	Shewanellaceae	20
+342	RG576	regprecise	BglR	LacI	Shewanellaceae	18
+343	RG577	regprecise	BirA	BirA	Shewanellaceae	33
+344	RG578	regprecise	CalR	TetR	Shewanellaceae	20
+345	RG580	regprecise	CueR	MerR	Shewanellaceae	21
+346	RG581	regprecise	DeoR	CRP	Shewanellaceae	18
+347	RG582	regprecise	Dnr	CRP	Shewanellaceae	18
+348	RG584	regprecise	FabR	TetR	Shewanellaceae	18
+349	RG585	regprecise	FadR	GntR/Others	Shewanellaceae	17
+350	RG588	regprecise	GcvA	LysR	Shewanellaceae	15
+351	RG589	regprecise	GlmR	DeoR	Shewanellaceae	19
+352	RG590	regprecise	GntR	LacI	Shewanellaceae	20
+353	RG591	regprecise	HexR	RpiR	Shewanellaceae	17
+354	RG592	regprecise	HmgQ	LysR	Shewanellaceae	15
+355	RG593	regprecise	HutC	GntR/Others	Shewanellaceae	20
+356	RG594	regprecise	HypR	GntR/Others	Shewanellaceae	12
+357	RG595	regprecise	IlvY	LysR	Shewanellaceae	17
+358	RG596	regprecise	IscR	Rrf2	Shewanellaceae	25
+359	RG597	regprecise	LiuR	MerR	Shewanellaceae	18
+360	RG598	regprecise	LldR	LysR	Shewanellaceae	21
+361	RG599	regprecise	MalR	LacI	Shewanellaceae	18
+362	RG600	regprecise	ManR1	LacI	Shewanellaceae	20
+363	RG601	regprecise	ManR2	LacI	Shewanellaceae	20
+364	RG603	regprecise	ModE	ModE	Shewanellaceae	28
+365	RG605	regprecise	NagR	LacI	Shewanellaceae	18
+366	RG608	regprecise	NhaR	LysR	Shewanellaceae	17
+367	RG609	regprecise	NorR	Fis	Shewanellaceae	19
+368	RG610	regprecise	NrdR	NrdR	Shewanellaceae	16
+369	RG611	regprecise	NrtR	NrtR	Shewanellaceae	21
+370	RG612	regprecise	NsrR	Rrf2	Shewanellaceae	21
+371	RG613	regprecise	NtrC	Fis	Shewanellaceae	17
+372	RG614	regprecise	PdhR	GntR/Others	Shewanellaceae	17
+373	RG615	regprecise	PflR	LysR	Shewanellaceae	17
+374	RG616	regprecise	PnuR	CRP	Shewanellaceae	20
+375	RG617	regprecise	PrpR	GntR/Others	Shewanellaceae	12
+376	RG618	regprecise	PsrA	TetR	Shewanellaceae	20
+377	RG619	regprecise	PUR	[Other]	Shewanellaceae	20
+378	RG620	regprecise	RbsR	LacI	Shewanellaceae	20
+379	RG621	regprecise	ScrR	LacI	Shewanellaceae	18
+380	RG622	regprecise	SdaR	SdaR	Shewanellaceae	20
+381	RG623	regprecise	SO0072	GntR/Others	Shewanellaceae	20
+382	RG624	regprecise	NmlR	MerR	Shewanellaceae	18
+383	RG625	regprecise	SO0193	TetR	Shewanellaceae	21
+384	RG626	regprecise	SO0734	PadR	Shewanellaceae	31
+385	RG627	regprecise	SO1393	TetR	Shewanellaceae	20
+386	RG628	regprecise	SO1415	TetR	Shewanellaceae	22
+387	RG629	regprecise	SO1578	TetR	Shewanellaceae	20
+388	RG630	regprecise	SO1703	TetR	Shewanellaceae	20
+389	RG631	regprecise	SO1758	[Other]	Shewanellaceae	20
+390	RG633	regprecise	SO3277	TetR	Shewanellaceae	20
+391	RG634	regprecise	PhrR	MerR	Shewanellaceae	25
+392	RG635	regprecise	SO3393	TetR	Shewanellaceae	20
+393	RG636	regprecise	SO3494	TetR	Shewanellaceae	20
+394	RG637	regprecise	SO3627	TetR	Shewanellaceae	22
+395	RG638	regprecise	SO4326	TetR	Shewanellaceae	20
+396	RG639	regprecise	SO4468	TetR	Shewanellaceae	20
+397	RG640	regprecise	SO4705	XRE	Shewanellaceae	28
+398	RG641	regprecise	SoxR	MerR	Shewanellaceae	20
+399	RG643	regprecise	TreR	LacI	Shewanellaceae	20
+400	RG644	regprecise	TrpR	TrpR	Shewanellaceae	20
+401	RG645	regprecise	TyrR	TyrR	Shewanellaceae	20
+402	RG646	regprecise	XltR	LacI	Shewanellaceae	20
+403	RG647	regprecise	ZntR	MerR	Shewanellaceae	22
+404	RG656	regprecise	AgrA	LytTR	Staphylococcaceae	30
+405	RG657	regprecise	ArcR	CRP	Staphylococcaceae	18
+406	RG658	regprecise	ArgR	ArgR	Staphylococcaceae	16
+407	RG659	regprecise	ArsR	ArsR	Staphylococcaceae	22
+408	RG660	regprecise	BirA	BirA	Staphylococcaceae	33
+409	RG661	regprecise	BlaI	MarR	Staphylococcaceae	18
+410	RG662	regprecise	CcpA	LacI	Staphylococcaceae	16
+411	RG663	regprecise	CggR	SorC	Staphylococcaceae	22
+412	RG664	regprecise	CodY	CodY	Staphylococcaceae	15
+413	RG665	regprecise	CtsR	CtsR	Staphylococcaceae	17
+414	RG666	regprecise	CymR	Rrf2	Staphylococcaceae	27
+415	RG667	regprecise	CzrA	ArsR	Staphylococcaceae	26
+416	RG668	regprecise	FapR	FapR	Staphylococcaceae	19
+417	RG669	regprecise	FruR	DeoR	Staphylococcaceae	20
+418	RG670	regprecise	Fur	FUR	Staphylococcaceae	19
+419	RG671	regprecise	GlnR	MerR	Staphylococcaceae	19
+420	RG672	regprecise	GltC	LysR	Staphylococcaceae	15
+421	RG673	regprecise	GlvR	RpiR	Staphylococcaceae	25
+422	RG674	regprecise	GntR	GntR/Others	Staphylococcaceae	18
+423	RG675	regprecise	HrcA	HrcA	Staphylococcaceae	27
+424	RG676	regprecise	HssR	OmpR	Staphylococcaceae	20
+425	RG677	regprecise	HutR	LysR	Staphylococcaceae	17
+426	RG678	regprecise	IcaR	TetR	Staphylococcaceae	22
+427	RG679	regprecise	LacR	DeoR	Staphylococcaceae	15
+428	RG680	regprecise	LexA	LexA	Staphylococcaceae	20
+429	RG681	regprecise	MalR	LacI	Staphylococcaceae	20
+430	RG682	regprecise	ManR	BglG	Staphylococcaceae	21
+431	RG683	regprecise	MecI	MarR	Staphylococcaceae	18
+432	RG684	regprecise	MepR	MarR	Staphylococcaceae	18
+433	RG685	regprecise	MntR	DtxR	Staphylococcaceae	20
+434	RG686	regprecise	MtlR	BglG	Staphylococcaceae	21
+435	RG687	regprecise	MurR	RpiR	Staphylococcaceae	21
+436	RG688	regprecise	NrdR	NrdR	Staphylococcaceae	16
+437	RG689	regprecise	NreC	OmpR	Staphylococcaceae	18
+438	RG691	regprecise	PerR	FUR	Staphylococcaceae	15
+439	RG692	regprecise	PurR	PurR	Staphylococcaceae	45
+440	RG694	regprecise	RbsR2	LacI	Staphylococcaceae	20
+441	RG695	regprecise	Rex	Rex	Staphylococcaceae	18
+442	RG696	regprecise	SaeR	OmpR	Staphylococcaceae	16
+443	RG697	regprecise	ScrR	LacI	Staphylococcaceae	20
+444	RG698	regprecise	TreR	GntR/Others	Staphylococcaceae	22
+445	RG699	regprecise	HisR	TrpR	Staphylococcaceae	20
+446	RG700	regprecise	YtrA	GntR/Others	Staphylococcaceae	21
+447	RG702	regprecise	Zur	FUR	Staphylococcaceae	23
+448	RG741	regprecise	AraR	GntR/Others	Thermotogales	20
+449	RG742	regprecise	BglR	ROK	Thermotogales	23
+450	RG743	regprecise	GluR	ROK	Thermotogales	23
+451	RG744	regprecise	ChiR	ROK	Thermotogales	23
+452	RG745	regprecise	Fur	FUR	Thermotogales	19
+453	RG746	regprecise	GalR	LacI	Thermotogales	16
+454	RG747	regprecise	GloR	LacI	Thermotogales	18
+455	RG748	regprecise	HcpR	CRP	Thermotogales	20
+456	RG749	regprecise	HrcA	HrcA	Thermotogales	27
+457	RG750	regprecise	IolR	ROK	Thermotogales	23
+458	RG751	regprecise	KdgR	IclR	Thermotogales	19
+459	RG752	regprecise	CelR	LacI	Thermotogales	16
+460	RG753	regprecise	ManR	ROK	Thermotogales	23
+461	RG754	regprecise	NiaR	NiaR	Thermotogales	17
+462	RG755	regprecise	NrdR	NrdR	Thermotogales	16
+463	RG756	regprecise	RbsR	LacI	Thermotogales	20
+464	RG758	regprecise	Rex	Rex	Thermotogales	18
+465	RG759	regprecise	RhaR	DeoR	Thermotogales	20
+466	RG760	regprecise	TM1030	TetR	Thermotogales	20
+467	RG761	regprecise	TreR	ROK	Thermotogales	23
+468	RG762	regprecise	UgpR	LacI	Thermotogales	20
+469	RG763	regprecise	UxaR	GntR/Others	Thermotogales	17
+470	RG764	regprecise	XylR	ROK	Thermotogales	23
+471	RG765	regprecise	Zur	FUR	Thermotogales	23
+472	RG766	regprecise	ArgR	ArgR	Bacillales	16
+473	RG767	regprecise	BirA	BirA	Bacillales	31
+474	RG768	regprecise	CggR	SorC	Bacillales	37
+475	RG769	regprecise	ExuR	LacI	Bacillales	16
+476	RG770	regprecise	Fnr	CRP	Bacillales	16
+477	RG771	regprecise	Fur	FUR	Bacillales	19
+478	RG773	regprecise	GlvR2	RpiR	Bacillales	25
+479	RG775	regprecise	HrcA	HrcA	Bacillales	27
+480	RG776	regprecise	GanR	LacI	Bacillales	22
+481	RG777	regprecise	LexA	LexA	Bacillales	16
+482	RG778	regprecise	LicR	BglG	Bacillales	21
+483	RG779	regprecise	ManR	BglG	Bacillales	23
+484	RG780	regprecise	MntR	DtxR	Bacillales	22
+485	RG781	regprecise	MtlR	BglG	Bacillales	21
+486	RG782	regprecise	NiaR	NiaR	Bacillales	22
+487	RG783	regprecise	NtdR	LacI	Bacillales	16
+488	RG784	regprecise	PerR	FUR	Bacillales	15
+489	RG785	regprecise	Rex	Rex	Bacillales	20
+490	RG786	regprecise	TreR	GntR/Others	Bacillales	20
+491	RG787	regprecise	XylR	ROK	Bacillales	25
+492	RG788	regprecise	YtrA	GntR/Others	Bacillales	21
+493	RG789	regprecise	Zur	FUR	Bacillales	23
+494	RG791	regprecise	BirA	BirA	Desulfovibrionales	33
+495	RG792	regprecise	CooA	CRP	Desulfovibrionales	16
+496	RG794	regprecise	DVU0030	GntR/MocR	Desulfovibrionales	21
+497	RG796	regprecise	DVU2423	HxlR	Desulfovibrionales	20
+498	RG797	regprecise	DVU2644	GntR/Others	Desulfovibrionales	16
+499	RG799	regprecise	DVU2802	GntR/Others	Desulfovibrionales	17
+500	RG802	regprecise	FliA	Sigma70	Desulfovibrionales	27
+501	RG803	regprecise	Fur	FUR	Desulfovibrionales	17
+502	RG805	regprecise	HrcA	HrcA	Desulfovibrionales	27
+503	RG806	regprecise	LldR	GntR/Others	Desulfovibrionales	17
+504	RG807	regprecise	LysX	TrmB	Desulfovibrionales	20
+505	RG809	regprecise	TunR	TunR	Desulfovibrionales	30
+506	RG810	regprecise	NikR	NikR	Desulfovibrionales	27
+507	RG811	regprecise	PerR	FUR	Desulfovibrionales	19
+508	RG812	regprecise	PhoB	OmpR	Desulfovibrionales	18
+509	RG813	regprecise	RpoH	Sigma70	Desulfovibrionales	25
+510	RG815	regprecise	Zur	FUR	Desulfovibrionales	17
+511	RG816	regprecise	BioQ	TetR	Actinomycetales	17
+512	RG1078	regprecise	NrdR	NrdR	Ralstonia	16
+513	RG1082	regprecise	HexR	RpiR	Ralstonia	17
+514	RG1083	regprecise	IscR	Rrf2	Ralstonia	25
+515	RG1085	regprecise	NorR	Fis	Ralstonia	19
+516	RG1086	regprecise	Dnr	CRP	Ralstonia	18
+517	RG1089	regprecise	ModE	ModE	Ralstonia	28
+518	RG1090	regprecise	Zur	FUR	Ralstonia	23
+519	RG1091	regprecise	LiuQ	TetR	Ralstonia	15
+520	RG1092	regprecise	Fur	FUR	Ralstonia	19
+521	RG1093	regprecise	PurR	PurR	Bacillales	44
+522	RG1094	regprecise	LiuR	MerR	Ralstonia	18
+523	RG1099	regprecise	LexA	LexA	Ralstonia	20
+524	RG1100	regprecise	FadP	TetR	Ralstonia	16
+525	RG1102	regprecise	PsrA	TetR	Ralstonia	20
+526	RG1103	regprecise	SphR	OmpR	Cyanobacteria	34
+527	RG1112	regprecise	Fur	FUR	Enterobacteriales	19
+528	RG1114	regprecise	Crp	CRP	Enterobacteriales	22
+529	RG1115	regprecise	MhqR	MarR	Bacillales	18
+530	RG1116	regprecise	GlpR	DeoR	Enterobacteriales	16
+531	RG1118	regprecise	TyrR	TyrR	Enterobacteriales	20
+532	RG1123	regprecise	GalR/GalS	LacI	Enterobacteriales	20
+533	RG1124	regprecise	MetR	LysR	Enterobacteriales	15
+534	RG1126	regprecise	IlvY	LysR	Enterobacteriales	17
+535	RG1127	regprecise	NtrC	Fis	Enterobacteriales	17
+536	RG1129	regprecise	FadR	GntR/Others	Enterobacteriales	17
+537	RG1130	regprecise	CueR	MerR	Enterobacteriales	21
+538	RG1131	regprecise	PurR	LacI	Enterobacteriales	16
+539	RG1132	regprecise	AscG	LacI	Enterobacteriales	20
+540	RG1133	regprecise	IscR	Rrf2	Enterobacteriales	25
+541	RG1135	regprecise	FruR	LacI	Enterobacteriales	16
+542	RG1136	regprecise	NorR	Fis	Enterobacteriales	19
+543	RG1137	regprecise	SdaR	SdaR	Enterobacteriales	20
+544	RG1138	regprecise	NsrR	Rrf2	Enterobacteriales	19
+545	RG1139	regprecise	PdhR	GntR/Others	Enterobacteriales	21
+546	RG1143	regprecise	Zur	FUR	Enterobacteriales	23
+547	RG1147	regprecise	NadR	NadR	Enterobacteriales	18
+548	RG1148	regprecise	FabR	TetR	Enterobacteriales	18
+549	RG1149	regprecise	BetI	TetR	Enterobacteriales	20
+550	RG1150	regprecise	NrdR	NrdR	Enterobacteriales	16
+551	RG1151	regprecise	IclR	IclR	Enterobacteriales	24
+552	RG1152	regprecise	LacI	LacI	Enterobacteriales	21
+553	RG1153	regprecise	NanR	GntR/Others	Enterobacteriales	23
+554	RG1154	regprecise	ModE	ModE	Enterobacteriales	24
+555	RG1155	regprecise	MprA	MarR	Enterobacteriales	22
+556	RG1156	regprecise	RbsR	LacI	Enterobacteriales	20
+557	RG1158	regprecise	TreR	LacI	Enterobacteriales	20
+558	RG1161	regprecise	MalI	LacI	Enterobacteriales	20
+559	RG1162	regprecise	Fur	FUR	Cyanobacteria	19
+560	RG1163	regprecise	LexA	LexA	Cyanobacteria	14
+561	RG1164	regprecise	NrdR	NrdR	Cyanobacteria	16
+562	RG1165	regprecise	NrtR	NrtR	Cyanobacteria	21
+563	RG1166	regprecise	NtcA	CRP	Cyanobacteria	16
+564	RG1167	regprecise	NtcB	LysR	Cyanobacteria	15
+565	RG1168	regprecise	Zur	FUR	Cyanobacteria	23
+566	RG1169	regprecise	GntR	LacI	Enterobacteriales��	20
+567	RG1170	regprecise	RutR	TetR	Enterobacteriales	20
+568	RG1171	regprecise	LldR	GntR/Others	Enterobacteriales	17
+569	RG1173	regprecise	GlnR	MerR	Bacillales	19
+570	RG1174	regprecise	MsmR	LacI	Bacillales	20
+571	RG1175	regprecise	NrdR	NrdR	Bacillales	16
+572	RG1176	regprecise	RbsR	LacI	Bacillales	20
+573	RG1178	regprecise	TnrA	MerR	Bacillales	17
+574	RG1179	regprecise	MdxR	LacI	Bacillales	18
+575	RG1180	regprecise	BglR	GntR/Others	Bacillales	18
+576	RG1182	regprecise	TrpR	TrpR	Enterobacteriales	20
+577	RG1184	regprecise	DeoR	DeoR	Enterobacteriales	16
+578	RG1185	regprecise	AcrR	TetR	Enterobacteriales	24
+579	RG1186	regprecise	NikR	NikR	Enterobacteriales	28
+580	RG1189	regprecise	DosR	LuxR	Actinomycetales	18
+581	RG1190	regprecise	CymR	Rrf2	Bacillales	27
+582	RG1191	regprecise	NsrR	Rrf2	Bacillales	27
+583	RG1192	regprecise	HisR	TrpR	Bacillales	20
+584	RG1193	regprecise	MarR	MarR	Enterobacteriales	22
+585	RG1195	regprecise	MntR	DtxR	Enterobacteriales	22
+586	RG1196	regprecise	SoxR	MerR	Enterobacteriales	20
+587	RG1197	regprecise	LexA	LexA	Enterobacteriales	20
+588	RG1202	regprecise	BirA	BirA	Enterobacteriales	33
+589	RG1203	regprecise	ArsR	ArsR	Bacillales	16
+590	RG1204	regprecise	AseR	ArsR	Bacillales	22
+591	RG1205	regprecise	CzrA	ArsR	Bacillales	22
+592	RG1207	regprecise	SdpR	ArsR	Bacillales	20
+593	RG1208	regprecise	YwrC	AsnC	Bacillales	13
+594	RG1210	regprecise	PhhR	TyrR	Pseudomonadaceae	20
+595	RG1216	regprecise	RocR	Fis	Bacillales	16
+596	RG1217	regprecise	AcoR	Fis	Bacillales	32
+597	RG1219	regprecise	BkdR	Fis	Bacillales	14
+598	RG1220	regprecise	GmuR	GntR/Others	Bacillales	18
+599	RG1221	regprecise	CcpN	CcpN	Bacillales	21
+600	RG1224	regprecise	KdgR	IclR	Enterobacteriales	21
+601	RG1230	regprecise	BglZ	LacI	Bacillales	18
+602	RG1234	regprecise	CitR	LysR	Bacillales	19
+603	RG1236	regprecise	GltR	LysR	Bacillales	21
+604	RG1238	regprecise	NagC	ROK	Enterobacteriales	23
+605	RG1239	regprecise	EbgR	LacI	Enterobacteriales	21
+606	RG1240	regprecise	YtlI	LysR	Bacillales	15
+607	RG1241	regprecise	YwbI	LysR	Bacillales	17
+608	RG1243	regprecise	CysL	LysR	Bacillales	15
+609	RG1244	regprecise	YetL	MarR	Bacillales	18
+610	RG1245	regprecise	OhrR	MarR	Bacillales	18
+611	RG1248	regprecise	NhaR	LysR	Enterobacteriales	13
+612	RG1250	regprecise	ZntR	MerR	Enterobacteriales	22
+613	RG1251	regprecise	YiaJ	IclR	Enterobacteriales	21
+614	RG1259	regprecise	DeoR	SorC	Bacillales	16
+615	RG1260	regprecise	FadR	TetR	Bacillales	20
+616	RG1268	regprecise	ArgR	ArgR	Enterobacteriales	18
+617	RG1273	regprecise	CodY	CodY	Bacillales	15
+618	RG1274	regprecise	LmrA	TetR	Bacillales	16
+619	RG1275	regprecise	QdoR	TetR	Bacillales	18
+620	RG1276	regprecise	FatR	TetR	Bacillales	18
+621	RG1279	regprecise	AgaR	DeoR	Enterobacteriales	15
+622	RG1280	regprecise	IolR	DeoR	Bacillales	22
+623	RG1281	regprecise	SufR	[Other]	Cyanobacteria	24
+624	RG1282	regprecise	ZnuR	OmpR	Thermotogales	19
+625	RG1283	regprecise	ArgR	ArgR	Thermotogales	19
+626	RG1291	regprecise	GltC	LysR	Bacillales	15
+627	RG1292	regprecise	GltC2	LysR	Bacillales	15
+628	RG1295	regprecise	BltR	MerR	Bacillales	23
+629	RG1298	regprecise	NagR	GntR/Others	Bacillales	20
+630	RG1299	regprecise	LutR	GntR/Others	Bacillales	19
+631	RG1300	regprecise	FrlR	GntR/Others	Bacillales	22
+632	RG1301	regprecise	YhcF	GntR/Others	Bacillales	22
+633	RG1304	regprecise	DgoR	GntR/Others	Enterobacteriales	11
+634	RG1306	regprecise	Crp	CRP	Cyanobacteria	16
+635	RG1307	regprecise	HexR	RpiR	Enterobacteriales	17
+636	RG1308	regprecise	AbgR	LysR	Enterobacteriales	17
+637	RG1315	regprecise	YdfD/YisV	GntR/MocR	Bacillales	31
+638	RG1316	regprecise	AllR	IclR	Enterobacteriales	17
+639	RG1323	regprecise	YdfL	MerR	Bacillales	23
+640	RG1324	regprecise	RmgR	AraC	Bacillales	24
+641	RG1326	regprecise	RhgR	AraC	Bacillales	32
+642	RG1332	regprecise	KipR	IclR	Bacillales	17
+643	RG1333	regprecise	AdaA	AraC	Bacillales	16
+644	RG1337	regprecise	CcpC	LysR	Bacillales	15
+645	RG1339	regprecise	BceR	OmpR	Bacillales	17
+646	RG1340	regprecise	AlsR	LysR	Bacillales	19
+647	RG1341	regprecise	GudR	GntR/Others	Bacillales	21
+648	RG1342	regprecise	DesR	LuxR	Bacillales	14
+649	RG1343	regprecise	YvfU	LuxR	Bacillales	14
+650	RG1344	regprecise	UgtR	RpiR	Thermotogales	16
+651	RG1345	regprecise	CssR	OmpR	Bacillales	16
+652	RG1346	regprecise	FapR	FapR	Bacillales	16
+653	RG1347	regprecise	ExuR	GntR/Others	Enterobacteriales	19
+654	RG1348	regprecise	UxuR	GntR/Others	Enterobacteriales	18
+655	RG1353	regprecise	PhoB	OmpR	Thermotogales	17
+656	RG1354	regprecise	ComA	LuxR	Bacillales	36
+657	RG1357	regprecise	HcpR	CRP	Desulfovibrionales	18
+658	RG1358	regprecise	Ddes_0528, DESPIG_03026	CRP	Desulfovibrionales	18
+659	RG1363	regprecise	UctR	RpiR	Thermotogales	18
+660	RG1365	regprecise	FruR	DeoR	Bacillales	20
+661	RG1366	regprecise	CtsR	CtsR	Bacillales	17
+662	RG1368	regprecise	Btr	AraC	Bacillales	29
+663	RG1369	regprecise	GlcR	DeoR	Bacillales	17
+664	RG1370	regprecise	CitT	CitB	Bacillales	18
+665	RG1371	regprecise	RhaR	DeoR	Bacillales	19
+666	RG1373	regprecise	TM0766	GntR/Others	Thermotogales	22
+667	RG1374	regprecise	Desal_2066	CRP	Desulfovibrionales	18
+668	RG1377	regprecise	Ddes_1411/Ddes_2092	CRP	Desulfovibrionales	18
+669	RG1378	regprecise	DctR	OmpR	Bacillales	36
+670	RG1379	regprecise	AnsR	XRE	Bacillales	14
+671	RG1383	regprecise	AraR	GntR/Others	Bacillales	20
+672	RG1384	regprecise	IolR1	LacI	Bacillales	14
+673	RG1385	regprecise	YisR	AraC	Bacillales	20
+674	RG1386	regprecise	NarP	LuxR	Enterobacteriales	16
+675	RG1387	regprecise	IolR2	LacI	Bacillales	18
+676	RG1388	regprecise	CsoR	CsoR	Bacillales	17
+677	RG1389	regprecise	YcnK	DeoR	Bacillales	17
+678	RG1390	regprecise	YczG	ArsR	Bacillales	18
+679	RG1391	regprecise	SahR	ArsR	Desulfovibrionales	20
+680	RG1392	regprecise	ArsR	ArsR	Desulfovibrionales	20
+681	RG1393	regprecise	SmtB	ArsR	Desulfovibrionales	22
+682	RG1394	regprecise	ArsR2	ArsR	Desulfovibrionales	20
+683	RG1395	regprecise	ArsR3	ArsR	Desulfovibrionales	22
+684	RG1402	regprecise	YfmP	MerR	Bacillales	22
+685	RG1404	regprecise	HxlR	HxlR	Bacillales	14
+686	RG1405	regprecise	TrpR	TrpR	Vibrionales	20
+687	RG1409	regprecise	YtcD	HxlR	Bacillales	16
+688	RG1412	regprecise	SinR	XRE	Bacillales	16
+689	RG1413	regprecise	Rex1	Rex	Thermotogales	18
+690	RG1414	regprecise	YybR/YdeP	HxlR	Bacillales	20
+691	RG1419	regprecise	CcmR	LysR	Cyanobacteria	16
+692	RG1421	regprecise	YodB/CatR	HxlR	Bacillales	17
+693	RG1423	regprecise	PadR	PadR	Bacillales	24
+694	RG1424	regprecise	YdfF	ArsR	Bacillales	16
+695	RG1425	regprecise	YybA	MarR	Bacillales	24
+696	RG1427	regprecise	BsdA	LysR	Bacillales	15
+697	RG1429	regprecise	GbsR (YuaC)	MarR	Bacillales	18
+698	RG1431	regprecise	YhgD	TetR	Bacillales	23
+699	RG1432	regprecise	HrcA	HrcA	Cyanobacteria	27
+700	RG1434	regprecise	KdgR	LacI	Bacillales	18
+701	RG1440	regprecise	PerR	FUR	Cyanobacteria	15
+702	RG1446	regprecise	TyrR	TyrR	Pasteurellales	20
+703	RG1447	regprecise	PedR	LuxR	Cyanobacteria	14
+704	RG1454	regprecise	PirR	LysR	Cyanobacteria	21
+705	RG1466	regprecise	BioQ	TetR	Corynebacteriaceae	17
+706	RG1468	regprecise	Zur	FUR	Corynebacteriaceae	21
+707	RG1472	regprecise	NrdR	NrdR	Corynebacteriaceae	16
+708	RG1473	regprecise	NrtR	NrtR	Corynebacteriaceae	21
+709	RG1497	regprecise	SmtB	ArsR	Cyanobacteria	26
+710	RG1515	regprecise	ArsR	ArsR	Cyanobacteria	16
+711	RG1521	regprecise	NagR	LacI	Alteromonadales	18
+712	RG1523	regprecise	NagR	LacI	Oceanospirillales/Alteromonadales	18
+713	RG1526	regprecise	NagR	LacI	Xanthomonadales	18
+714	RG1539	regprecise	FabR	TetR	Vibrionales	18
+715	RG1540	regprecise	FabR	TetR	Pasteurellales	18
+716	RG1541	regprecise	FabR	TetR	Alteromonadales	18
+717	RG1542	regprecise	FabR	TetR	Psychromonadaceae/Aeromonadales	18
+718	RG1543	regprecise	FabR	TetR	Oceanospirillales/Alteromonadales	18
+719	RG1544	regprecise	DesT	TetR	Pseudomonadaceae	18
+720	RG1545	regprecise	FabR	TetR	Moraxellaceae	18
+721	RG1546	regprecise	FabR	TetR	Xanthomonadales	18
+722	RG1558	regprecise	NsrR	Rrf2	Vibrionales	19
+723	RG1561	regprecise	NsrR	Rrf2	Psychromonadaceae/Aeromonadales	21
+724	RG1562	regprecise	NsrR	Rrf2	Oceanospirillales/Alteromonadales	21
+725	RG1564	regprecise	NsrR	Rrf2	Moraxellaceae	21
+726	RG1566	regprecise	NsrR	Rrf2	Ralstonia	19
+727	RG1567	regprecise	NsrR	Rrf2	Burkholderia	19
+728	RG1568	regprecise	NsrR	Rrf2	Comamonadaceae	19
+729	RG1569	regprecise	NsrR2	Rrf2	Various betaproteobacteria	19
+730	RG1571	regprecise	NsrR	Rrf2	Rhodobacterales	19
+731	RG1572	regprecise	NsrR	Rrf2	Rhodospirillales	19
+732	RG1573	regprecise	NsrR	Rrf2	Sphingomonadales	19
+733	RG1581	regprecise	HexR	RpiR	Vibrionales	15
+734	RG1583	regprecise	HexR	RpiR	Alteromonadales	17
+735	RG1584	regprecise	HexR	RpiR	Psychromonadaceae/Aeromonadales	17
+736	RG1585	regprecise	HexR	RpiR	Oceanospirillales/Alteromonadales	17
+737	RG1586	regprecise	HexR1	RpiR	Pseudomonadaceae	17
+738	RG1590	regprecise	HexR	RpiR	Burkholderia	17
+739	RG1591	regprecise	HexR	RpiR	Comamonadaceae	17
+740	RG1592	regprecise	HexR	RpiR	Various betaproteobacteria	17
+741	RG1600	regprecise	BirA	BirA	Vibrionales	33
+742	RG1602	regprecise	BirA	BirA	Alteromonadales	33
+743	RG1603	regprecise	BirA	BirA	Psychromonadaceae/Aeromonadales	33
+744	RG1604	regprecise	BirA	BirA	Oceanospirillales/Alteromonadales	32
+745	RG1605	regprecise	BirA	BirA	Pseudomonadaceae	32
+746	RG1607	regprecise	BirA	BirA	Xanthomonadales	34
+747	RG1611	regprecise	BirA	BirA	Various betaproteobacteria	32
+748	RG1617	regprecise	BirA	BirA	Desulfuromonadales	32
+749	RG1628	regprecise	NadQ	NadQ	Moraxellaceae	21
+750	RG1632	regprecise	NadQ	NadQ	Comamonadaceae	21
+751	RG1634	regprecise	NadQ	NadQ	Rhizobiales	21
+752	RG1635	regprecise	NadQ	NadQ	Rhodobacterales	21
+753	RG1636	regprecise	NadQ	NadQ	Rhodospirillales	21
+754	RG1638	regprecise	NadQ	NadQ	Caulobacterales	21
+755	RG1642	regprecise	NrtR	NrtR	Enterobacteriales	21
+756	RG1643	regprecise	NrtR	NrtR	Vibrionales	21
+757	RG1646	regprecise	NrtR	NrtR	Psychromonadaceae/Aeromonadales	21
+758	RG1647	regprecise	NrtR	NrtR	Oceanospirillales/Alteromonadales	21
+759	RG1648	regprecise	NrtR	NrtR	Pseudomonadaceae	21
+760	RG1653	regprecise	NrtR	NrtR	Comamonadaceae	21
+761	RG1654	regprecise	NrtR	NrtR	Various betaproteobacteria	21
+762	RG1655	regprecise	NrtR	NrtR	Rhizobiales	21
+763	RG1662	regprecise	NrdR	NrdR	Vibrionales	16
+764	RG1663	regprecise	NrdR	NrdR	Pasteurellales	16
+765	RG1664	regprecise	NrdR	NrdR	Alteromonadales	16
+766	RG1665	regprecise	NrdR	NrdR	Psychromonadaceae/Aeromonadales	16
+767	RG1666	regprecise	NrdR	NrdR	Oceanospirillales/Alteromonadales	16
+768	RG1667	regprecise	NrdR	NrdR	Pseudomonadaceae	16
+769	RG1668	regprecise	NrdR	NrdR	Moraxellaceae	16
+770	RG1669	regprecise	NrdR	NrdR	Xanthomonadales	16
+771	RG1671	regprecise	NrdR	NrdR	Burkholderia	16
+772	RG1672	regprecise	NrdR	NrdR	Comamonadaceae	16
+773	RG1673	regprecise	NrdR	NrdR	Various betaproteobacteria	16
+774	RG1674	regprecise	NrdR	NrdR	Rhizobiales	16
+775	RG1675	regprecise	NrdR	NrdR	Rhodobacterales	16
+776	RG1676	regprecise	NrdR	NrdR	Rhodospirillales	16
+777	RG1677	regprecise	NrdR	NrdR	Sphingomonadales	16
+778	RG1678	regprecise	NrdR	NrdR	Caulobacterales	16
+779	RG1679	regprecise	NrdR	NrdR	Desulfuromonadales	16
+780	RG1688	regprecise	SahR	ArsR	Oceanospirillales/Alteromonadales	20
+781	RG1689	regprecise	SahR	ArsR	Pseudomonadaceae	20
+782	RG1696	regprecise	SahR	ArsR	Rhizobiales	20
+783	RG1697	regprecise	SahR	ArsR	Rhodobacterales	20
+784	RG1698	regprecise	SahR	ArsR	Rhodospirillales	20
+785	RG1699	regprecise	SahR	ArsR	Sphingomonadales	20
+786	RG1700	regprecise	SahR	ArsR	Caulobacterales	20
+787	RG1701	regprecise	SahR	ArsR	Desulfuromonadales	20
+788	RG1715	regprecise	NikR	NikR	Rhizobiales	28
+789	RG1720	regprecise	NikR	NikR	Desulfuromonadales	27
+790	RG1722	regprecise	Zur	FUR	Vibrionales	23
+791	RG1724	regprecise	Zur	FUR	Alteromonadales	23
+792	RG1725	regprecise	Zur	FUR	Psychromonadaceae/Aeromonadales	23
+793	RG1726	regprecise	Zur	FUR	Oceanospirillales/Alteromonadales	23
+794	RG1727	regprecise	Zur	FUR	Pseudomonadaceae	23
+795	RG1728	regprecise	Zur	FUR	Moraxellaceae	23
+796	RG1729	regprecise	Zur	FUR	Xanthomonadales	23
+797	RG1731	regprecise	Zur	FUR	Burkholderia	23
+798	RG1732	regprecise	Zur	FUR	Comamonadaceae	23
+799	RG1733	regprecise	Zur	FUR	Various betaproteobacteria	23
+800	RG1734	regprecise	Zur	FUR	Rhizobiales	23
+801	RG1735	regprecise	Zur	FUR	Rhodobacterales	23
+802	RG1736	regprecise	Zur	FUR	Rhodospirillales	23
+803	RG1737	regprecise	Zur	FUR	Sphingomonadales	23
+804	RG1738	regprecise	Zur	FUR	Caulobacterales	23
+805	RG1739	regprecise	Zur	FUR	Desulfuromonadales	23
+806	RG1742	regprecise	PdhR	GntR/Others	Vibrionales	15
+807	RG1744	regprecise	PdhR	GntR/Others	Alteromonadales	15
+808	RG1745	regprecise	PdhR	GntR/Others	Psychromonadaceae/Aeromonadales	15
+809	RG1762	regprecise	FadR	GntR/Others	Vibrionales	17
+810	RG1763	regprecise	FadR	GntR/Others	Pasteurellales	17
+811	RG1764	regprecise	FadR	GntR/Others	Alteromonadales	17
+812	RG1765	regprecise	FadR	GntR/Others	Psychromonadaceae/Aeromonadales	17
+813	RG1781	regprecise	LldR	GntR/Others	Ralstonia	17
+814	RG1786	regprecise	LldR	GntR/Others	Oceanospirillales/Alteromonadales	17
+815	RG1787	regprecise	LldR	GntR/Others	Pseudomonadaceae	17
+816	RG1788	regprecise	LldR	GntR/Others	Moraxellaceae	17
+817	RG1791	regprecise	LldR	GntR/Others	Burkholderia	17
+818	RG1792	regprecise	LldR	GntR/Others	Comamonadaceae	17
+819	RG1793	regprecise	LldR	GntR/Others	Various betaproteobacteria	17
+820	RG1795	regprecise	LldR	GntR/Others	Rhodobacterales	21
+821	RG1796	regprecise	LldR	GntR/Others	Rhodospirillales	21
+822	RG1799	regprecise	LldR	GntR/Others	Desulfuromonadales	17
+823	RG1816	regprecise	NnrR	CRP	Rhizobiales	18
+824	RG1817	regprecise	NnrR	CRP	Rhodobacterales	18
+825	RG1818	regprecise	NnrR	CRP	Rhodospirillales	18
+826	RG1820	regprecise	NnrR	CRP	Caulobacterales	18
+827	RG1823	regprecise	NorR	Fis	Vibrionales	19
+828	RG1825	regprecise	NorR	Fis	Alteromonadales	19
+829	RG1826	regprecise	NorR	Fis	Psychromonadaceae/Aeromonadales	19
+830	RG1827	regprecise	NorR	Fis	Oceanospirillales/Alteromonadales	19
+831	RG1828	regprecise	NorR	Fis	Pseudomonadaceae	19
+832	RG1832	regprecise	NorR	Fis	Burkholderia	19
+833	RG1833	regprecise	NorR	Fis	Comamonadaceae	19
+834	RG1844	regprecise	PrpR	GntR/Others	Vibrionales	12
+835	RG1846	regprecise	PrpR	GntR/Others	Alteromonadales	12
+836	RG1847	regprecise	PrpR	GntR/Others	Psychromonadaceae/Aeromonadales	12
+837	RG1848	regprecise	PrpR	GntR/Others	Oceanospirillales/Alteromonadales	12
+838	RG1849	regprecise	PrpR	GntR/Others	Pseudomonadaceae	12
+839	RG1850	regprecise	PrpR	GntR/Others	Moraxellaceae	12
+840	RG1861	regprecise	PrpR	GntR/Others	Desulfuromonadales	12
+841	RG1863	regprecise	HutC	GntR/Others	Enterobacteriales	20
+842	RG1864	regprecise	HutC	GntR/Others	Vibrionales	20
+843	RG1867	regprecise	HutC	GntR/Others	Psychromonadaceae/Aeromonadales	20
+844	RG1868	regprecise	HutC	GntR/Others	Oceanospirillales/Alteromonadales	20
+845	RG1869	regprecise	HutC	GntR/Others	Pseudomonadaceae	20
+846	RG1870	regprecise	HutC	GntR/Others	Moraxellaceae	20
+847	RG1871	regprecise	HutC	GntR/Others	Xanthomonadales	20
+848	RG1873	regprecise	HutC	GntR/Others	Burkholderia	20
+849	RG1874	regprecise	HutC	GntR/Others	Comamonadaceae	20
+850	RG1876	regprecise	HutC	GntR/Others	Rhizobiales	18
+851	RG1877	regprecise	HutC	GntR/Others	Rhodobacterales	18
+852	RG1878	regprecise	HutC	GntR/Others	Rhodospirillales	18
+853	RG1879	regprecise	HutC	GntR/Others	Sphingomonadales	18
+854	RG1880	regprecise	HutC	GntR/Others	Caulobacterales	18
+855	RG1906	regprecise	HypR	GntR/Others	Vibrionales	12
+856	RG1908	regprecise	HypR	GntR/Others	Alteromonadales	12
+857	RG1909	regprecise	HypR	GntR/Others	Psychromonadaceae/Aeromonadales	12
+858	RG1910	regprecise	HypR	GntR/Others	Oceanospirillales/Alteromonadales	12
+859	RG1915	regprecise	HypR	GntR/Others	Burkholderia	12
+860	RG1918	regprecise	HypR	GntR/Others	Rhizobiales	14
+861	RG1919	regprecise	HypR	GntR/Others	Rhodobacterales	14
+862	RG1925	regprecise	IscR	Rrf2	Vibrionales	25
+863	RG1926	regprecise	IscR	Rrf2	Pasteurellales	25
+864	RG1927	regprecise	IscR	Rrf2	Alteromonadales	25
+865	RG1928	regprecise	IscR	Rrf2	Psychromonadaceae/Aeromonadales	25
+866	RG1929	regprecise	IscR	Rrf2	Oceanospirillales/Alteromonadales	25
+867	RG1930	regprecise	IscR	Rrf2	Pseudomonadaceae	25
+868	RG1931	regprecise	IscR	Rrf2	Moraxellaceae	25
+869	RG1932	regprecise	IscR	Rrf2	Xanthomonadales	25
+870	RG1934	regprecise	IscR	Rrf2	Burkholderia	25
+871	RG1935	regprecise	IscR	Rrf2	Comamonadaceae	25
+872	RG1936	regprecise	IscR	Rrf2	Various betaproteobacteria	25
+873	RG1938	regprecise	IscR	Rrf2	Rhodobacterales	19
+874	RG1939	regprecise	IscR	Rrf2	Rhodospirillales	25
+875	RG1940	regprecise	IscR	Rrf2	Sphingomonadales	25
+876	RG1941	regprecise	IscR	Rrf2	Caulobacterales	25
+877	RG1942	regprecise	IscR	Rrf2	Desulfuromonadales	25
+878	RG1959	regprecise	RirA	Rrf2	Rhizobiales	19
+879	RG1981	regprecise	Irr	FUR	Rhizobiales	21
+880	RG1982	regprecise	Irr	FUR	Rhodobacterales	21
+881	RG1983	regprecise	Irr	FUR	Rhodospirillales	21
+882	RG1990	regprecise	NagC	ROK	Vibrionales	23
+883	RG1991	regprecise	NagC	ROK	Pasteurellales	21
+884	RG1993	regprecise	NagC	ROK	Psychromonadaceae/Aeromonadales	21
+885	RG1994	regprecise	NagC	ROK	Oceanospirillales/Alteromonadales	23
+886	RG2016	regprecise	NagQ	GntR/Others	Oceanospirillales/Alteromonadales	18
+887	RG2017	regprecise	NagQ	GntR/Others	Pseudomonadaceae	18
+888	RG2021	regprecise	NagQ	GntR/Others	Burkholderia	18
+889	RG2023	regprecise	NagQ	GntR/Others	Various betaproteobacteria	18
+890	RG2024	regprecise	NagQ	GntR/Others	Rhizobiales	18
+891	RG2025	regprecise	NagQ	GntR/Others	Rhodobacterales	18
+892	RG2026	regprecise	NagQ	GntR/Others	Rhodospirillales	17
+893	RG2028	regprecise	NagQ	GntR/Others	Caulobacterales	18
+894	RG2033	regprecise	SiaR	RpiR	Enterobacteriales	19
+895	RG2034	regprecise	SiaR	RpiR	Vibrionales	19
+896	RG2035	regprecise	SiaR	RpiR	Pasteurellales	19
+897	RG2037	regprecise	SiaR	RpiR	Psychromonadaceae/Aeromonadales	19
+898	RG2052	regprecise	NrtR2	NrtR	Cyanobacteria	21
+899	RG2058	regprecise	GlcC	GntR/Others	Enterobacteriales	17
+900	RG2063	regprecise	GlcC	GntR/Others	Oceanospirillales/Alteromonadales	17
+901	RG2064	regprecise	GlcC	GntR/Others	Pseudomonadaceae	17
+902	RG2068	regprecise	GlcC	GntR/Others	Burkholderia	15
+903	RG2071	regprecise	GlcC	GntR/Others	Rhizobiales	25
+904	RG2078	regprecise	NtrC	Fis	Ralstonia	17
+905	RG2079	regprecise	NtrC	Fis	Vibrionales	17
+906	RG2081	regprecise	NtrC	Fis	Alteromonadales	17
+907	RG2082	regprecise	NtrC	Fis	Psychromonadaceae/Aeromonadales	17
+908	RG2083	regprecise	NtrC	Fis	Oceanospirillales/Alteromonadales	17
+909	RG2084	regprecise	NtrC	Fis	Pseudomonadaceae	17
+910	RG2085	regprecise	NtrC	Fis	Moraxellaceae	17
+911	RG2086	regprecise	NtrC	Fis	Xanthomonadales	17
+912	RG2088	regprecise	NtrC	Fis	Burkholderia	17
+913	RG2089	regprecise	NtrC	Fis	Comamonadaceae	17
+914	RG2090	regprecise	NtrC	Fis	Various betaproteobacteria	17
+915	RG2091	regprecise	NtrC	Fis	Rhizobiales	17
+916	RG2092	regprecise	NtrC	Fis	Rhodobacterales	17
+917	RG2093	regprecise	NtrC	Fis	Rhodospirillales	17
+918	RG2094	regprecise	NtrC	Fis	Sphingomonadales	17
+919	RG2095	regprecise	NtrC	Fis	Caulobacterales	17
+920	RG2096	regprecise	NtrC	Fis	Desulfuromonadales	17
+921	RG2097	regprecise	Fur	FUR	Vibrionales	21
+922	RG2098	regprecise	Fur	FUR	Pasteurellales	19
+923	RG2099	regprecise	Fur	FUR	Alteromonadales	21
+924	RG2100	regprecise	Fur	FUR	Psychromonadaceae/Aeromonadales	21
+925	RG2104	regprecise	Fur	FUR	Xanthomonadales	21
+926	RG2109	regprecise	Mur	FUR	Rhizobiales	19
+927	RG2110	regprecise	Mur	FUR	Rhodobacterales	19
+928	RG2111	regprecise	Fur	FUR	Rhodospirillales	19
+929	RG2112	regprecise	Fur	FUR	Sphingomonadales	19
+930	RG2113	regprecise	Fur	FUR	Caulobacterales	19
+931	RG2114	regprecise	Fur	FUR	Desulfuromonadales	17
+932	RG2118	regprecise	TrpR	TrpR	Pasteurellales	20
+933	RG2137	regprecise	TyrR1	TyrR	Alteromonadales	20
+934	RG2138	regprecise	TyrR	TyrR	Psychromonadaceae/Aeromonadales	20
+935	RG2154	regprecise	UxuR	GntR/Others	Vibrionales	18
+936	RG2155	regprecise	UxuR	GntR/Others	Pasteurellales	18
+937	RG2157	regprecise	UxuR	GntR/Others	Psychromonadaceae/Aeromonadales	18
+938	RG2158	regprecise	UxuR	GntR/Others	Oceanospirillales/Alteromonadales	18
+939	RG2167	regprecise	UxuR	GntR/Others	Rhodobacterales	18
+940	RG2175	regprecise	KdgR	IclR	Vibrionales	21
+941	RG2176	regprecise	KdgR	IclR	Pasteurellales	21
+942	RG2217	regprecise	HexR2	RpiR	Oceanospirillales/Alteromonadales	12
+943	RG2219	regprecise	HexR	RpiR	Pseudomonadaceae	20
+944	RG2234	regprecise	FruR	LacI	Vibrionales	16
+945	RG2237	regprecise	FruR	LacI	Psychromonadaceae/Aeromonadales	16
+946	RG2238	regprecise	FruR	LacI	Oceanospirillales/Alteromonadales	20
+947	RG2239	regprecise	FruR	LacI	Pseudomonadaceae	16
+948	RG2255	regprecise	PurR	LacI	Vibrionales	16
+949	RG2256	regprecise	PurR	LacI	Pasteurellales	16
+950	RG2275	regprecise	RbsR	LacI	Vibrionales	20
+951	RG2276	regprecise	RbsR	LacI	Pasteurellales	20
+952	RG2278	regprecise	RbsR	LacI	Psychromonadaceae/Aeromonadales	20
+953	RG2280	regprecise	RbsR	LacI	Pseudomonadaceae	20
+954	RG2284	regprecise	RbsR	LacI	Burkholderia	20
+955	RG2294	regprecise	ModE	ModE	Pasteurellales	28
+956	RG2298	regprecise	ModE	ModE	Pseudomonadaceae	24
+957	RG2302	regprecise	ModE	ModE	Burkholderia	24
+958	RG2303	regprecise	ModE	ModE	Comamonadaceae	23
+959	RG2305	regprecise	ModE	ModE	Rhizobiales	22
+960	RG2306	regprecise	ModE2	ModE	Rhodobacterales	22
+961	RG2309	regprecise	ModE	ModE	Caulobacterales	21
+962	RG2310	regprecise	ModE	ModE	Desulfuromonadales	30
+963	RG2347	regprecise	ArgR	ArgR	Vibrionales	18
+964	RG2348	regprecise	ArgR	ArgR	Pasteurellales	18
+965	RG2349	regprecise	ArgR	ArgR	Alteromonadales	18
+966	RG2350	regprecise	ArgR	ArgR	Psychromonadaceae/Aeromonadales	18
+967	RG2368	regprecise	NanR (SiaQ)	RpiR	Vibrionales	19
+968	RG2389	regprecise	AgaR	DeoR	Vibrionales	27
+969	RG2392	regprecise	AgaR	DeoR	Psychromonadaceae/Aeromonadales	15
+970	RG2561	regprecise	DVU1964/DVU1967	Rrf2	Desulfovibrionales	23
+971	RG2972	regprecise	AraR	GntR/Others	Lactobacillaceae	20
+972	RG2973	regprecise	LexA	LexA	Desulfovibrionales	18
+973	RG2974	regprecise	LexA	LexA	Vibrionales	20
+974	RG2975	regprecise	LexA	LexA	Pasteurellales	20
+975	RG2976	regprecise	LexA	LexA	Alteromonadales	20
+976	RG2977	regprecise	LexA	LexA	Psychromonadaceae/Aeromonadales	20
+977	RG2978	regprecise	LexA	LexA	Oceanospirillales/Alteromonadales	20
+978	RG2979	regprecise	LexA	LexA	Pseudomonadaceae	18
+979	RG2981	regprecise	LexA	LexA	Xanthomonadales	19
+980	RG2982	regprecise	LexA	LexA	Burkholderia	20
+981	RG2983	regprecise	LexA	LexA	Comamonadaceae	20
+982	RG2984	regprecise	LexA	LexA	Various betaproteobacteria	20
+983	RG2985	regprecise	LexA	LexA	Rhizobiales	15
+984	RG2986	regprecise	LexA	LexA	Rhodobacterales	15
+985	RG2987	regprecise	LexA	LexA	Rhodospirillales	15
+986	RG2988	regprecise	LexA	LexA	Sphingomonadales	15
+987	RG2989	regprecise	LexA	LexA	Caulobacterales	15
+988	RG2990	regprecise	LexA	LexA	Desulfuromonadales	18
+989	RG2992	regprecise	CcpA	LacI	Bacillales	16
+990	RG2995	regprecise	LiuR	MerR	Vibrionales	18
+991	RG2997	regprecise	LiuR	MerR	Alteromonadales	18
+992	RG2998	regprecise	LiuR	MerR	Psychromonadaceae/Aeromonadales	18
+993	RG2999	regprecise	LiuR	MerR	Oceanospirillales/Alteromonadales	18
+994	RG3000	regprecise	LiuR	MerR	Pseudomonadaceae	18
+995	RG3003	regprecise	LiuR	MerR	Burkholderia	18
+996	RG3004	regprecise	LiuR	MerR	Comamonadaceae	18
+997	RG3005	regprecise	LiuR	MerR	Various betaproteobacteria	18
+998	RG3006	regprecise	LiuR	MerR	Rhizobiales	18
+999	RG3007	regprecise	LiuR	MerR	Rhodobacterales	18
+1000	RG3008	regprecise	LiuR	MerR	Rhodospirillales	18
+1001	RG3009	regprecise	LiuR	MerR	Sphingomonadales	18
+1002	RG3010	regprecise	LiuR	MerR	Caulobacterales	18
+1003	RG3014	regprecise	NsrR	Rrf2	Neisseriales	19
+1004	RG3025	regprecise	NrtR	NrtR	Chloroflexia	21
+1005	RG3029	regprecise	Rex	Rex	Chloroflexia	18
+1006	RG3035	regprecise	LexA	LexA	Chloroflexia	16
+1007	RG3036	regprecise	ModE2	ModE	Desulfovibrionales	22
+1008	RG3039	regprecise	OhcR	Fis	Desulfovibrionales	20
+1009	RG3045	regprecise	HmcR	Rrf2	Desulfovibrionales	23
+1010	RG3046	regprecise	TmcR	Rrf2	Desulfovibrionales	23
+1011	RG3059	regprecise	Rex	Rex	Desulfovibrionales	20
+1012	RG3074	regprecise	PuuR	XRE	Thermotogales	20
+1013	RG3093	regprecise	PsrA	TetR	Vibrionales	20
+1014	RG3095	regprecise	PsrA	TetR	Alteromonadales	20
+1015	RG3096	regprecise	PsrA	TetR	Psychromonadaceae/Aeromonadales	20
+1016	RG3097	regprecise	PsrA	TetR	Oceanospirillales/Alteromonadales	20
+1017	RG3098	regprecise	PsrA	TetR	Pseudomonadaceae	20
+1018	RG3100	regprecise	PsrA	TetR	Xanthomonadales	20
+1019	RG3101	regprecise	PsrA	TetR	Burkholderia	20
+1020	RG3103	regprecise	PsrA	TetR	Various betaproteobacteria	20
+1021	RG3104	regprecise	PsrA	TetR	Rhizobiales	20
+1022	RG3108	regprecise	PsrA	TetR	Caulobacterales	20
+1023	RG3112	regprecise	Rex	Rex	Actinomycetales	18
+1024	RG3113	regprecise	Rex	Rex	Streptococcaceae	18
+1025	RG3114	regprecise	Rex	Rex	Lactobacillaceae	18
+1026	RG3115	regprecise	Rex	Rex	Deinococcus-Thermus	18
+1027	RG3146	regprecise	XylR	ROK	Rhizobiales	23
+1028	RG3180	regprecise	RutR	TetR	Ralstonia	20
+1029	RG3181	regprecise	RutR	TetR	Vibrionales	20
+1030	RG3183	regprecise	RutR	TetR	Alteromonadales	20
+1031	RG3184	regprecise	RutR	TetR	Psychromonadaceae/Aeromonadales	20
+1032	RG3185	regprecise	RutR	TetR	Oceanospirillales/Alteromonadales	20
+1033	RG3186	regprecise	RutR	TetR	Pseudomonadaceae	20
+1034	RG3187	regprecise	RutR	TetR	Moraxellaceae	20
+1035	RG3189	regprecise	RutR	TetR	Burkholderia	20
+1036	RG3192	regprecise	RutR	TetR	Rhizobiales	20
+1037	RG3193	regprecise	RutR	TetR	Rhodobacterales	20
+1038	RG3196	regprecise	RutR	TetR	Caulobacterales	20
+1039	RG3209	regprecise	FadP	TetR	Burkholderia	16
+1040	RG3210	regprecise	FadP	TetR	Comamonadaceae	16
+1041	RG3229	regprecise	LiuQ	TetR	Burkholderia	15
+1042	RG3230	regprecise	LiuQ	TetR	Comamonadaceae	15
+1043	RG3244	regprecise	VanR	GntR/Others	Alteromonadales	12
+1044	RG3246	regprecise	VanR	GntR/Others	Oceanospirillales/Alteromonadales	12
+1045	RG3247	regprecise	VanR	GntR/Others	Pseudomonadaceae	12
+1046	RG3248	regprecise	VanR	GntR/Others	Moraxellaceae	12
+1047	RG3249	regprecise	VanR	GntR/Others	Xanthomonadales	12
+1048	RG3251	regprecise	VanR	GntR/Others	Comamonadaceae	8
+1049	RG3253	regprecise	VanR	GntR/Others	Rhizobiales	8
+1050	RG3257	regprecise	VanR	GntR/Others	Caulobacterales	12
+1051	RG3261	regprecise	PhnF	GntR/Others	Ralstonia	22
+1052	RG3262	regprecise	PhnF	GntR/Others	Enterobacteriales	12
+1053	RG3267	regprecise	PhnF	GntR/Others	Oceanospirillales/Alteromonadales	12
+1054	RG3271	regprecise	PhnF	GntR/Others	Burkholderia	22
+1055	RG3273	regprecise	PhnF	GntR/Others	Various betaproteobacteria	22
+1056	RG3274	regprecise	PhnF	GntR/Others	Rhizobiales	20
+1057	RG3275	regprecise	PhnF	GntR/Others	Rhodobacterales	20
+1058	RG3283	regprecise	PhnR	GntR/Others	Enterobacteriales	20
+1059	RG3284	regprecise	PhnR	GntR/Others	Vibrionales	20
+1060	RG3287	regprecise	PhnR	GntR/Others	Psychromonadaceae/Aeromonadales	20
+1061	RG3288	regprecise	PhnR	GntR/Others	Oceanospirillales/Alteromonadales	20
+1062	RG3289	regprecise	PhnR	GntR/Others	Pseudomonadaceae	12
+1063	RG3299	regprecise	PhnR	GntR/Others	Caulobacterales	20
+1064	RG3308	regprecise	LldR	GntR/Others	Corynebacteriaceae	15
+1065	RG3313	regprecise	GamR	GntR/Others	Bacillales	20
+1066	RG3325	regprecise	YvbF/YvaV	MarR	Bacillales	25
+1067	RG3330	regprecise	HrsM	LysR	Desulfovibrionales	17
+1068	RG3332	regprecise	DVU2275	Fis	Desulfovibrionales	15
+1069	RG3333	regprecise	DVU2827	Fis	Desulfovibrionales	18
+1070	RG3337	regprecise	DVU1760	TetR	Desulfovibrionales	18
+1071	RG3472	regprecise	Dbac_0104	TetR	Desulfovibrionales	20
+1072	RG3473	regprecise	NrdR	NrdR	Chloroflexia	16
+1073	RG3474	regprecise	HrcA	HrcA	Chloroflexia	27
+1074	RG3475	regprecise	ModR	PadR	Chloroflexia	21
+1075	RG3476	regprecise	RhaR	DeoR	Chloroflexia	16
+1076	RG3477	regprecise	MntR	DtxR	Chloroflexia	20
+1077	RG3478	regprecise	FetR	DtxR	Chloroflexia	20
+1078	RG3479	regprecise	Zur	FUR	Chloroflexia	21
+1079	RG3486	regprecise	DvMF_1994	GntR/Others	Desulfovibrionales	21
+1080	RG3487	regprecise	PhnF	GntR/Others	Desulfovibrionales	16
+1081	RG3490	regprecise	NorR2	Fis	Vibrionales	19
+1082	RG3495	regprecise	NiaR	NiaR	Streptococcaceae	22
+1083	RG3497	regprecise	NiaR	NiaR	Lactobacillaceae	22
+1084	RG3501	regprecise	XylR	ROK	Lactobacillaceae	23
+1085	RG3502	regprecise	XylR	ROK	Enterococcaceae	23
+1086	RG3508	regprecise	FabR2	TetR	Oceanospirillales/Alteromonadales	18
+1087	RG3509	regprecise	FabR2	TetR	Pseudomonadaceae	18
+1088	RG3511	regprecise	CcpA	LacI	Lactobacillaceae	16
+1089	RG3536	regprecise	IscR2	Rrf2	Rhodospirillales	25
+1090	RG3540	regprecise	GcvA	LysR	Enterobacteriales	15
+1091	RG3545	regprecise	RutR4	TetR	Pseudomonadaceae	20
+1092	RG3552	regprecise	RutR2	TetR	Pseudomonadaceae	20
+1093	RG3554	regprecise	RutR3	TetR	Pseudomonadaceae	20
+1094	RG3557	regprecise	CopR	CopY	Streptococcaceae	20
+1095	RG3558	regprecise	CopR	CopY	Lactobacillaceae	20
+1096	RG3559	regprecise	ArgR	ArgR	Streptococcaceae	18
+1097	RG3563	regprecise	GlnR	MerR	Streptococcaceae	19
+1098	RG3564	regprecise	MalR	LacI	Streptococcaceae	20
+1099	RG3570	regprecise	NmlR	MerR	Streptococcaceae	19
+1100	RG3571	regprecise	FabT	MarR	Streptococcaceae	17
+1101	RG3572	regprecise	ScrR	LacI	Streptococcaceae	20
+1102	RG3573	regprecise	ScrR	LacI	Lactobacillaceae	20
+1103	RG3574	regprecise	SczA	TetR	Streptococcaceae	16
+1104	RG3575	regprecise	FabT	MarR	Lactobacillaceae	17
+1105	RG3576	regprecise	MalR	LacI	Lactobacillaceae	20
+1106	RG3578	regprecise	DeoR	SorC	Lactobacillaceae	16
+1107	RG3584	regprecise	CcpA	LacI	Streptococcaceae	16
+1108	RG3597	regprecise	NrtR	NrtR	Streptococcaceae	21
+1109	RG3600	regprecise	GlnR	MerR	Lactobacillaceae	19
+1110	RG3602	regprecise	NagR	GntR/Others	Streptococcaceae	20
+1111	RG3606	regprecise	PflR	DeoR	Streptococcaceae	21
+1112	RG3610	regprecise	PipR	TetR	Streptococcaceae	19
+1113	RG3620	regprecise	MtaR	LysR	Streptococcaceae	17
+1114	RG3624	regprecise	NrtR	NrtR	Lactobacillaceae	21
+1115	RG3625	regprecise	PadR	PadR	Lactobacillaceae	24
+1116	RG3629	regprecise	YjdR	MarR	Streptococcaceae	20
+1117	RG3630	regprecise	PerR	FUR	Streptococcaceae	15
+1118	RG3631	regprecise	SPy1285	GntR/Others	Streptococcaceae	22
+1119	RG3632	regprecise	PerR	FUR	Lactobacillaceae	15
+1120	RG3633	regprecise	AdcR	MarR	Streptococcaceae	16
+1121	RG3635	regprecise	CggR	SorC	Lactobacillaceae	37
+1122	RG3691	regprecise	LexA	LexA	Corynebacteriaceae	16
+1123	RG3697	regprecise	ClgR	XRE	Corynebacteriaceae	17
+1124	RG3706	regprecise	FasR	TetR	Corynebacteriaceae	20
+1125	RG3708	regprecise	McbR	TetR	Corynebacteriaceae	16
+1126	RG3711	regprecise	VanR	PadR	Corynebacteriaceae	19
+1127	RG3717	regprecise	GenR	IclR	Corynebacteriaceae	19
+1128	RG3722	regprecise	RosR	MarR	Corynebacteriaceae	18
+1129	RG3723	regprecise	QacR	TetR	Corynebacteriaceae	30
+1130	RG3838	regprecise	LysR	LysR	Enterobacteriales	18
+1131	RG3839	regprecise	XapR	LysR	Enterobacteriales	21
+1132	RG3840	regprecise	GntR	GntR/Others	Corynebacteriaceae	15
+1133	RG3841	regprecise	SufR	ArsR	Corynebacteriaceae	24
+1134	RG3843	regprecise	MntR	DtxR	Streptococcaceae	22
+1135	RG3846	regprecise	FruR	DeoR	Corynebacteriaceae	14
+1136	RG3848	regprecise	AmtR	TetR	Corynebacteriaceae	24
+1137	RG3849	regprecise	Rgg	XRE	Streptococcaceae	18
+1138	RG3852	regprecise	RbsR	LacI	Corynebacteriaceae	18
+1139	RG3857	regprecise	PurR	PurR	Streptococcaceae	13
+1140	RG3863	regprecise	PurR	PurR	Lactobacillaceae	13
+1141	RG3864	regprecise	HrcA	HrcA	Corynebacteriaceae	27
+1142	RG3869	regprecise	ArsR	ArsR	Corynebacteriaceae	20
+1143	RG3880	regprecise	CitB	CitB	Corynebacteriaceae	20
+1144	RG3881	regprecise	CadR	ArsR	Corynebacteriaceae	16
+1145	RG3884	regprecise	MntR	DtxR	Lactobacillaceae	20
+1146	RG3889	regprecise	Cg0454	TetR	Corynebacteriaceae	15
+1147	RG3905	regprecise	HspR	MerR	Corynebacteriaceae	19
+1148	RG3908	regprecise	Cg1053	TetR	Corynebacteriaceae	17
+1149	RG3913	regprecise	ArgR	ArgR	Corynebacteriaceae	13
+1150	RG3915	regprecise	PcaR	IclR	Corynebacteriaceae	15
+1151	RG3916	regprecise	DtxR	DtxR	Corynebacteriaceae	19
+1152	RG3917	regprecise	Cg1211	MarR	Corynebacteriaceae	17
+1153	RG3921	regprecise	LysG	LysR	Corynebacteriaceae	13
+1154	RG3922	regprecise	Cg1831	ArsR	Corynebacteriaceae	20
+1155	RG3926	regprecise	PaaR	TetR	Corynebacteriaceae	22
+1156	RG3927	regprecise	PaaR	TetR	Actinobacteria	22
+1157	RG3928	regprecise	PaaR	TetR	Deinococcus-Thermus	18
+1158	RG3929	regprecise	PaaR2	TetR	Deinococcus-Thermus	18
+1159	RG3933	regprecise	QsuR	LysR	Corynebacteriaceae	18
+1160	RG3940	regprecise	MurR	RpiR	Lactobacillaceae	17
+1161	RG3941	regprecise	NanR	RpiR	Streptococcaceae	18
+1162	RG3942	regprecise	MurR	RpiR	Streptococcaceae	21
+1163	RG3945	regprecise	RbsR	LacI	Lactobacillaceae	20
+1164	RG3955	regprecise	TreR	GntR/Others	Streptococcaceae	20
+1165	RG3956	regprecise	TreR	GntR/Others	Lactobacillaceae	20
+1166	RG3958	regprecise	Rex	Rex	Thermoanaerobacterales	18
+1167	RG3960	regprecise	HrcA	HrcA	Streptococcaceae	27
+1168	RG3963	regprecise	AcnR	TetR	Corynebacteriaceae	16
+1169	RG3966	regprecise	PaaX	[Other]	Enterobacteriales	39
+1170	RG3967	regprecise	GutR	GutR	Bacillales	29
+1171	RG3968	regprecise	PaaR	TetR	Burkholderia	22
+1172	RG3969	regprecise	UxuR	GntR/Others	Bacillales	20
+1173	RG3970	regprecise	PaaR	TetR	Ralstonia	22
+1174	RG3971	regprecise	PaaR	TetR	Comamonadaceae	22
+1175	RG3973	regprecise	PaaR	TetR	Rhizobiales	22
+1176	RG3974	regprecise	PaaR	TetR	Rhodobacterales	22
+1177	RG3975	regprecise	PaaR	TetR	Flavobacteria	18
+1178	RG3978	regprecise	MalR	CitB	Bacillales	30
+1179	RG4271	regprecise	YbzH	ArsR	Bacillales	20
+1180	RG4272	regprecise	PutR	SrmR	Bacillales	17
+1181	RG4273	regprecise	GlnL	GlnL	Bacillales	16
+1182	RG4279	regprecise	Zur2	FUR	Various betaproteobacteria	23
+1183	RG4281	regprecise	LiaR	OmpR	Bacillales	18
+1184	RG4282	regprecise	YrkD	CsoR	Bacillales	16
+1185	RG4283	regprecise	DVU3023	Fis	Desulfovibrionales	18
+1186	RG4284	regprecise	DVU0621	Fis	Desulfovibrionales	16
+1187	RG4285	regprecise	MntR	DtxR	Corynebacteriaceae	20
+1188	RG4286	regprecise	DVU0539/DVU0946	Fis	Desulfovibrionales	18
+1189	RG4287	regprecise	Cg3239	LysR	Corynebacteriaceae	15
+1190	RG4288	regprecise	Crp	CRP	Shewanellaceae	22
+1191	RG4310	regprecise	NarP	LuxR	Vibrionales	16
+1192	RG4311	regprecise	NarP	LuxR	Pasteurellales	16
+1193	RG4313	regprecise	NarP	LuxR	Psychromonadaceae/Aeromonadales	16
+1194	RG4327	regprecise	NarP	LuxR	Shewanellaceae	16
+1195	RG4329	regprecise	LeuO	LysR	Enterobacteriales	15
+1196	RG4331	regprecise	Fur	FUR	Shewanellaceae	21
+1197	RG4332	regprecise	Fnr	CRP	Enterobacteriales	14
+1198	RG4333	regprecise	NrdR	NrdR	Chlamydiales	16
+1199	RG4334	regprecise	NrdR	NrdR	Planctomycetes	16
+1200	RG4335	regprecise	NrdR	NrdR	Deinococcus-Thermus	16
+1201	RG4336	regprecise	NrdR	NrdR	Mycobacteriaceae	16
+1202	RG4338	regprecise	Zur	FUR	Mycobacteriaceae	21
+1203	RG4339	regprecise	Zur	FUR	Actinobacteria	21
+1204	RG4340	regprecise	RcnR	CsoR	Enterobacteriales	15
+1205	RG4341	regprecise	NrtR	NrtR	Mycobacteriaceae	23
+1206	RG4343	regprecise	Fur	FUR	Rhodobacterales	19
+1207	RG4344	regprecise	ArgR	ArgR	Lactobacillaceae	18
+1208	RG4345	regprecise	RegR	LacI	Streptococcaceae	20
+1209	RG4348	regprecise	FatR	TetR	Lactobacillaceae	16
+1210	RG4350	regprecise	GalR	LacI	Streptococcaceae	19
+1211	RG4351	regprecise	GalR	LacI	Lactobacillaceae	19
+1212	RG4352	regprecise	HrcA	HrcA	Lactobacillaceae	27
+1213	RG4356	regprecise	NrdR	NrdR	Streptococcaceae	16
+1214	RG4357	regprecise	NrdR	NrdR	Lactobacillaceae	16
+1215	RG4361	regprecise	RbsR2	LacI	Streptococcaceae	20
+1216	RG4363	regprecise	Zur	FUR	Lactobacillaceae	23
+1217	RG4364	regprecise	Fnr	CRP	Shewanellaceae	14
+1218	RG4369	regprecise	CmbR	LysR	Streptococcaceae	21
+1219	RG4544	regprecise	HomR	LysR	Streptococcaceae	21
+1220	RG4545	regprecise	Zur2	FUR	Chloroflexia	23
+1221	RG4546	regprecise	HcpR	CRP	Chloroflexia	20
+1222	RG4547	regprecise	Cagg_3094	GntR/Others	Chloroflexia	16
+1223	RG4548	regprecise	Cagg_1084	GntR/Others	Chloroflexia	23
+1224	RG4554	regprecise	MetJ	MetJ	Shewanellaceae	16
+1225	RG4556	regprecise	FucR	DeoR	Enterobacteriales	36
+1226	RG4569	regprecise	Lp_3221	LacI	Lactobacillaceae	20
+1227	RG4574	regprecise	UlaR	DeoR	Enterobacteriales	20
+1228	RG4575	regprecise	SrlR	DeoR	Enterobacteriales	29
+1229	RG4576	regprecise	MetJ	MetJ	Enterobacteriales	16
+1230	RG4586	regprecise	MalR2	LacI	Streptococcaceae	20
+1231	RG4591	regprecise	CcpB	LacI	Streptococcaceae	16
+1232	RG4592	regprecise	CcpB	LacI	Lactobacillaceae	16
+1233	RG4596	regprecise	LacR	LacI	Lactobacillaceae	17
+1234	RG4597	regprecise	BfrR	LacI	Streptococcaceae	20
+1235	RG4600	regprecise	NigR	LacI	Lactobacillaceae	20
+1236	RG4604	regprecise	MdxR	LacI	Lactobacillaceae	20
+1237	RG4609	regprecise	MalR3	LacI	Lactobacillaceae	20
+1238	RG4611	regprecise	LSEI_0368	LacI	Lactobacillaceae	20
+1239	RG4614	regprecise	HxlR	LacI	Lactobacillaceae	18
+1240	RG4615	regprecise	LJ1265	LacI	Lactobacillaceae	20
+1241	RG4616	regprecise	LBA1472	LacI	Lactobacillaceae	16
+1242	RG4618	regprecise	GutR	BglG	Lactobacillaceae	20
+1243	RG4626	regprecise	CelQ	ROK	Streptococcaceae	23
+1244	RG4627	regprecise	IdnR	LacI	Enterobacteriales	20
+1245	RG4628	regprecise	SdaR	SdaR	Lactobacillaceae	20
+1246	RG4629	regprecise	SAG1910	MarR	Streptococcaceae	18
+1247	RG4631	regprecise	SgaR	BglG	Streptococcaceae	16
+1248	RG4633	regprecise	CcpN	CcpN	Streptococcaceae	21
+1249	RG4634	regprecise	CcpN	CcpN	Lactobacillaceae	21
+1250	RG4635	regprecise	AlsR	RpiR	Enterobacteriales	17
+1251	RG4636	regprecise	CelR	BglG	Streptococcaceae	20
+1252	RG4637	regprecise	MurR	RpiR	Enterobacteriales	15
+1253	RG4639	regprecise	MtlR	BglG	Streptococcaceae	23
+1254	RG4640	regprecise	DVU0569	Fis	Desulfovibrionales	18
+1255	RG4641	regprecise	MtlR	BglG	Lactobacillaceae	24
+1256	RG4642	regprecise	SgaR2	BglG	Streptococcaceae	16
+1257	RG4644	regprecise	UxaR	LacI	Bacteroidaceae	20
+1258	RG4645	regprecise	DVU2106	Fis	Desulfovibrionales	17
+1259	RG4646	regprecise	TagR	RpiR	Lactobacillaceae	14
+1260	RG4647	regprecise	KdgR	LacI	Bacteroidaceae	18
+1261	RG4649	regprecise	LgoR	LacI	Bacteroidaceae	18
+1262	RG4650	regprecise	FucR	GntR/Others	Bacteroidaceae	26
+1263	RG4651	regprecise	DVU2359	Fis	Desulfovibrionales	16
+1264	RG4653	regprecise	CodY	CodY	Streptococcaceae	15
+1265	RG4654	regprecise	XylR	NrtR	Bacteroidaceae	23
+1266	RG4655	regprecise	AraR	NrtR	Bacteroidaceae	21
+1267	RG4656	regprecise	Crp	CRP	Bacteroidaceae	22
+1268	RG4658	regprecise	PspF	Fis	Desulfovibrionales	19
+1269	RG4660	regprecise	DVUA0100	Fis	Desulfovibrionales	15
+1270	RG4661	regprecise	YvcP	OmpR	Bacillales	16
+1271	RG4662	regprecise	FruR	DeoR	Streptococcaceae	20
+1272	RG4663	regprecise	FruR	DeoR	Lactobacillaceae	20
+1273	RG4665	regprecise	CtsR	CtsR	Streptococcaceae	24
+1274	RG4666	regprecise	LytT	LytTR	Bacillales	33
+1275	RG4667	regprecise	CtsR	CtsR	Lactobacillaceae	24
+1276	RG4673	regprecise	DVUA0143	Fis	Desulfovibrionales	14
+1277	RG4674	regprecise	ArgR	ArgR	Bacteroidaceae	18
+1278	RG4676	regprecise	NanR	ROK	Bacteroidaceae	23
+1279	RG4677	regprecise	ManR	GntR/Others	Bacteroidaceae	20
+1280	RG4678	regprecise	HcpR	CRP	Bacteroidaceae	18
+1281	RG4685	regprecise	PerR	FUR	Bacteroidaceae	23
+1282	RG4687	regprecise	AgaR	GntR/Others	Streptococcaceae	20
+1283	RG4688	regprecise	AgaR2	GntR/Others	Streptococcaceae	18
+1284	RG4689	regprecise	AgaR2	GntR/Others	Lactobacillaceae	18
+1285	RG4690	regprecise	LexA	LexA	Lactobacillaceae	16
+1286	RG4691	regprecise	Zur	FUR	Bacteroidaceae	17
+1287	RG4692	regprecise	Fur	FUR	Bacteroidaceae	19
+1288	RG4696	regprecise	PdxR	GntR/MocR	Streptococcaceae	32
+1289	RG4700	regprecise	BirA	BirA	Streptococcaceae	33
+1290	RG4702	regprecise	BirA	BirA	Lactobacillaceae	34
+1291	RG4703	regprecise	CcpA	LacI	Clostridia-1	16
+1292	RG4707	regprecise	LacR	DeoR	Streptococcaceae	19
+1293	RG4714	regprecise	SusR	[Other]	Bacteroidaceae	14
+1294	RG4715	regprecise	SusR2	[Other]	Bacteroidaceae	20
+1295	RG4717	regprecise	LsrR	SorC	Enterobacteriales	31
+1296	RG4718	regprecise	Lp_2742	GntR/Others	Lactobacillaceae	20
+1297	RG4720	regprecise	YtrA	GntR/Others	Lactobacillaceae	23
+1298	RG4721	regprecise	NrfR	CRP	Bacteroidaceae	20
+1299	RG4722	regprecise	YwzG	PadR	Lactobacillaceae	21
+1300	RG4723	regprecise	CcpA	LacI	Clostridia-2	16
+1301	RG4724	regprecise	YwzG	PadR	Streptococcaceae	19
+1302	RG4725	regprecise	GntR1	RpiR	Lactobacillaceae	19
+1303	RG4726	regprecise	GntR1	RpiR	Streptococcaceae	19
+1304	RG4727	regprecise	RpiR	RpiR	Lactobacillaceae	15
+1305	RG4728	regprecise	TreR (RgrA)	GntR/Others	Streptococcaceae	22
+1306	RG4729	regprecise	UxuR	GntR/Others	Streptococcaceae	18
+1307	RG4734	regprecise	MleR	LysR	Lactobacillaceae	17
+1308	RG4735	regprecise	RhaR	AraC	Bacteroidaceae	28
+1309	RG4736	regprecise	MleR	LysR	Streptococcaceae	15
+1310	RG4738	regprecise	CzcR1	ArsR	Lactobacillaceae	20
+1311	RG4739	regprecise	CzcR2	ArsR	Lactobacillaceae	20
+1312	RG4740	regprecise	FlpA	CRP	Streptococcaceae	20
+1313	RG4741	regprecise	FlpA	CRP	Lactobacillaceae	20
+1314	RG4742	regprecise	NihR	CRP	Lactobacillaceae	16
+1315	RG4743	regprecise	LBA0573	MarR	Lactobacillaceae	18
+1316	RG4746	regprecise	YxeR	TetR	Lactobacillaceae	21
+1317	RG4748	regprecise	LBA1638	TetR	Lactobacillaceae	18
+1318	RG4749	regprecise	LSEI_0081	TetR	Lactobacillaceae	14
+1319	RG4750	regprecise	FlrR	TetR	Lactobacillaceae	16
+1320	RG4755	regprecise	AgaR2	DeoR	Enterobacteriales	25
+1321	RG4767	regprecise	Rex	Rex	Clostridia-1	18
+1322	RG4782	regprecise	NiaR	NiaR	Clostridia-3	22
+1323	RG4783	regprecise	LexA	LexA	Clostridia-3	16
+1324	RG4784	regprecise	Rex	Rex	Clostridia-3	18
+1325	RG4785	regprecise	ArgR	ArgR	Clostridia-3	16
+1326	RG4786	regprecise	HrcA	HrcA	Clostridia-3	27
+1327	RG4787	regprecise	SusR3	[Other]	Bacteroidaceae	18
+1328	RG4788	regprecise	SusR4	[Other]	Bacteroidaceae	13
+1329	RG4790	regprecise	HTCS_Fru	[Other]	Bacteroidaceae	30
+1330	RG4791	regprecise	Rex	Rex	Clostridia-2	18
+1331	RG4792	regprecise	NiaR	NiaR	Clostridia-2	22
+1332	RG4793	regprecise	NiaR	NiaR	Clostridia-1	22
+1333	RG4794	regprecise	Zur	FUR	Clostridia-1	23
+1334	RG4795	regprecise	HrcA	HrcA	Clostridia-1	27
+1335	RG4796	regprecise	HrcA	HrcA	Clostridia-2	27
+1336	RG4797	regprecise	LexA	LexA	Clostridia-1	16
+1337	RG4798	regprecise	LexA	LexA	Clostridia-2	16
+1338	RG4799	regprecise	ArgR	ArgR	Clostridia-1	16
+1339	RG4802	regprecise	HTCS_Ara-1	[Other]	Bacteroidaceae	30
+1340	RG4803	regprecise	Caur_3448	LacI	Chloroflexia	20
+1341	RG4804	regprecise	Caur_1157	LacI	Chloroflexia	20
+1342	RG4808	regprecise	HTCS_Rgu-1	[Other]	Bacteroidaceae	33
+1343	RG4809	regprecise	NagR	ROK	Chloroflexia	23
+1344	RG4817	regprecise	HTCS_Rgu-2	[Other]	Bacteroidaceae	34
+1345	RG4820	regprecise	HTCS_Man-3	[Other]	Bacteroidaceae	37
+1346	RG4823	regprecise	TunR2	TunR	Desulfovibrionales	30
+1347	RG4960	regprecise	DVU0525	MarR	Desulfovibrionales	16
+1348	RG4962	regprecise	GlpR	DeoR	Desulfovibrionales	16
+1349	RG4967	regprecise	HTCS_Ara-2	[Other]	Bacteroidaceae	31
+1350	RG4968	regprecise	HTCS_Hep	[Other]	Bacteroidaceae	31
+1351	RG4969	regprecise	HTCS_Hya	[Other]	Bacteroidaceae	32
+1352	RG4972	regprecise	DVU0309	LysR	Desulfovibrionales	21
+1353	RG4974	regprecise	RhaR	AraC	Enterobacteriales	51
+1354	RG4975	regprecise	RhaS	AraC	Enterobacteriales	50
+1355	RG4976	regprecise	RhaR	DeoR	Rhizobiales	17
+1356	RG4977	regprecise	RhaR	DeoR	Rhodobacterales	17
+1357	RG4985	regprecise	NifA-1	Fis	Desulfovibrionales	16
+1358	RG4986	regprecise	DVU2894	Fis	Desulfovibrionales	16
+1359	RG4988	regprecise	DVU0151	Fis	Desulfovibrionales	14
+1360	RG4989	regprecise	DVU1419	Fis	Desulfovibrionales	18
+1361	RG4990	regprecise	DVU2114	Fis	Desulfovibrionales	19
+1362	RG4991	regprecise	DVU2394	Fis	Desulfovibrionales	17
+1363	RG4992	regprecise	DVU2934	Fis	Desulfovibrionales	15
+1364	RG4994	regprecise	DVU3305	Fis	Desulfovibrionales	17
+1365	RG4995	regprecise	KdpR	Fis	Desulfovibrionales	15
+1366	RG4996	regprecise	LfaR	LacI	Enterobacteriales	16
+1367	RG4997	regprecise	ZraR	Fis	Desulfovibrionales	17
+1368	RG5008	regprecise	AglR	LacI	Rhizobiales	20
+1369	RG5009	regprecise	AglR	LacI	Rhodobacterales	20
+1370	RG5010	regprecise	NanR	RpiR	Staphylococcaceae	17
+1371	RG5011	regprecise	ThuR	LacI	Rhizobiales	20
+1372	RG5013	regprecise	RL3595	LacI	Rhizobiales	20
+1373	RG5015	regprecise	PckR	LacI	Rhizobiales	20
+1374	RG5020	regprecise	AraC	AraC	Enterobacterales	38
+1375	RG5021	regprecise	NimR	MerR	Pasteurellales	21
+1376	RG5023	regprecise	HrcA	HrcA	Ralstonia	27
+1377	RG5032	regprecise	HrcA	HrcA	Xanthomonadales	27
+1378	RG5033	regprecise	HrcA	HrcA	Burkholderia	27
+1379	RG5034	regprecise	HrcA	HrcA	Comamonadaceae	27
+1380	RG5035	regprecise	HrcA	HrcA	Various betaproteobacteria	27
+1381	RG5036	regprecise	HrcA	HrcA	Rhizobiales	27
+1382	RG5037	regprecise	HrcA	HrcA	Rhodobacterales	27
+1383	RG5038	regprecise	HrcA	HrcA	Rhodospirillales	27
+1384	RG5039	regprecise	HrcA	HrcA	Sphingomonadales	27
+1385	RG5040	regprecise	HrcA	HrcA	Caulobacterales	27
+1386	RG5041	regprecise	HrcA	HrcA	Desulfuromonadales	27
+1387	RG5044	regprecise	GntR	LacI	Vibrionales	20
+1388	RG5045	regprecise	GntR	LacI	Pasteurellales	20
+1389	RG5046	regprecise	GntR	LacI	Alteromonadales	20
+1390	RG5047	regprecise	GntR	LacI	Psychromonadaceae/Aeromonadales	20
+1391	RG5048	regprecise	GntR	LacI	Oceanospirillales/Alteromonadales	20
+1392	RG5049	regprecise	GntR	LacI	Pseudomonadaceae	20
+1393	RG5052	regprecise	GntR	LacI	Burkholderia	20
+1394	RG5053	regprecise	GntR	LacI	Comamonadaceae	20
+1395	RG5055	regprecise	GntR	LacI	Rhizobiales	20
+1396	RG5057	regprecise	GntR	LacI	Rhodospirillales	20
+1397	RG5071	regprecise	MntR	DtxR	Xanthomonadales	20
+1398	RG5075	regprecise	MntR	DtxR	Rhizobiales	20
+1399	RG5076	regprecise	MntR	DtxR	Rhodobacterales	22
+1400	RG5077	regprecise	MntR	DtxR	Rhodospirillales	20
+1401	RG5081	regprecise	SocR	LacI	Rhizobiales	20
+1402	RG5083	regprecise	RbsR2	LacI	Rhizobiales	20
+1403	RG5086	regprecise	RhiR	LacI	Rhizobiales	20
+1404	RG5087	regprecise	PsiR	LacI	Rhizobiales	20
+1405	RG5088	regprecise	RbtR	LacI	Rhodobacterales	20
+1406	RG5089	regprecise	SMb20537	LacI	Rhizobiales	20
+1407	RG5090	regprecise	SMb20667	LacI	Rhizobiales	20
+1408	RG5091	regprecise	MocR	LacI	Rhizobiales	19
+1409	RG5092	regprecise	SmoR	LacI	Rhodobacterales	20
+1410	RG5093	regprecise	SmoR	LacI	Rhizobiales	20
+1411	RG5098	regprecise	NmlR	MerR	Pasteurellales	18
+1412	RG5105	regprecise	NmlR	MerR	Burkholderia	18
+1413	RG5116	regprecise	SoxR	MerR	Vibrionales	20
+1414	RG5121	regprecise	SoxR	MerR	Pseudomonadaceae	20
+1415	RG5123	regprecise	SoxR	MerR	Xanthomonadales	20
+1416	RG5124	regprecise	SoxR	MerR	Burkholderia	20
+1417	RG5125	regprecise	SoxR	MerR	Comamonadaceae	20
+1418	RG5127	regprecise	SoxR	MerR	Rhizobiales	20
+1419	RG5128	regprecise	SoxR	MerR	Rhodobacterales	20
+1420	RG5130	regprecise	SoxR	MerR	Sphingomonadales	20
+1421	RG5135	regprecise	ZntR	MerR	Vibrionales	22
+1422	RG5139	regprecise	ZntR	MerR	Oceanospirillales/Alteromonadales	22
+1423	RG5153	regprecise	CueR	MerR	Ralstonia	21
+1424	RG5154	regprecise	CueR	MerR	Vibrionales	21
+1425	RG5155	regprecise	CueR	MerR	Pasteurellales	21
+1426	RG5157	regprecise	CueR	MerR	Psychromonadaceae/Aeromonadales	21
+1427	RG5158	regprecise	CueR	MerR	Oceanospirillales/Alteromonadales	21
+1428	RG5159	regprecise	CueR	MerR	Pseudomonadaceae	21
+1429	RG5160	regprecise	CueR	MerR	Moraxellaceae	21
+1430	RG5162	regprecise	CueR	MerR	Burkholderia	21
+1431	RG5164	regprecise	CueR	MerR	Various betaproteobacteria	21
+1432	RG5165	regprecise	CueR	MerR	Rhizobiales	21
+1433	RG5166	regprecise	CueR	MerR	Rhodobacterales	21
+1434	RG5167	regprecise	CueR	MerR	Rhodospirillales	21
+1435	RG5169	regprecise	CueR	MerR	Caulobacterales	21
+1436	RG5171	regprecise	MerR	MerR	Shewanellaceae	22
+1437	RG5173	regprecise	MerR	MerR	Ralstonia	22
+1438	RG5177	regprecise	MerR	MerR	Alteromonadales	22
+1439	RG5179	regprecise	MerR	MerR	Oceanospirillales/Alteromonadales	22
+1440	RG5184	regprecise	MerR	MerR	Comamonadaceae	22
+1441	RG5189	regprecise	MerR	MerR	Sphingomonadales	22
+1442	RG5192	regprecise	CadR-PbrR	MerR	Shewanellaceae	21
+1443	RG5194	regprecise	CadR-PbrR	MerR	Ralstonia	21
+1444	RG5197	regprecise	CadR-PbrR	MerR	Pasteurellales	21
+1445	RG5198	regprecise	CadR-PbrR	MerR	Alteromonadales	21
+1446	RG5200	regprecise	CadR-PbrR	MerR	Oceanospirillales/Alteromonadales	21
+1447	RG5201	regprecise	CadR-PbrR	MerR	Pseudomonadaceae	21
+1448	RG5204	regprecise	CadR-PbrR	MerR	Burkholderia	21
+1449	RG5205	regprecise	CadR-PbrR	MerR	Comamonadaceae	21
+1450	RG5206	regprecise	CadR-PbrR	MerR	Various betaproteobacteria	21
+1451	RG5207	regprecise	CadR-PbrR	MerR	Rhizobiales	21
+1452	RG5208	regprecise	CadR-PbrR	MerR	Rhodobacterales	21
+1453	RG5210	regprecise	CadR-PbrR	MerR	Sphingomonadales	21
+1454	RG5213	regprecise	RpoN	Sigma54	Desulfovibrionales	19
+1455	RG5215	regprecise	DVU1063	Fis	Desulfovibrionales	13
+1456	RG5217	regprecise	DVUA0057	Fis	Desulfovibrionales	17
+1457	RG5219	regprecise	AduR	LacI	Rhizobiales	20
+1458	RG5220	regprecise	SMb21598	LacI	Rhizobiales	20
+1459	RG5221	regprecise	OG2516_10476	LacI	Rhodobacterales	20
+1460	RG5222	regprecise	SMb21706	LacI	Rhizobiales	20
+1461	RG5223	regprecise	SMc04260	LacI	Rhizobiales	20
+1462	RG5225	regprecise	RL4253	LacI	Rhizobiales	20
+1463	RG5226	regprecise	Jann_3936	LacI	Rhodobacterales	20
+1464	RG5228	regprecise	BglR2	LacI	Caulobacterales	20
+1465	RG5229	regprecise	GluR	LacI	Caulobacterales	20
+1466	RG5230	regprecise	SMb20717	LacI	Rhizobiales	20
+1467	RG5231	regprecise	Jann_1459	LacI	Rhodobacterales	20
+1468	RG5233	regprecise	CC1627	LacI	Caulobacterales	20
+1469	RG5239	regprecise	IolR	LacI	Micrococcineae	20
+1470	RG5240	regprecise	BglR	LacI	Listeriaceae	20
+1471	RG5242	regprecise	GalR	LacI	Alteromonadales	20
+1472	RG5243	regprecise	PFL_0254	LacI	Pseudomonadaceae	20
+1473	RG5245	regprecise	ScrR	LacI	Vibrionales	20
+1474	RG5246	regprecise	MalR	LacI	Alteromonadales	20
+1475	RG5248	regprecise	ScrR	LacI	Enterobacteriales	20
+1476	RG5249	regprecise	XCC2209	LacI	Xanthomonadales	20
+1477	RG5250	regprecise	MalR2	LacI	Thermoanaerobacterales	20
+1478	RG5251	regprecise	FruR2	LacI	Xanthomonadales	20
+1479	RG5258	regprecise	BglR	LacI	Alteromonadales	20
+1480	RG5260	regprecise	ScrR	LacI	Psychromonadaceae/Aeromonadales	20
+1481	RG5261	regprecise	GalR	LacI	Vibrionales	20
+1482	RG5263	regprecise	GalR	LacI	Pasteurellales	20
+1483	RG5268	regprecise	Rmet_4647	LacI	Ralstonia	20
+1484	RG5270	regprecise	MalR2	LacI	Clostridia-1	20
+1485	RG5272	regprecise	CelR	LacI	Streptomycetaceae	20
+1486	RG5273	regprecise	KojR	LacI	Thermoanaerobacterales	20
+1487	RG5274	regprecise	KojR	LacI	Bacillales	20
+1488	RG5275	regprecise	SCO4158	LacI	Streptomycetaceae	18
+1489	RG5276	regprecise	MalR2	LacI	Bacillales	20
+1490	RG5277	regprecise	TreR	LacI	Thermoanaerobacterales	20
+1491	RG5278	regprecise	ManR	LacI	Xanthomonadales	20
+1492	RG5279	regprecise	MalR1	LacI	Clostridia-1	20
+1493	RG5280	regprecise	SgaR	LacI	Vibrionales	20
+1494	RG5282	regprecise	STM1555	LacI	Enterobacteriales	20
+1495	RG5283	regprecise	ScrR	LacI	Bacillales	20
+1496	RG5284	regprecise	PtxS	LacI	Burkholderia	20
+1497	RG5285	regprecise	SAV1329	LacI	Streptomycetaceae	20
+1498	RG5286	regprecise	ManR	LacI	Streptomycetaceae	20
+1499	RG5287	regprecise	Bphy_4590	LacI	Burkholderia	20
+1500	RG5288	regprecise	RhaR	LacI	Streptomycetaceae	20
+1501	RG5289	regprecise	RbsR	LacI	Clostridia-1	20
+1502	RG5290	regprecise	IolR	LacI	Thermoanaerobacterales	20
+1503	RG5291	regprecise	BgaR	LacI	Streptomycetaceae	20
+1504	RG5292	regprecise	SCO2753	LacI	Streptomycetaceae	20
+1505	RG5293	regprecise	RhaR	LacI	Micrococcineae	20
+1506	RG5294	regprecise	Lmo0031	LacI	Listeriaceae	20
+1507	RG5295	regprecise	ScrR	LacI	Alteromonadales	20
+1508	RG5296	regprecise	SgaR	LacI	Psychromonadaceae/Aeromonadales	20
+1509	RG5297	regprecise	PtxS	LacI	Pseudomonadaceae	20
+1510	RG5298	regprecise	SuxR	LacI	Xanthomonadales	20
+1511	RG5302	regprecise	GalR	LacI	Desulfovibrionales	20
+1512	RG5303	regprecise	TalR	LacI	Enterobacteriales	20
+1513	RG5304	regprecise	MalI	LacI	Vibrionales	20
+1514	RG5306	regprecise	GntR2	LacI	Bacillales	20
+1515	RG5307	regprecise	Bamb_2736	LacI	Burkholderia	20
+1516	RG5309	regprecise	SCO5692	LacI	Streptomycetaceae	20
+1517	RG5311	regprecise	VF_1255	LacI	Vibrionales	22
+1518	RG5312	regprecise	YcjW	LacI	Enterobacteriales	20
+1519	RG5318	regprecise	UxuR	LacI	Bacillales	20
+1520	RG5319	regprecise	BH1250	LacI	Bacillales	20
+1521	RG5322	regprecise	ScrR2	LacI	Bacillales	20
+1522	RG5323	regprecise	FruR2	LacI	Ralstonia	20
+1523	RG5325	regprecise	TreR	LacI	Alteromonadales	20
+1524	RG5326	regprecise	DR2501	LacI	Deinococcus-Thermus	20
+1525	RG5327	regprecise	TreR	LacI	Psychromonadaceae/Aeromonadales	20
+1526	RG5329	regprecise	PtxS	LacI	Enterobacteriales	20
+1527	RG5330	regprecise	CelR	LacI	Vibrionales	20
+1528	RG5331	regprecise	RSc1790	LacI	Ralstonia	20
+1529	RG5333	regprecise	ScrR	LacI	Burkholderia	20
+1530	RG5338	regprecise	RafR	LacI	Enterobacteriales	20
+1531	RG5339	regprecise	BglR	LacI	Vibrionales	20
+1532	RG5341	regprecise	UriR	LacI	Listeriaceae	20
+1533	RG5342	regprecise	TreR	LacI	Vibrionales	20
+1534	RG5345	regprecise	BglR	LacI	Deinococcus-Thermus	20
+1535	RG5355	regprecise	SgaR	LacI	Enterobacteriales	20
+1536	RG5356	regprecise	BgaR	LacI	Micrococcineae	20
+1537	RG5357	regprecise	ExuR	LacI	Clostridia-1	20
+1538	RG5360	regprecise	AnsR	GntR/Others	Nocardiaceae	15
+1539	RG5365	regprecise	RhaR	LacI	Frankineae/Propionibacterineae/Pseudonocardiaceae	20
+1540	RG5366	regprecise	AAur_3503	LacI	Micrococcineae	20
+1541	RG5368	regprecise	AnsR	GntR/Others	Micrococcineae	15
+1542	RG5372	regprecise	Mce2R	GntR/Others	Nocardiaceae	21
+1543	RG5379	regprecise	Cg3261	GntR/Others	Corynebacteriaceae	30
+1544	RG5380	regprecise	AAur_2567	GntR/Others	Micrococcineae	30
+1545	RG5383	regprecise	ScrR	LacI	Pseudomonadaceae	20
+1546	RG5384	regprecise	CelR2	LacI	Vibrionales	20
+1547	RG5391	regprecise	XAC1548	GntR/Others	Xanthomonadales	26
+1548	RG5395	regprecise	THA_1503	GntR/Others	Thermotogales	24
+1549	RG5406	regprecise	YtrA	GntR/Others	Listeriaceae	27
+1550	RG5410	regprecise	MdxR	LacI	Listeriaceae	20
+1551	RG5411	regprecise	GabR	GntR/MocR	Burkholderia	32
+1552	RG5412	regprecise	AAur_4078	LacI	Micrococcineae	20
+1553	RG5421	regprecise	BioR	GntR/Others	Rhizobiales	10
+1554	RG5422	regprecise	BioR	GntR/Others	Rhodobacterales	10
+1555	RG5424	regprecise	Phr	ArsR	Thermococcales	23
+1556	RG5425	regprecise	Phr	ArsR	Archaeoglobales	23
+1557	RG5427	regprecise	Phr	ArsR	Methanobacteriales	23
+1558	RG5429	regprecise	Phr	ArsR	Methanomicrobiales	23
+1559	RG5432	regprecise	PdxR3	GntR/MocR	Nocardiaceae	24
+1560	RG5433	regprecise	PdxR3	GntR/MocR	Comamonadaceae	24
+1561	RG5440	regprecise	MalR	LacI	Xanthomonadales	20
+1562	RG5445	regprecise	RbsR	LacI	Thermoanaerobacterales	20
+1563	RG5446	regprecise	Sde_0506	LacI	Alteromonadales	20
+1564	RG5450	regprecise	IolR	LacI	Streptomycetaceae	20
+1565	RG5452	regprecise	BPSL1304	LacI	Burkholderia	20
+1566	RG5455	regprecise	RhaR	LacI	Nocardiaceae	20
+1567	RG5456	regprecise	FruR	LacI	Micrococcineae	20
+1568	RG5457	regprecise	MsmR	LacI	Micrococcineae	20
+1569	RG5461	regprecise	KojR	LacI	Chloroflexia	20
+1570	RG5466	regprecise	Caur_3866	LacI	Chloroflexia	20
+1571	RG5469	regprecise	MhpR	IclR	Chloroflexia	19
+1572	RG5473	regprecise	Caur_1779	LysR	Chloroflexia	19
+1573	RG5474	regprecise	AcrR	TetR	Chloroflexia	24
+1574	RG5475	regprecise	Caur_3401	TetR	Chloroflexia	20
+1575	RG5476	regprecise	SufR	[Other]	Chloroflexia	19
+1576	RG5477	regprecise	Caur_3587	ArsR	Chloroflexia	20
+1577	RG5479	regprecise	CelR	LacI	Micrococcineae	20
+1578	RG5480	regprecise	BglR2	LacI	Listeriaceae	20
+1579	RG5481	regprecise	BH1516	LacI	Bacillales	20
+1580	RG5482	regprecise	AlsR	LacI	Listeriaceae	20
+1581	RG5483	regprecise	YcjW	LacI	Listeriaceae	20
+1582	RG5484	regprecise	Arth_2426	LacI	Micrococcineae	20
+1583	RG5485	regprecise	GlxR	CRP	Corynebacteriaceae	16
+1584	RG5489	regprecise	PdxR2	GntR/MocR	Micrococcineae	16
+1585	RG5491	regprecise	QorR	HxlR	Enterobacteriales	21
+1586	RG5493	regprecise	CelR	GntR/Others	Enterobacteriales	20
+1587	RG5496	regprecise	VCA0673	LacI	Vibrionales	20
+1588	RG5497	regprecise	CscR	LacI	Enterobacteriales	20
+1589	RG5503	regprecise	VP2396	LacI	Vibrionales	20
+1590	RG5506	regprecise	Znr	ArsR	Corynebacteriaceae	18
+1591	RG5526	regprecise	GabR	[Other]	Corynebacteriaceae	23
+1592	RG5527	regprecise	Znr	ArsR	Mycobacteriaceae	18
+1593	RG5528	regprecise	CsoR	CsoR	Corynebacteriaceae	17
+1594	RG5539	regprecise	SMb20014	LacI	Rhizobiales	20
+1595	RG5545	regprecise	IolR	LacI	Rhizobiales	20
+1596	RG5546	regprecise	IolR	LacI	Rhodobacterales	20
+1597	RG5547	regprecise	Jann_1107	LacI	Rhodobacterales	20
+1598	RG5550	regprecise	AfrR	LacI	Rhizobiales	20
+1599	RG5563	regprecise	YhcF	GntR/Others	Listeriaceae	24
+1600	RG5565	regprecise	SPO0590	LacI	Rhodobacterales	20
+1601	RG5566	regprecise	NGR_b22600	LacI	Rhizobiales	20
+1602	RG5567	regprecise	AZL_a08610	LacI	Rhodospirillales	20
+1603	RG5568	regprecise	CceR (GapR)	LacI	Rhodobacterales	20
+1604	RG5569	regprecise	HisR	TrpR	Clostridia-3	20
+1605	RG5570	regprecise	Chvl	OmpR	Rhodobacterales	24
+1606	RG5572	regprecise	IdnR	LacI	Rhizobiales	20
+1607	RG5574	regprecise	MalR	LacI	Sphingomonadales	20
+1608	RG5575	regprecise	BglR	LacI	Sphingomonadales	20
+1609	RG5576	regprecise	Nfa20840	GntR/Others	Nocardiaceae	18
+1610	RG5578	regprecise	Arth_3541	GntR/Others	Micrococcineae	18
+1611	RG5587	regprecise	VSAK1_25095	GntR/Others	Vibrionales	10
+1612	RG5589	regprecise	ROP_32700	GntR/Others	Nocardiaceae	15
+1613	RG5593	regprecise	AAur_0050	GntR/Others	Micrococcineae	15
+1614	RG5594	regprecise	Aave_3515	GntR/Others	Comamonadaceae	15
+1615	RG5595	regprecise	XylR	LacI	Rhizobiales	20
+1616	RG5606	regprecise	BglR3	LacI	Caulobacterales	20
+1617	RG5609	regprecise	pRL90265	LacI	Rhizobiales	20
+1618	RG5611	regprecise	BenR	LuxR	Corynebacteriaceae	18
+1619	RG5615	regprecise	LldR	GntR/Others	Micrococcineae	15
+1620	RG5616	regprecise	LldR	GntR/Others	Nocardiaceae	15
+1621	RG5620	regprecise	GmuR	GntR/Others	Listeriaceae	16
+1622	RG5622	regprecise	PhnF	GntR/Others	Nocardiaceae	16
+1623	RG5625	regprecise	TreR	GntR/Others	Listeriaceae	18
+1624	RG5628	regprecise	TreR	GntR/Others	Enterococcaceae	18
+1625	RG5637	regprecise	Atu5239	LacI	Rhizobiales	20
+1626	RG5638	regprecise	Mll1683	LacI	Rhizobiales	20
+1627	RG5639	regprecise	SPOA0336	LacI	Rhodobacterales	20
+1628	RG5645	regprecise	PrpR	GntR/Others	Alcaligenaceae	12
+1629	RG5666	regprecise	Daci_3836	GntR/Others	Comamonadaceae	14
+1630	RG5667	regprecise	BAV2585	GntR/Others	Alcaligenaceae	14
+1631	RG5676	regprecise	PhnR2	GntR/Others	Comamonadaceae	12
+1632	RG5677	regprecise	IolR	GntR/Others	Nocardiaceae	18
+1633	RG5681	regprecise	IolR	GntR/Others	Micrococcineae	18
+1634	RG5683	regprecise	IolR	GntR/Others	Corynebacteriaceae	18
+1635	RG5684	regprecise	LtbR	IclR	Corynebacteriaceae	19
+1636	RG5685	regprecise	Cg1143	GntR/Others	Corynebacteriaceae	17
+1637	RG5692	regprecise	UreR	GntR/Others	Comamonadaceae	15
+1638	RG5694	regprecise	Cg2544	GntR/Others	Corynebacteriaceae	16
+1639	RG5695	regprecise	NanR	GntR/Others	Corynebacteriaceae	21
+1640	RG5706	regprecise	GlcC	GntR/Others	Alcaligenaceae	15
+1641	RG5707	regprecise	Jk1423	TetR	Corynebacteriaceae	21
+1642	RG5708	regprecise	SsuR	ROK	Corynebacteriaceae	17
+1643	RG5712	regprecise	CueR	MerR	Comamonadaceae	21
+1644	RG5721	regprecise	CcpB	LacI	Listeriaceae	20
+1645	RG5736	regprecise	ManR2	LacI	Alteromonadales	20
+1646	RG5739	regprecise	ManR1	LacI	Alteromonadales	20
+1647	RG5741	regprecise	ManR	LacI	Psychromonadaceae/Aeromonadales	20
+1648	RG5742	regprecise	Csal_3216	LacI	Oceanospirillales/Alteromonadales	20
+1649	RG5751	regprecise	VVA0138	LacI	Vibrionales	20
+1650	RG5752	regprecise	ScrR	LacI	Oceanospirillales/Alteromonadales	20
+1651	RG5753	regprecise	ScrR	LacI	Sphingomonadales	20
+1652	RG5756	regprecise	XltR	LacI	Oceanospirillales/Alteromonadales	20
+1653	RG5758	regprecise	SgaR	LacI	Pasteurellales	20
+1654	RG5759	regprecise	EbgR	LacI	Vibrionales	21
+1655	RG5760	regprecise	EbgR	LacI	Psychromonadaceae/Aeromonadales	21
+1656	RG5763	regprecise	MetJ	MetJ	Vibrionales	16
+1657	RG5764	regprecise	MetJ	MetJ	Pasteurellales	16
+1658	RG5765	regprecise	MetJ	MetJ	Alteromonadales	16
+1659	RG5766	regprecise	MetJ	MetJ	Psychromonadaceae/Aeromonadales	16
+1660	RG5781	regprecise	MetR	LysR	Ralstonia	17
+1661	RG5782	regprecise	MetR	LysR	Vibrionales	15
+1662	RG5783	regprecise	MetR	LysR	Pasteurellales	15
+1663	RG5784	regprecise	MetR	LysR	Alteromonadales	17
+1664	RG5785	regprecise	MetR	LysR	Psychromonadaceae/Aeromonadales	17
+1665	RG5786	regprecise	MetR	LysR	Oceanospirillales/Alteromonadales	15
+1666	RG5787	regprecise	MetR	LysR	Pseudomonadaceae	17
+1667	RG5789	regprecise	MetR	LysR	Xanthomonadales	15
+1668	RG5790	regprecise	MetR	LysR	Burkholderia	15
+1669	RG5791	regprecise	MetR	LysR	Comamonadaceae	15
+1670	RG5792	regprecise	MetR	LysR	Various betaproteobacteria	15
+1671	RG5794	regprecise	MetR	LysR	Rhodobacterales	15
+1672	RG5800	regprecise	FruR2	LacI	Comamonadaceae	20
+1673	RG5801	regprecise	FruR2	LacI	Various betaproteobacteria	20
+1674	RG5802	regprecise	LldR	GntR/Others	Frankineae/Propionibacterineae/Pseudonocardiaceae	15
+1675	RG5803	regprecise	LldR	GntR/Others	Streptomycetaceae	15
+1676	RG5804	regprecise	LldR	GntR/Others	Mycobacteriaceae	15
+1677	RG5805	regprecise	IolR	GntR/Others	Mycobacteriaceae	18
+1678	RG5806	regprecise	IolR	GntR/Others	Frankineae/Propionibacterineae/Pseudonocardiaceae	18
+1679	RG5807	regprecise	IolR	GntR/Others	Streptomycetaceae	18
+1680	RG5808	regprecise	PhnF	GntR/Others	Mycobacteriaceae	16
+1681	RG5813	regprecise	SCO1410	GntR/Others	Streptomycetaceae	15
+1682	RG5814	regprecise	Amir_6997	GntR/Others	Frankineae/Propionibacterineae/Pseudonocardiaceae	15
+1683	RG5815	regprecise	H16_B1761	GntR/Others	Ralstonia	15
+1684	RG5816	regprecise	PSPTO5027	GntR/Others	Pseudomonadaceae	15
+1685	RG5817	regprecise	PMI3555	GntR/Others	Enterobacteriales	15
+1686	RG5820	regprecise	PdxR3	GntR/MocR	Streptomycetaceae	24
+1687	RG5823	regprecise	SACE_5794	GntR/Others	Frankineae/Propionibacterineae/Pseudonocardiaceae	18
+1688	RG5828	regprecise	AnsR	GntR/Others	Rhizobiales	15
+1689	RG5830	regprecise	BH0651	GntR/Others	Bacillales	39
+1690	RG5831	regprecise	RUMGNA_00848	GntR/Others	Clostridia-3	39
+1691	RG5832	regprecise	Csac_2497	GntR/Others	Thermoanaerobacterales	39
+1692	RG5833	regprecise	Cbei_4343	GntR/Others	Clostridia-1	39
+1693	RG5834	regprecise	CD0652	GntR/Others	Clostridia-2	39
+1694	RG5835	regprecise	HpxS	GntR/Others	Enterobacteriales	14
+1695	RG5837	regprecise	HpxS	GntR/Others	Oceanospirillales/Alteromonadales	14
+1696	RG5838	regprecise	LndYR	GntR/Others	Streptomycetaceae	24
+1697	RG5839	regprecise	LndYR	GntR/Others	Frankineae/Propionibacterineae/Pseudonocardiaceae	24
+1698	RG5840	regprecise	Bxe_A4089	GntR/Others	Burkholderia	12
+1699	RG5842	regprecise	TreR	GntR/Others	Clostridia-1	18
+1700	RG5843	regprecise	TreR	GntR/Others	Clostridia-2	18
+1701	RG5844	regprecise	TreR	GntR/Others	Clostridia-3	18
+1702	RG5845	regprecise	TreR	GntR/Others	Pseudomonadaceae	18
+1703	RG5848	regprecise	YtrA	GntR/Others	Clostridia-1	27
+1704	RG5849	regprecise	YtrA	GntR/Others	Clostridia-3	27
+1705	RG5850	regprecise	UreR	GntR/Others	Pseudomonadaceae	15
+1706	RG5851	regprecise	UreR	GntR/Others	Burkholderia	15
+1707	RG5852	regprecise	UreR	GntR/Others	Ralstonia	15
+1708	RG5853	regprecise	UraR	GntR/Others	Burkholderia	12
+1709	RG5854	regprecise	UraR	GntR/Others	Ralstonia	12
+1710	RG5856	regprecise	YhcF2	GntR/Others	Bacillales	22
+1711	RG5857	regprecise	YhcF	GntR/Others	Lactobacillaceae	24
+1712	RG5859	regprecise	YhcF	GntR/Others	Clostridia-1	22
+1713	RG5860	regprecise	YhcF	GntR/Others	Clostridia-3	24
+1714	RG5864	regprecise	VIBHAR_07005	GntR/Others	Vibrionales	26
+1715	RG5865	regprecise	ELI_12480	GntR/Others	Sphingomonadales	26
+1716	RG5866	regprecise	PdxW	GntR/MocR	Mycobacteriaceae	16
+1717	RG5867	regprecise	PdxW	GntR/MocR	Streptomycetaceae	16
+1718	RG5868	regprecise	Csac_2166	GntR/Others	Thermoanaerobacterales	24
+1719	RG5869	regprecise	Atu2740	GntR/Others	Rhizobiales	13
+1720	RG5870	regprecise	BC2903	GntR/Others	Bacillales	30
+1721	RG5877	regprecise	Bamb_1959	GntR/Others	Burkholderia	16
+1722	RG5879	regprecise	PA1520	GntR/Others	Pseudomonadaceae	10
+1723	RG5880	regprecise	Nur	FUR	Streptomycetaceae	19
+1724	RG5885	regprecise	SdaR	GntR/Others	Ralstonia	17
+1725	RG5886	regprecise	SdaR	GntR/Others	Pseudomonadaceae	17
+1726	RG5887	regprecise	PhnR1	GntR/Others	Psychromonadaceae/Aeromonadales	20
+1727	RG5888	regprecise	PhnR2	GntR/Others	Burkholderia	12
+1728	RG5889	regprecise	PhnR2	GntR/Others	Ralstonia	12
+1729	RG5895	regprecise	NrtR	NrtR	Clostridia-1	21
+1730	RG5898	regprecise	NrdR	NrdR	Streptomycetaceae	16
+1731	RG5900	regprecise	NrdR	NrdR	Micrococcineae	16
+1732	RG5902	regprecise	NrdR	NrdR	Nocardiaceae	16
+1733	RG5903	regprecise	NrdR	NrdR	Frankineae/Propionibacterineae/Pseudonocardiaceae	16
+1734	RG5905	regprecise	NrdR	NrdR	Listeriaceae	16
+1735	RG5906	regprecise	NrdR	NrdR	Alcaligenaceae	16
+1736	RG5907	regprecise	ModE	ModE	Chlorobiales	30
+1737	RG5909	regprecise	NrtR	NrtR	Frankineae/Propionibacterineae/Pseudonocardiaceae	21
+1738	RG5910	regprecise	NrtR	NrtR	Micrococcineae	21
+1739	RG5911	regprecise	NrtR	NrtR	Streptomycetaceae	21
+1740	RG5914	regprecise	NrtR	NrtR	Sphingobacteria	21
+1741	RG5915	regprecise	ModE	ModE	Rhodospirillales	27
+1742	RG5917	regprecise	NikR	NikR	Chlorobiales	27
+1743	RG5926	regprecise	BirA	BirA	Clostridia-1	31
+1744	RG5927	regprecise	BirA	BirA	Clostridia-2	32
+1745	RG5928	regprecise	BirA	BirA	Thermoanaerobacterales	31
+1746	RG5929	regprecise	BirA	BirA	Clostridia-3	31
+1747	RG5930	regprecise	BirA	BirA	Chlorobiales	32
+1748	RG5937	regprecise	TauR	GntR/MocR	Nocardiaceae	34
+1749	RG5961	regprecise	PdxW	GntR/MocR	Burkholderia	44
+1750	RG5962	regprecise	Spro_3719	GntR/MocR	Enterobacteriales	47
+1751	RG5964	regprecise	EutR	GntR/MocR	Burkholderia	16
+1752	RG5965	regprecise	VSAL_I1306	GntR/MocR	Vibrionales	16
+1753	RG5969	regprecise	Tola_2572	GntR/MocR	Psychromonadaceae/Aeromonadales	16
+1754	RG5973	regprecise	SMb20039	GntR/MocR	Rhizobiales	43
+1755	RG5983	regprecise	FdsR	ModE	Ralstonia	20
+1756	RG5984	regprecise	ModE3	ModE	Ralstonia	20
+1757	RG5985	regprecise	FdsR	ModE	Comamonadaceae	20
+1758	RG5986	regprecise	FdsR	ModE	Alcaligenaceae	20
+1759	RG5988	regprecise	FdsR	ModE	Oceanospirillales/Alteromonadales	20
+1760	RG5989	regprecise	FdsR	ModE	Pseudomonadaceae	20
+1761	RG5990	regprecise	FdsR	ModE	Burkholderia	21
+1762	RG5991	regprecise	ModE3	ModE	Comamonadaceae	20
+1763	RG5992	regprecise	ModE3	ModE	Alcaligenaceae	20
+1764	RG5995	regprecise	ModE2	ModE	Burkholderia	24
+1765	RG5997	regprecise	Bamb_4265	GntR/MocR	Burkholderia	43
+1766	RG5998	regprecise	ModE2	ModE	Comamonadaceae	28
+1767	RG5999	regprecise	ModE2	ModE	Various betaproteobacteria	26
+1768	RG6003	regprecise	HrcA	HrcA	Frankineae/Propionibacterineae/Pseudonocardiaceae	27
+1769	RG6004	regprecise	HrcA	HrcA	Alcaligenaceae	27
+1770	RG6005	regprecise	HrcA	HrcA	Micrococcineae	27
+1771	RG6006	regprecise	HrcA	HrcA	Mycobacteriaceae	27
+1772	RG6007	regprecise	HrcA	HrcA	Nocardiaceae	27
+1773	RG6008	regprecise	HrcA	HrcA	Streptomycetaceae	27
+1774	RG6009	regprecise	HrcA	HrcA	Chlorobiales	27
+1775	RG6010	regprecise	HrcA	HrcA	Deinococcus-Thermus	27
+1776	RG6011	regprecise	HrcA	HrcA	Listeriaceae	27
+1777	RG6012	regprecise	HrcA	HrcA	Thermoanaerobacterales	27
+1778	RG6013	regprecise	HrcA	HrcA	Chlamydiales	27
+1779	RG6014	regprecise	LexA	LexA	Alcaligenaceae	20
+1780	RG6015	regprecise	LexA	LexA	Listeriaceae	24
+1781	RG6016	regprecise	LexA	LexA	Planctomycetes	17
+1782	RG6018	regprecise	LexA	LexA	Frankineae/Propionibacterineae/Pseudonocardiaceae	16
+1783	RG6019	regprecise	LexA	LexA	Nocardiaceae	16
+1784	RG6020	regprecise	LexA	LexA	Mycobacteriaceae	16
+1785	RG6021	regprecise	LexA	LexA	Streptomycetaceae	16
+1786	RG6033	regprecise	Bamb_6386	GntR/MocR	Burkholderia	34
+1787	RG6040	regprecise	LexA	LexA	Micrococcineae	16
+1788	RG6042	regprecise	ArgR	ArgR	Francisellaceae	18
+1789	RG6044	regprecise	ArgR	ArgR	Frankineae/Propionibacterineae/Pseudonocardiaceae	16
+1790	RG6045	regprecise	ArgR	ArgR	Micrococcineae	16
+1791	RG6046	regprecise	ArgR	ArgR	Mycobacteriaceae	18
+1792	RG6047	regprecise	ArgR	ArgR	Nocardiaceae	18
+1793	RG6048	regprecise	ArgR	ArgR	Streptomycetaceae	20
+1794	RG6049	regprecise	ArgR	ArgR	Chlorobiales	14
+1795	RG6050	regprecise	ArgR	ArgR	Deinococcus-Thermus	14
+1796	RG6052	regprecise	ArgR	ArgR	Thermoanaerobacterales	16
+1797	RG6054	regprecise	ArgR	ArgR	Listeriaceae	16
+1798	RG6058	regprecise	Bamb_5788	GntR/MocR	Burkholderia	47
+1799	RG6063	regprecise	TauR	GntR/MocR	Burkholderia	33
+1800	RG6064	regprecise	TauR	GntR/MocR	Ralstonia	33
+1801	RG6067	regprecise	GabR	GntR/MocR	Ralstonia	35
+1802	RG6068	regprecise	GabR	GntR/MocR	Alcaligenaceae	32
+1803	RG6069	regprecise	GabR	GntR/MocR	Enterobacteriales	35
+1804	RG6079	regprecise	PdxW2	GntR/MocR	Burkholderia	35
+1805	RG6081	regprecise	H16_A0963	GntR/MocR	Ralstonia	38
+1806	RG6082	regprecise	BPSS1200	GntR/MocR	Burkholderia	38
+1807	RG6089	regprecise	PdxQ	GntR/MocR	Micrococcineae	37
+1808	RG6090	regprecise	PdxQ	GntR/MocR	Mycobacteriaceae	37
+1809	RG6093	regprecise	PdxQ	GntR/MocR	Streptomycetaceae	37
+1810	RG6094	regprecise	SO2282	GntR/MocR	Shewanellaceae	18
+1811	RG6095	regprecise	VSAK1_09283	GntR/MocR	Vibrionales	18
+1812	RG6098	regprecise	Csal_1101	GntR/MocR	Oceanospirillales/Alteromonadales	18
+1813	RG6099	regprecise	PdxQ2	GntR/MocR	Caulobacterales	23
+1814	RG6100	regprecise	PdxQ2	GntR/MocR	Sphingomonadales	22
+1815	RG6102	regprecise	PdxQ2	GntR/MocR	Rhodospirillales	22
+1816	RG6105	regprecise	ArgR	ArgR	Chlamydiales	18
+1817	RG6108	regprecise	LAR_1807	GntR/MocR	Lactobacillaceae	21
+1818	RG6109	regprecise	CBY_0654	GntR/MocR	Clostridia-1	21
+1819	RG6113	regprecise	Mll0059	GntR/MocR	Rhizobiales	19
+1820	RG6114	regprecise	YjiR	GntR/MocR	Enterobacteriales	46
+1821	RG6115	regprecise	Daci_0595	GntR/MocR	Comamonadaceae	61
+1822	RG6116	regprecise	H16_A2655	GntR/MocR	Ralstonia	44
+1823	RG6124	regprecise	YdcR	GntR/MocR	Burkholderia	39
+1824	RG6125	regprecise	YdcR	GntR/MocR	Comamonadaceae	39
+1825	RG6126	regprecise	YdcR	GntR/MocR	Various betaproteobacteria	39
+1826	RG6127	regprecise	YdcR	GntR/MocR	Enterobacteriales	39
+1827	RG6128	regprecise	YdcR	GntR/MocR	Pseudomonadaceae	39
+1828	RG6129	regprecise	YdcR	GntR/MocR	Vibrionales	39
+1829	RG6130	regprecise	YdcR	GntR/MocR	Shewanellaceae	39
+1830	RG6131	regprecise	YdcR	GntR/MocR	Ralstonia	39
+1831	RG6139	regprecise	EF0117	GntR/MocR	Enterococcaceae	21
+1832	RG6142	regprecise	RhaS	AraC	Psychromonadaceae/Aeromonadales	51
+1833	RG6146	regprecise	YhcF	GntR/Others	Clostridia-2	24
+1834	RG6149	regprecise	Bpet4349	GntR/Others	Alcaligenaceae	16
+1835	RG6150	regprecise	Rmet_5631	GntR/Others	Ralstonia	16
+1836	RG6151	regprecise	Bll4368	GntR/Others	Rhizobiales	16
+1837	RG6152	regprecise	Bphy_4252	GntR/Others	Burkholderia	16
+1838	RG6153	regprecise	Pden_3389	GntR/Others	Rhodobacterales	16
+1839	RG6154	regprecise	Daci_3053	GntR/Others	Comamonadaceae	16
+1840	RG6155	regprecise	Csal_3199	GntR/Others	Oceanospirillales/Alteromonadales	16
+1841	RG6156	regprecise	HutC	GntR/Others	Nocardiaceae	20
+1842	RG6158	regprecise	GabR2	GntR/MocR	Comamonadaceae	47
+1843	RG6160	regprecise	YdfD/YisV	GntR/MocR	Staphylococcaceae	30
+1844	RG6165	regprecise	PdxR2	GntR/MocR	Frankineae/Propionibacterineae/Pseudonocardiaceae	41
+1845	RG6166	regprecise	PdxR2	GntR/MocR	Nocardiaceae	41
+1846	RG6169	regprecise	SCO4836	GntR/MocR	Streptomycetaceae	36
+1847	RG6170	regprecise	MSMEG_4140	GntR/MocR	Mycobacteriaceae	36
+1848	RG6171	regprecise	Nfa21130	GntR/MocR	Nocardiaceae	36
+1849	RG6175	regprecise	Cpin_4810	GntR/MocR	Sphingobacteria	39
+1850	RG6179	regprecise	Bamb_3558	GntR/MocR	Burkholderia	73
+1851	RG6180	regprecise	GcvR	TyrR	Pseudomonadales	20
+1852	RG6182	regprecise	HmgR	IclR	Pseudomonadaceae	19
+1853	RG6183	regprecise	TyrR2	TyrR	Alteromonadales	20
+1854	RG6184	regprecise	MdeR	TyrR	Alteromonadales	20
+1855	RG6186	regprecise	HmgS	MarR	Alteromonadales	16
+1856	RG6187	regprecise	TyrR	TyrR	Vibrionales	20
+1857	RG6189	regprecise	HisR	TrpR	Thermoanaerobacterales	20
+1858	RG6190	regprecise	HisR	TrpR	Listeriaceae	20
+1859	RG6191	regprecise	HisR	TrpR	Xanthomonadales	20
+1860	RG6203	regprecise	PdxW	GntR/MocR	Rhizobiales	35
+1861	RG6208	regprecise	PdxR	GntR/MocR	Staphylococcaceae	35
+1862	RG6216	regprecise	VEA_000881	GntR/MocR	Vibrionales	44
+1863	RG6222	regprecise	Fjoh_4822	GntR/MocR	Flavobacteria	44
+1864	RG6233	regprecise	PdxR2	GntR/MocR	Enterobacteriales	16
+1865	RG6239	regprecise	OapR	GntR/MocR	Ralstonia	48
+1866	RG6244	regprecise	YdcR	GntR/MocR	Alcaligenaceae	40
+1867	RG6245	regprecise	BPSS0970	GntR/MocR	Burkholderia	40
+1868	RG6246	regprecise	H16_B1468	GntR/MocR	Ralstonia	40
+1869	RG6258	regprecise	Gbem_0803	GntR/MocR	Desulfuromonadales	36
+1870	RG6259	regprecise	Aave_3430	GntR/MocR	Comamonadaceae	73
+1871	RG6260	regprecise	H16_A0970	GntR/MocR	Ralstonia	73
+1872	RG6261	regprecise	BAV2320	GntR/MocR	Alcaligenaceae	73
+1873	RG6272	regprecise	RALTA_A0216	GntR/MocR	Ralstonia	55
+1874	RG6281	regprecise	Sbal_3352	GntR/MocR	Shewanellaceae	41
+1875	RG6283	regprecise	PdxW	GntR/MocR	Vibrionales	47
+1876	RG6287	regprecise	SPOA0164	GntR/MocR	Rhodobacterales	35
+1877	RG6290	regprecise	SPOA0379	GntR/MocR	Rhodobacterales	41
+1878	RG6312	regprecise	PdxR	GntR/MocR	Clostridia-3	38
+1879	RG6313	regprecise	CblR		Thermococcales	17
+1880	RG6316	regprecise	CblR		Halobacteriales	20
+1881	RG6317	regprecise	UxuR2	GntR/Others	Burkholderia	19
+1882	RG6318	regprecise	UxuR2	GntR/Others	Comamonadaceae	19
+1883	RG6319	regprecise	UxuR2	GntR/Others	Alcaligenaceae	19
+1884	RG6320	regprecise	UxuR2	GntR/Others	Rhizobiales	19
+1885	RG6321	regprecise	UxuR3	GntR/Others	Burkholderia	18
+1886	RG6322	regprecise	UxuR3	GntR/Others	Comamonadaceae	18
+1887	RG6324	regprecise	ThiR	[Other]	Halobacteriales	17
+1888	RG6325	regprecise	Bcep18194_B0628	GntR/Others	Burkholderia	15
+1889	RG6326	regprecise	Spro_0637	GntR/Others	Enterobacteriales	15
+1890	RG6327	regprecise	Csal_1739	GntR/Others	Oceanospirillales/Alteromonadales	15
+1891	RG6328	regprecise	Gdia_0881	GntR/Others	Rhodospirillales	15
+1892	RG6330	regprecise	MlnR	GntR/Others	Xanthomonadales	19
+1893	RG6332	regprecise	MlnR	GntR/Others	Various betaproteobacteria	20
+1894	RG6334	regprecise	MlnR	GntR/Others	Ralstonia	20
+1895	RG6335	regprecise	MdcY	GntR/Others	Rhizobiales	10
+1896	RG6337	regprecise	MdcY	GntR/Others	Various betaproteobacteria	10
+1897	RG6339	regprecise	MdcY	GntR/Others	Rhodospirillales	10
+1898	RG6340	regprecise	MdcY	GntR/Others	Comamonadaceae	10
+1899	RG6344	regprecise	UreR	GntR/Others	Moraxellaceae	15
+1900	RG6345	regprecise	YjiR	GntR/MocR	Pseudomonadaceae	46
+1901	RG6346	regprecise	YjiR	GntR/MocR	Oceanospirillales/Alteromonadales	46
+1902	RG6347	regprecise	YjiR2	GntR/MocR	Oceanospirillales/Alteromonadales	46
+1903	RG6351	regprecise	YrdX3	GntR/MocR	Ralstonia	45
+1904	RG6355	regprecise	TsrR	[Other]	Shewanellaceae	22
+1905	RG6356	regprecise	PdxR	GntR/MocR	Thermoanaerobacterales	95
+1906	RG6363	regprecise	YhdI/YdeL	GntR/MocR	Bacillales	35
+1907	RG6364	regprecise	PdxR	GntR/MocR	Listeriaceae	28
+1908	RG6365	regprecise	PdxR	GntR/MocR	Lactobacillaceae	28
+1909	RG6366	regprecise	PdxR	GntR/MocR	Enterococcaceae	28
+1910	RG6376	regprecise	GabR	GntR/MocR	Bacillales	30
+1911	RG6378	regprecise	TauR	GntR/MocR	Rhodobacterales	32
+1912	RG6380	regprecise	SPOA0375	GntR/Others	Rhodobacterales	32
+1913	RG6381	regprecise	TauR	GntR/MocR	Comamonadaceae	33
+1914	RG6384	regprecise	SdhR	GntR/Others	Burkholderia	26
+1915	RG6385	regprecise	SdhR	GntR/Others	Ralstonia	26
+1916	RG6386	regprecise	SdhR	GntR/Others	Alcaligenaceae	26
+1917	RG6387	regprecise	SdhR	GntR/Others	Comamonadaceae	26
+1918	RG6388	regprecise	SdhR	GntR/Others	Various betaproteobacteria	26
+1919	RG6389	regprecise	SdhR2	GntR/Others	Desulfuromonadales	17
+1920	RG6390	regprecise	SamR	ArsR	Xanthomonadales	24
+1921	RG6396	regprecise	Rex	Rex	Frankineae/Propionibacterineae/Pseudonocardiaceae	18
+1922	RG6397	regprecise	AmtR	TetR	Micrococcineae	24
+1923	RG6400	regprecise	SdaR	SdaR	Clostridia-1	20
+1924	RG6403	regprecise	MntR	DtxR	Clostridia-1	22
+1925	RG6406	regprecise	AmtR	TetR	Nocardiaceae	24
+1926	RG6407	regprecise	QorR	HxlR	Frankineae/Propionibacterineae/Pseudonocardiaceae	21
+1927	RG6409	regprecise	PaaR	TetR	Frankineae/Propionibacterineae/Pseudonocardiaceae	22
+1928	RG6411	regprecise	SutR	ArsR	Mycobacteriaceae	18
+1929	RG6412	regprecise	PaaR	TetR	Nocardiaceae	22
+1930	RG6415	regprecise	QorR	HxlR	Micrococcineae	21
+1931	RG6416	regprecise	BioQ	TetR	Micrococcineae	17
+1932	RG6417	regprecise	Zur	FUR	Nocardiaceae	21
+1933	RG6419	regprecise	CsoR	CsoR	Micrococcineae	17
+1934	RG6422	regprecise	CsoR	CsoR	Nocardiaceae	17
+1935	RG6423	regprecise	AmtR	TetR	Mycobacteriaceae	24
+1936	RG6426	regprecise	MetR	LysR	Alcaligenaceae	15
+1937	RG6427	regprecise	QorR	HxlR	Streptomycetaceae	21
+1938	RG6431	regprecise	GguR	GntR/Others	Comamonadaceae	17
+1939	RG6433	regprecise	GguR	GntR/Others	Burkholderia	17
+1940	RG6434	regprecise	GguR	GntR/Others	Ralstonia	17
+1941	RG6435	regprecise	GudR	LacI	Comamonadaceae	20
+1942	RG6437	regprecise	ArsR	ArsR	Mycobacteriaceae	18
+1943	RG6438	regprecise	Zur	FUR	Listeriaceae	23
+1944	RG6439	regprecise	Fur	FUR	Listeriaceae	19
+1945	RG6440	regprecise	DtxR	DtxR	Clostridia-3	18
+1946	RG6442	regprecise	Fur	FUR	Enterococcaceae	19
+1947	RG6443	regprecise	Rex	Rex	Micrococcineae	18
+1948	RG6444	regprecise	SdaR	SdaR	Vibrionales	20
+1949	RG6445	regprecise	MntR	DtxR	Micrococcineae	16
+1950	RG6446	regprecise	CzrA	ArsR	Clostridia-3	22
+1951	RG6449	regprecise	AcnR	TetR	Nocardiaceae	16
+1952	RG6450	regprecise	HcpR	CRP	Desulfuromonadales	18
+1953	RG6453	regprecise	Zur	FUR	Micrococcineae	21
+1954	RG6454	regprecise	BioQ	TetR	Mycobacteriaceae	17
+1955	RG6455	regprecise	MntR	DtxR	Mycobacteriaceae	20
+1956	RG6456	regprecise	ArsR	ArsR	Nocardiaceae	20
+1957	RG6458	regprecise	Fur	FUR	Clostridia-3	19
+1958	RG6459	regprecise	Fur	FUR	Clostridia-2	19
+1959	RG6461	regprecise	HcpR	CRP	Thermoanaerobacterales	16
+1960	RG6463	regprecise	QorR	HxlR	Nocardiaceae	21
+1961	RG6464	regprecise	LtbR	IclR	Frankineae/Propionibacterineae/Pseudonocardiaceae	19
+1962	RG6466	regprecise	Rex	Rex	Nocardiaceae	18
+1963	RG6468	regprecise	BioQ	TetR	Frankineae/Propionibacterineae/Pseudonocardiaceae	17
+1964	RG6469	regprecise	Zur	FUR	Streptomycetaceae	21
+1965	RG6474	regprecise	BioQ	TetR	Nocardiaceae	17
+1966	RG6476	regprecise	Fur	FUR	Thermoanaerobacterales	19
+1967	RG6477	regprecise	HcpR	CRP	Clostridia-1	18
+1968	RG6482	regprecise	MntR	DtxR	Listeriaceae	22
+1969	RG6483	regprecise	LtbR	IclR	Nocardiaceae	19
+1970	RG6484	regprecise	Zur	FUR	Frankineae/Propionibacterineae/Pseudonocardiaceae	19
+1971	RG6485	regprecise	PaaR	TetR	Streptomycetaceae	22
+1972	RG6489	regprecise	SutR	ArsR	Micrococcineae	16
+1973	RG6490	regprecise	LtbR	IclR	Micrococcineae	19
+1974	RG6491	regprecise	MntR	DtxR	Nocardiaceae	22
+1975	RG6492	regprecise	AmtR	TetR	Streptomycetaceae	24
+1976	RG6493	regprecise	GguR	GntR/Others	Pseudomonadaceae	17
+1977	RG6494	regprecise	LtbR	IclR	Mycobacteriaceae	19
+1978	RG6495	regprecise	AcnR	TetR	Frankineae/Propionibacterineae/Pseudonocardiaceae	16
+1979	RG6496	regprecise	GulR	LysR	Rhizobiales	23
+1980	RG6497	regprecise	GulR	LysR	Ralstonia	23
+1981	RG6499	regprecise	UxuR	LacI	Clostridia-3	20
+1982	RG6500	regprecise	IdeR	DtxR	Clostridia-3	22
+1983	RG6503	regprecise	FnrN/FixK/AadR	CRP	Rhizobiales	20
+1984	RG6504	regprecise	NagR	GntR/Others	Listeriaceae	20
+1985	RG6505	regprecise	AgaR	GntR/Others	Clostridia-2	20
+1986	RG6506	regprecise	AgaR	GntR/Others	Clostridia-1	20
+1987	RG6509	regprecise	NagR	GntR/Others	Enterococcaceae	20
+1988	RG6513	regprecise	NagR	GntR/Others	Lactobacillaceae	20
+1989	RG6515	regprecise	PhsR	LuxR	Vibrionales	24
+1990	RG6519	regprecise	PhsR	LuxR	Shewanellaceae	24
+1991	RG6520	regprecise	TtrR	LuxR	Vibrionales	24
+1992	RG6521	regprecise	TtrR	LuxR	Shewanellaceae	24
+1993	RG6522	regprecise	TtrR	LuxR	Pasteurellales	24
+1994	RG6523	regprecise	TtrR	LuxR	Enterobacteriales	24
+1995	RG6525	regprecise	Zur	FUR	Enterococcaceae	23
+1996	RG6526	regprecise	FixJ	LuxR	Rhizobiales	18
+1997	RG6527	regprecise	FixJ	LuxR	Caulobacterales	18
+1998	RG6529	regprecise	FnrN	CRP	Sphingomonadales	20
+1999	RG6530	regprecise	FnrN	CRP	Rhodobacterales	20
+2000	RG6531	regprecise	FixK	CRP	Caulobacterales	20
+2001	RG6532	regprecise	FnrN	CRP	Rhodospirillales	20
+2002	RG6533	regprecise	Rex	Rex	Streptomycetaceae	18
+2003	RG6535	regprecise	LtbR	IclR	Streptomycetaceae	19
+2004	RG6551	regprecise	DasR	GntR/Others	Nocardiaceae	16
+2005	RG6552	regprecise	DasR	GntR/Others	Frankineae/Propionibacterineae/Pseudonocardiaceae	16
+2006	RG6555	regprecise	DasR	GntR/Others	Micrococcineae	16
+2007	RG6556	regprecise	DasR	GntR/Others	Streptomycetaceae	16
+2008	RG6559	regprecise	PaaR	TetR	Micrococcineae	22
+2009	RG6560	regprecise	CsoR	CsoR	Listeriaceae	17
+2010	RG6561	regprecise	AcnR	TetR	Mycobacteriaceae	16
+2011	RG6567	regprecise	SdaR	SdaR	Pseudomonadaceae	20
+2012	RG6568	regprecise	EutR	RpiR	Rhodobacterales	20
+2013	RG6569	regprecise	EutR	RpiR	Rhizobiales	20
+2014	RG6573	regprecise	EutR	RpiR	Burkholderia	20
+2015	RG6574	regprecise	EutR	RpiR	Mycobacteriaceae	20
+2016	RG6576	regprecise	CzrA	ArsR	Listeriaceae	22
+2017	RG6577	regprecise	CzrA	ArsR	Clostridia-1	22
+2018	RG6578	regprecise	MntR	DtxR	Enterococcaceae	22
+2019	RG6579	regprecise	PaaR	TetR	Mycobacteriaceae	22
+2020	RG6580	regprecise	FixJ	LuxR	Rhizobiales	17
+2021	RG6581	regprecise	NifA	Fis	Rhizobiales	16
+2022	RG6582	regprecise	NifA	Fis	Sphingomonadales	16
+2023	RG6583	regprecise	NifA	Fis	Rhodobacterales	16
+2024	RG6584	regprecise	NifA	Fis	Rhodospirillales	16
+2025	RG6585	regprecise	TauR2	GntR/MocR	Rhodobacterales	32
+2026	RG6590	regprecise	YcxD	GntR/MocR	Bacillales	38
+2027	RG6592	regprecise	PP0486	GntR/MocR	Pseudomonadaceae	16
+2028	RG6596	regprecise	EutR	GntR/MocR	Rhodobacterales	16
+2029	RG6597	regprecise	EutR	GntR/MocR	Rhizobiales	16
+2030	RG6598	regprecise	PBPRB0322	GntR/MocR	Vibrionales	27
+2031	RG6600	regprecise	Tola_2750	GntR/MocR	Psychromonadaceae/Aeromonadales	18
+2032	RG6606	regprecise	BPSL1086	GntR/MocR	Burkholderia	60
+2033	RG6607	regprecise	DVU0110	Fis	Desulfovibrionales	17
+2034	RG6608	regprecise	DVU0619	Fis	Desulfovibrionales	17
+2035	RG6610	regprecise	YrdX	GntR/MocR	Comamonadaceae	20
+2036	RG6611	regprecise	YrdX	GntR/MocR	Burkholderia	19
+2037	RG6612	regprecise	YrdX	GntR/MocR	Rhizobiales	23
+2038	RG6616	regprecise	DVU2956	Fis	Desulfovibrionales	18
+2039	RG6617	regprecise	YrdX2	GntR/MocR	Rhizobiales	28
+2040	RG6630	regprecise	PdxR3	GntR/MocR	Mycobacteriaceae	43
+2041	RG6631	regprecise	PdxR3	GntR/MocR	Micrococcineae	43
+2042	RG6632	regprecise	NrdR	NrdR	Clostridia-1	16
+2043	RG6633	regprecise	NrdR	NrdR	Clostridia-2	16
+2044	RG6634	regprecise	NrdR	NrdR	Thermoanaerobacterales	16
+2045	RG6635	regprecise	NrdR	NrdR	Clostridia-3	16
+2046	RG6638	regprecise	BC3039	GntR/MocR	Bacillales	28
+2047	RG6653	regprecise	RspR	GntR/Others	Enterobacteriales	20
+2048	RG6696	regprecise	HspR	MerR	Mycobacteriaceae	19
+2049	RG6713	regprecise	Bll2166	LysR	Rhizobiales	17
+2050	RG6722	regprecise	BLA_0143	LacI	Bifidobacteriaceae	20
+2051	RG6723	regprecise	BL0185	LacI	Bifidobacteriaceae	20
+2052	RG6724	regprecise	XosR	LacI	Bifidobacteriaceae	19
+2053	RG6725	regprecise	GosR	LacI	Bifidobacteriaceae	20
+2054	RG6726	regprecise	CscR	LacI	Bifidobacteria	20
+2055	RG6727	regprecise	HxlR	LacI	Bifidobacteriaceae	20
+2056	RG6728	regprecise	RbsR1	LacI	Bifidobacteriaceae	20
+2057	RG6729	regprecise	BDP_1267	LacI	Bifidobacteriaceae	20
+2058	RG6731	regprecise	AraQ	LacI	Bifidobacteriaceae	20
+2059	RG6740	regprecise	BfrR	LacI	Bifidobacteriaceae	20
+2060	RG6742	regprecise	RbsR3	LacI	Bifidobacteriaceae	20
+2061	RG6744	regprecise	BDP_2100	LacI	Bifidobacteriaceae	20
+2062	RG6745	regprecise	BDP_2111	LacI	Bifidobacteriaceae	20
+2063	RG6746	regprecise	MsmR	LacI	Bifidobacteriaceae	20
+2064	RG6748	regprecise	FucR	LacI	Bifidobacteriaceae	20
+2065	RG6750	regprecise	PtsR	LacI	Bifidobacteriaceae	20
+2066	RG6752	regprecise	BL0176	LacI	Bifidobacteriaceae	20
+2067	RG6757	regprecise	MsmR1	LacI	Bifidobacteriaceae	20
+2068	RG6760	regprecise	FruR	ROK	Bifidobacteriaceae	23
+2069	RG6761	regprecise	GalR2	LacI	Bifidobacteriaceae	19
+2070	RG6762	regprecise	LacR	LacI	Bifidobacteriaceae	19
+2071	RG6763	regprecise	RbsR2	LacI	Bifidobacteriaceae	20
+2072	RG6765	regprecise	RafR	ROK	Bifidobacteriaceae	23
+2073	RG6773	regprecise	GalR	DeoR	Bifidobacteriaceae	17
+2074	RG6774	regprecise	Crp	CRP	Bifidobacteriaceae	22
+2075	RG6775	regprecise	BLA_0357	ROK	Bifidobacteriaceae	23
+2076	RG6778	regprecise	ScrR	LacI	Bifidobacteriaceae	20
+2077	RG6788	regprecise	UdhR	LacI	Burkholderia	18
+2078	RG6791	regprecise	TalR	LacI	Comamonadaceae	20
+2079	RG6792	regprecise	TalR	LacI	Ralstonia	20
+2080	RG6793	regprecise	MSMEG_3264	DeoR	Mycobacteriaceae	27
+2081	RG6794	regprecise	MSMEG_3606	DeoR	Mycobacteriaceae	18
+2082	RG6795	regprecise	NanR	GntR/Others	Bifidobacteriaceae	21
+2083	RG6797	regprecise	BDP_2071	ROK	Bifidobacteriaceae	23
+2084	RG6801	regprecise	NagR	ROK	Bifidobacteriaceae	23
+2085	RG6802	regprecise	XylR	ROK	Bifidobacteriaceae	23
+2086	RG6803	regprecise	AouR	LacI	Bifidobacteriaceae	20
+2087	RG6804	regprecise	BgaR	LacI	Bifidobacteriaceae	20
+2088	RG6806	regprecise	SgaR2	LacI	Bifidobacteriaceae	20
+2089	RG6809	regprecise	BDP_2131	LacI	Bifidobacteriaceae	18
+2090	RG6817	regprecise	GlcR	BglG	Bifidobacteriaceae	32
+2091	RG6818	regprecise	ThiR	[Other]	Thermococcales	13
+2092	RG6819	regprecise	ThiR	[Other]	Sulfolobales	20
+2093	RG6820	regprecise	ThiR	[Other]	Thermoproteales	13
+2094	RG6833	regprecise	BgrT3	TetR	Bifidobacteriaceae	18
+2095	RG6834	regprecise	BgrT2	TetR	Bifidobacteriaceae	18
+2096	RG6835	regprecise	BgrT4	TetR	Bifidobacteriaceae	18
+2097	RG6836	regprecise	BgrT1	TetR	Bifidobacteriaceae	18
+2098	RG6838	regprecise	BgrT6	TetR	Bifidobacteriaceae	20
+2099	RG6839	regprecise	BgrT7	TetR	Bifidobacteriaceae	20
+2100	RG6841	regprecise	MalR1/MalR2/MalR3	LacI	Bifidobacteriaceae	16
+2101	RG6842	regprecise	ArgR	ArgR	Bifidobacteriaceae	16
+2102	RG6843	regprecise	NrtR	NrtR	Bifidobacteriaceae	21
+2103	RG6844	regprecise	NrdR	NrdR	Bifidobacteriaceae	16
+2104	RG6845	regprecise	HrcA	HrcA	Bifidobacteriaceae	27
+2105	RG6846	regprecise	LexA	LexA	Bifidobacteriaceae	16
+2106	RG6847	regprecise	CsoR	CsoR	Bifidobacteriaceae	17
+2107	RG6848	regprecise	LtbR	IclR	Bifidobacteriaceae	19
+2108	RG6849	regprecise	Zur	FUR	Bifidobacteriaceae	21
+2109	RG6850	regprecise	BglR	LacI	Bifidobacteriaceae	20
+2110	RG6851	regprecise	MalR4	LacI	Bifidobacteriaceae	16
+2111	RG6852	regprecise	MalR5	LacI	Bifidobacteriaceae	16
+2112	RG6859	regprecise	PhrR	MerR	Pseudomonadaceae	24
+2113	RG6860	regprecise	PhrR	MerR	Vibrionales	23
+2114	RG6863	regprecise	PhrR	MerR	Psychromonadaceae/Aeromonadales	25
+2115	RG6865	regprecise	PdxW2	GntR/MocR	Pseudomonadaceae	38
+2116	RG6867	regprecise	PpsR	[Other]	Rhodobacterales	18
+2117	RG6872	regprecise	HypR2	GntR/Others	Rhodobacterales	14
+2118	RG6874	regprecise	HutC	GntR/Others	Alteromonadales	20
+2119	RG6875	regprecise	HutC	GntR/Others	Ralstonia	20
+2120	RG6876	regprecise	CblR		Sulfolobales	19
+2121	RG6877	regprecise	CblR		Thermoproteales	20
+2122	RG6878	regprecise	RbkR	[Other]	Sulfolobales	16
+2123	RG6879	regprecise	RbkR	[Other]	Archaeoglobales	18
+2124	RG6880	regprecise	RbkR	[Other]	Thermoproteales	18
+2125	RG6881	regprecise	RbkR	[Other]	Thermococcales	20
+2126	RG6882	regprecise	RbkR	[Other]	Thermoplasmatales	18
+2127	RG6883	regprecise	RbkR	[Other]	Halobacteriales	20
+2128	RG6884	regprecise	RbkR	[Other]	Methanomicrobiales	18
+2129	RG6885	regprecise	RbkR	[Other]	Methanosarcinales	18
+2130	RG6886	regprecise	Phr	ArsR	Methanosarcinales	23
+2131	RG6889	regprecise	Mce2R	GntR/Others	Mycobacteriaceae	21
+2132	RG6892	regprecise	PaaR	TetR	Various betaproteobacteria	22
+2133	RG6893	regprecise	LexA2	LexA	Pseudomonadaceae	16
+2134	RG6895	regprecise	FruR2	LacI	Rhodospirillales	20
+2135	RG6896	regprecise	AraR	GntR/Others	Clostridia-1	20
+2136	RG6897	regprecise	XylR	ROK	Clostridia-1	25
+2137	RG6899	regprecise	IscR	Rrf2	Clostridia-1	29
+2138	RG6900	regprecise	IscR	Rrf2	Clostridia-2	29
+2139	RG6901	regprecise	IscR	Rrf2	Clostridia-3	29
+2140	RG6902	regprecise	CymR	Rrf2	Clostridia-1	27
+2141	RG6903	regprecise	MalR	LacI	Bacteroidaceae	20
