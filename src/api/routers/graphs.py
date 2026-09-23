@@ -2,7 +2,12 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text, bindparam
 from src.database.connection import get_db
-from src.api.network_params import NETWORK_NEG_LOG10_P, EDGES_SQL, check_threshold
+from src.api.network_params import (
+    NETWORK_NEG_LOG10_P,
+    EDGES_SQL,
+    ELIGIBILITY_FILTER,
+    check_threshold,
+)
 
 router = APIRouter(prefix="/graphs", tags=["Graphs"])
 
@@ -28,7 +33,7 @@ async def get_network_graph(
         # (PWM) que la sustentan. Antes se devolvían hits crudos, por lo que
         # un mismo par podía aparecer varias veces.
         rows = db.execute(
-            text("""
+            text(f"""
                 SELECT m.tf_name AS tf,
                        g.locus_tag,
                        MAX(fh.neg_log10_p) AS best,
@@ -40,6 +45,7 @@ async def get_network_graph(
                 WHERE gen.accession = :genome_acc
                   AND fh.neg_log10_p >= :threshold
                   AND m.tf_name IS NOT NULL
+                  {ELIGIBILITY_FILTER}
                 GROUP BY m.tf_name, g.locus_tag
                 ORDER BY best DESC
                 LIMIT :max_edges

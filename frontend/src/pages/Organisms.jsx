@@ -10,7 +10,7 @@ const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
 // key: campo del JSON de /genomes; numeric: se puede ordenar.
 const COLUMNS = [
   { key: "ncbi_organism", label: "Organism" },
-  { key: "gtdb_genus", label: "GTDB genus" },
+  { key: "genus", label: "Genus" },
   { key: "genome_size_mb", label: "Genome (Mb)", numeric: true },
   { key: "n_genes", label: "Genes", numeric: true },
   { key: "n_operons", label: "Operons", numeric: true },
@@ -30,7 +30,14 @@ export default function Organisms({ navigate }) {
     let cancelled = false;
     api
       .getGenomesByAccessions(COMPARISON_ACCESSIONS)
-      .then((res) => !cancelled && setOrganisms(res.data.items ?? []))
+      .then((res) => {
+        if (cancelled) return;
+        // Género desde el nombre NCBI: GTDB asigna a E. coli K-12 un género
+        // placeholder (G047199095) que no dice nada en la tabla.
+        setOrganisms(
+          (res.data.items ?? []).map((o) => ({ ...o, genus: o.ncbi_organism?.split(" ")[0] }))
+        );
+      })
       .catch(() => !cancelled && setError("Genomes could not be loaded. Check that the backend is running."))
       .finally(() => !cancelled && setLoading(false));
     return () => {
@@ -49,7 +56,7 @@ export default function Organisms({ navigate }) {
     .filter(
       (o) =>
         (o.ncbi_organism ?? "").toLowerCase().includes(term) ||
-        (o.gtdb_genus ?? "").toLowerCase().includes(term) ||
+        (o.genus ?? "").toLowerCase().includes(term) ||
         o.accession.toLowerCase().includes(term)
     )
     .sort((a, b) => {
@@ -141,7 +148,7 @@ export default function Organisms({ navigate }) {
                     </div>
                     <div className="text-[10px] text-[#94A3B8] font-mono mt-0.5">{o.accession}</div>
                   </td>
-                  <td className="px-4 py-3 text-[12px] text-[#64748B] italic">{o.gtdb_genus ?? "—"}</td>
+                  <td className="px-4 py-3 text-[12px] text-[#64748B] italic">{o.genus ?? "—"}</td>
                   <td className="px-4 py-3 font-mono text-[12px] text-[#334155]">
                     {o.genome_size_mb != null ? o.genome_size_mb.toFixed(2) : "—"}
                   </td>

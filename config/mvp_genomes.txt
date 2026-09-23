@@ -1,0 +1,11 @@
+# Genomas del subconjunto del MVP: gtdb_family = 'Enterobacteriaceae' y
+# selection IN ('forced', 'regprecise_source'). Mismo conjunto que
+# frontend/src/constants/comparisonGenomes.js.
+GCF_000005845.2  # Escherichia coli str. K-12 substr. MG1655 (referencia)
+GCF_000016305.1  # Klebsiella pneumoniae subsp. pneumoniae MGH 78578
+GCF_000011605.1  # Pectobacterium atrosepticum SCRI1043
+GCF_000006945.2  # Salmonella enterica serovar Typhimurium str. LT2
+GCF_000016325.1  # Enterobacter sp. 638
+GCF_000196155.1  # Photorhabdus laumondii subsp. laumondii TTO1
+GCF_000027205.1  # Erwinia amylovora ATCC 49946
+GCF_000069965.1  # Proteus mirabilis HI4320

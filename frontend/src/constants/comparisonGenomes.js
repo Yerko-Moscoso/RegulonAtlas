@@ -16,3 +16,14 @@ export const COMPARISON_ACCESSIONS = [
   "GCF_000027205.1", // Erwinia amylovora ATCC 49946
   "GCF_000069965.1", // Proteus mirabilis HI4320
 ];
+
+// Genomas cuyos locus tags RefSeq coinciden con los de RegPrecise. En el
+// resto, PGAP reanotó los locus tags y la validación da TP = 0 por un
+// desajuste de identificadores, no por la red.
+export const VALIDATED_ACCESSIONS = [
+  "GCF_000005845.2", // E. coli K-12 MG1655 (b-numbers)
+  "GCF_000006945.2", // Salmonella Typhimurium LT2 (STM)
+];
+
+// Genoma de referencia con gold standard.
+export const REFERENCE_ACCESSION = "GCF_000005845.2";
