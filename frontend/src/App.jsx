@@ -42,9 +42,9 @@ export default function App() {
           {page === "organism-detail" && (
             <OrganismDetail navigate={navigate} organismId={selectedOrganism} />
           )}
-          {page === "networks" && <RegulatoryNetwork />}
-          {page === "metrics" && <Metrics />}
-          {page === "validation" && <Validation />}
+          {page === "networks" && <RegulatoryNetwork initialOrganism={selectedOrganism} />}
+          {page === "metrics" && <Metrics initialOrganism={selectedOrganism} />}
+          {page === "validation" && <Validation initialOrganism={selectedOrganism} />}
         </main>
       </div>
     </div>
