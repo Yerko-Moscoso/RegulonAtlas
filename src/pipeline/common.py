@@ -106,8 +106,8 @@ def git_info() -> dict:
         except Exception:
             return None
 
-    return {"commit": run("git", "rev-parse", "HEAD"), "dirty": bool(run("git", "status", "--porcelain"))}
-
+    status = run("git", "status", "--porcelain", "--", ".", ":(exclude)data/results")
+    return {"commit": run("git", "rev-parse", "HEAD"), "dirty": bool(status)}
 
 def _rel(path: Path) -> str:
     path = Path(path)
