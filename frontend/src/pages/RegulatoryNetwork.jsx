@@ -4,6 +4,7 @@ import fcose from "cytoscape-fcose";
 import CytoscapeComponent from "react-cytoscapejs";
 import { Search, Filter, X, Info, Loader2 } from "lucide-react";
 import { api } from "../services/api";
+import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
 
 cytoscape.use(fcose);
 
@@ -17,14 +18,6 @@ const NODE_BORDER = {
   Gene: "#2563A0",
   Operon: "#176B57",
 };
-
-const THRESHOLD_OPTIONS = [
-  { value: "0.0001", label: "1e-4 (~265k edges, slow)" },
-  { value: "0.00001", label: "1e-5 (~32k edges)" },
-  { value: "0.000001", label: "1e-6 (~6.4k edges, recommended)" },
-  { value: "0.0000001", label: "1e-7 (~2k edges)" },
-  { value: "0.00000001", label: "1e-8 (~1k edges, cleanest)" },
-];
 
 const CYTOSCAPE_STYLESHEET = [
   {
@@ -104,7 +97,7 @@ const FCOSE_LAYOUT = {
 export default function RegulatoryNetwork() {
   const [organismList, setOrganismList] = useState([]);
   const [organism, setOrganism] = useState("");
-  const [pvalueThreshold, setPvalueThreshold] = useState("0.000001");
+  const [loadingGenomes, setLoadingGenomes] = useState(true);
 
   const [rawNodes, setRawNodes] = useState([]);
   const [rawEdges, setRawEdges] = useState([]);
@@ -119,20 +112,29 @@ export default function RegulatoryNetwork() {
   useEffect(() => {
     const fetchOrganisms = async () => {
       try {
-        const response = await api.getGenomes(0, 100);
+        setLoadingGenomes(true);
+        const response = await api.getGenomes(0, 3000);
         const fetchedOrgs = response.data.items
+          .filter((item) => COMPARISON_ACCESSIONS.includes(item.accession))
           .map((item) => ({
             id: item.accession,
             label: item.ncbi_organism || item.accession,
           }))
-          .sort((a, b) => a.label.localeCompare(b.label)); 
+          .sort((a, b) => a.label.localeCompare(b.label));
         
         setOrganismList(fetchedOrgs);
         if (fetchedOrgs.length > 0) {
           setOrganism(fetchedOrgs[0].id);
+        } else {
+          setLoading(false);
+          setError("No genomes from the compared set were found in the database.");
         }
       } catch (err) {
         console.error("Error fetching organisms list:", err);
+        setLoading(false);
+        setError("Could not load the organism list from the server.");
+      } finally {
+        setLoadingGenomes(false);
       }
     };
     fetchOrganisms();
@@ -147,10 +149,7 @@ export default function RegulatoryNetwork() {
         setError("");
         setSelectedNode(null);
         
-        const response = await api.getNetworkGraph(organism, {
-          threshold: parseFloat(pvalueThreshold) || 1e-6,
-          leader_only: true,
-        });
+        const response = await api.getNetworkGraph(organism);
         
         const elements = response.data?.elements || { nodes: [], edges: [] };
         setRawNodes(elements.nodes || []);
@@ -170,7 +169,7 @@ export default function RegulatoryNetwork() {
     };
 
     fetchGraph();
-  }, [organism, pvalueThreshold]);
+  }, [organism]);
 
   const cyElements = useMemo(
     () => [...rawNodes, ...rawEdges],
@@ -231,25 +230,16 @@ export default function RegulatoryNetwork() {
           <select
             value={organism}
             onChange={(e) => setOrganism(e.target.value)}
-            className="text-sm border border-[#D9E2E7] rounded-lg px-2.5 py-1.5 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] min-w-[220px]"
+            disabled={loadingGenomes}
+            className="text-sm border border-[#D9E2E7] rounded-lg px-2.5 py-1.5 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] min-w-[220px] disabled:bg-gray-50 disabled:text-gray-400"
           >
-            {organismList.length === 0 && <option>Loading...</option>}
-            {organismList.map((o) => (
-              <option key={o.id} value={o.id}>{o.label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[#64748B]">Threshold</span>
-          <select
-            value={pvalueThreshold}
-            onChange={(e) => setPvalueThreshold(e.target.value)}
-            className="text-sm border border-[#D9E2E7] rounded-lg px-2.5 py-1.5 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C]"
-          >
-            {THRESHOLD_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
+            {loadingGenomes ? (
+              <option>Loading...</option>
+            ) : (
+              organismList.map((o) => (
+                <option key={o.id} value={o.id}>{o.label}</option>
+              ))
+            )}
           </select>
         </div>
 
@@ -281,7 +271,7 @@ export default function RegulatoryNetwork() {
                 <Info size={24} className="text-[#CBD5E1] mx-auto mb-3" />
                 <p className="text-sm text-[#64748B]">
                   This graph has <span className="font-mono font-medium">{rawNodes.length.toLocaleString()}</span> nodes
-                  but 0 loaded interactions at this threshold. Try a less strict p-value.
+                  but 0 loaded interactions. Try a different organism.
                 </p>
               </div>
             </div>

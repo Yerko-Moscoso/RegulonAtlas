@@ -3,6 +3,9 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import pandas as pd
 from tqdm import tqdm
+import os
+from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
 
 RAW_DIR = Path("data/raw/regprecise")
 PAGES_DIR = RAW_DIR / "pages"
@@ -31,7 +34,7 @@ for p in tqdm(html_files, desc="Extrayendo metadatos desde archivos HTML"):
 
     try:
         with open(p, "r", encoding="utf-8", errors="ignore") as f:
-            soup = BeautifulSoup(f.read(), "lxml")
+            soup = BeautifulSoup(f.read(), "html.parser")
         
         title = soup.find("title")
         if not title:
@@ -67,42 +70,31 @@ for idx, row in df_motifs.iterrows():
 
 df_motifs.to_csv(MOTIFS_FILE, sep="\t", index=False)
 
-# 3. Cruce taxonómico avanzado por Género y Especie contra el Atlas
-atlas = pd.read_csv(ATLAS_FILE, sep="\t") if ATLAS_FILE.exists() else pd.DataFrame()
+load_dotenv()
+engine = create_engine(
+    f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
+    f"@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME', 'regulon_atlas')}"
+)
 
-def get_genus_species(name):
-    if pd.isna(name) or not name:
-        return ""
-    s = str(name).strip().lower()
-    s = re.sub(r"^(str\.|strain|sp\.)\s*", "", s)
-    s = re.sub(r"[\[\]()_,-]", " ", s)
-    tokens = s.split()
-    if len(tokens) >= 2:
-        return f"{tokens[0]} {tokens[1]}"
-    return tokens[0] if tokens else ""
+# 3. Cruce contra el mapeo RegPrecise -> Atlas ya resuelto en MariaDB
+map_query = text("""
+    SELECT rgm.genome_name, rgm.accession
+    FROM regprecise_genome_map rgm
+    JOIN genomes g ON g.accession = rgm.accession
+""")
+with engine.connect() as conn:
+    genome_map = pd.read_sql(map_query, conn)
 
-matched_count = 0
-if not atlas.empty and "ncbi_organism_name" in atlas.columns:
-    atlas["genus_sp"] = atlas["ncbi_organism_name"].apply(get_genus_species)
-    df_curated["genus_sp"] = df_curated["genome_name"].apply(get_genus_species)
+merged = df_curated.merge(genome_map, on="genome_name", how="left")
+matched = merged[merged["accession"].notna()]
+matched_count = len(matched)
 
-    # Cruce por las primeras 2 palabras (Género y Especie) para maximizar matches biológicos
-    merged = df_curated.merge(
-        atlas[["accession", "genus_sp"]].drop_duplicates(subset=["genus_sp"]),
-        on="genus_sp",
-        how="left"
-    )
-    
-    matched = merged[merged["accession"].notna()]
-    matched_count = len(matched)
+unmatched = merged[merged["accession"].isna()][["genome_name"]].drop_duplicates()
+unmatched.to_csv(QC_DIR / "regprecise_sin_match.tsv", sep="\t", index=False)
 
-    unmatched = merged[merged["accession"].isna()][["genome_name"]].drop_duplicates()
-    unmatched.to_csv(QC_DIR / "regprecise_sin_match.tsv", sep="\t", index=False)
-
-    cols_to_save = ["regulog_id", "genome_name", "locus_tag", "tf_name", "gene_name"]
-    df_curated[cols_to_save].to_csv(OUT_REGULONS, sep="\t", index=False)
-else:
-    df_curated.to_csv(OUT_REGULONS, sep="\t", index=False)
+cols_to_save = ["regulog_id", "genome_name", "locus_tag", "tf_name", "gene_name", "accession"]
+df_curated_final = merged[cols_to_save + ["genome_name"]] if "accession" not in df_curated.columns else merged
+merged[["regulog_id", "genome_name", "locus_tag", "tf_name", "gene_name"]].to_csv(OUT_REGULONS, sep="\t", index=False)
 
 print("\n" + "=" * 65)
 print("          REPORTE CHECKPOINT 7 · MAPEO TAXONÓMICO")

@@ -9,7 +9,7 @@ router = APIRouter(prefix="/genomes", tags=["Genomes"])
 @router.get("/", response_model=PaginatedGenomes)
 async def get_genomes(
     skip: int = Query(0, ge=0, description="Registros a omitir"),
-    limit: int = Query(50, ge=1, le=100, description="Límite de registros por página"),
+    limit: int = Query(100, ge=0, le=5000, description="Límite de registros por página"),
     search: str = Query(None, description="Buscar por nombre de organismo o accession"),
     db: Session = Depends(get_db)
 ):

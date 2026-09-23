@@ -99,23 +99,6 @@ export default function Sidebar({ activePage, navigate }) {
           </div>
         ))}
       </nav>
-
-      {/* MVP */}
-      <div className="px-3 py-3 border-t border-[#D9E2E7]">
-        <button
-          onClick={() => navigate("mvp")}
-          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-            activePage === "mvp"
-              ? "bg-[#E8F5F0] text-[#176B57] font-medium"
-              : "text-[#3A9D7C] hover:bg-[#E8F5F0]"
-          }`}
-        >
-          <span className="text-[10px] bg-[#3A9D7C] text-white px-1.5 py-0.5 rounded font-mono font-semibold shrink-0">
-            MVP
-          </span>
-          <span>Week 8 Milestone</span>
-        </button>
-      </div>
     </aside>
   );
 }

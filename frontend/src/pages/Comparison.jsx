@@ -61,8 +61,8 @@ export default function Comparison({ navigate }) {
         setPcaData(projectionRes.data?.points || []);
         setClusters(clustersRes.data?.clusters || []);
       } catch (err) {
-        console.error("Error al cargar datos de comparación:", err);
-        setError("No se pudieron cargar los datos de comparación de organismos.");
+        console.error("Error loading comparison data:", err);
+        setError("The organism comparison data could not be loaded.");
         setPcaData([]);
         setClusters([]);
       } finally {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Search, ChevronRight, ArrowUpDown, Loader2 } from "lucide-react";
-import { api } from "../services/api"; // Importamos el servicio que creaste
+import { api } from "../services/api";
+import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
 
 function StatusBadge({ status }) {
   const map = {
@@ -31,37 +32,36 @@ const groups = ["All", "Proteobacteria", "Firmicutes"];
 const statuses = ["All", "Validated", "Analyzed", "Running", "Pending"];
 
 export default function Organisms({ navigate }) {
-  // Estados para manejar los datos reales de la API
   const [organisms, setOrganisms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Estados de filtros originales
   const [search, setSearch] = useState("");
   const [groupFilter, setGroupFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  // Efecto para conectar con FastAPI al montar el componente
   useEffect(() => {
     const fetchGenomes = async () => {
       try {
         setLoading(true);
-        // Pedimos los primeros 100 genomas a tu base de datos MariaDB
-        const response = await api.getGenomes(0, 100);
-        
-        // Adaptamos la respuesta de MariaDB al formato que espera la tabla de Figma
-        const mappedData = response.data.items.map((item) => ({
-          id: item.accession,
-          name: item.ncbi_organism || "Organismo Desconocido",
-          taxonomy: item.assembly_level || "Unknown",
-          group: "Proteobacteria", // Dato temporal para filtros
-          genome: item.completeness || 0, // Usamos completitud temporalmente
-          genes: 0, // Por conectar a BD
-          tfs: 0,   // Por conectar a BD
-          predictedInteractions: 0, // Por conectar a BD
-          curatedInteractions: 0,   // Por conectar a BD
-          status: "Analyzed" // Estado por defecto
-        }));
+        const response = await api.getGenomes(0, 3000);
+
+        const mappedData = response.data.items
+          .filter((item) => COMPARISON_ACCESSIONS.includes(item.accession))
+          .map((item) => ({
+            id: item.accession,
+            name: item.ncbi_organism || "Organismo Desconocido",
+            taxonomy: item.assembly_level || "Unknown",
+            group: "Proteobacteria", // Dato temporal para filtros
+            genome: item.completeness || 0, // Usamos completitud temporalmente
+            genes: 0, // Por conectar a BD
+            tfs: 0,   // Por conectar a BD
+            predictedInteractions: 0, // Por conectar a BD
+            curatedInteractions: 0,   // Por conectar a BD
+            status: "Analyzed" // Estado por defecto
+          }));
+
+        mappedData.sort((a, b) => a.name.localeCompare(b.name));
 
         setOrganisms(mappedData);
       } catch (err) {
@@ -89,7 +89,7 @@ export default function Organisms({ navigate }) {
       <div>
         <h1 className="text-2xl font-semibold text-[#334155]">Organisms</h1>
         <p className="text-sm text-[#64748B] mt-1">
-          Browse and analyze bacterial genomes included in the framework.
+          Browse and analyze the bacterial genomes included in the compared set.
         </p>
       </div>
 

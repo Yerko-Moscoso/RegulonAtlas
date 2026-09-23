@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Network, Loader2 } from "lucide-react";
-import { api } from "../services/api"; // Importamos tu servicio de conexión
+import { api } from "../services/api";
+import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
 import {
   LineChart,
   Line,
@@ -35,16 +36,25 @@ const thresholdCurve = [
 export default function OrganismDetail({ navigate, organismId }) {
   const [tab, setTab] = useState("Overview");
   
-  // Nuevos estados para manejar la API
   const [loading, setLoading] = useState(true);
   const [org, setOrg] = useState(null);
+  const [notInComparisonSet, setNotInComparisonSet] = useState(false);
 
   useEffect(() => {
     const fetchOrganismDetails = async () => {
       try {
         setLoading(true);
-        // Traemos la lista de genomas para encontrar los metadatos del seleccionado
-        const response = await api.getGenomes(0, 100);
+        setNotInComparisonSet(false);
+
+        if (!COMPARISON_ACCESSIONS.includes(organismId)) {
+          // El resto del dashboard (Validation, Robustness, Fingerprints) solo tiene
+          // datos cargados para este subconjunto de genomas; evitamos pedir detalle de otros.
+          setNotInComparisonSet(true);
+          setOrg(null);
+          return;
+        }
+
+        const response = await api.getGenomes(0, 3000);
         const found = response.data.items.find(item => item.accession === organismId);
         
         if (found) {
@@ -81,6 +91,20 @@ export default function OrganismDetail({ navigate, organismId }) {
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <Loader2 className="w-8 h-8 text-[#3A9D7C] animate-spin mb-4" />
         <p className="text-sm text-[#64748B]">Cargando metadatos del organismo...</p>
+      </div>
+    );
+  }
+
+  if (notInComparisonSet) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <p className="text-[#64748B] text-sm max-w-md text-center">
+          {organismId} no forma parte del subconjunto de genomas comparado. El detalle,
+          validación y robustez solo están disponibles para ese subconjunto por ahora.
+        </p>
+        <button onClick={() => navigate("organisms")} className="mt-3 text-sm text-[#3A9D7C] hover:underline">
+          Volver al catálogo
+        </button>
       </div>
     );
   }
