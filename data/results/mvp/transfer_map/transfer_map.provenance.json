@@ -1,11 +1,11 @@
 {
   "stage": "build_transfer_map",
   "git": {
-    "commit": "0eb8016fcadda6be4d6b24a9dc7dc53c0c43c398",
-    "dirty": false
+    "commit": "483070c73f860cd2465744413ba5d27f77f1c2e3",
+    "dirty": true
   },
-  "started_utc": "2026-09-24T11:47:11.566291+00:00",
-  "finished_utc": "2026-09-24T11:47:21.817610+00:00",
+  "started_utc": "2026-09-24T11:47:44.268785+00:00",
+  "finished_utc": "2026-09-24T11:47:54.190427+00:00",
   "params_file": "config/mvp_params.json",
   "params": {
     "subset_name": "mvp",
