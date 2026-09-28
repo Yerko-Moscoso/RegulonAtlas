@@ -1,11 +1,11 @@
 {
   "stage": "compute_metrics",
   "git": {
-    "commit": "483070c73f860cd2465744413ba5d27f77f1c2e3",
+    "commit": "d056fc96b24a8608127096dacd15c7382c316c84",
     "dirty": true
   },
-  "started_utc": "2026-09-24T11:47:59.884074+00:00",
-  "finished_utc": "2026-09-24T11:48:00.378013+00:00",
+  "started_utc": "2026-09-26T21:19:39.814961+00:00",
+  "finished_utc": "2026-09-26T21:19:40.309624+00:00",
   "params_file": "config/mvp_params.json",
   "params": {
     "subset_name": "mvp",

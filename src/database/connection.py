@@ -11,7 +11,9 @@ load_dotenv(dotenv_path=env_path)
 def get_engine():
     """Crea la conexión a MariaDB."""
     user = str(os.getenv("DB_USER", "ymoscoso")).strip()
-    password = str(os.getenv("DB_PASSWORD", "***ELIMINADA***")).strip()
+    password = os.getenv("DB_PASSWORD")
+    if not password:
+        raise RuntimeError("Falta la variable de entorno DB_PASSWORD (ver .env.example).")
     host = str(os.getenv("DB_HOST", "127.0.0.1")).strip()
     port = str(os.getenv("DB_PORT", "3306")).strip()
     database = str(os.getenv("DB_NAME", "regulon_atlas")).strip()
