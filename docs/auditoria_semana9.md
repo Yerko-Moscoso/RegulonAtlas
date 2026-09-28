@@ -1,0 +1,9 @@
+# Auditoría de datos — Semana 9
+
+- fimo_hits: 54.575.443 hits, carga completa (p ≤ 1e-5; min -log10 p = 5,0).
+- Atlas: 2.224 genomas (representative 2.220 + forced 3 + replacement 1); 2.222 con hits.
+- Sin hits: 2 micoplasmas (sin TF elegibles, documentado en bitácora 2026-08-20).
+- Ventanas promotoras de hasta 350 pb río arriba (max hit_stop = 350).
+- Hits por umbral: 1e-6 = 10,1M; 1e-7 = 2,7M; 1e-8 = 1,0M.
+- Redes materializadas por el pipeline externo: 5 (validated, high-precision, balanced, permissive, no-footprint), con P/R/F1 de la decisión D33 contra RegPrecise 3.0 (prov_id 5).
+- Decisión: el dashboard muestra las redes de la base; el pipeline local se usa como validador independiente.
