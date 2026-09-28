@@ -44,6 +44,11 @@ const CYTOSCAPE_STYLESHEET = [
     },
   },
   {
+    // Redes pequeñas: se muestran también los nombres de los operones
+    selector: "node.labeled",
+    style: { label: "data(label)", "font-size": 10 },
+  },
+  {
     selector: "node.highlighted",
     style: {
       "border-width": 4,
@@ -78,9 +83,10 @@ const CYTOSCAPE_STYLESHEET = [
   },
 ];
 
-// react-cytoscapejs no ejecuta ningún layout propio: las posiciones las controla
-// el componente (layout por defecto con semilla fija, o el guardado tras "Rearrange").
-const NO_LAYOUT = { name: "preset", fit: false };
+// Las posiciones se calculan ANTES de entregarle los nodos a Cytoscape (en una
+// instancia sin pantalla) y viajan dentro de cada nodo. Así el grafo aparece ya
+// dibujado al seleccionar el organismo, sin depender de cuándo termina de montarse.
+const PRESET_LAYOUT = { name: "preset", fit: false };
 const SEED_STORAGE_PREFIX = "regulatory-network-layout-seed:";
 
 // Hash FNV-1a de un texto -> entero de 32 bits (semilla por defecto de cada subgrafo)
@@ -122,24 +128,45 @@ const saveSeed = (key, seed) => {
   }
 };
 
-// fcose parte de posiciones aleatorias. Se reemplaza Math.random por un generador
-// con semilla mientras corre, así la misma semilla produce siempre el mismo dibujo.
-const runSeededLayout = (cy, seed, onDone) => {
-  const originalRandom = Math.random;
-  Math.random = seededRandom(seed);
-  const restore = () => {
-    Math.random = originalRandom;
-  };
-  try {
-    const layout = cy.layout(FCOSE_LAYOUT);
-    layout.one("layoutstop", () => {
-      restore();
-      onDone?.();
-    });
-    layout.run();
-  } catch (err) {
-    restore();
-    throw err;
+// Por debajo de estos tamaños, fcose no siempre separa bien los nodos (con 1 TF y
+// 1 operón los deja uno encima del otro), así que se usa un layout en dos filas.
+const SMALL_GRAPH_NODES = 12;
+const LABEL_ALL_NODES = 60;
+const MAX_FIT_ZOOM = 1.6;
+
+// Mezcla determinista: la misma semilla da siempre el mismo orden
+const seededShuffle = (items, seed) => {
+  const rand = seededRandom(seed);
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+};
+
+// TF en la fila de arriba, operones en la de abajo, centrados.
+const runTwoRowLayout = (cy, seed) => {
+  const gapX = 120;
+  const rowY = { TF: 0, Operon: 160 };
+  ["TF", "Operon"].forEach((type) => {
+    const row = seededShuffle(cy.nodes(`[node_type = "${type}"]`).toArray(), seed);
+    row.forEach((node, i) => node.position({ x: (i - (row.length - 1) / 2) * gapX, y: rowY[type] }));
+  });
+};
+
+// true si todos los nodos quedaron prácticamente en el mismo punto
+const nodesCollapsed = (cy) => {
+  const bb = cy.nodes().boundingBox({ includeLabels: false });
+  return cy.nodes().length > 1 && bb.w < 40 && bb.h < 40;
+};
+
+// Encuadra la red sin acercar demasiado las redes pequeñas
+const fitView = (cy) => {
+  cy.fit(undefined, 40);
+  if (cy.zoom() > MAX_FIT_ZOOM) {
+    cy.zoom(MAX_FIT_ZOOM);
+    cy.center();
   }
 };
 
@@ -159,6 +186,38 @@ const FCOSE_LAYOUT = {
   nodeRepulsion: 6500,
   idealEdgeLength: 50,
   padding: 30,
+  fit: false,
+};
+
+// Calcula las posiciones de un subgrafo con una semilla, en una instancia de
+// Cytoscape sin pantalla. fcose parte de posiciones aleatorias: mientras corre se
+// reemplaza Math.random por un generador con semilla, así la misma semilla da
+// siempre el mismo dibujo. Las redes muy pequeñas van en dos filas (TF arriba,
+// operones abajo), porque fcose puede dejarlas encimadas.
+const computePositions = (nodes, edges, seed) => {
+  const cy = cytoscape({
+    headless: true,
+    styleEnabled: true,
+    style: CYTOSCAPE_STYLESHEET,
+    elements: [...nodes, ...edges],
+  });
+  try {
+    if (cy.nodes().length <= SMALL_GRAPH_NODES) {
+      runTwoRowLayout(cy, seed);
+    } else {
+      const originalRandom = Math.random;
+      Math.random = seededRandom(seed);
+      try {
+        cy.layout(FCOSE_LAYOUT).run();
+      } finally {
+        Math.random = originalRandom;
+      }
+      if (nodesCollapsed(cy)) runTwoRowLayout(cy, seed);
+    }
+    return snapshotPositions(cy);
+  } finally {
+    cy.destroy();
+  }
 };
 
 const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
@@ -314,6 +373,8 @@ export default function RegulatoryNetwork({ initialOrganism }) {
   const cyRef = useRef(null);
   // Posiciones ya calculadas en esta sesión, por subgrafo (red + organismo + filtros)
   const positionsRef = useRef(new Map());
+  const seedsRef = useRef(new Map());
+  const [layoutVersion, setLayoutVersion] = useState(0);
 
   // 1. Lista de redes
   useEffect(() => {
@@ -394,33 +455,62 @@ export default function RegulatoryNetwork({ initialOrganism }) {
   const organismLabel = organismList.find((o) => o.id === organism)?.label ?? organism;
   const rawNodes = graph?.elements?.nodes ?? [];
   const rawEdges = graph?.elements?.edges ?? [];
-  const cyElements = useMemo(() => [...rawNodes, ...rawEdges], [graph]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Posiciones de cada subgrafo: siempre las mismas, salvo que se presione "Rearrange".
-  // 1) Si ya se dibujó en esta sesión, se reutilizan sus posiciones.
-  // 2) Si no, se calcula con su semilla: la guardada tras un "Rearrange" o, por
-  //    defecto, una derivada del propio subgrafo (igual en cada visita y recarga).
-  useEffect(() => {
-    const cy = cyRef.current;
-    if (loading || !graph || !cy || cy.destroyed() || cy.nodes().length === 0) return;
+  // Semilla del dibujo de cada subgrafo: la elegida con "Rearrange" (en memoria y
+  // guardada en el navegador) o, por defecto, una derivada del propio subgrafo.
+  const seedFor = (key) => seedsRef.current.get(key) ?? readSeed(key) ?? hashString(key);
 
-    const cached = positionsRef.current.get(graph.key);
-    if (cached) {
-      cy.nodes().positions((node) => cached[node.id()] ?? { x: 0, y: 0 });
-      cy.fit(undefined, FCOSE_LAYOUT.padding);
-      return;
+  // Nodos con su posición ya calculada. Solo cambia si cambia el subgrafo o si se
+  // presiona "Rearrange" (layoutVersion).
+  const cyElements = useMemo(() => {
+    if (!graph || rawNodes.length === 0) return [];
+    const seed = seedFor(graph.key);
+    const cacheKey = `${graph.key}|${seed}`;
+    let positions = positionsRef.current.get(cacheKey);
+    if (!positions) {
+      positions = computePositions(rawNodes, rawEdges, seed);
+      positionsRef.current.set(cacheKey, positions);
     }
-    const seed = readSeed(graph.key) ?? hashString(graph.key);
-    runSeededLayout(cy, seed, () => positionsRef.current.set(graph.key, snapshotPositions(cy)));
-  }, [graph, loading]);
+    const labeled = rawNodes.length <= LABEL_ALL_NODES ? "labeled" : "";
+    return [
+      ...rawNodes.map((n) => ({ ...n, position: positions[n.data.id] ?? { x: 0, y: 0 }, classes: labeled })),
+      ...rawEdges,
+    ];
+  }, [graph, layoutVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Encuadre: cuando Cytoscape ya tiene los nodos y el contenedor tiene tamaño,
+  // se aplican las posiciones calculadas y se centra la red.
+  useEffect(() => {
+    if (loading || cyElements.length === 0) return undefined;
+    const positioned = cyElements.filter((el) => el.position);
+    const byId = new Map(positioned.map((el) => [el.data.id, el.position]));
+    let frame = 0;
+    let tries = 0;
+
+    const apply = () => {
+      const cy = cyRef.current;
+      const ready =
+        cy && !cy.destroyed() && cy.nodes().length === positioned.length && cy.width() > 0 && cy.height() > 0;
+      if (!ready) {
+        if (tries++ < 60) frame = requestAnimationFrame(apply);
+        return;
+      }
+      cy.resize();
+      cy.nodes().positions((node) => byId.get(node.id()) ?? node.position());
+      fitView(cy);
+    };
+
+    apply();
+    return () => cancelAnimationFrame(frame);
+  }, [cyElements, loading]);
 
   // Única forma de cambiar el dibujo: una semilla nueva, que queda guardada.
   const rearrange = () => {
-    const cy = cyRef.current;
-    if (!cy || cy.destroyed() || !graph) return;
+    if (!graph) return;
     const seed = (Date.now() ^ Math.floor(Math.random() * 2 ** 31)) >>> 0;
+    seedsRef.current.set(graph.key, seed);
     saveSeed(graph.key, seed);
-    runSeededLayout(cy, seed, () => positionsRef.current.set(graph.key, snapshotPositions(cy)));
+    setLayoutVersion((v) => v + 1);
   };
 
   // Resaltado por búsqueda
@@ -594,7 +684,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
             <CytoscapeComponent
               elements={cyElements}
               stylesheet={CYTOSCAPE_STYLESHEET}
-              layout={NO_LAYOUT}
+              layout={PRESET_LAYOUT}
               style={{ width: "100%", height: "100%" }}
               cy={(cy) => {
                 cyRef.current = cy;
