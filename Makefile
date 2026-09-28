@@ -47,3 +47,6 @@ api:
 
 clean:
 	rm -rf $(RESULTS)
+
+cache-atlas:
+	PYTHONPATH=. python scripts/export_atlas_cache.py

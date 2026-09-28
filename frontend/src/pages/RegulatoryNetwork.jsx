@@ -4,14 +4,17 @@ import fcose from "cytoscape-fcose";
 import CytoscapeComponent from "react-cytoscapejs";
 import { Search, X, Info, Loader2 } from "lucide-react";
 import { api } from "../services/api";
-import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
 
 cytoscape.use(fcose);
 
-// La red es TF -> gen. Las aristas "operon" vienen de propagar un sitio a los
-// genes que se transcriben después de él en el mismo operón (línea punteada).
-const NODE_COLOR = { TF: "#3A9D7C", Gene: "#3B82B8" };
-const NODE_BORDER = { TF: "#176B57", Gene: "#2563A0" };
+// Red real del atlas: TF -> operón (D10). El operón se etiqueta con el gen del
+// mejor sitio de unión. Grosor de arista = confidence calibrada.
+const NODE_COLOR = { TF: "#3A9D7C", Operon: "#3B82B8" };
+const NODE_BORDER = { TF: "#176B57", Operon: "#2563A0" };
+const DEFAULT_NETWORK = 3; // balanced: mejor F1 (D33)
+const DEFAULT_GENOME = "GCF_000005845.2"; // E. coli K-12 MG1655
+const CONFIDENCE_OPTIONS = [0, 0.3, 0.5, 0.7, 0.9];
+const EDGE_LIMITS = [200, 500, 1000, 2000];
 
 const CYTOSCAPE_STYLESHEET = [
   {
@@ -54,9 +57,9 @@ const CYTOSCAPE_STYLESHEET = [
   {
     selector: "edge",
     style: {
-      width: 1.5,
-      "line-color": "#E2E8F0",
-      "target-arrow-color": "#E2E8F0",
+      width: "mapData(weight, 0, 1, 0.5, 3)",
+      "line-color": "#CBD5E1",
+      "target-arrow-color": "#CBD5E1",
       "target-arrow-shape": "triangle",
       "curve-style": "bezier",
       "arrow-scale": 0.7,
@@ -64,20 +67,89 @@ const CYTOSCAPE_STYLESHEET = [
     },
   },
   {
-    selector: 'edge[evidence = "operon"]',
-    style: { "line-style": "dashed" },
-  },
-  {
     selector: "edge:selected",
     style: {
       "line-color": "#3A9D7C",
       "target-arrow-color": "#3A9D7C",
-      width: 2.5,
+      width: 3,
       opacity: 1,
       "z-index": 999,
     },
   },
 ];
+
+// react-cytoscapejs no ejecuta ningún layout propio: las posiciones las controla
+// el componente (layout por defecto con semilla fija, o el guardado tras "Rearrange").
+const NO_LAYOUT = { name: "preset", fit: false };
+const SEED_STORAGE_PREFIX = "regulatory-network-layout-seed:";
+
+// Hash FNV-1a de un texto -> entero de 32 bits (semilla por defecto de cada subgrafo)
+const hashString = (text) => {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+};
+
+// Generador pseudoaleatorio con semilla (mulberry32)
+const seededRandom = (seed) => {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const readSeed = (key) => {
+  try {
+    const saved = window.localStorage.getItem(SEED_STORAGE_PREFIX + key);
+    return saved == null ? null : Number(saved);
+  } catch {
+    return null;
+  }
+};
+
+const saveSeed = (key, seed) => {
+  try {
+    window.localStorage.setItem(SEED_STORAGE_PREFIX + key, String(seed));
+  } catch {
+    // Sin almacenamiento disponible: la semilla nueva vale solo para esta sesión
+  }
+};
+
+// fcose parte de posiciones aleatorias. Se reemplaza Math.random por un generador
+// con semilla mientras corre, así la misma semilla produce siempre el mismo dibujo.
+const runSeededLayout = (cy, seed, onDone) => {
+  const originalRandom = Math.random;
+  Math.random = seededRandom(seed);
+  const restore = () => {
+    Math.random = originalRandom;
+  };
+  try {
+    const layout = cy.layout(FCOSE_LAYOUT);
+    layout.one("layoutstop", () => {
+      restore();
+      onDone?.();
+    });
+    layout.run();
+  } catch (err) {
+    restore();
+    throw err;
+  }
+};
+
+const snapshotPositions = (cy) => {
+  const positions = {};
+  cy.nodes().forEach((n) => {
+    positions[n.id()] = { ...n.position() };
+  });
+  return positions;
+};
 
 const FCOSE_LAYOUT = {
   name: "fcose",
@@ -90,37 +162,190 @@ const FCOSE_LAYOUT = {
 };
 
 const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
+// params.source viene en español desde la base ("... P=0,545 R=0,343 F1=0,421 ...");
+// se extraen solo los números para mostrarlos en inglés.
+const parseBenchmark = (source) => {
+  const m = source?.match(/P=([\d,.]+)\s+R=([\d,.]+)\s+F1=([\d,.]+)/);
+  return m ? { p: m[1].replace(",", "."), r: m[2].replace(",", "."), f1: m[3].replace(",", ".") } : null;
+};
+const fmtP = (p) => (p == null ? "—" : `1e${Math.round(Math.log10(p))}`);
 // Origen del motivo según el prefijo de su clave.
 const motifSource = (key) =>
   key.startsWith("RG") ? "RegPrecise" : key.startsWith("MX") ? "PRODORIC" : "—";
 
+const selectClass =
+  "text-sm border border-[#D9E2E7] rounded-lg px-2.5 py-1.5 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] disabled:bg-gray-50 disabled:text-gray-400";
+
+// Buscador de organismos: se escribe parte del nombre o del accession y se
+// elige una sugerencia con el ratón o con las flechas + Enter.
+function OrganismSearch({ options, value, onChange, disabled }) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const listRef = useRef(null);
+
+  const current = options.find((o) => o.id === value);
+
+  // Todos los organismos; al escribir se filtran por nombre o accession
+  const matches = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    if (!term) return options;
+    return options.filter((o) => o.label.toLowerCase().includes(term) || o.id.toLowerCase().includes(term));
+  }, [options, query]);
+
+  // Mantiene visible la sugerencia activa al moverse con las flechas
+  useEffect(() => {
+    listRef.current?.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
+  }, [active]);
+
+  const choose = (option) => {
+    onChange(option.id);
+    setQuery("");
+    setOpen(false);
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setOpen(true);
+      setActive((i) => Math.min(i + 1, matches.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter" && open && matches[active]) {
+      e.preventDefault();
+      choose(matches[active]);
+    } else if (e.key === "Escape") {
+      setQuery("");
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none" />
+      <input
+        role="combobox"
+        aria-expanded={open}
+        aria-controls="organism-suggestions"
+        aria-activedescendant={open && matches[active] ? `organism-${matches[active].id}` : undefined}
+        disabled={disabled}
+        value={open ? query : current?.label ?? ""}
+        placeholder={disabled ? "Loading…" : "Search organism or accession"}
+        onFocus={() => {
+          setOpen(true);
+          setActive(0);
+        }}
+        onBlur={() => setOpen(false)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setActive(0);
+          setOpen(true);
+        }}
+        onKeyDown={onKeyDown}
+        className="text-sm border border-[#D9E2E7] rounded-lg pl-8 pr-2.5 py-1.5 w-80 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] disabled:bg-gray-50 disabled:text-gray-400"
+      />
+
+      {open && !disabled && (
+        <ul
+          id="organism-suggestions"
+          role="listbox"
+          ref={listRef}
+          className="absolute z-30 mt-1 w-[26rem] max-h-72 overflow-y-auto bg-white border border-[#D9E2E7] rounded-lg shadow-lg py-1"
+        >
+          {matches.length === 0 && (
+            <li className="px-3 py-2 text-sm text-[#94A3B8]">No organism matches “{query}”.</li>
+          )}
+          {matches.map((o, i) => (
+            <li
+              key={o.id}
+              id={`organism-${o.id}`}
+              data-index={i}
+              role="option"
+              aria-selected={o.id === value}
+              // onMouseDown en vez de onClick: se ejecuta antes del blur del input
+              onMouseDown={(e) => {
+                e.preventDefault();
+                choose(o);
+              }}
+              onMouseEnter={() => setActive(i)}
+              className={`px-3 py-1.5 cursor-pointer flex items-baseline justify-between gap-3 ${
+                i === active ? "bg-[#F0F7F4]" : ""
+              }`}
+            >
+              <span
+                className={`text-sm truncate ${
+                  o.id === value ? "font-semibold text-[#176B57]" : o.nEdges > 0 ? "text-[#334155]" : "text-[#94A3B8]"
+                }`}
+              >
+                {o.label}
+              </span>
+              <span className="text-[11px] font-mono text-[#94A3B8] shrink-0">
+                {o.id}, {o.nEdges > 0 ? `${fmtInt(o.nEdges)} edges` : "no edges"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function RegulatoryNetwork({ initialOrganism }) {
+  // Redes disponibles
+  const [networks, setNetworks] = useState([]);
+  const [networkId, setNetworkId] = useState(DEFAULT_NETWORK);
+
+  // Genomas con aristas en la red elegida
   const [organismList, setOrganismList] = useState([]);
   const [organism, setOrganism] = useState("");
   const [loadingGenomes, setLoadingGenomes] = useState(true);
 
-  const [graph, setGraph] = useState(null); // respuesta completa de /graphs
+  // Filtros del subgrafo
+  const [minConfidence, setMinConfidence] = useState(0);
+  const [maxEdges, setMaxEdges] = useState(500);
+
+  const [graph, setGraph] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const cyRef = useRef(null);
+  // Posiciones ya calculadas en esta sesión, por subgrafo (red + organismo + filtros)
+  const positionsRef = useRef(new Map());
 
-  // Selector: solo los genomas del análisis, pedidos directamente al backend.
+  // 1. Lista de redes
+  useEffect(() => {
+    api
+      .getAtlasNetworks()
+      .then((res) => setNetworks(res.data))
+      .catch(() => setError("The network list could not be loaded. Check that the backend is running."));
+  }, []);
+
+  // 2. Genomas de la red elegida; se conserva el organismo actual si sigue presente
   useEffect(() => {
     let cancelled = false;
+    setLoadingGenomes(true);
     api
-      .getGenomesByAccessions(COMPARISON_ACCESSIONS)
+      .getAtlasGenomes(networkId)
       .then((res) => {
         if (cancelled) return;
-        const list = (res.data.items ?? [])
-          .map((g) => ({ id: g.accession, label: g.ncbi_organism || g.accession }))
-          .sort((a, b) => a.label.localeCompare(b.label));
+        const list = res.data.map((g) => ({
+          id: g.accession,
+          label: g.ncbi_organism || g.accession,
+          nEdges: g.n_edges,
+          selection: g.selection,
+        }));
         setOrganismList(list);
-        const start = list.find((o) => o.id === initialOrganism) ?? list[0];
-        if (start) setOrganism(start.id);
-        else {
+        // La lista trae todos los genomas, así que el organismo elegido siempre se conserva.
+        // Solo en la primera carga se usa initialOrganism o E. coli K-12.
+        setOrganism((prev) => {
+          if (prev && list.some((o) => o.id === prev)) return prev;
+          const start = [initialOrganism, DEFAULT_GENOME].find((id) => list.some((o) => o.id === id));
+          return start ?? list[0]?.id ?? "";
+        });
+        if (list.length === 0) {
           setLoading(false);
           setError("No genomes found.");
         }
@@ -134,8 +359,9 @@ export default function RegulatoryNetwork({ initialOrganism }) {
     return () => {
       cancelled = true;
     };
-  }, [initialOrganism]);
+  }, [networkId, initialOrganism]);
 
+  // 3. Subgrafo
   useEffect(() => {
     if (!organism) return;
     let cancelled = false;
@@ -145,14 +371,14 @@ export default function RegulatoryNetwork({ initialOrganism }) {
     setSearchTerm("");
 
     api
-      .getNetworkGraph(organism)
-      .then((res) => !cancelled && setGraph(res.data))
+      .getAtlasGraph(networkId, organism, { minConfidence, maxEdges })
+      .then((res) => !cancelled && setGraph({ ...res.data, key: `${networkId}|${organism}|${minConfidence}|${maxEdges}` }))
       .catch((err) => {
         if (cancelled) return;
         setGraph(null);
         setError(
           err.response?.status === 404
-            ? `No predicted interactions for ${organism} at this threshold.`
+            ? `${organism} has no edges in this network.`
             : "The regulatory network could not be loaded."
         );
       })
@@ -160,11 +386,42 @@ export default function RegulatoryNetwork({ initialOrganism }) {
     return () => {
       cancelled = true;
     };
-  }, [organism]);
+  }, [networkId, organism, minConfidence, maxEdges]);
 
+  const network = networks.find((n) => n.network_id === networkId);
+  const benchmark = parseBenchmark(network?.params?.source);
+  const organismsWithEdges = useMemo(() => organismList.filter((o) => o.nEdges > 0).length, [organismList]);
+  const organismLabel = organismList.find((o) => o.id === organism)?.label ?? organism;
   const rawNodes = graph?.elements?.nodes ?? [];
   const rawEdges = graph?.elements?.edges ?? [];
   const cyElements = useMemo(() => [...rawNodes, ...rawEdges], [graph]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Posiciones de cada subgrafo: siempre las mismas, salvo que se presione "Rearrange".
+  // 1) Si ya se dibujó en esta sesión, se reutilizan sus posiciones.
+  // 2) Si no, se calcula con su semilla: la guardada tras un "Rearrange" o, por
+  //    defecto, una derivada del propio subgrafo (igual en cada visita y recarga).
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (loading || !graph || !cy || cy.destroyed() || cy.nodes().length === 0) return;
+
+    const cached = positionsRef.current.get(graph.key);
+    if (cached) {
+      cy.nodes().positions((node) => cached[node.id()] ?? { x: 0, y: 0 });
+      cy.fit(undefined, FCOSE_LAYOUT.padding);
+      return;
+    }
+    const seed = readSeed(graph.key) ?? hashString(graph.key);
+    runSeededLayout(cy, seed, () => positionsRef.current.set(graph.key, snapshotPositions(cy)));
+  }, [graph, loading]);
+
+  // Única forma de cambiar el dibujo: una semilla nueva, que queda guardada.
+  const rearrange = () => {
+    const cy = cyRef.current;
+    if (!cy || cy.destroyed() || !graph) return;
+    const seed = (Date.now() ^ Math.floor(Math.random() * 2 ** 31)) >>> 0;
+    saveSeed(graph.key, seed);
+    runSeededLayout(cy, seed, () => positionsRef.current.set(graph.key, snapshotPositions(cy)));
+  };
 
   // Resaltado por búsqueda
   useEffect(() => {
@@ -185,7 +442,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
   const nodeById = useMemo(() => new Map(rawNodes.map((n) => [n.data.id, n.data])), [graph]); // eslint-disable-line react-hooks/exhaustive-deps
   const selected = selectedNode ? nodeById.get(selectedNode) : null;
 
-  // Conexiones del nodo seleccionado, ordenadas por p-value (más fuerte primero).
+  // Conexiones del nodo seleccionado, de mayor a menor confidence.
   const connections = useMemo(() => {
     if (!selected) return [];
     const isTF = selected.node_type === "TF";
@@ -197,52 +454,93 @@ export default function RegulatoryNetwork({ initialOrganism }) {
           id: otherId,
           label: nodeById.get(otherId)?.label ?? otherId,
           weight: e.data.weight,
-          viaOperon: e.data.evidence === "operon",
+          tier: e.data.tier,
         };
       })
       .sort((a, b) => b.weight - a.weight);
   }, [selected, graph]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const threshold = graph?.neg_log10_p_threshold;
 
   return (
     <div className="space-y-4 h-full flex flex-col w-full">
       <div>
         <h1 className="text-2xl font-semibold text-[#334155]">Regulatory Network</h1>
         <p className="text-sm text-[#64748B] mt-1">
-          Predicted transcription factor → target gene interactions from FIMO motif scanning.
+          Predicted transcription factor → target operon interactions from the RegulomeAtlas database.
         </p>
       </div>
 
-      <div className="bg-white border border-[#D9E2E7] rounded-xl p-3 flex flex-wrap items-center gap-4 shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[#64748B]">Organism</span>
+      <div className="bg-white border border-[#D9E2E7] rounded-xl p-3 flex flex-wrap items-end gap-4 shadow-sm">
+        <label className="flex flex-col gap-1">
+          <span className="text-xs text-[#64748B]">Network</span>
           <select
-            value={organism}
-            onChange={(e) => setOrganism(e.target.value)}
-            disabled={loadingGenomes}
-            className="text-sm border border-[#D9E2E7] rounded-lg px-2.5 py-1.5 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] min-w-[220px] disabled:bg-gray-50 disabled:text-gray-400"
+            value={networkId}
+            onChange={(e) => setNetworkId(Number(e.target.value))}
+            disabled={networks.length === 0}
+            className={selectClass}
           >
-            {loadingGenomes ? (
-              <option>Loading…</option>
-            ) : (
-              organismList.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.label}
-                </option>
-              ))
-            )}
+            {networks.map((n) => (
+              <option key={n.network_id} value={n.network_id}>
+                {n.name} (p ≤ {fmtP(n.p_threshold)}, {n.tier_ceiling})
+              </option>
+            ))}
           </select>
+        </label>
+
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-[#64748B]">
+            Organism ({fmtInt(organismsWithEdges)} of {fmtInt(organismList.length)} have edges in this network)
+          </span>
+          <OrganismSearch
+            options={organismList}
+            value={organism}
+            onChange={setOrganism}
+            disabled={loadingGenomes}
+          />
         </div>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-xs text-[#64748B]">Min. confidence</span>
+          <select
+            value={minConfidence}
+            onChange={(e) => setMinConfidence(Number(e.target.value))}
+            className={selectClass}
+          >
+            {CONFIDENCE_OPTIONS.map((c) => (
+              <option key={c} value={c}>
+                {c === 0 ? "Any" : `≥ ${c}`}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-xs text-[#64748B]">Edges drawn</span>
+          <select value={maxEdges} onChange={(e) => setMaxEdges(Number(e.target.value))} className={selectClass}>
+            {EDGE_LIMITS.map((n) => (
+              <option key={n} value={n}>
+                up to {fmtInt(n)}
+              </option>
+            ))}
+          </select>
+        </label>
 
         {graph && (
           <div className="ml-auto text-xs text-[#64748B] text-right">
             <div className="font-mono text-[#334155]">
-              {fmtInt(rawNodes.length)} nodes · {fmtInt(graph.shown_edges)} of {fmtInt(graph.total_edges)} edges
+              {fmtInt(rawNodes.length)} nodes, {fmtInt(graph.shown_edges)} of {fmtInt(graph.total_edges)} TF–operon
+              edges
             </div>
             <div className="text-[11px] mt-0.5">
-              Showing the {fmtInt(graph.shown_edges)} strongest edges (lowest FIMO p-value), network at p ≤ 1e-{threshold}
+              {graph.filtered_edges < graph.total_edges
+                ? `${fmtInt(graph.filtered_edges)} pass the confidence filter; `
+                : ""}
+              highest-confidence edges first
             </div>
+            {benchmark && (
+              <div className="text-[11px] mt-0.5 text-[#94A3B8]">
+                Benchmark against RegPrecise: precision {benchmark.p}, recall {benchmark.r}, F1 {benchmark.f1}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -262,7 +560,25 @@ export default function RegulatoryNetwork({ initialOrganism }) {
             </div>
           )}
 
-          <div className="absolute top-4 right-4 z-10">
+          {!loading && !error && graph && rawEdges.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
+              <p className="text-sm text-[#64748B] text-center max-w-md">
+                {graph.total_edges === 0
+                  ? `${organismLabel} has no predicted edges in the ${graph.network} network. Choose a less strict network, such as permissive, to see its interactions.`
+                  : "No edges reach this confidence. Lower the minimum confidence to see more."}
+              </p>
+            </div>
+          )}
+
+          <div className="absolute top-4 right-4 z-10 flex gap-2">
+            <button
+              onClick={rearrange}
+              disabled={!graph || rawEdges.length === 0}
+              className="px-3 py-2 text-sm bg-white border border-[#D9E2E7] rounded-lg shadow-sm text-[#334155] hover:bg-[#F7FAFC] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] disabled:text-[#CBD5E1]"
+              title="Compute a new layout for this network"
+            >
+              Rearrange
+            </button>
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
               <input
@@ -274,11 +590,11 @@ export default function RegulatoryNetwork({ initialOrganism }) {
             </div>
           </div>
 
-          {!loading && !error && graph && (
+          {!loading && !error && graph && rawEdges.length > 0 && (
             <CytoscapeComponent
               elements={cyElements}
               stylesheet={CYTOSCAPE_STYLESHEET}
-              layout={FCOSE_LAYOUT}
+              layout={NO_LAYOUT}
               style={{ width: "100%", height: "100%" }}
               cy={(cy) => {
                 cyRef.current = cy;
@@ -298,20 +614,19 @@ export default function RegulatoryNetwork({ initialOrganism }) {
             <div className="text-xs font-semibold text-[#64748B] mb-2">Legend</div>
             {[
               { type: "TF", label: "Transcription factor" },
-              { type: "Gene", label: "Target gene" },
+              { type: "Operon", label: "Target operon (named by its best-site gene)" },
             ].map((l) => (
               <div key={l.type} className="flex items-center gap-2 mb-1.5">
                 <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: NODE_COLOR[l.type] }} />
                 <span className="text-xs text-[#64748B]">{l.label}</span>
               </div>
             ))}
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-5 border-t-2 border-[#94A3B8]" />
-              <span className="text-xs text-[#64748B]">Site upstream of the gene</span>
-            </div>
             <div className="flex items-center gap-2">
-              <div className="w-5 border-t-2 border-dashed border-[#94A3B8]" />
-              <span className="text-xs text-[#64748B]">Propagated through the operon</span>
+              <div className="flex flex-col gap-0.5">
+                <div className="w-5 border-t border-[#94A3B8]" />
+                <div className="w-5 border-t-[3px] border-[#94A3B8]" />
+              </div>
+              <span className="text-xs text-[#64748B]">Thicker edge = higher confidence</span>
             </div>
           </div>
         </div>
@@ -322,7 +637,9 @@ export default function RegulatoryNetwork({ initialOrganism }) {
               <div>
                 <h3 className="text-xl font-bold text-[#334155] break-all leading-none">{selected.label}</h3>
                 <p className="text-[13px] text-[#64748B] mt-1.5">
-                  {selected.node_type === "TF" ? "Transcription factor" : "Target gene"}
+                  {selected.node_type === "TF"
+                    ? `Transcription factor${selected.family ? `, ${selected.family} family` : ""}`
+                    : "Target operon"}
                 </p>
               </div>
               <button
@@ -341,9 +658,23 @@ export default function RegulatoryNetwork({ initialOrganism }) {
                 </dt>
                 <dd className="font-mono text-[#334155]">{connections.length}</dd>
               </div>
+              {selected.node_type === "Operon" && (
+                <>
+                  <div className="flex justify-between">
+                    <dt className="text-[#64748B]">Genes in operon</dt>
+                    <dd className="font-mono text-[#334155]">{selected.n_genes}</dd>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-[#64748B]">Best-site locus</dt>
+                    <dd className="font-mono text-[#334155] truncate" title={selected.lead_locus}>
+                      {selected.lead_locus}
+                    </dd>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between">
-                <dt className="text-[#64748B]">FIMO threshold</dt>
-                <dd className="font-mono text-[#334155]">p ≤ 1e-{threshold}</dd>
+                <dt className="text-[#64748B]">Network</dt>
+                <dd className="font-mono text-[#334155]">{graph?.network}</dd>
               </div>
             </dl>
 
@@ -368,7 +699,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
             <div className="flex-1 min-h-0">
               <div className="flex justify-between text-[13px] font-semibold text-[#334155] mb-3">
                 <span>{selected.node_type === "TF" ? "Predicted targets" : "Regulated by"}</span>
-                <span className="text-[11px] font-normal text-[#94A3B8]">−log10 p</span>
+                <span className="text-[11px] font-normal text-[#94A3B8]">confidence</span>
               </div>
               <div className="space-y-1.5">
                 {connections.map((c) => (
@@ -379,23 +710,21 @@ export default function RegulatoryNetwork({ initialOrganism }) {
                   >
                     <div
                       className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: selected.node_type === "TF" ? NODE_COLOR.Gene : NODE_COLOR.TF }}
+                      style={{ backgroundColor: selected.node_type === "TF" ? NODE_COLOR.Operon : NODE_COLOR.TF }}
                     />
                     <span className="text-[13px] font-mono text-[#334155] truncate flex-1" title={c.label}>
                       {c.label}
                     </span>
-                    {c.viaOperon && (
-                      <span className="text-[10px] text-[#94A3B8]" title="Propagated from a site upstream in the same operon">
-                        operon
-                      </span>
-                    )}
-                    <span className="text-[11px] font-mono text-[#94A3B8]">{c.weight.toFixed(1)}</span>
+                    <span className="text-[10px] text-[#94A3B8]" title="Taxonomic distance of the motif transfer">
+                      {c.tier}
+                    </span>
+                    <span className="text-[11px] font-mono text-[#94A3B8]">{c.weight.toFixed(2)}</span>
                   </button>
                 ))}
               </div>
               <p className="text-[11px] text-[#94A3B8] mt-3">
-                Only the edges drawn in this view are listed; the full network has{" "}
-                {fmtInt(graph?.total_edges)} edges.
+                Only the edges drawn in this view are listed; this organism has {fmtInt(graph?.total_edges)}{" "}
+                TF–operon edges in this network.
               </p>
             </div>
           </div>

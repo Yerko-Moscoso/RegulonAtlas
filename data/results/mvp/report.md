@@ -1,6 +1,6 @@
 # Informe MVP: redes regulatorias predichas (mvp)
 
-Generado: 2026-09-26 21:19 UTC · commit `d056fc96b2` (con cambios sin commit)
+Generado: 2026-09-28 12:23 UTC · commit `b628e547c9`
 
 ## 1. Datos y parámetros
 

@@ -53,6 +53,21 @@ export const api = {
     return apiClient.get(`/metrics/topology-summary?${params.toString()}`);
   },
 
+  // === ATLAS (redes reales de la base, caché data/cache/atlas) ===
+  getAtlasNetworks: () => apiClient.get('/atlas/networks'),
+
+  getAtlasGenomes: (networkId) => apiClient.get(`/atlas/networks/${networkId}/genomes`),
+
+  getAtlasGraph: (networkId, accession, { minConfidence = 0, maxEdges = 500 } = {}) =>
+    apiClient.get(`/atlas/networks/${networkId}/graph/${accession}`, {
+      params: { min_confidence: minConfidence, max_edges: maxEdges },
+    }),
+
+  getAtlasMetrics: (networkId, accession) =>
+    apiClient.get(`/atlas/networks/${networkId}/metrics`, { params: accession ? { accession } : {} }),
+
+  getAtlasProvenance: () => apiClient.get('/atlas/provenance'),
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');

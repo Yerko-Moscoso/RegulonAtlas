@@ -1,0 +1,109 @@
+]633;E;for t in edges motifs operons genes curated_regulons;92423f4b-ad0f-42ef-a77c-0141eac04b5c]633;C*************************** 1. row ***************************
+       Table: edges
+Create Table: CREATE TABLE `edges` (
+  `network_id` smallint(5) unsigned NOT NULL,
+  `genome_id` smallint(5) unsigned NOT NULL,
+  `motif_id` smallint(5) unsigned NOT NULL,
+  `target_operon` int(10) unsigned NOT NULL,
+  `best_gene_id` int(10) unsigned NOT NULL,
+  `best_score` float NOT NULL,
+  `best_neg_log10_p` float NOT NULL,
+  `n_sites` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `footprint_enrichment` float DEFAULT NULL,
+  `tier` varchar(24) NOT NULL,
+  `confidence` float DEFAULT NULL COMMENT 'probabilidad calibrada (calibrate_edges.py)',
+  PRIMARY KEY (`network_id`,`genome_id`,`motif_id`,`target_operon`),
+  KEY `idx_e_genome` (`network_id`,`genome_id`),
+  KEY `idx_e_filter` (`network_id`,`best_neg_log10_p`,`footprint_enrichment`),
+  KEY `idx_e_conf` (`network_id`,`genome_id`,`confidence`),
+  CONSTRAINT `fk_e_net` FOREIGN KEY (`network_id`) REFERENCES `networks` (`network_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+*************************** 1. row ***************************
+       Table: motifs
+Create Table: CREATE TABLE `motifs` (
+  `motif_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `motif_key` varchar(12) NOT NULL,
+  `source` enum('prodoric','regprecise') NOT NULL,
+  `tf_name` varchar(64) NOT NULL,
+  `tf_family` varchar(64) DEFAULT NULL,
+  `source_taxon` varchar(128) DEFAULT NULL,
+  `source_phylum` varchar(64) DEFAULT NULL,
+  `length` tinyint(3) unsigned NOT NULL,
+  `n_sites` smallint(5) unsigned DEFAULT NULL,
+  `consensus` varchar(64) DEFAULT NULL,
+  `tf_og` varchar(32) DEFAULT NULL,
+  `transfer_rule` varchar(32) NOT NULL,
+  `entraf_id` varchar(20) DEFAULT NULL,
+  `regulatory_role` varchar(16) DEFAULT NULL,
+  PRIMARY KEY (`motif_id`),
+  UNIQUE KEY `motif_key` (`motif_key`),
+  KEY `idx_tf` (`tf_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4096 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+*************************** 1. row ***************************
+       Table: operons
+Create Table: CREATE TABLE `operons` (
+  `operon_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `genome_id` smallint(5) unsigned NOT NULL,
+  `label` varchar(32) NOT NULL,
+  `contig` varchar(32) NOT NULL,
+  `strand` char(1) NOT NULL,
+  `n_genes` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`operon_id`),
+  UNIQUE KEY `uq_label` (`label`),
+  KEY `idx_genome` (`genome_id`),
+  CONSTRAINT `fk_op_genome` FOREIGN KEY (`genome_id`) REFERENCES `genomes` (`genome_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5236311 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+*************************** 1. row ***************************
+       Table: genes
+Create Table: CREATE TABLE `genes` (
+  `gene_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `genome_id` smallint(5) unsigned NOT NULL,
+  `locus_tag` varchar(32) NOT NULL,
+  `contig` varchar(32) NOT NULL,
+  `start_pos` int(10) unsigned NOT NULL,
+  `end_pos` int(10) unsigned NOT NULL,
+  `strand` char(1) NOT NULL,
+  `protein_id` varchar(20) DEFAULT NULL,
+  `gene_name` varchar(32) DEFAULT NULL,
+  `biotype` varchar(24) DEFAULT NULL,
+  `operon_id` int(10) unsigned DEFAULT NULL,
+  `operon_role` enum('leader','internal','monocistronic') DEFAULT NULL,
+  `gap_prev` smallint(6) DEFAULT NULL,
+  `join_evidence` enum('distance','conserved') DEFAULT NULL,
+  `win_start` int(10) unsigned DEFAULT NULL,
+  `win_end` int(10) unsigned DEFAULT NULL,
+  `dist_prev` int(11) DEFAULT NULL,
+  `prev_orient` enum('codirectional','opposite','none') DEFAULT NULL,
+  PRIMARY KEY (`gene_id`),
+  UNIQUE KEY `uq_gene` (`genome_id`,`locus_tag`),
+  KEY `idx_operon` (`operon_id`),
+  KEY `idx_gene_name` (`gene_name`),
+  KEY `idx_g_locus` (`locus_tag`),
+  CONSTRAINT `fk_gene_genome` FOREIGN KEY (`genome_id`) REFERENCES `genomes` (`genome_id`),
+  CONSTRAINT `fk_gene_operon` FOREIGN KEY (`operon_id`) REFERENCES `operons` (`operon_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9440406 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+*************************** 1. row ***************************
+       Table: curated_regulons
+Create Table: CREATE TABLE `curated_regulons` (
+  `regulog_id` int(10) unsigned NOT NULL,
+  `tf_name` varchar(64) NOT NULL,
+  `genome_name` varchar(128) NOT NULL,
+  `locus_tag` varchar(32) NOT NULL,
+  `gene_name` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`regulog_id`,`genome_name`,`locus_tag`),
+  KEY `idx_cr_locus` (`locus_tag`),
+  KEY `idx_cr_genome` (`genome_name`),
+  KEY `idx_cr_gene` (`gene_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+network_id	genome_id	motif_id	target_operon	best_gene_id	best_score	best_neg_log10_p	n_sites	footprint_enrichment	tier	confidence
+1	22	511	876013	1589502	20.07	7.1656	2	143.93	within_order	0.7597
+1	22	580	876573	1590450	20.192	7.5229	1	24.06	within_order	0.6302
+1	22	2058	876831	1590926	21.398	7.4815	2	21.2	same_order	0.6322
+src/database/connection.py:4:from sqlalchemy import create_engine
+src/database/connection.py:14:    password = os.getenv("DB_PASSWORD")
+src/database/connection.py:16:        raise RuntimeError("Falta la variable de entorno DB_PASSWORD (ver .env.example).")
+src/database/connection.py:22:    database_url = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}?charset=utf8mb4"
+src/database/connection.py:24:    engine = create_engine(
+src/ingestion/map_regprecise_atlas.py:7:from sqlalchemy import create_engine, text
+src/ingestion/map_regprecise_atlas.py:74:engine = create_engine(
+src/ingestion/map_regprecise_atlas.py:75:    f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
