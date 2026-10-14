@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -8,224 +8,616 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine,
+  ReferenceDot,
 } from "recharts";
 import { Loader2 } from "lucide-react";
 import { api } from "../services/api";
-import { VALIDATED_ACCESSIONS, REFERENCE_ACCESSION } from "../constants/comparisonGenomes";
+import NetworkSelector from "../components/NetworkSelector";
+import OrganismSearch from "../components/OrganismSearch";
+import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
 
-const formatThreshold = (t) => (t == null ? "—" : `1e-${Number(t).toFixed(1).replace(".0", "")}`);
-const pct = (v) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
-const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
-const f1Score = (p, r) => (p + r > 0 ? (2 * p * r) / (p + r) : 0);
+// Validación de las 5 redes del atlas contra RegPrecise.
+// La evaluación se calcula offline (make validate-atlas); esta vista solo lee resultados.
+
+const NET_COLORS = { 1: "#176B57", 2: "#7C3AED", 3: "#2563EB", 4: "#D97706", 5: "#DB2777" };
+
+const pct = (v) => (v == null || Number.isNaN(v) ? "—" : `${(v * 100).toFixed(1)}%`);
+const pctTick = (v) => `${Math.round(v * 100)}%`;
+const dec = (v) => (v == null ? "—" : Number(v).toFixed(3));
+const detail = (err, fallback) => err?.response?.data?.detail ?? fallback;
+
+const MODES = [
+  {
+    id: "all",
+    label: "All edges",
+    hint: "Includes motifs built from the same RegPrecise regulog as the evaluated genome (comparable with D33).",
+  },
+  {
+    id: "independent",
+    label: "Independent",
+    hint: "Excludes motifs whose source regulog contains the evaluated genome, so no genome validates its own motifs.",
+  },
+];
+
+const UNIVERSES = [
+  {
+    id: "genome_tf",
+    label: "Curated TFs only",
+    hint: "Only predictions for (genome, TF) pairs with a curated regulon are scored. Other predictions are not evaluable.",
+  },
+  {
+    id: "genome",
+    label: "Whole genome",
+    hint: "Every prediction in a validable genome is scored. Lower bound for precision.",
+  },
+];
+
+const TIER_ORDER = [
+  "within_genus",
+  "same_genus",
+  "within_family",
+  "same_family",
+  "within_order",
+  "same_order",
+  "within_class",
+  "same_class",
+  "within_phylum",
+  "same_phylum",
+  "cross_phylum",
+];
+
+const ORIGIN_LABELS = {
+  self_regulog: "Same RegPrecise regulog (circular)",
+  regprecise_transfer: "RegPrecise, other regulog",
+  prodoric: "PRODORIC",
+  unknown: "Unknown source",
+};
+
+// ------------------------------------------------------------------ piezas pequeñas
+
+function Section({ title, subtitle, children, right }) {
+  return (
+    <section className="bg-white border border-[#D9E2E7] rounded-xl p-5">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <h2 className="text-base font-semibold text-[#1E293B]">{title}</h2>
+          {subtitle && <p className="text-xs text-[#64748B] mt-1 max-w-3xl">{subtitle}</p>}
+        </div>
+        {right}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Segmented({ label, options, value, onChange }) {
+  const current = options.find((o) => o.id === value);
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-xs text-[#64748B]">{label}</span>
+      <div className="inline-flex rounded-lg border border-[#D9E2E7] overflow-hidden w-fit">
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => onChange(o.id)}
+            className={`text-sm px-3 py-1.5 ${
+              o.id === value ? "bg-[#176B57] text-white" : "bg-white text-[#334155] hover:bg-[#F0F7F4]"
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+      <span className="text-[11px] text-[#94A3B8] max-w-xs">{current?.hint}</span>
+    </div>
+  );
+}
+
+function Stat({ label, value, sub }) {
+  return (
+    <div className="border border-[#E2E8F0] rounded-lg px-3 py-2">
+      <div className="text-[11px] uppercase tracking-wide text-[#94A3B8]">{label}</div>
+      <div className="text-lg font-semibold text-[#1E293B]">{value}</div>
+      {sub && <div className="text-[11px] text-[#64748B]">{sub}</div>}
+    </div>
+  );
+}
+
+function Spinner({ text = "Loading…" }) {
+  return (
+    <div className="flex items-center gap-2 text-sm text-[#64748B] py-6">
+      <Loader2 size={16} className="animate-spin" /> {text}
+    </div>
+  );
+}
+
+function ErrorMsg({ children }) {
+  return <p className="text-sm text-red-600 py-2">{children}</p>;
+}
+
+function PrecisionBar({ value }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-2 w-32 bg-[#EEF2F5] rounded">
+        <div className="h-2 rounded bg-[#3A9D7C]" style={{ width: `${Math.round((value ?? 0) * 100)}%` }} />
+      </div>
+      <span className="text-xs font-mono text-[#334155] w-12 text-right">{pct(value)}</span>
+    </div>
+  );
+}
+
+function BreakdownTable({ rows, labelOf, total }) {
+  if (rows.length === 0) return <p className="text-sm text-[#94A3B8]">No evaluable pairs.</p>;
+  return (
+    <table className="w-full text-sm">
+      <thead>
+        <tr className="text-left text-[11px] uppercase tracking-wide text-[#94A3B8] border-b border-[#E2E8F0]">
+          <th className="py-1.5 font-medium">Group</th>
+          <th className="py-1.5 font-medium text-right">Evaluable</th>
+          <th className="py-1.5 font-medium text-right">Share</th>
+          <th className="py-1.5 font-medium text-right">TP</th>
+          <th className="py-1.5 font-medium text-right">FP</th>
+          <th className="py-1.5 font-medium pl-4">Precision</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.key} className="border-b border-[#F1F5F9]">
+            <td className="py-1.5 text-[#334155]">{labelOf(r.key)}</td>
+            <td className="py-1.5 text-right font-mono">{fmtInt(r.pairs_evaluable)}</td>
+            <td className="py-1.5 text-right font-mono text-[#64748B]">{pct(r.pairs_evaluable / total)}</td>
+            <td className="py-1.5 text-right font-mono">{fmtInt(r.TP)}</td>
+            <td className="py-1.5 text-right font-mono">{fmtInt(r.FP)}</td>
+            <td className="py-1.5 pl-4">
+              <PrecisionBar value={r.precision} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function CurveTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-[#D9E2E7] rounded-lg shadow px-3 py-2 text-xs">
+      {payload.map((p) => (
+        <div key={`${p.payload.network_id}-${p.payload.min_confidence}`} className="text-[#334155]">
+          <span className="font-semibold" style={{ color: p.color }}>
+            {p.payload.network}
+          </span>{" "}
+          · confidence ≥ {p.payload.min_confidence.toFixed(2)} · P {pct(p.payload.precision)} · R{" "}
+          {pct(p.payload.recall)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ------------------------------------------------------------------ vista
 
 export default function Validation({ initialOrganism }) {
-  const [genomes, setGenomes] = useState([]);
-  const [genomeAcc, setGenomeAcc] = useState("");
-  const [loadingGenomes, setLoadingGenomes] = useState(true);
+  const [networks, setNetworks] = useState([]);
+  const [networkId, setNetworkId] = useState(DEFAULT_NETWORK);
+  const [mode, setMode] = useState("all");
+  const [universe, setUniverse] = useState("genome_tf");
 
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [manifest, setManifest] = useState(null);
+  const [summary, setSummary] = useState([]);
+  const [loadingBase, setLoadingBase] = useState(true);
   const [error, setError] = useState("");
-  const [thresholdIndex, setThresholdIndex] = useState(0);
 
-  // Solo genomas donde el cruce de locus tags con RegPrecise funciona.
+  const [curve, setCurve] = useState([]);
+  const [loadingCurve, setLoadingCurve] = useState(false);
+  const [curveError, setCurveError] = useState("");
+
+  const [tiers, setTiers] = useState([]);
+  const [origins, setOrigins] = useState([]);
+  const [genomes, setGenomes] = useState([]);
+  const [genomeAcc, setGenomeAcc] = useState(initialOrganism || DEFAULT_GENOME);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [detailError, setDetailError] = useState("");
+
+  // Redes, definición de la evaluación y resumen (una sola vez)
   useEffect(() => {
     let cancelled = false;
-    api
-      .getGenomesByAccessions(VALIDATED_ACCESSIONS)
-      .then((res) => {
+    Promise.all([api.getAtlasNetworks(), api.getAtlasValidationManifest(), api.getAtlasValidationSummary()])
+      .then(([netRes, manRes, sumRes]) => {
         if (cancelled) return;
-        const list = (res.data.items ?? []).map((g) => ({
+        const list = Array.isArray(netRes.data) ? netRes.data : netRes.data.networks ?? netRes.data.items ?? [];
+        setNetworks(list);
+        setManifest(manRes.data);
+        setSummary(sumRes.data.rows ?? []);
+      })
+      .catch((err) => !cancelled && setError(detail(err, "Validation results could not be loaded.")))
+      .finally(() => !cancelled && setLoadingBase(false));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Curvas P/R de las 5 redes en el modo elegido
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingCurve(true);
+    setCurveError("");
+    api
+      .getAtlasValidationCurve(undefined, mode)
+      .then((res) => !cancelled && setCurve(res.data.points ?? []))
+      .catch((err) => !cancelled && setCurveError(detail(err, "The P/R curves could not be loaded.")))
+      .finally(() => !cancelled && setLoadingCurve(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
+
+  // Desglose por tier/origen y tabla por genoma de la red elegida
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingDetail(true);
+    setDetailError("");
+    Promise.all([
+      api.getAtlasValidationBreakdown("tier", networkId, mode),
+      api.getAtlasValidationBreakdown("origin", networkId, mode),
+      api.getAtlasValidationGenomes(networkId, mode, { limit: 5000 }),
+    ])
+      .then(([tierRes, originRes, genRes]) => {
+        if (cancelled) return;
+        setTiers(tierRes.data.rows ?? []);
+        setOrigins(originRes.data.rows ?? []);
+        setGenomes(genRes.data.rows ?? []);
+      })
+      .catch((err) => !cancelled && setDetailError(detail(err, "The network breakdown could not be loaded.")))
+      .finally(() => !cancelled && setLoadingDetail(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [networkId, mode]);
+
+  // Si el genoma elegido no es validable, se cae a E. coli K-12 o al primero
+  useEffect(() => {
+    if (genomes.length === 0 || genomes.some((g) => g.accession === genomeAcc)) return;
+    const fallback = genomes.find((g) => g.accession === DEFAULT_GENOME) ?? genomes[0];
+    setGenomeAcc(fallback.accession);
+  }, [genomes, genomeAcc]);
+
+  // ---------------------------------------------------------------- derivados
+
+  const tableRows = useMemo(
+    () =>
+      summary
+        .filter((r) => r.mode === mode && r.universe === universe)
+        .sort((a, b) => a.network_id - b.network_id),
+    [summary, mode, universe]
+  );
+  const bestF1 = Math.max(...tableRows.map((r) => r.f1 ?? 0), 0);
+
+  const curvesByNetwork = useMemo(() => {
+    const groups = {};
+    curve.forEach((p) => {
+      if (p.precision == null || p.recall == null) return;
+      (groups[p.network_id] ??= []).push(p);
+    });
+    Object.values(groups).forEach((pts) => pts.sort((a, b) => b.min_confidence - a.min_confidence));
+    return groups;
+  }, [curve]);
+
+  const maxRecall = useMemo(() => {
+    const m = Math.max(0.1, ...curve.map((p) => p.recall ?? 0));
+    return Math.min(1, Math.ceil(m * 10) / 10);
+  }, [curve]);
+
+  const d33Points = useMemo(
+    () => summary.filter((r) => r.mode === "all" && r.universe === "genome_tf"),
+    [summary]
+  );
+
+  const thresholdData = useMemo(() => {
+    const pts = curve.filter((p) => p.network_id === networkId).sort((a, b) => a.min_confidence - b.min_confidence);
+    const base = pts[0]?.pairs_total || 1;
+    return pts.map((p) => ({ ...p, kept: p.pairs_total / base }));
+  }, [curve, networkId]);
+
+  const tierRows = useMemo(() => {
+    const rank = (t) => (TIER_ORDER.includes(t) ? TIER_ORDER.indexOf(t) : TIER_ORDER.length);
+    return tiers.map((r) => ({ ...r, key: r.tier })).sort((a, b) => rank(a.key) - rank(b.key));
+  }, [tiers]);
+  const tierTotal = tierRows.reduce((s, r) => s + r.pairs_evaluable, 0);
+
+  const originRows = useMemo(
+    () => origins.map((r) => ({ ...r, key: r.origin })).sort((a, b) => b.pairs_evaluable - a.pairs_evaluable),
+    [origins]
+  );
+  const originTotal = originRows.reduce((s, r) => s + r.pairs_evaluable, 0);
+
+  const genomeOptions = useMemo(
+    () =>
+      genomes
+        .map((g) => ({
           id: g.accession,
-          name: g.ncbi_organism || g.accession,
-          threshold: g.network_threshold,
-        }));
-        setGenomes(list);
-        const start =
-          list.find((g) => g.id === initialOrganism) ??
-          list.find((g) => g.id === REFERENCE_ACCESSION) ??
-          list[0];
-        if (start) setGenomeAcc(start.id);
-      })
-      .catch(() => !cancelled && setError("The genome list could not be loaded."))
-      .finally(() => !cancelled && setLoadingGenomes(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [initialOrganism]);
+          label: g.ncbi_organism || g.accession,
+          muted: g.pairs_evaluable === 0,
+          meta: `${fmtInt(g.n_gold)} curated`,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [genomes]
+  );
+  const genome = genomes.find((g) => g.accession === genomeAcc);
+  const withPredictions = genomes.filter((g) => g.pairs_evaluable > 0).length;
 
-  useEffect(() => {
-    if (!genomeAcc) return;
-    let cancelled = false;
-    setLoading(true);
-    setError("");
+  const gs = manifest?.gold_stats;
+  const lostRows = gs ? gs.rows_without_genome + gs.rows_unmatched_locus : null;
+  const selectedName = tableRows.find((r) => r.network_id === networkId)?.network ?? `network ${networkId}`;
 
-    api
-      .getValidationMetrics(genomeAcc)
-      .then((res) => {
-        if (cancelled) return;
-        const sorted = [...res.data]
-          .sort((a, b) => a.neg_log10_pvalue_threshold - b.neg_log10_pvalue_threshold)
-          .map((r) => ({ ...r, threshold: r.neg_log10_pvalue_threshold }));
-        setRows(sorted);
-        // Por defecto, el umbral con que se construye la red.
-        const networkThreshold = genomes.find((g) => g.id === genomeAcc)?.threshold;
-        const idx = sorted.findIndex((r) => r.threshold === networkThreshold);
-        setThresholdIndex(idx >= 0 ? idx : 0);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setRows([]);
-        setError(
-          err.response?.status === 404
-            ? "No curated regulons are available for this genome."
-            : "Validation results could not be loaded."
-        );
-      })
-      .finally(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [genomeAcc, genomes]);
+  // ---------------------------------------------------------------- render
 
-  const current = rows[thresholdIndex];
-  const networkThreshold = genomes.find((g) => g.id === genomeAcc)?.threshold;
+  if (loadingBase) return <Spinner text="Loading validation results…" />;
+  if (error)
+    return (
+      <div className="p-6">
+        <ErrorMsg>{error}</ErrorMsg>
+      </div>
+    );
 
   return (
-    <div className="space-y-6 max-w-[1100px]">
-      <div>
-        <h1 className="text-2xl font-semibold text-[#334155]">Validation</h1>
-        <p className="text-sm text-[#64748B] mt-1">
-          Predicted TF → gene interactions compared with curated regulons
-          {current?.gold_standard ? ` (${current.gold_standard})` : ""}.
+    <div className="flex flex-col gap-5 p-6">
+      <header>
+        <h1 className="text-xl font-semibold text-[#1E293B]">Validation against RegPrecise 3.0</h1>
+        <p className="text-sm text-[#64748B] mt-1 max-w-4xl">
+          Predicted TF → operon interactions compared with curated regulons. Curated genes are projected to their
+          operon; TFs are matched by normalized name. Results are computed offline and read from{" "}
+          <span className="font-mono text-xs">data/results/validation</span>.
         </p>
+        {gs && (
+          <p className="text-xs text-[#64748B] mt-2">
+            Gold standard: <b>{fmtInt(gs.gold_tf_operon_pairs)}</b> curated TF–operon pairs in{" "}
+            <b>{fmtInt(gs.validable_genomes)}</b> genomes. {fmtInt(lostRows)} of {fmtInt(gs.curated_rows)} curated rows (
+            {pct(lostRows / gs.curated_rows)}) could not be used: {fmtInt(gs.rows_without_genome)} without a genome in
+            the database and {fmtInt(gs.rows_unmatched_locus)} with unmatched locus tags.
+          </p>
+        )}
+      </header>
+
+      <div className="flex flex-wrap gap-6 items-start">
+        <NetworkSelector networks={networks} value={networkId} onChange={setNetworkId} />
+        <Segmented label="Edges" options={MODES} value={mode} onChange={setMode} />
+        <Segmented label="Scored predictions" options={UNIVERSES} value={universe} onChange={setUniverse} />
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-[#64748B]">Organism</span>
-        <select
-          value={genomeAcc}
-          onChange={(e) => setGenomeAcc(e.target.value)}
-          disabled={loadingGenomes}
-          className="text-sm border border-[#D9E2E7] rounded-lg px-2.5 py-1.5 bg-white text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] disabled:bg-gray-50 disabled:text-gray-400"
+      {/* Resumen de las 5 redes */}
+      <Section
+        title="Networks"
+        subtitle="Recall is computed over all curated pairs. D33 are the values reported by the external pipeline; its exact evaluation definition is unknown, so only the ranking is expected to match. Click a row to select the network."
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-[11px] uppercase tracking-wide text-[#94A3B8] border-b border-[#E2E8F0]">
+                <th className="py-2 font-medium">Network</th>
+                <th className="py-2 font-medium text-right">Precision</th>
+                <th className="py-2 font-medium text-right">Recall</th>
+                <th className="py-2 font-medium text-right">F1</th>
+                <th className="py-2 font-medium text-right">D33 P / R / F1</th>
+                <th className="py-2 font-medium text-right">Evaluable pairs</th>
+                <th className="py-2 font-medium text-right">Genomes</th>
+                <th className="py-2 font-medium text-right">Median P / R per genome</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableRows.map((r) => (
+                <tr
+                  key={r.network_id}
+                  onClick={() => setNetworkId(r.network_id)}
+                  className={`border-b border-[#F1F5F9] cursor-pointer ${
+                    r.network_id === networkId ? "bg-[#F0F7F4]" : "hover:bg-[#F8FAFC]"
+                  }`}
+                >
+                  <td className="py-2">
+                    <span
+                      className="inline-block w-2.5 h-2.5 rounded-full mr-2 align-middle"
+                      style={{ background: NET_COLORS[r.network_id] }}
+                    />
+                    <span className="font-medium text-[#334155]">{r.network}</span>
+                  </td>
+                  <td className="py-2 text-right font-mono">{dec(r.precision)}</td>
+                  <td className="py-2 text-right font-mono">{dec(r.recall)}</td>
+                  <td className={`py-2 text-right font-mono ${r.f1 === bestF1 ? "font-bold text-[#176B57]" : ""}`}>
+                    {dec(r.f1)}
+                  </td>
+                  <td className="py-2 text-right font-mono text-[#94A3B8]">
+                    {dec(r.d33_precision)} / {dec(r.d33_recall)} / {dec(r.d33_f1)}
+                  </td>
+                  <td className="py-2 text-right font-mono">
+                    {fmtInt(r.pairs_evaluable)}
+                    <span className="text-[#94A3B8]"> of {fmtInt(r.pairs_total)} ({pct(r.pairs_evaluable / r.pairs_total)})</span>
+                  </td>
+                  <td className="py-2 text-right font-mono">{fmtInt(r.genomes_evaluated)}</td>
+                  <td className="py-2 text-right font-mono text-[#64748B]">
+                    {dec(r.precision_macro_median)} / {dec(r.recall_macro_median)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-[#94A3B8] mt-3">
+          Predictions outside the scored set are reported as not evaluable, not as false positives: the gold standard is
+          incomplete, so the scores describe only the evaluable fraction of each network.
+        </p>
+      </Section>
+
+      {/* Curvas */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <Section
+          title="Precision–recall curves"
+          subtitle={`Each curve sweeps the minimum edge confidence from 1 to 0 (curated TFs only, ${
+            mode === "all" ? "all edges" : "independent edges"
+          }). Hollow dots: values reported in D33.`}
         >
-          {loadingGenomes ? (
-            <option>Loading…</option>
+          {loadingCurve ? (
+            <Spinner />
+          ) : curveError ? (
+            <ErrorMsg>{curveError}</ErrorMsg>
           ) : (
-            genomes.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.name} ({g.id})
-              </option>
-            ))
-          )}
-        </select>
-      </div>
-
-      {loading && (
-        <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-8 flex items-center justify-center gap-2 text-sm text-[#64748B]">
-          <Loader2 className="w-5 h-5 text-[#3A9D7C] animate-spin" />
-          Computing validation…
-        </div>
-      )}
-
-      {!loading && error && (
-        <div className="bg-[#FEF0F0] rounded-xl border border-[#F8BFBF] p-6 text-center text-sm text-[#D96C6C]">
-          {error}
-        </div>
-      )}
-
-      {!loading && !error && current && (
-        <>
-          <div className="grid grid-cols-6 gap-3">
-            {[
-              { label: "Precision", value: pct(current.precision), color: "text-[#3A9D7C]" },
-              { label: "Recall", value: pct(current.recall), color: "text-[#3B82B8]" },
-              { label: "F1 score", value: pct(f1Score(current.precision, current.recall)), color: "text-[#55B8A5]" },
-              { label: "True positives", value: fmtInt(current.true_positives), color: "text-[#176B57]" },
-              { label: "False positives", value: fmtInt(current.false_positives), color: "text-[#D96C6C]" },
-              { label: "False negatives", value: fmtInt(current.false_negatives), color: "text-[#B7791F]" },
-            ].map((m) => (
-              <div key={m.label} className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-4">
-                <div className={`text-xl font-bold font-mono ${m.color}`}>{m.value}</div>
-                <div className="text-[11px] text-[#64748B] mt-1">{m.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
-            <div className="flex items-start justify-between mb-4 gap-4">
-              <div>
-                <h3 className="text-sm font-semibold text-[#334155]">
-                  Precision and recall across FIMO p-value thresholds
-                </h3>
-                <p className="text-xs text-[#64748B] mt-0.5">
-                  Selected: p ≤{" "}
-                  <span className="font-mono font-medium text-[#334155]">{formatThreshold(current.threshold)}</span>
-                  {current.threshold === networkThreshold && " (threshold used to build the network)"}
-                </p>
-              </div>
-              {rows.length > 1 && (
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-mono text-[#94A3B8]">{formatThreshold(rows[0].threshold)}</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={rows.length - 1}
-                    step={1}
-                    value={thresholdIndex}
-                    onChange={(e) => setThresholdIndex(parseInt(e.target.value, 10))}
-                    aria-label="FIMO p-value threshold"
-                    className="w-36 accent-[#3A9D7C]"
-                  />
-                  <span className="text-xs font-mono text-[#94A3B8]">
-                    {formatThreshold(rows[rows.length - 1].threshold)}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <ResponsiveContainer width="100%" height={280}>
-              <LineChart data={rows} margin={{ top: 5, right: 16, bottom: 24, left: -10 }}>
-                <CartesianGrid strokeDasharray="2 2" stroke="#F0F4F8" />
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart margin={{ top: 10, right: 20, bottom: 25, left: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                 <XAxis
-                  dataKey="threshold"
-                  tickFormatter={formatThreshold}
-                  tick={{ fontSize: 11, fill: "#64748B" }}
-                  label={{ value: "FIMO p-value threshold (stricter →)", position: "insideBottom", offset: -14, fontSize: 11, fill: "#64748B" }}
+                  type="number"
+                  dataKey="recall"
+                  domain={[0, maxRecall]}
+                  tickFormatter={pctTick}
+                  allowDuplicatedCategory={false}
+                  fontSize={11}
+                  label={{ value: "Recall", position: "insideBottom", offset: -15, fontSize: 12 }}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#64748B" }}
-                  tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
-                  domain={[0, "auto"]}
+                  type="number"
+                  domain={[0, 1]}
+                  tickFormatter={pctTick}
+                  fontSize={11}
+                  label={{ value: "Precision", angle: -90, position: "insideLeft", fontSize: 12 }}
                 />
-                <Tooltip
-                  contentStyle={{ fontSize: 11, borderColor: "#D9E2E7", borderRadius: 8 }}
-                  labelFormatter={(v) => `p ≤ ${formatThreshold(v)}`}
-                  formatter={(v) => `${(v * 100).toFixed(1)}%`}
-                />
-                {/* Leyenda arriba para que no se monte sobre el título del eje X */}
-                <Legend verticalAlign="top" align="right" height={24} wrapperStyle={{ fontSize: 11 }} />
-                <ReferenceLine x={current.threshold} stroke="#E9B949" strokeDasharray="4 3" strokeWidth={1.5} />
-                <Line type="monotone" dataKey="precision" stroke="#3A9D7C" strokeWidth={2.5} dot={{ r: 3 }} name="Precision" />
-                <Line type="monotone" dataKey="recall" stroke="#3B82B8" strokeWidth={2.5} dot={{ r: 3 }} name="Recall" />
+                <Tooltip content={<CurveTooltip />} />
+                <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
+                {Object.entries(curvesByNetwork).map(([id, pts]) => (
+                  <Line
+                    key={id}
+                    data={pts}
+                    dataKey="precision"
+                    name={pts[0].network}
+                    stroke={NET_COLORS[id]}
+                    strokeWidth={Number(id) === networkId ? 3 : 1.5}
+                    dot={false}
+                    type="linear"
+                    isAnimationActive={false}
+                  />
+                ))}
+                {d33Points.map((r) => (
+                  <ReferenceDot
+                    key={`d33-${r.network_id}`}
+                    x={r.d33_recall}
+                    y={r.d33_precision}
+                    r={5}
+                    fill="#fff"
+                    stroke={NET_COLORS[r.network_id]}
+                    strokeWidth={2}
+                  />
+                ))}
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          )}
+        </Section>
 
-          <div className="text-[11px] text-[#94A3B8] space-y-1 max-w-3xl">
-            <p>
-              An edge is a distinct TF → gene pair. True positives are predicted pairs present in the curated
-              regulons; false positives are predicted pairs absent from them; false negatives are curated pairs
-              the prediction missed.
-            </p>
-            <p>
-              Thresholds more permissive than 1e-5 are not shown: only FIMO hits with p ≤ 1e-5 are stored in
-              the database.
-            </p>
+        <Section
+          title={`Confidence threshold — ${selectedName}`}
+          subtitle="Precision, recall and F1 when only edges with confidence ≥ threshold are kept. The dashed line is the share of the network's TF–operon pairs that survive the threshold."
+        >
+          {loadingCurve ? (
+            <Spinner />
+          ) : thresholdData.length === 0 ? (
+            <p className="text-sm text-[#94A3B8]">No curve for this network.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={thresholdData} margin={{ top: 10, right: 20, bottom: 25, left: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis
+                  type="number"
+                  dataKey="min_confidence"
+                  domain={[0, 1]}
+                  fontSize={11}
+                  label={{ value: "Minimum confidence", position: "insideBottom", offset: -15, fontSize: 12 }}
+                />
+                <YAxis type="number" domain={[0, 1]} tickFormatter={pctTick} fontSize={11} />
+                <Tooltip
+                  formatter={(v) => pct(v)}
+                  labelFormatter={(v) => `confidence ≥ ${Number(v).toFixed(2)}`}
+                  contentStyle={{ fontSize: 12 }}
+                />
+                <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
+                <Line dataKey="precision" name="Precision" stroke="#176B57" strokeWidth={2} dot={false} isAnimationActive={false} />
+                <Line dataKey="recall" name="Recall" stroke="#2563EB" strokeWidth={2} dot={false} isAnimationActive={false} />
+                <Line dataKey="f1" name="F1" stroke="#D97706" strokeWidth={2} dot={false} isAnimationActive={false} />
+                <Line
+                  dataKey="kept"
+                  name="Pairs kept"
+                  stroke="#94A3B8"
+                  strokeDasharray="5 4"
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </Section>
+      </div>
+
+      {/* Desglose de la red elegida */}
+      {detailError && <ErrorMsg>{detailError}</ErrorMsg>}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <Section
+          title="Precision by transfer tier"
+          subtitle="Tier of the motif transfer to the evaluated genome, ordered from closest to most distant relative."
+        >
+          {loadingDetail ? <Spinner /> : <BreakdownTable rows={tierRows} labelOf={(k) => k} total={tierTotal} />}
+        </Section>
+        <Section
+          title="Precision by motif origin"
+          subtitle={
+            mode === "all"
+              ? "Circular pairs come from a RegPrecise motif built with the same regulog that contains the evaluated genome."
+              : "Circular pairs are excluded in independent mode."
+          }
+        >
+          {loadingDetail ? (
+            <Spinner />
+          ) : (
+            <BreakdownTable rows={originRows} labelOf={(k) => ORIGIN_LABELS[k] ?? k} total={originTotal} />
+          )}
+        </Section>
+      </div>
+
+      {/* Por genoma */}
+      <Section
+        title="Per genome"
+        subtitle={`${fmtInt(genomes.length)} genomes have curated regulons; ${fmtInt(
+          withPredictions
+        )} have evaluable predictions in ${selectedName} (genomes without them are shown in gray).`}
+        right={
+          <OrganismSearch options={genomeOptions} value={genomeAcc} onChange={setGenomeAcc} disabled={loadingDetail} />
+        }
+      >
+        {loadingDetail ? (
+          <Spinner />
+        ) : !genome ? (
+          <p className="text-sm text-[#94A3B8]">Select a genome.</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div>
+              <div className="text-sm font-semibold text-[#334155]">{genome.ncbi_organism}</div>
+              <div className="text-xs font-mono text-[#94A3B8]">
+                {genome.accession} · {genome.gtdb_family ?? "—"}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+              <Stat label="Precision" value={pct(genome.precision)} />
+              <Stat label="Recall" value={pct(genome.recall)} />
+              <Stat label="Curated pairs" value={fmtInt(genome.n_gold)} />
+              <Stat label="Evaluable predictions" value={fmtInt(genome.pairs_evaluable)} />
+              <Stat label="TP" value={fmtInt(genome.TP)} />
+              <Stat label="FP" value={fmtInt(genome.FP)} />
+              <Stat label="FN" value={fmtInt(genome.FN)} />
+            </div>
+            {genome.pairs_evaluable === 0 && (
+              <p className="text-xs text-[#94A3B8]">
+                This network has no predictions for the curated TFs of this genome, so precision is undefined.
+              </p>
+            )}
           </div>
-        </>
-      )}
+        )}
+      </Section>
     </div>
   );
 }

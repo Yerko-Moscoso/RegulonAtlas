@@ -50,3 +50,6 @@ clean:
 
 cache-atlas:
 	PYTHONPATH=. python scripts/export_atlas_cache.py
+
+validate-atlas:
+	PYTHONPATH=. python src/validation/atlas.py --gold regprecise

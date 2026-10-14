@@ -68,6 +68,22 @@ export const api = {
 
   getAtlasProvenance: () => apiClient.get('/atlas/provenance'),
 
+  // === VALIDACIÓN DEL ATLAS (resultados de make validate-atlas) ===
+  getAtlasValidationManifest: (gold = 'regprecise') =>
+    apiClient.get('/atlas/validation/manifest', { params: { gold } }),
+
+  getAtlasValidationSummary: (gold = 'regprecise', { mode, universe } = {}) =>
+    apiClient.get('/atlas/validation/summary', { params: { gold, mode, universe } }),
+
+  getAtlasValidationCurve: (networkId, mode = 'all', gold = 'regprecise') =>
+    apiClient.get('/atlas/validation/curve', { params: { gold, network_id: networkId, mode } }),
+
+  getAtlasValidationBreakdown: (kind, networkId, mode = 'all', gold = 'regprecise') =>
+    apiClient.get(`/atlas/validation/breakdown/${kind}`, { params: { gold, network_id: networkId, mode } }),
+
+  getAtlasValidationGenomes: (networkId, mode = 'all', { accession, limit = 500, gold = 'regprecise' } = {}) =>
+    apiClient.get('/atlas/validation/genomes', { params: { gold, network_id: networkId, mode, accession, limit } }),
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');
