@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Hook versionado. Se activa una vez por clon con: make hooks
+# (git config core.hooksPath scripts/githooks). Saltarlo solo con motivo: git commit --no-verify
+exec "$(git rev-parse --show-toplevel)/scripts/check_commit.sh" --staged

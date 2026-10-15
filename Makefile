@@ -14,7 +14,7 @@ RUN      = $(PYTHON) -m src.pipeline
 CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
-.PHONY: all cache mvp transfer_map networks metrics validation report api clean
+.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks
 
 all: mvp
 
@@ -59,3 +59,15 @@ cache-genes:
 
 metrics-atlas:
 	PYTHONPATH=. python src/networks/atlas_metrics.py
+
+# Verificaciones antes de commit/push (ver scripts/check_commit.sh).
+check:
+	scripts/check_commit.sh --worktree
+	PYTHONPATH=. python -m pytest -q
+
+test:
+	PYTHONPATH=. python -m pytest -q
+
+# Una vez por clon: activa el pre-commit versionado (revisa el índice, no la copia de trabajo).
+hooks:
+	git config core.hooksPath scripts/githooks
