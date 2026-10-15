@@ -1,25 +1,26 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   RadarChart,
-  Radar,
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  ResponsiveContainer,
+  Radar,
   Legend,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts";
-import { Loader2, Info, Plus, Check, X } from "lucide-react";
+import { Loader2, Info, X, Check, Plus } from "lucide-react";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
-import { DEFAULT_NETWORK, DEFAULT_GENOME, ATLAS_SELECTIONS, fmtInt } from "../utils/atlas";
+import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
 
 // Huella topológica de cada genoma: su posición (percentil) en cada métrica
-// respecto de TODOS los genomas con métricas en la red elegida. A diferencia de
-// la normalización min-max sobre unos pocos genomas, el percentil no depende de
-// qué genomas se muestran y resiste las colas largas (de 1 a miles de aristas).
-// Fuente: network_metrics del pipeline externo (ver aviso en la vista).
+// respecto de los genomas del atlas con aristas en la red elegida. El percentil
+// no depende de qué genomas se muestran y resiste las colas largas.
+// Fuente: métricas propias (make metrics-atlas, endpoint /atlas/metrics), calculadas
+// con NetworkX sobre el grafo TF -> operón. No se usan las métricas que dependen de
+// ubicar el gen del TF por nombre (autorregulación, aristas TF -> TF).
 
 const fmtDec = (digits) => (v) => (v == null ? "—" : Number(v).toFixed(digits));
 const fmtPct = (v) => (v == null ? "—" : `${(Number(v) * 100).toFixed(1)}%`);
@@ -27,10 +28,11 @@ const fmtPct = (v) => (v == null ? "—" : `${(Number(v) * 100).toFixed(1)}%`);
 const FP_METRICS = [
   { key: "n_edges", label: "Edges", fmt: fmtInt },
   { key: "n_tf", label: "TFs", fmt: fmtInt },
-  { key: "mean_out_deg", label: "Avg out-degree", fmt: fmtDec(2) },
-  { key: "mean_in_deg", label: "Avg in-degree", fmt: fmtDec(2) },
+  { key: "edges_per_tf", label: "Edges per TF", fmt: fmtDec(2) },
   { key: "frac_multi_reg", label: "Multi-regulated targets", fmt: fmtPct },
-  { key: "n_ffl", label: "Feed-forward loops", fmt: fmtInt },
+  { key: "out_degree_gini", label: "Out-degree Gini", fmt: fmtDec(2) },
+  { key: "hub_share", label: "Hub share", fmt: fmtPct },
+  { key: "frac_genome_targeted", label: "Genome targeted", fmt: fmtPct },
   { key: "frac_largest", label: "Largest component", fmt: fmtPct },
 ];
 
@@ -78,8 +80,7 @@ export default function Fingerprints({ initialOrganism }) {
   const [networks, setNetworks] = useState([]);
   const [networkId, setNetworkId] = useState(DEFAULT_NETWORK);
 
-  const [genomes, setGenomes] = useState([]); // los 2.644 genomas
-  const [rows, setRows] = useState([]); // filas de network_metrics de la red elegida
+  const [all, setAll] = useState([]); // los 2.644 genomas con sus métricas propias (has_edges=false si no tienen aristas)
   const [organism, setOrganism] = useState("");
   const [pinned, setPinned] = useState([]); // accessions que se comparan en el radar
   const [loading, setLoading] = useState(true);
@@ -94,27 +95,28 @@ export default function Fingerprints({ initialOrganism }) {
       .catch(() => setError("The network list could not be loaded. Check that the backend is running."));
   }, []);
 
-  // 2. Genomas y métricas de la red elegida (una llamada a cada endpoint)
+  // 2. Métricas propias de todos los genomas en la red elegida (una sola llamada)
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError("");
-    Promise.all([api.getAtlasGenomes(networkId), api.getAtlasMetrics(networkId)])
-      .then(([genomesRes, metricsRes]) => {
+    api
+      .getAtlasOwnMetrics(networkId)
+      .then((res) => {
         if (cancelled) return;
-        const list = genomesRes.data;
-        setGenomes(list);
-        setRows(metricsRes.data);
+        const list = res.data.rows ?? [];
+        setAll(list);
         setOrganism((prev) => {
           if (prev && list.some((g) => g.accession === prev)) return prev;
           const start = [initialOrganism, DEFAULT_GENOME].find((id) => list.some((g) => g.accession === id));
           return start ?? list[0]?.accession ?? "";
         });
       })
-      .catch(() => {
+      .catch((err) => {
         if (cancelled) return;
         setError(
-          "Network metrics could not be loaded. Check that the backend is running and the atlas cache exists (make cache-atlas)."
+          err?.response?.data?.detail ??
+            "Network metrics could not be loaded. Check that the backend is running and the metrics exist (make metrics-atlas)."
         );
       })
       .finally(() => !cancelled && setLoading(false));
@@ -123,25 +125,27 @@ export default function Fingerprints({ initialOrganism }) {
     };
   }, [networkId, initialOrganism]);
 
-  const metricsByAcc = useMemo(() => new Map(rows.map((r) => [r.accession, r])), [rows]);
+  const byAcc = useMemo(() => new Map(all.map((r) => [r.accession, r])), [all]);
+  const rows = useMemo(() => all.filter((r) => r.has_edges), [all]); // genomas con aristas
+  const atlasRows = useMemo(() => rows.filter((r) => r.in_atlas), [rows]); // población de referencia
   const network = networks.find((n) => n.network_id === networkId);
-  const genome = genomes.find((g) => g.accession === organism);
-  const current = metricsByAcc.get(organism);
-  const family = current?.gtdb_family ?? genome?.gtdb_family;
+  const genome = byAcc.get(organism);
+  const current = genome?.has_edges ? genome : null;
+  const family = genome?.gtdb_family;
 
-  // Valores ordenados por métrica, para calcular percentiles en el atlas
+  // Valores ordenados por métrica (solo genomas del atlas), para calcular percentiles
   const sorted = useMemo(
     () =>
       Object.fromEntries(
         FP_METRICS.map((m) => [
           m.key,
-          rows
+          atlasRows
             .map((r) => r[m.key])
             .filter((v) => v != null)
             .sort((a, b) => a - b),
         ])
       ),
-    [rows]
+    [atlasRows]
   );
 
   // Percentil (0-100) con empates repartidos al medio
@@ -155,35 +159,26 @@ export default function Fingerprints({ initialOrganism }) {
 
   const options = useMemo(
     () =>
-      genomes.map((g) => {
-        const m = metricsByAcc.get(g.accession);
-        return {
-          id: g.accession,
-          label: g.ncbi_organism || g.accession,
-          muted: !m,
-          meta: m
-            ? `${fmtInt(m.n_tf)} TFs, ${fmtInt(m.n_edges)} edges`
-            : ATLAS_SELECTIONS.has(g.selection)
-            ? "no metrics"
-            : "auxiliary",
-        };
-      }),
-    [genomes, metricsByAcc]
+      all.map((g) => ({
+        id: g.accession,
+        label: g.ncbi_organism || g.accession,
+        muted: !g.has_edges,
+        meta: `${g.has_edges ? `${fmtInt(g.n_tf)} TFs, ${fmtInt(g.n_edges)} edges` : "no edges"}${
+          g.in_atlas ? "" : ", auxiliary"
+        }`,
+      })),
+    [all]
   );
 
   const missingReason = () => {
     if (!genome) return "";
     const name = genome.ncbi_organism || genome.accession;
-    if (!ATLAS_SELECTIONS.has(genome.selection)) {
-      return `${name} is an auxiliary genome (${genome.selection}). Metrics are reported only for the 2,224 atlas genomes.`;
-    }
-    if (!genome.n_edges) {
-      return `${name} has no edges in the ${network?.name ?? "selected"} network, so it has no fingerprint. Choose a less strict network, such as permissive.`;
-    }
-    return `${name} has ${fmtInt(genome.n_edges)} edges in this network, but the external pipeline reported no metrics for it.`;
+    return `${name} has no edges in the ${
+      network?.name ?? "selected"
+    } network, so it has no fingerprint. Choose a less strict network, such as permissive.`;
   };
 
-  // Genomas de la misma familia GTDB, de mayor a menor número de aristas
+  // Genomas de la misma familia GTDB con aristas, de mayor a menor número de aristas
   const familyRows = useMemo(
     () =>
       family
@@ -197,11 +192,11 @@ export default function Fingerprints({ initialOrganism }) {
     [familyRows]
   );
 
-  // Comparadores fijados que tienen métricas en la red actual
+  // Comparadores fijados que tienen aristas en la red actual
   const pinnedRows = pinned
     .filter((acc) => acc !== organism)
-    .map((acc) => metricsByAcc.get(acc))
-    .filter(Boolean);
+    .map((acc) => byAcc.get(acc))
+    .filter((r) => r?.has_edges);
 
   const togglePin = (acc) =>
     setPinned((p) => (p.includes(acc) ? p.filter((a) => a !== acc) : p.length >= MAX_PINNED ? p : [...p, acc]));
@@ -222,8 +217,8 @@ export default function Fingerprints({ initialOrganism }) {
       <div>
         <h1 className="text-2xl font-semibold text-[#334155]">Regulatory Network Fingerprints</h1>
         <p className="text-sm text-[#64748B] mt-1">
-          Where each genome's regulatory network stands in the atlas: every metric is shown as a percentile among all
-          genomes with metrics in the selected network.
+          Where each genome's regulatory network stands in the atlas: every metric is shown as a percentile among the
+          atlas genomes with edges in the selected network.
         </p>
       </div>
 
@@ -236,18 +231,14 @@ export default function Fingerprints({ initialOrganism }) {
         <NetworkSelector networks={networks} value={networkId} onChange={setNetworkId} />
         <div className="flex flex-col gap-1">
           <span className="text-xs text-[#64748B]">
-            Organism ({fmtInt(rows.length)} of {fmtInt(genomes.length)} have metrics in this network)
+            Organism ({fmtInt(rows.length)} of {fmtInt(all.length)} genomes have edges in this network)
           </span>
-          <OrganismSearch
-            options={options}
-            value={organism}
-            onChange={setOrganism}
-            disabled={loading && genomes.length === 0}
-          />
+          <OrganismSearch options={options} value={organism} onChange={setOrganism} disabled={loading && all.length === 0} />
         </div>
-        {current && (
+        {genome && (
           <div className="ml-auto text-xs text-[#64748B] text-right">
-            {current.gtdb_phylum}, {current.gtdb_family}
+            {genome.gtdb_phylum}, {genome.gtdb_family}
+            {!genome.in_atlas && <div className="text-[11px] text-[#94A3B8]">Auxiliary genome ({genome.selection})</div>}
           </div>
         )}
       </div>
@@ -255,8 +246,10 @@ export default function Fingerprints({ initialOrganism }) {
       <div className="flex gap-2.5 items-start bg-[#F7FAFC] border border-[#D9E2E7] rounded-lg px-4 py-2.5">
         <Info size={15} className="text-[#64748B] shrink-0 mt-0.5" />
         <p className="text-[12px] text-[#64748B]">
-          Fingerprints use the metrics reported by the external pipeline that built the networks. They cannot be
-          reproduced from the network edges with the available information, so read them as a reference.
+          Metrics are computed by RegulomeAtlas from the network edges: a directed graph with one node per transcription
+          factor (normalized name) and per target operon. Percentiles are relative to the {fmtInt(atlasRows.length)} atlas
+          genomes with edges in this network. Absolute sizes (edges, TFs) grow strongly with less strict networks;
+          compare genomes within the same network.
         </p>
       </div>
 
@@ -275,16 +268,14 @@ export default function Fingerprints({ initialOrganism }) {
 
       {/* Valores y percentiles del genoma elegido */}
       {!loading && current && (
-        <div className="grid grid-cols-7 gap-2.5">
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-2.5">
           {FP_METRICS.map((m) => {
             const p = percentile(m.key, current[m.key]);
             return (
               <div key={m.key} className="bg-white rounded-xl border border-[#D9E2E7] p-3 shadow-sm">
                 <div className="text-lg font-bold font-mono text-[#3A9D7C]">{m.fmt(current[m.key])}</div>
                 <div className="text-[11px] text-[#64748B] mt-0.5 leading-tight">{m.label}</div>
-                <div className="text-[11px] text-[#94A3B8] mt-1.5">
-                  {p == null ? "—" : `Percentile ${Math.round(p)}`}
-                </div>
+                <div className="text-[11px] text-[#94A3B8] mt-1.5">{p == null ? "—" : `Percentile ${Math.round(p)}`}</div>
               </div>
             );
           })}
@@ -299,9 +290,9 @@ export default function Fingerprints({ initialOrganism }) {
               <div>
                 <h3 className="text-sm font-semibold text-[#334155]">Fingerprint radar</h3>
                 <p className="text-xs text-[#64748B] mt-0.5">
-                  Percentile of each metric among the {fmtInt(rows.length)} genomes of the{" "}
-                  {network?.name ?? "selected"} network. The grey ring is the atlas median (50); the blue profile is
-                  the median of {family ?? "the family"}. Add up to {MAX_PINNED} genomes from the table below to compare.
+                  Percentile of each metric among the {fmtInt(atlasRows.length)} atlas genomes of the{" "}
+                  {network?.name ?? "selected"} network. The grey ring is the atlas median (50); the blue profile is the
+                  median of {family ?? "the family"}. Add up to {MAX_PINNED} genomes from the table below to compare.
                 </p>
               </div>
             </div>
@@ -327,7 +318,7 @@ export default function Fingerprints({ initialOrganism }) {
               </div>
             )}
 
-            <ResponsiveContainer width="100%" height={340}>
+            <ResponsiveContainer width="100%" height={360}>
               <RadarChart data={radarData} margin={{ top: 10, right: 40, bottom: 10, left: 40 }}>
                 <PolarGrid stroke="#E2E8F0" />
                 <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: "#64748B" }} />
@@ -387,9 +378,10 @@ export default function Fingerprints({ initialOrganism }) {
               <div className="mb-4">
                 <h3 className="text-sm font-semibold text-[#334155]">Fingerprints within {family}</h3>
                 <p className="text-xs text-[#64748B] mt-0.5">
-                  {fmtInt(familyRows.length)} genome{familyRows.length === 1 ? "" : "s"} of this GTDB family, ordered by
-                  number of edges. Cells show the real value; the color is its percentile in the atlas. Click a name to
-                  select it, or + to add it to the radar.
+                  {fmtInt(familyRows.length)} genome{familyRows.length === 1 ? "" : "s"} of this GTDB family with edges,
+                  ordered by number of edges ("aux" marks auxiliary genomes outside the 2,224-genome atlas). Cells show
+                  the real value; the color is its percentile in the atlas. Click a name to select it, or + to add it to
+                  the radar.
                 </p>
               </div>
               <div className="max-h-[480px] overflow-auto">
@@ -399,7 +391,7 @@ export default function Fingerprints({ initialOrganism }) {
                       <th className="w-7 pb-2" />
                       <th className="text-left text-[10px] font-medium text-[#64748B] pb-2 pr-3 w-52">Organism</th>
                       {FP_METRICS.map((m) => (
-                        <th key={m.key} className="text-center text-[10px] font-medium text-[#64748B] pb-2 px-1 min-w-[84px]">
+                        <th key={m.key} className="text-center text-[10px] font-medium text-[#64748B] pb-2 px-1 min-w-[76px]">
                           {m.label}
                         </th>
                       ))}
@@ -442,6 +434,7 @@ export default function Fingerprints({ initialOrganism }) {
                             }`}
                           >
                             {r.ncbi_organism}
+                            {!r.in_atlas && <span className="ml-1 not-italic text-[9px] text-[#94A3B8]">aux</span>}
                           </td>
                           {FP_METRICS.map((m, colIdx) => {
                             const p = percentile(m.key, r[m.key]);

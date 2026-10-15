@@ -53,3 +53,9 @@ cache-atlas:
 
 validate-atlas:
 	PYTHONPATH=. python src/validation/atlas.py --gold regprecise
+
+cache-genes:
+	PYTHONPATH=. python scripts/export_genes_cache.py
+
+metrics-atlas:
+	PYTHONPATH=. python src/networks/atlas_metrics.py

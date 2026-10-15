@@ -4,59 +4,65 @@ import { Loader2, Info, ArrowUp, ArrowDown } from "lucide-react";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
-import {
-  DEFAULT_NETWORK,
-  DEFAULT_GENOME,
-  ATLAS_SELECTIONS,
-  fmtInt,
-  parseBenchmark,
-  selectClass,
-} from "../utils/atlas";
+import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, parseBenchmark, selectClass } from "../utils/atlas";
 
-// Métricas topológicas de las redes reales del atlas, tal como las reporta la
-// tabla network_metrics del pipeline externo. No se reproducen desde `edges`
-// (diagnóstico semana 9), por eso la vista lo declara de forma visible.
-// network_metrics trae una fila por genoma: los gráficos comparan genomas entre
-// sí (distribución en el atlas y ranking en la familia), no grados por nodo.
+// Métricas topológicas propias de las redes del atlas (make metrics-atlas,
+// endpoint /atlas/metrics). Se calculan con NetworkX sobre el grafo dirigido
+// TF -> operón de cada genoma y reemplazan a la tabla externa network_metrics,
+// que no se reproduce desde `edges`. La comparación con la tabla externa se
+// muestra como referencia (correlación de rangos por red).
 
 const fmtDec = (digits) => (v) => (v == null ? "—" : Number(v).toFixed(digits));
 const fmtPct = (v) => (v == null ? "—" : `${(Number(v) * 100).toFixed(1)}%`);
 
 const COLOR = { green: "#3A9D7C", blue: "#3B82B8", highlight: "#E9B949" };
 
-// Tarjetas principales (mismo formato que el MVP)
+// Tarjetas principales
 const MAIN_METRICS = [
   { key: "n_tf", label: "Transcription factors", fmt: fmtInt, color: "text-[#3A9D7C]" },
-  { key: "n_targets", label: "Targets", fmt: fmtInt, color: "text-[#3B82B8]" },
-  { key: "n_edges", label: "Edges", fmt: fmtInt, color: "text-[#55B8A5]" },
+  { key: "n_targets", label: "Target operons", fmt: fmtInt, color: "text-[#3B82B8]" },
+  { key: "n_edges", label: "Edges (TF → operon)", fmt: fmtInt, color: "text-[#55B8A5]" },
   { key: "density", label: "Density", fmt: fmtDec(4), color: "text-[#3A9D7C]" },
-  { key: "mean_out_deg", label: "Average out-degree", fmt: fmtDec(2), color: "text-[#3B82B8]" },
+  { key: "mean_out_degree", label: "Average out-degree", fmt: fmtDec(2), color: "text-[#3B82B8]" },
 ];
 
-// Resto de network_metrics, en un panel compacto
+// Resto de las métricas, en un panel compacto
 const DETAIL_METRICS = [
-  { key: "max_out_deg", label: "Max out-degree", fmt: fmtInt, hint: "Targets of the most connected TF" },
-  { key: "mean_in_deg", label: "Average in-degree", fmt: fmtDec(2), hint: "Average number of regulators per target" },
-  { key: "max_in_deg", label: "Max in-degree", fmt: fmtInt, hint: "Regulators of the most regulated target" },
-  { key: "frac_multi_reg", label: "Multi-regulated targets", fmt: fmtPct },
-  { key: "n_autoreg", label: "Autoregulations", fmt: fmtInt },
-  { key: "n_ffl", label: "Feed-forward loops", fmt: fmtInt },
-  { key: "n_cascade", label: "Cascades", fmt: fmtInt },
-  { key: "n_components", label: "Connected components", fmt: fmtInt },
-  { key: "frac_largest", label: "Largest component", fmt: fmtPct },
+  { key: "max_out_degree", label: "Max out-degree", fmt: fmtInt, hint: "Target operons of the most connected TF" },
+  { key: "mean_in_degree", label: "Average in-degree", fmt: fmtDec(2), hint: "Average number of TFs per target operon" },
+  { key: "max_in_degree", label: "Max in-degree", fmt: fmtInt, hint: "TFs of the most regulated operon" },
+  { key: "frac_multi_reg", label: "Multi-regulated targets", fmt: fmtPct, hint: "Operons regulated by two or more TFs" },
+  { key: "n_target_genes", label: "Target genes", fmt: fmtInt, hint: "Genes in the target operons" },
+  { key: "frac_genome_targeted", label: "Genome targeted", fmt: fmtPct, hint: "Share of the genome's genes in target operons" },
+  {
+    key: "out_degree_gini",
+    label: "Out-degree Gini",
+    fmt: fmtDec(2),
+    hint: "0: every TF regulates the same number of operons; close to 1: a few TFs regulate most of them",
+  },
+  { key: "hub_share", label: "Hub share", fmt: fmtPct, hint: "Share of the edges that come from the most connected TF" },
+  { key: "n_components", label: "Connected components", fmt: fmtInt, hint: "Weakly connected components" },
+  { key: "frac_largest", label: "Largest component", fmt: fmtPct, hint: "Share of the nodes in the largest component" },
 ];
 
-// Métricas que se pueden graficar. Los conteos tienen colas largas (de 1 a miles
-// de aristas), así que van en intervalos logarítmicos; las fracciones y promedios
-// en intervalos lineales.
+// Métricas que necesitan ubicar el gen de cada TF por nombre: solo cota inferior
+const LOWER_BOUND_METRICS = [
+  { key: "tf_resolved_rate", label: "TFs located by gene name", fmt: fmtPct },
+  { key: "n_autoreg", label: "Autoregulations", fmt: fmtInt },
+  { key: "n_tf_tf_edges", label: "TF → TF edges", fmt: fmtInt },
+];
+
+// Métricas que se pueden graficar. Los conteos tienen colas largas, así que van en
+// intervalos logarítmicos; las fracciones y promedios en intervalos lineales.
 const CHART_METRICS = [
   { key: "n_edges", label: "Edges", scale: "log", fmt: fmtInt },
   { key: "n_tf", label: "Transcription factors", scale: "log", fmt: fmtInt },
-  { key: "n_targets", label: "Targets", scale: "log", fmt: fmtInt },
-  { key: "n_ffl", label: "Feed-forward loops", scale: "log", fmt: fmtInt },
-  { key: "mean_out_deg", label: "Average out-degree", scale: "linear", fmt: fmtDec(2) },
+  { key: "n_targets", label: "Target operons", scale: "log", fmt: fmtInt },
+  { key: "edges_per_tf", label: "Edges per TF", scale: "linear", fmt: fmtDec(2) },
   { key: "density", label: "Density", scale: "linear", fmt: fmtDec(4) },
   { key: "frac_multi_reg", label: "Multi-regulated targets", scale: "linear", fmt: fmtPct },
+  { key: "out_degree_gini", label: "Out-degree Gini", scale: "linear", fmt: fmtDec(2) },
+  { key: "frac_genome_targeted", label: "Genome targeted", scale: "linear", fmt: fmtPct },
   { key: "frac_largest", label: "Largest component", scale: "linear", fmt: fmtPct },
 ];
 
@@ -65,17 +71,20 @@ const TABLE_COLUMNS = [
   { key: "n_targets", label: "Targets", fmt: fmtInt },
   { key: "n_edges", label: "Edges", fmt: fmtInt },
   { key: "density", label: "Density", fmt: fmtDec(4) },
-  { key: "mean_out_deg", label: "Avg. out-deg.", fmt: fmtDec(2) },
-  { key: "n_ffl", label: "FFLs", fmt: fmtInt },
+  { key: "mean_out_degree", label: "Avg. out-deg.", fmt: fmtDec(2) },
+  { key: "frac_multi_reg", label: "Multi-reg.", fmt: fmtPct },
+  { key: "out_degree_gini", label: "Gini", fmt: fmtDec(2) },
   { key: "frac_largest", label: "Largest comp.", fmt: fmtPct },
 ];
+
+const EXTERNAL_LABELS = { n_tf: "TFs", n_targets: "targets", n_edges: "edges", density: "density" };
 
 const LOG_BOUNDS = [0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, Infinity];
 const LINEAR_BINS = 20;
 const FAMILY_CHART_MAX = 30;
 
-// Histograma de una métrica sobre todos los genomas de la red. Marca el
-// intervalo donde cae el genoma elegido.
+// Histograma de una métrica sobre los genomas del atlas. Marca el intervalo
+// donde cae el genoma elegido.
 function buildHistogram(values, metric, selectedValue) {
   const vals = values.filter((v) => v != null);
   if (vals.length === 0) return [];
@@ -109,7 +118,7 @@ function buildHistogram(values, metric, selectedValue) {
       const hi = i === n - 1 ? max : lo + width;
       return { bin: metric.fmt(lo), lo, hi, range: `${metric.fmt(lo)} – ${metric.fmt(hi)}`, count: 0 };
     });
-    const indexOf = (v) => Math.min(n - 1, Math.floor((v - min) / width));
+    const indexOf = (v) => Math.max(0, Math.min(n - 1, Math.floor((v - min) / width)));
     vals.forEach((v) => {
       bins[indexOf(v)].count += 1;
     });
@@ -145,8 +154,8 @@ export default function Metrics({ initialOrganism }) {
   const [networks, setNetworks] = useState([]);
   const [networkId, setNetworkId] = useState(DEFAULT_NETWORK);
 
-  const [genomes, setGenomes] = useState([]); // los 2.644 genomas, con n_edges en la red elegida
-  const [rows, setRows] = useState([]); // filas de network_metrics de la red elegida
+  const [all, setAll] = useState([]); // los 2.644 genomas con sus métricas propias (has_edges=false si no tienen aristas)
+  const [external, setExternal] = useState([]); // concordancia con network_metrics (por métrica)
   const [organism, setOrganism] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -162,18 +171,18 @@ export default function Metrics({ initialOrganism }) {
       .catch(() => setError("The network list could not be loaded. Check that the backend is running."));
   }, []);
 
-  // 2. Genomas y métricas de la red elegida: una sola llamada a cada endpoint.
+  // 2. Métricas de la red elegida (una llamada) y su concordancia con la tabla externa.
   //    El genoma elegido, los gráficos y la tabla se resuelven en el navegador.
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError("");
-    Promise.all([api.getAtlasGenomes(networkId), api.getAtlasMetrics(networkId)])
-      .then(([genomesRes, metricsRes]) => {
+    api
+      .getAtlasOwnMetrics(networkId)
+      .then((res) => {
         if (cancelled) return;
-        const list = genomesRes.data;
-        setGenomes(list);
-        setRows(metricsRes.data);
+        const list = res.data.rows ?? [];
+        setAll(list);
         // Se conserva el organismo al cambiar de red; en la primera carga se usa
         // initialOrganism o E. coli K-12.
         setOrganism((prev) => {
@@ -182,66 +191,74 @@ export default function Metrics({ initialOrganism }) {
           return start ?? list[0]?.accession ?? "";
         });
       })
-      .catch(() => {
+      .catch((err) => {
         if (cancelled) return;
         setError(
-          "Network metrics could not be loaded. Check that the backend is running and the atlas cache exists (make cache-atlas)."
+          err?.response?.data?.detail ??
+            "Network metrics could not be loaded. Check that the backend is running and the metrics exist (make metrics-atlas)."
         );
       })
       .finally(() => !cancelled && setLoading(false));
+    // La concordancia es opcional: si falla, la vista funciona igual
+    api
+      .getAtlasMetricsVsExternal(networkId)
+      .then((res) => !cancelled && setExternal(res.data.rows ?? []))
+      .catch(() => !cancelled && setExternal([]));
     return () => {
       cancelled = true;
     };
   }, [networkId, initialOrganism]);
 
-  const metricsByAcc = useMemo(() => new Map(rows.map((r) => [r.accession, r])), [rows]);
+  const byAcc = useMemo(() => new Map(all.map((r) => [r.accession, r])), [all]);
+  const rows = useMemo(() => all.filter((r) => r.has_edges), [all]); // genomas con aristas
+  const atlasRows = useMemo(() => rows.filter((r) => r.in_atlas), [rows]);
   const network = networks.find((n) => n.network_id === networkId);
   const benchmark = parseBenchmark(network?.params?.source);
-  const genome = genomes.find((g) => g.accession === organism);
-  const current = metricsByAcc.get(organism);
+  const genome = byAcc.get(organism);
+  const current = genome?.has_edges ? genome : null;
   const chartMetric = CHART_METRICS.find((m) => m.key === chartKey);
 
-  // Opciones del buscador: en gris los genomas sin fila en network_metrics
+  // Opciones del buscador: en gris los genomas sin aristas en la red elegida
   const options = useMemo(
     () =>
-      genomes.map((g) => {
-        const m = metricsByAcc.get(g.accession);
-        return {
-          id: g.accession,
-          label: g.ncbi_organism || g.accession,
-          muted: !m,
-          meta: m
-            ? `${fmtInt(m.n_tf)} TFs, ${fmtInt(m.n_edges)} edges`
-            : ATLAS_SELECTIONS.has(g.selection)
-            ? "no metrics"
-            : "auxiliary",
-        };
-      }),
-    [genomes, metricsByAcc]
+      all.map((g) => ({
+        id: g.accession,
+        label: g.ncbi_organism || g.accession,
+        muted: !g.has_edges,
+        meta: `${g.has_edges ? `${fmtInt(g.n_tf)} TFs, ${fmtInt(g.n_edges)} edges` : "no edges"}${
+          g.in_atlas ? "" : ", auxiliary"
+        }`,
+      })),
+    [all]
   );
 
-  // Por qué el genoma elegido no tiene métricas
   const missingReason = () => {
     if (!genome) return "";
     const name = genome.ncbi_organism || genome.accession;
-    if (!ATLAS_SELECTIONS.has(genome.selection)) {
-      return `${name} is an auxiliary genome (${genome.selection}). Metrics are reported only for the 2,224 atlas genomes.`;
-    }
-    if (!genome.n_edges) {
-      return `${name} has no edges in the ${network?.name ?? "selected"} network, so it has no metrics. Choose a less strict network, such as permissive.`;
-    }
-    return `${name} has ${fmtInt(genome.n_edges)} edges in this network, but the external pipeline reported no metrics for it.`;
+    return `${name} has no edges in the ${
+      network?.name ?? "selected"
+    } network, so it has no metrics. Choose a less strict network, such as permissive.`;
   };
 
-  // Gráfico 1: distribución de la métrica en todos los genomas de la red
+  // Concordancia con network_metrics, en una frase
+  const externalSummary = useMemo(() => {
+    const counts = external.filter((r) => r.metric !== "density" && r.spearman != null);
+    if (counts.length === 0) return null;
+    const n = Math.max(...external.map((r) => r.genomes_compared ?? 0));
+    const parts = counts.map((r) => `${EXTERNAL_LABELS[r.metric] ?? r.metric} ρ = ${Number(r.spearman).toFixed(2)}`);
+    const density = external.find((r) => r.metric === "density");
+    return { n, parts, density };
+  }, [external]);
+
+  // Gráfico 1: distribución de la métrica en los genomas del atlas
   const histogram = useMemo(
-    () => buildHistogram(rows.map((r) => r[chartKey]), chartMetric, current?.[chartKey]),
-    [rows, chartKey, chartMetric, current]
+    () => buildHistogram(atlasRows.map((r) => r[chartKey]), chartMetric, current?.[chartKey]),
+    [atlasRows, chartKey, chartMetric, current]
   );
   const selectedBin = histogram.find((b) => b.selected);
 
-  // Gráfico 2 y tabla: genomas de la misma familia GTDB
-  const family = current?.gtdb_family ?? genome?.gtdb_family;
+  // Gráfico 2 y tabla: genomas con aristas de la misma familia GTDB
+  const family = genome?.gtdb_family;
   const familyAll = useMemo(() => (family ? rows.filter((r) => r.gtdb_family === family) : []), [rows, family]);
 
   const familyChart = useMemo(() => {
@@ -304,26 +321,42 @@ export default function Metrics({ initialOrganism }) {
 
         <div className="flex flex-col gap-1">
           <span className="text-xs text-[#64748B]">
-            Organism ({fmtInt(rows.length)} of {fmtInt(genomes.length)} have metrics in this network)
+            Organism ({fmtInt(rows.length)} of {fmtInt(all.length)} genomes have edges in this network)
           </span>
-          <OrganismSearch
-            options={options}
-            value={organism}
-            onChange={setOrganism}
-            disabled={loading && genomes.length === 0}
-          />
+          <OrganismSearch options={options} value={organism} onChange={setOrganism} disabled={loading && all.length === 0} />
         </div>
 
         <div className="ml-auto text-xs text-[#64748B] text-right">
-          {current && (
+          {genome && (
             <div>
-              {current.gtdb_phylum}, {current.gtdb_family}. {fmtInt(current.n_operons)} operons in the genome.
+              {genome.gtdb_phylum}, {genome.gtdb_family}. {fmtInt(genome.n_genes)} genes in the genome.
+              {!genome.in_atlas && <span className="text-[#94A3B8]"> Auxiliary genome ({genome.selection}).</span>}
             </div>
           )}
           {benchmark && (
             <div className="text-[11px] mt-0.5 text-[#94A3B8]">
-              Benchmark against RegPrecise: precision {benchmark.p}, recall {benchmark.r}, F1 {benchmark.f1}
+              Benchmark against RegPrecise (D33): precision {benchmark.p}, recall {benchmark.r}, F1 {benchmark.f1}
             </div>
+          )}
+        </div>
+      </div>
+
+      {/* Definición y concordancia con la tabla externa */}
+      <div className="flex gap-2.5 items-start bg-[#F7FAFC] border border-[#D9E2E7] rounded-lg px-4 py-2.5">
+        <Info size={15} className="text-[#64748B] shrink-0 mt-0.5" />
+        <div className="text-[12px] text-[#64748B] space-y-1">
+          <p>
+            Metrics are computed by RegulomeAtlas with NetworkX from the network edges: one node per transcription factor
+            (normalized name) and per target operon, and one edge per TF–operon pair. They replace the metrics reported
+            by the external pipeline, which cannot be reproduced from the edges.
+          </p>
+          {externalSummary && (
+            <p className="text-[11px] text-[#94A3B8]">
+              Agreement with the external table in this network ({fmtInt(externalSummary.n)} genomes, Spearman rank
+              correlation): {externalSummary.parts.join(", ")}. Values differ in scale but rank genomes the same way.
+              {externalSummary.density &&
+                ` Density is defined differently (ρ = ${Number(externalSummary.density.spearman).toFixed(2)}) and is not comparable.`}
+            </p>
           )}
         </div>
       </div>
@@ -350,13 +383,27 @@ export default function Metrics({ initialOrganism }) {
             <dl className="grid grid-cols-3 gap-x-8 gap-y-2.5">
               {DETAIL_METRICS.map((m) => (
                 <div key={m.key} className="flex items-baseline justify-between gap-3">
-                  <dt className="text-[12px] text-[#64748B]" title={m.hint}>
+                  <dt className="text-[12px] text-[#64748B] cursor-help" title={m.hint}>
                     {m.label}
                   </dt>
                   <dd className="font-mono text-[13px] font-semibold text-[#334155]">{m.fmt(current?.[m.key])}</dd>
                 </div>
               ))}
             </dl>
+            <div className="mt-4 pt-3 border-t border-[#F0F4F8]">
+              <p className="text-[11px] text-[#94A3B8] mb-2">
+                Lower bound: TF → TF edges need the gene of each TF, which can only be located by gene name. This works
+                for a minority of TFs in most genomes, so these values are not comparable between genomes.
+              </p>
+              <dl className="grid grid-cols-3 gap-x-8 gap-y-2.5">
+                {LOWER_BOUND_METRICS.map((m) => (
+                  <div key={m.key} className="flex items-baseline justify-between gap-3">
+                    <dt className="text-[12px] text-[#94A3B8]">{m.label}</dt>
+                    <dd className="font-mono text-[13px] text-[#64748B]">{m.fmt(current?.[m.key])}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </>
       )}
@@ -379,7 +426,8 @@ export default function Metrics({ initialOrganism }) {
           {loading && <Spinner />}
           <h3 className="text-sm font-semibold text-[#334155] mb-1">Distribution across the atlas</h3>
           <p className="text-xs text-[#64748B] mb-4">
-            Genomes per {chartMetric.label.toLowerCase()} value in the {network?.name ?? "selected"} network
+            {fmtInt(atlasRows.length)} atlas genomes with edges in the {network?.name ?? "selected"} network, by{" "}
+            {chartMetric.label.toLowerCase()}
             {chartMetric.scale === "log" ? " (logarithmic intervals)" : ""}.{" "}
             {selectedBin ? "The highlighted bar contains the selected organism." : ""}
           </p>
@@ -412,9 +460,7 @@ export default function Metrics({ initialOrganism }) {
         {/* Ranking en la familia */}
         <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5 relative">
           {loading && <Spinner />}
-          <h3 className="text-sm font-semibold text-[#334155] mb-1">
-            Ranking within {family ?? "the family"}
-          </h3>
+          <h3 className="text-sm font-semibold text-[#334155] mb-1">Ranking within {family ?? "the family"}</h3>
           <p className="text-xs text-[#64748B] mb-4">
             {familyAll.length > FAMILY_CHART_MAX
               ? `Top ${FAMILY_CHART_MAX} of ${fmtInt(familyAll.length)} genomes`
@@ -422,7 +468,7 @@ export default function Metrics({ initialOrganism }) {
             of this GTDB family by {chartMetric.label.toLowerCase()}. Click a bar to select it.
           </p>
           {familyChart.length === 0 ? (
-            <p className="text-sm text-[#94A3B8] py-16 text-center">No genome of this family has metrics in this network.</p>
+            <p className="text-sm text-[#94A3B8] py-16 text-center">No genome of this family has edges in this network.</p>
           ) : (
             <ResponsiveContainer width="100%" height={Math.max(220, familyChart.length * 20)}>
               <BarChart data={familyChart} layout="vertical" margin={{ top: 0, right: 12, bottom: 0, left: 4 }}>
@@ -464,8 +510,8 @@ export default function Metrics({ initialOrganism }) {
         <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
           <h3 className="text-sm font-semibold text-[#334155] mb-1">Comparison within {family}</h3>
           <p className="text-xs text-[#64748B] mb-4">
-            Bold marks the highest value and the last row is the family median. Click a column to sort and a row to
-            select it.
+            Bold marks the highest value and the last row is the family median. "aux" marks auxiliary genomes outside the
+            2,224-genome atlas. Click a column to sort and a row to select it.
           </p>
           <div className="max-h-[420px] overflow-y-auto">
             <table className="w-full">
@@ -499,7 +545,10 @@ export default function Metrics({ initialOrganism }) {
                       r.accession === organism ? "bg-[#E8F5F0]" : "hover:bg-[#F7FAFC]"
                     }`}
                   >
-                    <td className="py-2 text-[12px] text-[#334155] italic">{r.ncbi_organism}</td>
+                    <td className="py-2 text-[12px] text-[#334155] italic">
+                      {r.ncbi_organism}
+                      {!r.in_atlas && <span className="ml-1 not-italic text-[10px] text-[#94A3B8]">aux</span>}
+                    </td>
                     {TABLE_COLUMNS.map((c) => (
                       <td
                         key={c.key}
@@ -526,7 +575,7 @@ export default function Metrics({ initialOrganism }) {
             </table>
           </div>
           <p className="text-[11px] text-[#94A3B8] mt-3">
-            Density, degrees and components as defined by the external pipeline (network_metrics).
+            Metrics computed by RegulomeAtlas from the network edges (directed TF → operon graph).
           </p>
         </div>
       )}

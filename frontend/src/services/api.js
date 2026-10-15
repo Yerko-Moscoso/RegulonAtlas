@@ -84,6 +84,26 @@ export const api = {
   getAtlasValidationGenomes: (networkId, mode = 'all', { accession, limit = 500, gold = 'regprecise' } = {}) =>
     apiClient.get('/atlas/validation/genomes', { params: { gold, network_id: networkId, mode, accession, limit } }),
 
+    // === MÉTRICAS PROPIAS DEL ATLAS (resultados de make metrics-atlas) ===
+  getAtlasOwnMetrics: (networkId, { accession, atlasOnly = false, withEdgesOnly = false } = {}) =>
+    apiClient.get('/atlas/metrics', {
+      params: { network_id: networkId, accession, atlas_only: atlasOnly, with_edges_only: withEdgesOnly },
+    }),
+
+  getAtlasMetricsDefinitions: () => apiClient.get('/atlas/metrics/definitions'),
+
+  getAtlasMetricsSummary: (networkId, atlasOnly = true) =>
+    apiClient.get('/atlas/metrics/summary', { params: { network_id: networkId, atlas_only: atlasOnly } }),
+
+  getAtlasMetricsVsExternal: (networkId) =>
+    apiClient.get('/atlas/metrics/compare-external', { params: { network_id: networkId } }),
+
+  getAtlasOwnMetricsForGenomes: (networkId, accessions) => {
+    const params = new URLSearchParams({ network_id: networkId });
+    accessions.forEach((acc) => params.append('accessions', acc));
+    return apiClient.get(`/atlas/metrics/genomes?${params.toString()}`);
+  },
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');
