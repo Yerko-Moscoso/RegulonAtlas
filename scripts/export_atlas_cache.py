@@ -2,6 +2,10 @@
 
 Solo usa SELECT. Genera parquet en data/cache/atlas/ con etiquetas legibles
 (TF, operón, gen) para que la API no tenga que consultar la base en cada request.
+
+Además del atlas, exporta lo necesario para la validación (semana 10):
+el gold standard de RegPrecise, su mapeo a accesiones y los genes de los
+genomas validables con su locus antiguo, para emparejar sin tocar la base.
 """
 import json
 import os
@@ -11,13 +15,17 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import text
 
-from src.database.connection import get_engine  # ajusta el nombre si es distinto
+from src.database.connection import get_engine
 
 OUT = Path(os.getenv("ATLAS_CACHE", "data/cache/atlas"))
 OUT.mkdir(parents=True, exist_ok=True)
 engine = get_engine()
 
-manifest = {"exportado": str(date.today()), "tablas": {}}
+manifest = {
+    "exportado": str(date.today()),
+    "fuente": "MariaDB regulon_atlas (solo SELECT)",
+    "tablas": {},
+}
 
 
 def guardar(df: pd.DataFrame, nombre: str) -> None:
@@ -26,19 +34,38 @@ def guardar(df: pd.DataFrame, nombre: str) -> None:
     print(f"{nombre}: {len(df):,} filas")
 
 
-# Tablas pequeñas, completas
+# --- Tablas pequeñas, completas -------------------------------------------
 for tabla in ["networks", "network_metrics", "provenance"]:
     guardar(pd.read_sql(text(f"SELECT * FROM {tabla}"), engine), tabla)
 
-guardar(pd.read_sql(text(
-    "SELECT genome_id, accession, selection, gtdb_phylum, gtdb_class, gtdb_order, "
-    "gtdb_family, gtdb_genus, gtdb_species, ncbi_organism FROM genomes"), engine), "genomes")
+# genomes y motifs completos: el catálogo de la API (genomes.py, motifs.py)
+# necesita completeness, contamination, assembly_level, source_taxon y length.
+guardar(pd.read_sql(text("SELECT * FROM genomes"), engine), "genomes")
+guardar(pd.read_sql(text("SELECT * FROM motifs"), engine), "motifs")
 
-guardar(pd.read_sql(text(
-    "SELECT motif_id, motif_key, source, tf_name, tf_family, regulatory_role FROM motifs"),
-    engine), "motifs")
+# --- Validación (gold standard RegPrecise) --------------------------------
+guardar(pd.read_sql(text("SELECT * FROM curated_regulons"), engine), "curated_regulons")
+guardar(pd.read_sql(text("SELECT * FROM regprecise_genome_map"), engine), "regprecise_genome_map")
 
-# Aristas con etiquetas, una red por archivo
+# Genes solo de los genomas que RegPrecise cubre (no los 9,4M), con su locus
+# antiguo: RegPrecise usa locus antiguos en muchos genomas. gene_old_locus
+# tiene a lo más una fila por gen, así que el LEFT JOIN no duplica genes.
+SQL_GENES_VALIDACION = text("""
+    SELECT g.gene_id, g.genome_id, g.locus_tag, g.gene_name, g.operon_id,
+           o.old_locus_tag
+    FROM genes g
+    LEFT JOIN gene_old_locus o ON o.gene_id = g.gene_id
+    WHERE g.genome_id IN (
+        SELECT ge.genome_id
+        FROM genomes ge
+        JOIN regprecise_genome_map r ON r.accession = ge.accession
+    )
+""")
+genes_val = pd.read_sql(SQL_GENES_VALIDACION, engine)
+guardar(genes_val, "genes_validation")
+manifest["genomas_validacion"] = int(genes_val["genome_id"].nunique())
+
+# --- Aristas con etiquetas, una red por archivo ----------------------------
 SQL_EDGES = text("""
     SELECT e.network_id, e.genome_id, e.motif_id, m.tf_name, m.tf_family,
            e.target_operon, o.label AS operon_label, o.n_genes,
@@ -58,4 +85,4 @@ for nid, nombre in zip(redes.network_id, redes.name):
     guardar(df, f"edges_net{nid}")
 
 (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
-print("Listo:", OUT)
+print(f"Manifest escrito en {OUT / 'manifest.json'}")

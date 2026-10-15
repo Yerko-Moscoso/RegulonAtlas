@@ -4,6 +4,7 @@ import fcose from "cytoscape-fcose";
 import CytoscapeComponent from "react-cytoscapejs";
 import { Search, X, Info, Loader2 } from "lucide-react";
 import { api } from "../services/api";
+import NetworkSelector from "../components/NetworkSelector";
 
 cytoscape.use(fcose);
 
@@ -397,6 +398,8 @@ export default function RegulatoryNetwork({ initialOrganism }) {
           label: g.ncbi_organism || g.accession,
           nEdges: g.n_edges,
           selection: g.selection,
+          muted: !(g.n_edges > 0),
+          meta: g.n_edges > 0 ? `${fmtInt(g.n_edges)} edges` : "no edges"
         }));
         setOrganismList(list);
         // La lista trae todos los genomas, así que el organismo elegido siempre se conserva.
@@ -560,21 +563,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
       </div>
 
       <div className="bg-white border border-[#D9E2E7] rounded-xl p-3 flex flex-wrap items-end gap-4 shadow-sm">
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#64748B]">Network</span>
-          <select
-            value={networkId}
-            onChange={(e) => setNetworkId(Number(e.target.value))}
-            disabled={networks.length === 0}
-            className={selectClass}
-          >
-            {networks.map((n) => (
-              <option key={n.network_id} value={n.network_id}>
-                {n.name} (p ≤ {fmtP(n.p_threshold)}, {n.tier_ceiling})
-              </option>
-            ))}
-          </select>
-        </label>
+        <NetworkSelector networks={networks} value={networkId} onChange={setNetworkId} />
 
         <div className="flex flex-col gap-1">
           <span className="text-xs text-[#64748B]">
