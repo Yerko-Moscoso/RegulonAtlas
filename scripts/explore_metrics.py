@@ -89,7 +89,7 @@ def main():
         res_rows.append(per_g)
     res = pd.concat(res_rows).merge(genomes, on="genome_id", how="left")
     res.to_csv(OUT / "metrics_tf_resolution.tsv", sep="\t", index=False)
-    atlas = res[res["selection"].isin(["representative", "forced", "replacement"])]
+    atlas = res[res["selection"].str.split().str[0].isin(["representative", "forced", "replacement"])]
     print("\nMediana de TF ubicables por genoma del atlas:")
     print(atlas.groupby("network_id")["tf_resolved_rate"].median().rename(index=NETWORKS).to_string())
 

@@ -76,6 +76,17 @@ def git_commit():
         return None
 
 
+def git_dirty():
+    """True si hay archivos versionados con cambios sin commit: en ese caso git_commit
+    no describe el código que generó los resultados."""
+    try:
+        out = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
+                             capture_output=True, text=True, check=True)
+        return bool(out.stdout.strip())
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
 def norm_entropy(values):
     """Entropía de Shannon de la distribución de grado, normalizada a [0, 1]."""
     v = np.asarray(values, dtype=float)
@@ -218,6 +229,10 @@ def main():
     ap.add_argument("--networks", type=int, nargs="+", default=list(NETWORKS))
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
+    dirty = git_dirty()
+    if dirty:
+        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
+              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
     args.out.mkdir(parents=True, exist_ok=True)
 
     genomes = load("genomes", ["genome_id", "accession", "ncbi_organism", "selection",
@@ -233,7 +248,9 @@ def main():
     own = pd.concat(frames, ignore_index=True)
     own.insert(1, "network", own["network_id"].map(NETWORKS))
     own = own.merge(genomes, on="genome_id", how="left")
-    own["in_atlas"] = own["selection"].isin(ATLAS_SELECTIONS)
+    # selection puede llevar una nota tras la categoría, p. ej.
+    # "replacement (GCF_050942165.1 suppressed in RefSeq 2026)": se compara la primera palabra.
+    own["in_atlas"] = own["selection"].str.split().str[0].isin(ATLAS_SELECTIONS)
 
     own.to_csv(args.out / "atlas_metrics.tsv", sep="\t", index=False)
     own.to_parquet(args.out / "atlas_metrics.parquet", index=False)
@@ -259,6 +276,7 @@ def main():
     manifest = {
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "git_commit": git_commit(),
+        "git_dirty": dirty,
         "cache_manifest": json.loads(cache_manifest.read_text()) if cache_manifest.exists() else None,
         "graph_definition": {
             "nodes": "TF (normalized name) and operon",

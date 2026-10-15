@@ -88,6 +88,17 @@ def git_commit():
         return None
 
 
+def git_dirty():
+    """True si hay archivos versionados con cambios sin commit: en ese caso git_commit
+    no describe el código que generó los resultados."""
+    try:
+        out = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
+                             capture_output=True, text=True, check=True)
+        return bool(out.stdout.strip())
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
 # ---------------------------------------------------------------- gold standard
 def build_gold_regprecise(genomes):
     cur = load("curated_regulons", ["regulog_id", "tf_name", "genome_name", "locus_tag"])
@@ -270,6 +281,10 @@ def main():
     ap.add_argument("--networks", type=int, nargs="+", default=list(NETWORKS))
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
+    dirty = git_dirty()
+    if dirty:
+        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
+              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
 
     out = args.out / args.gold
     out.mkdir(parents=True, exist_ok=True)
@@ -313,6 +328,7 @@ def main():
     manifest = {
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "git_commit": git_commit(),
+        "git_dirty": dirty,
         "cache_manifest": json.loads(cache_manifest.read_text()) if cache_manifest.exists() else None,
         "gold": args.gold,
         "gold_stats": gstats,

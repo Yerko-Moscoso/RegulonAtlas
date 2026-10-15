@@ -8,6 +8,10 @@ export const DEFAULT_GENOME = "GCF_000005845.2"; // E. coli K-12 MG1655
 // El resto (regprecise_source, chromosome_level, expression_validation) son auxiliares.
 export const ATLAS_SELECTIONS = new Set(["representative", "forced", "replacement"]);
 
+// selection puede traer una nota tras la categoría ("replacement (GCF_050942165.1 suppressed ...)"):
+// se compara solo la primera palabra. Preferir el campo in_atlas de la API cuando venga en la respuesta.
+export const isAtlasSelection = (selection) => ATLAS_SELECTIONS.has(String(selection ?? "").split(" ")[0]);
+
 export const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
 
 export const fmtP = (p) => (p == null ? "—" : `1e${Math.round(Math.log10(p))}`);
