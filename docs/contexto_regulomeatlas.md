@@ -1,0 +1,497 @@
+# RegulomeAtlas — Documento de contexto del proyecto
+
+*Última actualización: semana 10 (14 de octubre de 2026). Este documento resume el estado del proyecto, las decisiones tomadas y el trabajo hecho en los chats de la carpeta "Redes de regulación bacterianas". Sirve como punto de partida para cualquier conversación nueva.*
+
+---
+
+## 1. El proyecto
+
+**RegulomeAtlas** es un proyecto de título de Ingeniería Informática en la Universidad de las Américas, dentro del NIDS (Núcleo de Investigación en Data Science).
+
+- **Objetivo:** predecir y comparar redes de regulación transcripcional (factor de transcripción → genes/operones diana) en 2.224 genomas bacterianos representativos seleccionados desde GTDB R232 + RefSeq.
+- **Flujo completo:** ingesta de genomas → escaneo de motivos → construcción de redes → validación → dashboard de visualización interactiva.
+- **Roles:** el usuario (Yerko Moscoso, usuario de servidor `ymoscoso`) es el desarrollador. Se encarga de la parte informática: pipeline, sistema, API y dashboard. Trabaja junto a un investigador bioinformático que aporta la parte de investigación y que generó la base de datos y las redes. El usuario no hace la investigación biológica, pero debe entender y poder explicar los términos del dominio.
+- **Metodología declarada en la tesis:** modelo en cascada (no Agile/Scrum), justificado porque los requisitos son fijos y secuenciales. Las semanas posteriores al MVP se presentan como fases de construcción, pruebas y cierre.
+- **Idiomas:** la tesis se escribe en español. El texto visible del dashboard va en inglés.
+- **Objetivos específicos mencionados:** OE4 (métricas topológicas) y OE5 (validación contra gold standard).
+
+---
+
+## 2. Infraestructura y entorno de trabajo
+
+- **Servidor:** `devastator`, Ubuntu 22.04, 48 núcleos, 242 GB de RAM, discos NVMe y almacenamiento compartido en `/mnt/biostore`.
+- **Acceso:** VS Code conectado por SSH. Todos los comandos se ejecutan desde la terminal integrada de VS Code. VS Code reenvía automáticamente los puertos (8000 para la API y el de Vite para el frontend).
+- **Sin `tmux`** (no hay permisos). Los procesos largos se lanzan con `nohup … &`, y las credenciales de MariaDB para esos procesos van en `~/.my.cnf` (con `chmod 600`).
+- **Conda:** entorno `bioinfo` para el trabajo bioinformático y uno aparte para el stack de FastAPI.
+- **Raíz del proyecto:** `~/proyecto`.
+- **Base de datos:** MariaDB `regulon_atlas`. El usuario `ymoscoso` **solo tiene permiso SELECT**: no puede crear, modificar ni cargar tablas. Todo dato nuevo (por ejemplo RegulonDB) se maneja como archivo dentro del repositorio.
+- **La API ya no consulta MariaDB:** todo se lee desde la caché local `data/cache/atlas/` (parquet) y desde los resultados en `data/results/`. La base solo se usa al regenerar la caché con `make cache-atlas`.
+- **Credenciales:** se leen de variables de entorno (`DB_PASSWORD`, etc.) desde un `.env` ignorado por git. La conexión del proyecto está en `src/database/connection.py`. La contraseña antigua fue cambiada y eliminada del historial de git. La línea 8 del `.env` tiene un formato que python-dotenv no puede leer (no afecta la conexión; pendiente de corregir).
+- **Carpetas de otros usuarios** (`/home/*`) tienen permisos `drwxr-x---`, así que no se pueden leer.
+
+### Arranque del sistema
+
+```bash
+# Backend (desde ~/proyecto)
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+# Frontend (desde ~/proyecto/frontend)
+npm run dev
+```
+
+La documentación interactiva de la API queda en `http://localhost:8000/docs`.
+
+---
+
+## 3. Repositorio y control de versiones
+
+- **Repositorio:** `github.com/Yerko-Moscoso/Proyecto_Bioinfo`.
+- **`main`:** contiene el MVP congelado. La etiqueta **`mvp-semana8`** marca la entrega del MVP.
+- **`dev`:** rama de trabajo desde la semana 9. Los bloques terminados se fusionan a `main` y se etiquetan (por ejemplo, `semana10-validacion`).
+- **No se versionan** datos generados (`data/cache/`, `data/audit/*.tsv`, `data/results/`), solo código, SQL y documentación.
+
+---
+
+## 4. Datos del atlas
+
+### 4.1 Selección de genomas (embudo)
+
+878.998 genomas en GTDB → 189.801 representantes de especie → 39.085 en RefSeq → 34.667 aislados (sin MAG/SAG) → 8.276 "Complete Genome" → 7.961 con completitud >95 % y contaminación <5 % → **2.224** (1 por género según calidad + 3 referencias forzadas).
+
+- GTDB R232 se usa solo como marco taxonómico y de muestreo. RefSeq (accesiones GCF_ con anotación PGAP) es la fuente real de ensamblajes y anotaciones.
+- Se guarda **taxonomía dual** por genoma (rango GTDB + `ncbi_organism`), porque GTDB ubica a *E. coli* K-12 en un género placeholder (`G047199095`). En el dashboard se muestra `ncbi_organism` como nombre principal.
+- **Decisión D4:** tres cepas de referencia se incluyen siempre (`selection = 'forced'`): `GCF_000005845.2` (*E. coli* K-12 MG1655, RegulonDB), `GCF_000006765.1` (*P. aeruginosa* PAO1, PRODORIC) y `GCF_000009045.1` (*B. subtilis* 168).
+
+### 4.2 Composición de la tabla `genomes` (2.644 filas)
+
+| `selection` | Genomas | Rol |
+|---|---|---|
+| `representative` | 2.220 | Atlas |
+| `forced` | 3 | Atlas |
+| `replacement` | 1 | Atlas (GCF_050942165.1 suprimido → GCF_002993285.1) |
+| `regprecise_source` | 315 | Auxiliar: genomas de RegPrecise para validación |
+| `chromosome_level` | 104 | Auxiliar |
+| `expression_validation` | 1 | Auxiliar |
+
+El atlas son exactamente **2.224 genomas**. Los otros 420 son auxiliares.
+
+### 4.3 Fuentes de datos (tabla `provenance`)
+
+| prov_id | Fuente | Versión | Fecha | Nota |
+|---|---|---|---|---|
+| 1 | GTDB | R232 | 2026-08-17 | 2.224 genomas seleccionados |
+| 2 | RefSeq | snapshot 2026-08-17 | 2026-08-17 | GCF_050942165.1 suprimido → GCF_002993285.1 |
+| 3 | eggNOG | v7 / emapper 3.0.0-beta6 | 2026-08-18 | 7,27M proteínas anotadas |
+| 4 | PRODORIC | 2021.9 (API 1.3.1) | 2026-08-18 | D11 |
+| 5 | RegPrecise | 3.0 (scraping JSP) | 2026-08-18 | API REST caída; ExportServlet. 2.730 regulogs, 1.808 motivos TF, 434 RNA |
+| 6 | Rfam | 43 familias CM | 2026-08-18 | D12 |
+| 7 | NCBI COG | 2020 | 2026-08-18 | Guarda de reguladores (D10) |
+
+### 4.4 Volúmenes por etapa
+
+2.224 genomas → 25 GB descargados → 7,27M proteínas anotadas (eggNOG v7, ejecutado como un solo FASTA combinado con IDs prefijados por accesión) → 6,55M regiones intergénicas → 4,34M operones → 2.141 motivos de TF → 43 familias de RNA → 2,20M pares motivo–genoma en `transfer_map` → 317,7M hits de escaneo (FIMO + cmscan) → 103.044 membresías de regulones de RegPrecise (gold standard).
+
+### 4.5 Principio de diseño: "escanear una vez, filtrar después"
+
+- FIMO se ejecutó una sola vez para los 2.224 genomas con un umbral permisivo (p ≤ 1e-4): 311,1M hits de TF, 6,6M de reguladores de respuesta y 27.582 hits de RNA (cmscan).
+- En MariaDB solo se cargaron los hits con **p ≤ 1e-5**. Los resultados crudos completos siguen en archivos `.tsv.gz`.
+- `fimo_hits` es el escaneo crudo, **no es la red regulatoria**. Las redes se materializan aparte (`networks` + `edges`) aplicando umbrales a posteriori.
+- `fimo_hits` se escaneó sin el filtro de elegibilidad de `transfer_map`, así que incluye combinaciones TF–genoma que `transfer_map` marcaría como no elegibles.
+
+---
+
+## 5. Esquema de la base `regulon_atlas` (tablas clave)
+
+La base tiene 41 tablas en tres capas (genómica, motivos/escaneo, redes/validación/trazabilidad) más tablas puente de vocabularios funcionales (GO, KEGG, EC, CAZy, PFAM, BRITE, COG), con unos 60M pares gen–término.
+
+| Tabla | Filas | Columnas relevantes |
+|---|---|---|
+| `genomes` | 2.644 | `genome_id`, `accession`, `gtdb_*` (dominio a especie), `ncbi_organism`, `completeness`, `contamination`, `selection` |
+| `genes` | 9.440.405 | `gene_id`, `genome_id`, `locus_tag`, `gene_name`, `operon_id`, `operon_role`, `win_start`, `win_end` (la cifra antigua de 7,84M era una estimación de InnoDB) |
+| `gene_old_locus` | 8.058.126 | `genome_id`, `old_locus_tag`, `gene_id`. Una fila por gen, sin huérfanos; ningún `old_locus_tag` es igual al `locus_tag`. *E. coli* MG1655 no tiene locus antiguos (sus locus ya son números b) |
+| `operons` | ~4,34M | `operon_id`, `genome_id`, `label`, `contig`, `strand`, `n_genes` |
+| `motifs` | 2.141 | `motif_id`, `motif_key`, `source` (prodoric/regprecise), `tf_name`, `tf_family`, `source_taxon`, `source_phylum`, `tf_og`, `transfer_rule`, `regulatory_role` |
+| `transfer_map` | ~2,2M | Pares motivo–genoma elegibles con su tier (D13) |
+| `fimo_hits` | 54.575.443 | `motif_id`, `genome_id`, `gene_id`, `hit_start`, `hit_stop`, `strand`, `score`, `neg_log10_p` |
+| `networks` | 5 | `network_id`, `name`, `p_threshold`, `tier_ceiling`, `fdr_method`, `params` (JSON), `prov_id` |
+| `edges` | 3.152.092 | `network_id`, `genome_id`, `motif_id`, `target_operon`, `best_gene_id`, `best_score`, `best_neg_log10_p`, `n_sites`, `footprint_enrichment`, `tier`, `confidence` |
+| `network_metrics` | 6.427 | Por red y genoma: `n_tf`, `n_targets`, `n_edges`, `density`, grados, `frac_multi_reg`, `n_autoreg`, `n_ffl`, `n_cascade`, `n_components`, `frac_largest` |
+| `curated_regulons` | 103.044 | Gold standard RegPrecise: `regulog_id`, `tf_name`, `genome_name`, `locus_tag`, `gene_name` |
+| `regprecise_genome_map` | 488 | Mapeo resuelto `genome_name` de RegPrecise → `accession`, con `source` (atlas/ncbi) y `resolved_name` |
+| `provenance` | 7 | Fuentes de datos (sección 4.3) |
+
+**Detalles importantes:**
+
+- Las **coordenadas de `fimo_hits` son relativas** a la ventana promotora de cada gen (hasta 350 pb río arriba), no al genoma.
+- Las **aristas apuntan a operones** (decisión D10), no a genes. Los genes heredan la pertenencia a la red mediante `operon_id`. `best_gene_id` indica el gen del mejor sitio de unión.
+- `edges.confidence` es una **probabilidad calibrada** por arista (script `calibrate_edges.py` del pipeline externo). Ninguna arista tiene `confidence` nula.
+- Un mismo TF puede tener **varios motivos** (PRODORIC y RegPrecise), y su nombre puede variar en mayúsculas entre fuentes (MariaDB compara sin distinguir mayúsculas; pandas sí distingue). Para agrupar TF hay que normalizar el nombre (minúsculas). `tf_og` no sirve para agrupar, porque muchos motivos no lo tienen.
+- **`motif_key` identifica el origen del motivo:** `RGnnn` es el regulog `nnn` de RegPrecise (coincide con `curated_regulons.regulog_id`); `MXnnnnnn` es PRODORIC. Esto permite detectar autoevaluación en la validación.
+- `transfer_rule` de los motivos: `ortholog` (1.265), `tax_fallback_order` (256), `tax_fallback_family` (230), `tax_fallback_phylum` (217), `tax_fallback_genus` (110), `tax_fallback_genome` (28), `unresolved` (21), `tax_fallback_class` (14).
+- Tiers que aparecen en `edges`: `within_genus`, `same_genus`, `within_family`, `same_family`, `within_order`, `same_order`, `within_class`, `same_class`, `within_phylum`, `same_phylum` y `cross_phylum`. La diferencia entre `within_*` y `same_*` no está documentada (pregunta abierta).
+
+---
+
+## 6. Redes materializadas por el pipeline externo
+
+El investigador generó cinco redes para todo el atlas el 2026-09-03 (decisión D33). Todas usan el método `convergent-empirical + phylo-footprint decoy` y fueron evaluadas contra RegPrecise 3.0 (`prov_id = 5`).
+
+| ID | Red | p | Tier máximo | Footprint ≥ | P | R | F1 | Aristas | Genomas |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | validated | 1e-7 | same_order | 10 | 0,682 | 0,231 | 0,345 | 77.503 | 1.427 |
+| 2 | high-precision | 1e-8 | same_family | 50 | 0,742 | 0,041 | 0,078 | 5.711 | 338 |
+| 3 | **balanced** | 1e-6 | same_class | 10 | 0,545 | 0,343 | **0,421** | 383.903 | 2.088 |
+| 4 | permissive | 1e-6 | cross_phylum | 1 | 0,307 | 0,446 | 0,364 | 2.551.734 | 2.634 |
+| 5 | no-footprint | 1e-7 | same_order | 0 | 0,548 | 0,317 | 0,402 | 133.241 | 1.515 |
+
+- **`balanced`** es el punto recomendado por F1 y la red por defecto del dashboard. La validación propia de la semana 10 lo confirma (sección 10.3).
+- **`validated` vs `no-footprint`** es un experimento controlado: mismo umbral y tier, solo cambia el footprinting. D33 informa 1,24× de precisión; la validación propia da 1,30× (modo `all`) y 1,37× (modo `independent`).
+- La cobertura cae con la exigencia: incluso `balanced` deja ~560 de los 2.644 genomas sin aristas, y `high-precision` cubre solo 338.
+
+### Sobre el pipeline externo
+
+- El código no está en ningún lugar accesible del servidor. Se buscó con `locate`, `find` y `grep` en `/mnt/biostore` y `/home` sin resultado; probablemente está en la carpeta privada del investigador o en otra máquina.
+- Lo que se sabe de él viene de la base: los parámetros en `networks.params`, la procedencia en `provenance` y las referencias a decisiones numeradas (D10–D33).
+- **Estrategia adoptada:** no depender de él. Toda evaluación y métrica que se presenta como propia se define y calcula desde la caché, y los valores externos (D33, `network_metrics`) se muestran solo como referencia.
+
+---
+
+## 7. Registro de decisiones conocidas
+
+| Decisión | Contenido |
+|---|---|
+| D1–D3 | GTDB R232 como marco taxonómico; RefSeq como fuente de ensamblajes y anotaciones; embudo de selección |
+| D4 | Tres referencias forzadas (*E. coli* K-12, *P. aeruginosa* PAO1, *B. subtilis* 168) |
+| D10 | Las aristas apuntan a operones; COG se usa como guarda de reguladores |
+| D11 | Catálogo de motivos de PRODORIC + RegPrecise; gold standard de RegPrecise |
+| D12 | 43 familias de RNA de Rfam |
+| D13 | Regla de transferencia de motivos: ortólogo del TF por COG + respaldo taxonómico con un tier por par (motivo, genoma) |
+| D15 | Catálogo final de 2.141 motivos de TF |
+| D33 | Las cinco redes materializadas y su benchmark P/R/F1 |
+| Post-MVP | Los datos de la base son la fuente principal; el pipeline propio pasa a ser validador independiente |
+| Semana 10 | Validación propia a nivel TF–operón, universo (genoma, TF) curado, recall sobre todo el gold standard y modo `independent` sin autoevaluación (sección 10.2) |
+
+El registro completo de decisiones lo tiene el investigador y está pendiente de solicitar.
+
+---
+
+## 8. Historia del proyecto hasta el MVP (semanas 1–8)
+
+### 8.1 Módulo de validación del MVP (OE5)
+
+- Vive en `src/validation/benchmark.py`.
+- Se corrigieron tres errores en el benchmark de *B. subtilis*:
+  1. `parse_regprecise.py` generaba locus tags falsos (`REG_xxxxx`) porque las fallas del endpoint FASTA de RegPrecise eran silenciosas (`except: pass`). Se arregló parseando las páginas HTML en caché con BeautifulSoup.
+  2. `lxml` no encontraba la tabla `operontbl` en el servidor; se cambió a `html.parser`.
+  3. `normalize_id()` no quitaba el prefijo `gene-` de los IDs estilo GFF3; se corrigió con `re.sub(r'(?i)^gene[-_]', '', s)`.
+- Resultado de *B. subtilis* tras las correcciones: TP=845, FP=180.457, FN=483, precisión ≈0,47 %, recall ≈63,6 %.
+- `map_regprecise_atlas.py` quedó resuelto el 2026-09-22: con el cambio a `html.parser` se mapearon 4.479 de 4.569 páginas, y al reemplazar el join difuso por género/especie por un join directo con `regprecise_genome_map`, las coincidencias con el atlas pasaron de 0 a 33.996 de 41.083 interacciones.
+- La validación de *E. coli* K-12 funciona de punta a punta desde el 2026-09-22: `GET /api/v1/metrics/validation/GCF_000005845.2` devuelve precisión y recall reales en 7 umbrales (por ejemplo, TP=459, FP=12.082, precisión 3,66 % en 1e-4, hasta TP=211, FP=435, precisión 32,7 % en 1e-7).
+
+### 8.2 Subconjunto de comparación del MVP
+
+`gtdb_order = 'Enterobacterales'` devuelve 228 genomas, porque el orden de GTDB es más amplio que el de NCBI. El subconjunto final del MVP (`gtdb_family = 'Enterobacteriaceae'` y `selection IN ('forced', 'regprecise_source')`) tiene 8 genomas:
+
+`GCF_000005845.2` (*E. coli* K-12), `GCF_000016305.1` (*K. pneumoniae* MGH 78578), `GCF_000011605.1` (*P. atrosepticum* SCRI1043), `GCF_000006945.2` (*S. enterica* Typhimurium LT2), `GCF_000016325.1` (*Enterobacter* sp. 638), `GCF_000196155.1` (*P. laumondii* TTO1), `GCF_000027205.1` (*E. amylovora* ATCC 49946) y `GCF_000069965.1` (*P. mirabilis* HI4320).
+
+Esta lista sigue en `frontend/src/constants/comparisonGenomes.js`, que todavía importan `Dashboard`, `Robustness`, `OrganismDetail`, `Organisms` y `Header` (ya no `Validation`). No borrar hasta migrar esas vistas.
+
+### 8.3 MVP entregado (etiqueta `mvp-semana8`)
+
+- `make cache`: exporta una caché de solo lectura desde MariaDB a `data/cache/mvp`.
+- `make mvp`: `transfer_map` → redes con propagación por operones → métricas NetworkX → validación → `data/results/mvp/report.md`.
+- La red del MVP usa p ≤ 1e-5 y las reglas de elegibilidad source_genome + ortholog. Gold standard: RegPrecise (validables *E. coli* y *Salmonella* LT2).
+- Verificado desde un clon limpio. El dashboard lee los resultados del pipeline.
+
+### 8.4 Dashboard en el MVP
+
+- Backend migrado de Streamlit a FastAPI (uvicorn, SQLAlchemy asyncio, asyncmy, pydantic-settings, python-dotenv).
+- Frontend: Vite + React + Tailwind CSS + Cytoscape.js + Recharts.
+- Nueve componentes migrados desde prototipos de Figma: `RegulatoryNetwork`, `Metrics`, `Robustness`, `Comparison`, `Pipeline`, `DataProvenance`, `MVP`, `Fingerprints` y `Validation`. Varios usaban nombres de métodos de API inventados y se están alineando con el `api.js` real (ver pendientes).
+- Patrón de componentes: `useState`/`useEffect` + llamadas `api.xxx()`, spinner `Loader2` y mensajes de error en rojo.
+
+---
+
+## 9. Semana 9 — trabajo realizado
+
+### 9.1 Planificación y ramas
+
+Se armó el plan de las semanas 9 a 16 y se creó la rama `dev`.
+
+### 9.2 Auditoría de `fimo_hits`
+
+Archivos: `sql/audit_fimo_coverage.sql`, `scripts/audit_summary.py`, salida en `data/audit/fimo_coverage.tsv` y resumen en `docs/auditoria_semana9.md`.
+
+- **La carga está completa:** 54.575.443 hits.
+- **Cobertura del atlas:** 2.222 de 2.224 genomas con hits. Los dos sin hits son micoplasmas (Mycoplasmoidaceae y Metamycoplasmataceae) sin TF elegibles, algo esperado y documentado.
+- **Umbral mínimo en la base:** exactamente 1e-5. El barrido desde la base va de 1e-5 a 1e-8; el umbral 1e-4 solo existe en los `.tsv.gz` crudos.
+- **El escaneo se limitó a regiones promotoras:** ventanas de hasta 350 pb río arriba (`max hit_stop = 350`).
+- **Hits por umbral:** 1e-5 = 54,6M; 1e-6 = 10,1M (18,5 %); 1e-7 = 2,7M (5,0 %); 1e-8 = 1,0M (1,8 %).
+
+### 9.3 Decisión de fuente de datos
+
+Las redes de la base (sección 6) pasan a ser la **fuente principal** de lo que muestra el sistema. El pipeline propio pasa a ser un **validador independiente**.
+
+### 9.4 Caché del atlas (`make cache-atlas`)
+
+- Script `scripts/export_atlas_cache.py`, que usa `get_engine` de `src/database/connection.py`. Se ejecuta con `PYTHONPATH=.`.
+- Salida en `data/cache/atlas/` (parquet). Contenido tras la regeneración del 14-10-2026:
+  - Completas: `networks` (5), `network_metrics` (6.427), `provenance` (7), `genomes` (2.644, todas las columnas) y `motifs` (2.141, todas las columnas).
+  - Para la validación: `curated_regulons` (103.044), `regprecise_genome_map` (488) y `genes_validation` (1.415.837 genes de los genomas cubiertos por RegPrecise, con `gene_id`, `genome_id`, `locus_tag`, `gene_name`, `operon_id` y `old_locus_tag`).
+  - `edges_net1` a `edges_net5` (77.503 / 5.711 / 383.903 / 2.551.734 / 133.241): cada red unida con `motifs` (`tf_name`, `tf_family`), `operons` (`operon_label`, `n_genes`) y `genes` (`best_locus`, `best_gene_name`).
+  - `manifest.json` con los conteos y la fecha de exportación.
+- **Integridad referencial verificada:** los 5 conteos de aristas coinciden exactamente con la base.
+
+### 9.5 API de las redes reales (`src/api/routers/atlas.py`)
+
+Router con prefijo `/atlas`, registrado en `main.py`. Lee solo desde la caché (cada parquet se carga una vez con `lru_cache`).
+
+| Endpoint | Devuelve |
+|---|---|
+| `GET /api/v1/atlas/networks` | Las 5 redes con sus parámetros (JSON parseado) y número de aristas |
+| `GET /api/v1/atlas/networks/{id}/genomes` | Los 2.644 genomas con su número de aristas en esa red (0 si no tienen), ordenados por nombre |
+| `GET /api/v1/atlas/networks/{id}/metrics?accession=` | Filas de `network_metrics` con la taxonomía del genoma |
+| `GET /api/v1/atlas/networks/{id}/graph/{accession}?min_confidence=&max_edges=` | Subgrafo TF → operón en formato Cytoscape (`elements.nodes` / `elements.edges`) |
+| `GET /api/v1/atlas/provenance` | Tabla `provenance` + `manifest.json` de la caché |
+
+Detalles del endpoint del grafo:
+
+- Agrupa por nombre de TF normalizado y por operón, y conserva la arista de mayor `confidence`.
+- Ordena por `confidence` y limita a `max_edges` (500 por defecto, máximo 5.000).
+- Nodos TF: `node_type: "TF"`, `family`, `motifs`. Nodos operón: `node_type: "Operon"`, `label`, `operon_label`, `n_genes`, `lead_locus`.
+- Aristas: `weight` (= `confidence`), `neg_log10_p`, `footprint`, `tier`, `n_sites`.
+- Devuelve `total_edges`, `filtered_edges` y `shown_edges`.
+- Los mensajes de error de la API están en inglés.
+
+### 9.6 Diagnóstico de `network_metrics`
+
+Script `scripts/check_metrics_coverage.py`.
+
+- **Cobertura:** solo genomas del atlas; faltan entre 0 y 14 genomas del atlas por red (1.122, 207, 1.704, 2.205 y 1.189 genomas con métricas).
+- **Consistencia:** los conteos **no se pueden reproducir desde `edges`**. Para *E. coli* K-12 en `balanced`, `network_metrics` dice 68 TF, 310 dianas y 919 aristas; `edges` tiene 832 filas, 118 TF, 218 motivos, 342 operones y 485 pares TF–operón. Agrupar por `tf_og` da 37, así que esa hipótesis se descartó.
+- **Decisión:** recalcular las métricas con NetworkX desde `edges` (semana 11) y usar `network_metrics` solo como referencia externa.
+
+### 9.7 Dashboard: `RegulatoryNetwork.jsx` con datos reales
+
+- Selector de red (por defecto `balanced` con *E. coli* K-12), con el benchmark de D33 en inglés.
+- Buscador de organismos con sugerencias sobre los 2.644 genomas, navegable con teclado; marca en gris los que no tienen aristas en la red actual. El organismo se mantiene al cambiar de red.
+- Filtros de confianza mínima y de límite de aristas dibujadas.
+- Grafo con TF en verde y operones en azul; el grosor refleja `confidence`. Panel lateral con familia, motivos (`RG` = RegPrecise, `MX` = PRODORIC), genes del operón, confianza y tier.
+- **Layout determinista:** fcose sembrado, calculado antes de entregar los nodos a Cytoscape. Solo el botón "Rearrange" cambia el dibujo; la semilla se guarda en `localStorage`.
+- Redes pequeñas en dos filas (≤12 nodos) y etiquetas completas hasta 60 nodos.
+
+---
+
+## 10. Semana 10 — trabajo realizado (7 al 14 de octubre)
+
+### 10.1 Backend y frontend sin la base
+
+- `routers/genomes.py` y `routers/motifs.py` leen la caché (`lru_cache`; responden 503 si falta).
+- `routers/fingerprints.py` **se eliminó** (devolvía datos inventados con fórmulas fijas), junto con su import y su `include_router`. Ningún archivo de `src/api` usa `get_db` ni `get_engine`.
+- `routers/robustness.py` responde "pending" de forma explícita hasta la semana 12.
+- Componentes compartidos nuevos:
+  - `components/NetworkSelector.jsx` (props `networks`, `value`, `onChange`).
+  - `components/OrganismSearch.jsx` (props `options` `[{id, label, muted, meta}]`, `value`, `onChange`, `disabled`).
+  - `utils/atlas.js` (`DEFAULT_NETWORK = 3`, `DEFAULT_GENOME = GCF_000005845.2`, `ATLAS_SELECTIONS`, `fmtInt`, `fmtP`, `parseBenchmark`, `selectClass`).
+- `RegulatoryNetwork.jsx` usa los componentes compartidos (se corrigió un selector duplicado).
+- `Metrics.jsx`: 2.644 genomas, tarjetas, histograma en el atlas, ranking y tabla de la familia GTDB, con aviso de que `network_metrics` es externo.
+- `Fingerprints.jsx`: percentil de 7 métricas en todo el atlas, radar (genoma + mediana de la familia + mediana del atlas + hasta 4 comparadores) y matriz de la familia.
+- **Misterio resuelto:** `GCF_000013425.1` está entre los 10 genomas piloto de `data/genomes/atlas_genomes/`, lo que explica su `expanded_network.tsv`.
+
+### 10.2 Validación propia de las 5 redes (OE5)
+
+Detalle completo en `docs/validacion_semana10.md`.
+
+- **Exploración previa:** `scripts/explore_validation.py` (salidas en `data/audit/validation_*`).
+- **Módulo:** `src/validation/atlas.py`, ejecutado con `make validate-atlas`. Lee solo la caché y escribe en `data/results/validation/regprecise/` (`summary.tsv`, `pr_curve.tsv`, `by_tier.tsv`, `by_origin.tsv`, `by_genome.tsv`, `locus_mapping.tsv` y `manifest.json`).
+- **Definición:**
+  - Nivel TF → operón; genes curados proyectados por `operon_id`, emparejados por `locus_tag` y luego `old_locus_tag`.
+  - TF por nombre normalizado; un par por (genoma, TF, operón) con la arista de mayor `confidence`.
+  - Universo principal `genome_tf` (solo pares (genoma, TF) curados; el resto es "no evaluable") y universo estricto `genome`.
+  - Recall sobre todo el gold standard proyectado.
+  - Modo `all` y modo `independent` (excluye motivos `RGnnn` cuyo regulog contiene al genoma evaluado).
+  - Curva P/R barriendo `confidence` de 0 a 1 en pasos de 0,01.
+  - Parámetro `--gold regprecise|regulondb` (RegulonDB todavía no implementado).
+- **Gold standard proyectado:** 37.266 pares TF–operón en 312 genomas. Se pierde el 28 % de las 103.044 filas curadas: 11.450 sin genoma en la base y 17.687 con locus sin emparejar. `old_locus_tag` resolvió 70.424 filas.
+
+### 10.3 Resultados principales
+
+| Red | P | R | F1 | F1 `independent` | D33 P / R / F1 |
+|---|---|---|---|---|---|
+| validated | 0,784 | 0,220 | 0,343 | 0,160 | 0,682 / 0,231 / 0,345 |
+| high-precision | 0,861 | 0,043 | 0,081 | 0,019 | 0,742 / 0,041 / 0,078 |
+| **balanced** | 0,612 | 0,332 | **0,431** | **0,318** | 0,545 / 0,343 / 0,421 |
+| permissive | 0,342 | 0,434 | 0,383 | 0,314 | 0,307 / 0,446 / 0,364 |
+| no-footprint | 0,601 | 0,309 | 0,408 | 0,179 | 0,548 / 0,317 / 0,402 |
+
+*(Universo `genome_tf`; P, R y F1 en modo `all`.)*
+
+- **Prueba de cordura superada:** el recall reproduce D33 con diferencia ≤ 0,012 y el orden de F1 es el mismo.
+- **Precisión propia 0,04 a 0,12 más alta que D33.** El universo estricto `genome` tampoco la explica; queda como diferencia de definición.
+- **La circularidad infla el recall:** en modo `independent` el recall cae entre 24 % y 79 % (`balanced` de 0,332 a 0,219; `validated` de 0,220 a 0,089), mientras la precisión baja como mucho 0,11. D33 casi seguro incluye autoevaluación.
+- **`balanced` es la mejor red** en 3 de las 4 combinaciones de modo y universo.
+- **La precisión cae con la distancia taxonómica** del motivo transferido: en `permissive`, de 0,74 (`within_family`) a 0,05 (`cross_phylum`).
+- **Solo una fracción de cada red es evaluable:** 9,7 % de los pares en `balanced`, 3,8 % en `permissive`.
+
+### 10.4 API y vista de validación
+
+- Router `src/api/routers/atlas_validation.py` (prefijo `/atlas/validation`), que solo lee los TSV; la caché se invalida sola cuando cambia la fecha del archivo.
+
+| Endpoint | Devuelve |
+|---|---|
+| `GET /api/v1/atlas/validation/manifest` | Definición de la evaluación, estadísticas del gold standard, commit y fecha |
+| `GET /api/v1/atlas/validation/summary?mode=&universe=` | P/R/F1 por red, modo y universo, con D33 |
+| `GET /api/v1/atlas/validation/curve?network_id=&mode=` | Curva P/R (sin `network_id` devuelve las 5 redes) |
+| `GET /api/v1/atlas/validation/breakdown/{tier\|origin}?network_id=&mode=` | Precisión por tier o por origen del motivo |
+| `GET /api/v1/atlas/validation/genomes?network_id=&mode=&accession=&limit=` | TP/FP/FN, precisión y recall por genoma |
+| `GET /api/v1/atlas/validation/locus-mapping?max_rate=` | Tasa de emparejamiento de locus por genoma |
+
+- Métodos nuevos en `api.js`: `getAtlasValidationManifest`, `getAtlasValidationSummary`, `getAtlasValidationCurve`, `getAtlasValidationBreakdown` y `getAtlasValidationGenomes`.
+- `Validation.jsx` reescrita: selector de red, modo (`all`/`independent`) y universo; tabla de las 5 redes con D33; curvas P/R de las 5 redes con los puntos de D33; curva de umbral de `confidence` con la fracción de pares conservados; desglose por tier y por origen; ficha por genoma para los 312 genomas validables. Funciona con todos los genomas.
+
+---
+
+## 11. Arquitectura actual
+
+```
+MariaDB regulon_atlas (solo SELECT)
+        │  make cache-atlas            make cache (MVP)
+        ▼                               ▼
+data/cache/atlas/*.parquet       data/cache/mvp/
+        │   make validate-atlas         │  make mvp
+        ├──────────────► data/results/validation/
+        │                               ▼
+        │                        data/results/mvp/ (pipeline propio)
+        ▼                               │
+FastAPI src/api ── routers: system, graphs, metrics, genomes, motifs,
+                   robustness (MVP / pendiente) + atlas + atlas_validation
+        │
+        ▼
+React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/api.js
+```
+
+---
+
+## 12. Plan de las semanas restantes
+
+| Semana | Trabajo |
+|---|---|
+| 9 | Auditoría, caché del atlas, API `/atlas` y `RegulatoryNetwork` (hecho) |
+| 10 | Validación propia de las 5 redes contra RegPrecise, modo independiente, curva P/R, API y `Validation.jsx`; `Metrics.jsx` y `Fingerprints.jsx` con datos reales (hecho). Pendiente: punto del MVP en la curva y RegulonDB si se aprueba |
+| 11 | Recalcular métricas con NetworkX para los 2.644 genomas y las 5 redes; comparar con `network_metrics`; huellas topológicas y comparación entre genomas por familia/orden/filo. Componentes `Comparison` y `Fingerprints` sobre las métricas propias. Opcional: enriquecimiento funcional con `gene_module`/`kegg_modules` |
+| 12 | Robustez (cómo cambian las métricas entre las 5 redes); línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) contra las redes externas. Componente `Robustness` |
+| 13 | Componentes restantes (`Pipeline`, `DataProvenance`, `MVP`) y revisión completa. Congelamiento de funciones |
+| 14 | Pruebas (`pytest`, tests de API con `httpx`, prueba de punta a punta desde un clon limpio con `make all`), README y etiqueta `v1.0` |
+| 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
+| 16 | Preparación de la defensa, guion de demo con capturas de respaldo y holgura |
+
+**Si falta tiempo, se recorta en este orden:** primero la línea base de la semana 12, después las huellas de la semana 11 (reducidas a 2 o 3 métricas). No se recortan la validación ni las pruebas.
+
+### Rol del pipeline propio
+
+- **Semana 10 (hecho):** la validación propia evalúa las 5 redes de forma independiente desde la caché.
+- **Semana 11:** su cálculo con NetworkX genera las métricas propias, con una definición de grafo documentada.
+- **Semana 12:** construye la línea base sin filtros sofisticados para medir cuánto aportan los filtros externos.
+- **Semanas 13–14:** queda integrado en `make all` con pruebas, como prueba de reproducibilidad.
+
+### Plan de RegulonDB (si se aprueba)
+
+- **Alcance:** solo *E. coli* K-12 MG1655 (`GCF_000005845.2`, `genome_id` 1869).
+- **Descarga:** interacciones TF–gen con nivel de evidencia en `data/raw/regulondb/`, con un `manifest.json` propio (versión, fecha, URL). Revisar condiciones de uso y cita.
+- **Procesamiento (`make regulondb`):** `data/processed/curated/regulondb/regulondb_tf_gene.tsv` con `tf_name`, `target_locus`, `target_gene`, `effect` y `evidence`. Genes por número b; TF por nombre normalizado más una tabla de alias para complejos (`IHF`, `RcsB-BglJ`).
+- **Validación:** implementar la rama `--gold regulondb` de `src/validation/atlas.py` con la misma definición (TF → operón). Resultado mostrado lado a lado en `Validation.jsx`.
+
+---
+
+## 13. Cómo presentarlo en el informe
+
+- Declarar explícitamente que las redes analizadas las generó un pipeline externo del investigador, presentado como **decisión de diseño** (cobertura completa del atlas, filtros de especificidad que el pipeline propio no tiene, evitar duplicar trabajo y un segundo atlas incompatible).
+- Separar la autoría:
+  - **Externo:** la base `regulon_atlas`, las redes materializadas, `network_metrics` y el benchmark D33.
+  - **Propio:** la auditoría de datos, la caché, la API, la validación independiente (definición, modo sin autoevaluación, curva P/R, desglose por tier), el pipeline local como validador y el dashboard.
+- Usar `balanced` como red principal y presentar las cifras de validación como rangos: precisión entre el universo `genome` y `genome_tf`; recall entre el modo `independent` y `all`.
+- Declarar las limitaciones: sin acceso al código del pipeline externo, definición de D33 desconocida, autoevaluación en el benchmark externo, 28 % del gold standard sin mapear, solo una fracción de cada red evaluable, `network_metrics` no reproducible desde `edges` y trazabilidad hacia atrás solo hasta `provenance`.
+- Citar al investigador según lo que él indique.
+
+---
+
+## 14. Pendientes y preguntas abiertas
+
+Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. Las más urgentes:
+
+- **Investigador:** nivel de comparación y versión de RegPrecise en D33; cómo se contaron los FP; si se excluyó la autoevaluación; diferencia entre tiers `within_*` y `same_*`; calibración de `confidence`; acceso al código y al registro de decisiones.
+- **Profesor:** aprobación del cambio de alcance; `balanced` como red principal con cifras del modo `independent`; RegulonDB obligatorio o complementario; fechas y formato del informe y la defensa.
+
+### Pendientes técnicos
+
+- Corregir la línea 8 del `.env`.
+- Avisos de "análisis pendiente" en `Robustness.jsx` y `Comparison.jsx`, que llaman métodos inexistentes en `api.js` (`getNetworkRobustness`, `getEdgeSubsampling`, `getOrganismProjection`, `getRegulatoryClusters`). Se reescriben en las semanas 11 y 12.
+- Verificar `Fingerprints.jsx` (`balanced` + *E. coli*: Edges = 919; `high-precision`: 207 genomas con métricas).
+- Opcional: agregar `gtdb_family`, `gtdb_genus`, `gtdb_species` y `selection` a `CATALOG_COLUMNS` en `routers/genomes.py`.
+- Agregar la red del MVP como punto aparte en la curva de validación.
+- Migrar las vistas que todavía usan `constants/comparisonGenomes.js` y después borrarlo.
+- Mantener `docs/auditoria_semana9.md` y `docs/validacion_semana10.md` al día.
+
+---
+
+## 15. Lecciones técnicas y forma de trabajo
+
+### Lecciones aprendidas
+
+- **"Escanear una vez, filtrar después":** la falta temporal de acceso a la base no bloquea el trabajo; se priorizan salidas en archivos planos.
+- **En este servidor, BeautifulSoup debe usar `html.parser`:** `lxml` puede fallar en silencio al buscar tablas.
+- **Nunca inventar nombres de métodos de la API:** siempre obtener el `api.js` real (y la estructura de las respuestas) antes de escribir componentes.
+- **Normalizar IDs biológicos con cuidado:** quitar prefijos como `gene-`/`gene_`, normalizar mayúsculas en nombres de TF y probar `old_locus_tag` cuando `locus_tag` no coincide.
+- **Nada de `except: pass`** en scripts de ingesta: provocó corrupción silenciosa de datos con RegPrecise.
+- **Las métricas de NetworkX se calculan en el servidor;** al navegador solo llegan subgrafos limitados, nunca grafos completos.
+- **Verificar integridad tras cada exportación** (comparar conteos con la base) y documentar cualquier discrepancia como hallazgo.
+- **No asumir que métricas precalculadas son reproducibles:** compararlas contra los datos de origen antes de mostrarlas.
+- **Los conteos de InnoDB son estimaciones:** usar `COUNT(*)` para cifras que van a la tesis.
+- **Sin acceso al código externo, definir la evaluación propia** y usar los valores externos como prueba de cordura, no como objetivo.
+- **Revisar la circularidad en toda validación:** si los motivos se construyeron con el mismo gold standard, separar el modo independiente.
+- **Calcular offline y servir resultados:** la validación pesada corre con `make`; la API solo lee archivos.
+
+### Forma de trabajo
+
+- Desarrollo iterativo e incremental: se construye sobre lo existente, no se reinicia.
+- Para componentes nuevos se toma un archivo de referencia que funciona y se replica su patrón exacto.
+- Depuración por capas: error visible → causa raíz → corregir el origen antes que los síntomas.
+- Explorar antes de construir: un script de exploración rápido fija las decisiones antes de escribir el módulo definitivo.
+- Comandos pensados para la terminal de VS Code por SSH; procesos largos con `nohup`.
+- Redacción de la tesis en español, concisa y en lenguaje simple, ajustada a la rúbrica sin extensión innecesaria; se refina con instrucciones cortas y específicas.
+- Texto visible del dashboard en inglés.
+
+### Herramientas
+
+- **Bioinformática:** FIMO, cmscan, PRODORIC, RegPrecise, RegulonDB, eggNOG v7, `ncbi-datasets-cli`, GTDB R232, NCBI RefSeq, GFF3, NetworkX, BeautifulSoup.
+- **Backend:** FastAPI, uvicorn, SQLAlchemy (asyncio y pymysql), asyncmy, MariaDB, Pydantic, python-dotenv, pandas, pyarrow.
+- **Frontend:** Vite, React (JSX), Tailwind CSS, Cytoscape.js con fcose, react-cytoscapejs, Recharts, lucide-react, axios.
+- **Diseño:** prototipos en Figma (pensados en modo oscuro); el dashboard actual usa tonos teal/azul sobre fondo claro, fuente monoespaciada para IDs genómicos; referencias visuales: UCSC Genome Browser, STRING-db y Ensembl.
+
+---
+
+## 16. Comandos frecuentes
+
+```bash
+# Rama de trabajo
+cd ~/proyecto && git checkout dev
+
+# Regenerar la caché del atlas (en segundo plano)
+nohup make cache-atlas > data/cache/atlas_export.log 2>&1 &
+tail -f data/cache/atlas_export.log
+
+# Validación de las 5 redes contra RegPrecise
+make validate-atlas 2>&1 | tee data/results/validation_run.log
+
+# Consultas rápidas a la base (usa ~/.my.cnf)
+mysql regulon_atlas -e "SELECT * FROM networks;"
+
+# Probar la API
+curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head -30
+curl -s "localhost:8000/api/v1/atlas/networks/3/graph/GCF_000005845.2?max_edges=20" | python -m json.tool | head -50
+curl -s "localhost:8000/api/v1/atlas/validation/summary?universe=genome_tf" | python -m json.tool | head -40
+
+# Chequeos de datos
+python scripts/audit_summary.py
+python scripts/check_metrics_coverage.py
+PYTHONPATH=. python scripts/explore_validation.py
+```
