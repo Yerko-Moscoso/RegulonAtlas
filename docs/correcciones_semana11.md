@@ -62,8 +62,11 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
   (log en `logs/metrics_atlas_semana11.log`). El manifiesto queda así: `created_at 2026-10-15T13:42:38+00:00`,
   `git_commit ceeb831`, `git_dirty false`.
 - **Verificación:** `test_manifest_is_traceable`. Los valores de control de E. coli no cambiaron (118 / 342 / 485).
-- **Pendiente:** la validación de la semana 10 (`data/results/validation/`) se generó antes de este cambio y su
-  manifiesto no tiene `git_dirty`. Conviene ejecutar `make validate-atlas` otra vez cuando se vuelva a tocar.
+- **Validación (19-10-2026):** se ejecutó `make validate-atlas` otra vez con el árbol limpio
+  (`logs/validate_atlas_semana11.log`). El manifiesto quedó con `git_commit 63469d5` y `git_dirty false`. `summary.tsv` es
+  **idéntico** al de la semana 10 (diferencia máxima 0,0 en las 20 filas), así que las cifras de `validacion_semana10.md`
+  siguen valiendo. Ahora lo comprueba `tests/test_api_atlas_validation.py`: control de balanced 0,612 / 0,332 / 0,431,
+  `balanced` como mejor F1 y manifiesto trazable.
 
 ## C4. Verificación antes de cada commit
 

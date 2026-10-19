@@ -1,6 +1,6 @@
 # Métricas topológicas propias y comparación entre taxones (semana 11)
 
-*15 al 19 de octubre de 2026. Objetivo específico OE4.*
+*15 al 19 de octubre de 2026. Objetivo específico OE4. La sección 8.5 (origen de los motivos) se agregó el 19-10-2026.*
 
 ## 1. Objetivo
 
@@ -195,6 +195,57 @@ Medianas por filo en `balanced` (propia / externa):
 | Campylobacterota | 32 | 1 / 2 | 2 / 2 |
 | Cyanobacteriota | 64 | 1 / 3 | 2 / 6 |
 
+### 8.5 ¿El efecto del taxón se explica por el origen de los motivos?
+
+**Hipótesis.** Los motivos se transfieren por cercanía taxonómica (D13). Por eso, los genomas cercanos a los organismos donde
+se describieron los motivos (los modelos de PRODORIC y RegPrecise) reciben más TF, y eso infla el efecto del taxón.
+
+**Cómo se probó** (`scripts/explore_motif_origin.py`):
+
+1. **Origen de cada motivo en GTDB.**
+   - RegPrecise (`RGnnn`): regulog nnn → genomas del regulog (`curated_regulons`) → accesión (`regprecise_genome_map`) →
+     taxonomía. Ubica 1.773 de 1.808 motivos (98,1 %).
+   - PRODORIC: `source_taxon` contra `ncbi_organism`, primero por especie (301 motivos) y después por género (32). Ubica
+     los 333 (100 %).
+2. **Oferta de motivos de cada genoma del atlas:** número de motivos con al menos un genoma de origen en su misma familia,
+   orden, clase o filo.
+3. **Regresión lineal** sobre los genomas del atlas con aristas, con `y = log(1 + n_tf)`. Se compara el R² del filo solo con
+   el R² que el filo **agrega** después de controlar por el tamaño del genoma (`log n_genes`) y por la oferta de familia,
+   orden y clase.
+
+**Origen de los motivos por filo** (un motivo cuenta en cada filo de sus genomas de origen): Pseudomonadota 1.101,
+Bacillota 510, Actinomycetota 262, Desulfobacterota 85, Thermotogota 39, Bacteroidota 38, Chloroflexota 25,
+Cyanobacteriota 23, Campylobacterota 10. Es el mismo orden que el tamaño de las redes: Spearman entre la mediana de TF del
+filo y los motivos originados en él = **0,936**.
+
+**R² de los modelos** (`y = log(1 + n_tf)`):
+
+| Red | Genomas | Filo solo | Tamaño del genoma | Oferta | Tamaño + oferta | + filo | R² que agrega el filo | Efecto del filo explicado |
+|---|---|---|---|---|---|---|---|---|
+| validated | 1.127 | 0,288 | 0,193 | 0,291 | 0,457 | 0,592 | 0,135 | 53 % |
+| high-precision | 207 | 0,077 | 0,076 | 0,346 | 0,370 | 0,741 | 0,370 | no interpretable* |
+| **balanced** | 1.717 | 0,475 | 0,157 | 0,601 | 0,768 | 0,824 | **0,056** | **88 %** |
+| permissive | 2.214 | 0,318 | 0,653 | 0,141 | 0,747 | 0,837 | 0,089 | 72 % |
+| no-footprint | 1.203 | 0,348 | 0,118 | 0,330 | 0,489 | 0,626 | 0,137 | 61 % |
+
+*"Efecto del filo explicado" = 1 − (R² que agrega el filo / R² del filo solo). Con `n_edges` los resultados son casi
+iguales (88 % en `balanced`). \*En `high-precision` hay solo 207 genomas: con las variables de filo el modelo se sobreajusta
+y el R² que agrega el filo supera al del filo solo.*
+
+**Lectura:**
+
+- **Se confirma la hipótesis.** En `balanced`, la oferta de motivos sola (R² 0,60) explica más que el filo (0,48). Después
+  de controlar por tamaño y oferta, el filo agrega apenas 0,056.
+- **El factor dominante depende de la red.** En `balanced`, `validated` y `no-footprint` (transferencia hasta clase u orden)
+  domina la oferta cercana. En `permissive` (transferencia entre filos) domina el tamaño del genoma (R² 0,65), porque casi
+  cualquier TF con ortólogo recibe un motivo y el número de TF crece con el genoma.
+- **Dentro de los filos también se ve:** en `balanced`, más oferta en el mismo orden significa más TF en Bacillota
+  (ρ = 0,67), Desulfobacterota (0,60) y Pseudomonadota (0,40), pero casi no en Actinomycetota (0,12) ni en Bacteroidota
+  (0,08).
+- **Qué no se puede separar:** el tamaño del genoma es en parte biológico (los genomas grandes tienen más TF), y la oferta
+  está ligada a qué grupos se estudiaron más. Con estos datos no se puede saber cuánto de la diferencia que queda es
+  biología.
+
 ## 9. Hallazgos
 
 1. **Las métricas de tamaño propias reproducen la comparación externa.** `n_targets`, `n_edges`, `max_out_degree` y `n_tf`
@@ -206,10 +257,10 @@ Medianas por filo en `balanced` (propia / externa):
    las propias.
 3. **El taxón explica gran parte del tamaño de la red.** El filo explica alrededor del 40 % de la variación del número de
    TF y de pares (ε² ≈ 0,4), la clase alrededor del 60 % y el orden o la familia más del 70 %. La red regulatoria predicha
-   se parece más entre genomas cercanos. Es probable que parte de este efecto venga del método y no de la biología: los
-   motivos se transfieren por cercanía taxonómica (D13), y los filos con las redes más grandes (Pseudomonadota, Bacillota)
-   son los de los organismos modelo de PRODORIC y RegPrecise. **Hipótesis no verificada:** falta cruzar el tamaño de la red
-   con el origen de los motivos por filo (candidato para la semana 12).
+   se parece más entre genomas cercanos. **Pero ese efecto es sobre todo metodológico** (sección 8.5): en `balanced`, el
+   tamaño del genoma y la cantidad de motivos que vienen de su misma familia, orden o clase explican el 88 % del efecto del
+   filo sobre el número de TF. Las diferencias entre taxones de la vista *Taxon Comparison* reflejan más dónde se
+   estudiaron los reguladores que la biología de cada grupo.
 4. **Las métricas de grado de entrada no son comparables con la tabla externa** (ρ < 0,6 en la mayoría de los niveles).
    Dependen de cómo se definen los nodos TF, que es justamente lo que no se puede verificar del pipeline externo.
 5. **Bacteroidota, Campylobacterota y Cyanobacteriota tienen redes casi vacías en `balanced`** (mediana de 1 a 2 TF). Su
@@ -225,6 +276,9 @@ Medianas por filo en `balanced` (propia / externa):
 - Kruskal–Wallis supone genomas independientes. Dentro de un taxón, los genomas comparten motivos transferidos, así que los
   valores p son optimistas. Por eso se informa ε² y no solo p.
 - La comparación usa solo los taxones con al menos 5 genomas, así que los géneros con un solo representante no aparecen.
+- Las diferencias entre taxones dependen sobre todo de la oferta de motivos cercanos y del tamaño del genoma (sección 8.5).
+  No deben presentarse como diferencias biológicas de arquitectura regulatoria sin esa advertencia.
+- El 1,9 % de los motivos de RegPrecise (35) no se pudo ubicar en GTDB: sus genomas del regulog no están en `regprecise_genome_map`.
 
 ## 11. Reproducibilidad
 
@@ -245,8 +299,8 @@ Ambas se ejecutaron con el árbol limpio. El manifiesto de las métricas apunta 
 | `data/results/comparison/taxon_tests.tsv` | Kruskal–Wallis, ε² y concordancia por (red, nivel, métrica) |
 | `manifest.json` (en cada carpeta) | Definición, parámetros, commit y `git_dirty` |
 
-Exploración previa: `scripts/explore_metrics.py` y `scripts/explore_comparison.py` (salidas en `data/audit/metrics_*` y
-`data/audit/comparison_*`).
+Exploración previa: `scripts/explore_metrics.py`, `scripts/explore_comparison.py` y `scripts/explore_motif_origin.py`
+(salidas en `data/audit/metrics_*`, `data/audit/comparison_*` y `data/audit/motif_origin_*`).
 
 ## 12. Integración en el sistema
 
@@ -257,5 +311,6 @@ Exploración previa: `scripts/explore_metrics.py` y `scripts/explore_comparison.
   - `Metrics.jsx`: métricas propias por genoma, histograma, ranking y concordancia con la tabla externa.
   - `Fingerprints.jsx`: percentiles y radar del genoma frente a su familia y al atlas.
   - `Comparison.jsx` (*Taxon Comparison*): mediana propia con su rango intercuartílico por taxón y mediana externa como
-    punto. Incluye la tabla de concordancia por métrica y la tabla completa de taxones.
+    punto. Incluye la tabla de concordancia por métrica y la tabla completa de taxones. Desde el 19-10-2026 muestra una
+    advertencia: el efecto del taxón es en buena parte metodológico (sección 8.5).
 - `Fingerprints` y `Comparison` vuelven al menú lateral. Hasta esta semana, `Fingerprints` no estaba enrutada.

@@ -369,6 +369,7 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 - **Exploración:** `scripts/explore_comparison.py`. **Módulo:** `src/networks/atlas_comparison.py` (`make comparison-atlas`) → `data/results/comparison/` (`by_taxon.tsv`, `taxon_tests.tsv`, `manifest.json`).
 - **Definición:** genomas del atlas con aristas y con fila en `network_metrics` (los mismos para ambas fuentes); filo, clase, orden y familia de GTDB; taxones con ≥ 5 genomas; Kruskal–Wallis + ε²; concordancia = Spearman de las medianas por taxón (alta ≥ 0,85).
 - **Resultado:** `n_targets`, `n_edges`, `max_out_degree` y `n_tf` ordenan los taxones como `network_metrics` (ρ ≥ 0,936 en `balanced`); Kruskal–Wallis llega a la misma conclusión en el 95 % de las combinaciones. El taxón explica ~40 % (filo) a >70 % (orden/familia) del tamaño de la red. Las métricas de grado de entrada no son comparables con la tabla externa.
+- **Ese efecto del taxón es sobre todo metodológico** (`scripts/explore_motif_origin.py`, `metricas_semana11.md` sección 8.5): se ubicó en GTDB el origen del 98–100 % de los motivos; en `balanced`, el tamaño del genoma más la oferta de motivos de la misma familia/orden/clase explican el 88 % del efecto del filo sobre el número de TF (el filo solo agrega R² 0,056). `Comparison.jsx` lo advierte.
 
 ### 11.3 API y vistas
 
@@ -391,7 +392,7 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 - **El commit `06e5140` dejó la API sin arrancar** (`main.py` importaba `atlas_metrics_router`). Se corrigió en `73c7a34`.
 - **El genoma `replacement` (*Gordonia iterans*, `GCF_002993285.1`) quedaba fuera del atlas** porque `selection` lleva una nota; se compara la primera palabra (`a1b5dfc`). El atlas vuelve a tener 2.224 genomas en las métricas.
 - **Trazabilidad:** los manifiestos de métricas, validación y comparación guardan `git_dirty`; los resultados se generan con el árbol limpio.
-- **`make check` y hook `pre-commit` versionado** (`make hooks`): verifican sobre el índice que la API importa, que `src/api` no usa `get_db` y que el frontend compila; `make check` además ejecuta `pytest` (`tests/test_api_atlas_metrics.py`, `tests/test_api_atlas_comparison.py`, 19 pruebas). Se instalaron `pytest` y `httpx` en `bioinfo`.
+- **`make check` y hook `pre-commit` versionado** (`make hooks`): verifican sobre el índice que la API importa, que `src/api` no usa `get_db` y que el frontend compila; `make check` además ejecuta `pytest` (`tests/test_api_atlas_metrics.py`, `tests/test_api_atlas_comparison.py`, `tests/test_api_atlas_validation.py`; 22 pruebas). Se instalaron `pytest` y `httpx` en `bioinfo`.
 
 ---
 
@@ -468,7 +469,7 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 
 ## 15. Pendientes y preguntas abiertas
 
-Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. Las más urgentes:
+Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. El índice de toda la documentación y la bitácora de trabajo están en `docs/README.md`. Las más urgentes:
 
 - **Investigador:** nivel de comparación y versión de RegPrecise en D33; cómo se contaron los FP; si se excluyó la autoevaluación; diferencia entre tiers `within_*` y `same_*`; calibración de `confidence`; acceso al código y al registro de decisiones.
 - **Profesor:** aprobación del cambio de alcance; `balanced` como red principal con cifras del modo `independent`; RegulonDB obligatorio o complementario; fechas y formato del informe y la defensa.
@@ -478,8 +479,8 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 - Corregir la línea 8 del `.env`.
 - `Robustness.jsx` llama métodos inexistentes en `api.js` (`getNetworkRobustness`, `getEdgeSubsampling`). Se reescribe en la semana 12. (`Comparison.jsx` ya se reescribió en la semana 11.)
 - Revisar en el navegador `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
-- Volver a ejecutar `make validate-atlas` con el árbol limpio: su manifiesto es anterior al campo `git_dirty`.
-- Comprobar si el tamaño de la red por filo se explica por el origen de los motivos (hipótesis de `metricas_semana11.md`, hallazgo 3).
+- Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`). Los envía el usuario.
+- *(Hecho el 19-10-2026: `make validate-atlas` repetido con el árbol limpio, resultados idénticos; hipótesis del origen de los motivos comprobada.)*
 - Opcional: agregar `gtdb_family`, `gtdb_genus`, `gtdb_species` y `selection` a `CATALOG_COLUMNS` en `routers/genomes.py`.
 - Agregar la red del MVP como punto aparte en la curva de validación.
 - Migrar las vistas que todavía usan `constants/comparisonGenomes.js` y después borrarlo.

@@ -7,6 +7,8 @@ desarrollador; las redes y la base las generó un investigador con un pipeline e
 Contexto completo: `docs/contexto_regulomeatlas.md`. Léelo al empezar una tarea que no sea trivial.
 Validación: `docs/validacion_semana10.md`. Métricas y comparación: `docs/metricas_semana11.md`.
 Preguntas abiertas: `docs/preguntas_pendientes.md`.
+**Índice de toda la documentación y bitácora: `docs/README.md`.** Cada documento nuevo y cada bloque de trabajo se
+registra ahí, y al terminar una tarea se le dice al usuario dónde quedó documentada.
 
 ## Entorno
 
@@ -74,4 +76,4 @@ curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
 - E. coli K-12 (`GCF_000005845.2`) en balanced: 118 TF, 342 operones diana, 485 pares TF–operón.
 - Métricas propias: 2.224 genomas con `in_atlas` en cada una de las 5 redes (`tests/test_api_atlas_metrics.py`).
 - Comparación, balanced: 10 filos, 13 clases, 48 órdenes y 83 familias con ≥ 5 genomas (`tests/test_api_atlas_comparison.py`).
-- Validación balanced, `all` / `genome_tf`: P = 0,612, R = 0,332, F1 = 0,431.
+- Validación balanced, `all` / `genome_tf`: P = 0,612, R = 0,332, F1 = 0,431 (`tests/test_api_atlas_validation.py`).

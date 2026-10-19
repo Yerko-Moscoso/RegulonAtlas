@@ -5,6 +5,9 @@ y qué decisión se tomó mientras tanto. Al final hay un borrador de mensaje pa
 
 *Creado el 15-10-2026 (semana 11). Última actualización: 19-10-2026.*
 
+**Estado de los mensajes:** borradores listos el 19-10-2026, **pendientes de envío por el usuario** (Claude no tiene
+acceso a correo). Al enviarlos, anotar aquí la fecha; al recibir respuesta, pasar la pregunta a "Resueltas".
+
 ## Para el investigador
 
 ### P1. ¿Cómo se calcularon `n_edges` y `n_tf` de `network_metrics`?
@@ -90,6 +93,11 @@ son dos métricas distintas, no un error. Detalle en `correcciones_semana11.md`,
 En la comparación entre taxones, sí para las métricas de tamaño. `n_targets`, `n_edges`, `max_out_degree` y `n_tf` ordenan
 los taxones igual (ρ ≥ 0,936 en `balanced`), y Kruskal–Wallis da la misma conclusión en el 95 % de las combinaciones. No pasa
 lo mismo con las métricas de grado de entrada. Detalle en `metricas_semana11.md`, sección 8.
+
+### R3. ¿El tamaño de la red por taxón refleja el origen de los motivos? (19-10-2026)
+
+En gran parte, sí. En `balanced`, el tamaño del genoma y la oferta de motivos de su misma familia, orden o clase explican el
+88 % del efecto del filo sobre el número de TF. Detalle en `metricas_semana11.md`, sección 8.5.
 
 ## Borradores de mensaje
 
