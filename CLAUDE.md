@@ -6,6 +6,7 @@ desarrollador; las redes y la base las generó un investigador con un pipeline e
 
 Contexto completo: `docs/contexto_regulomeatlas.md`. Léelo al empezar una tarea que no sea trivial.
 Validación: `docs/validacion_semana10.md`. Métricas y comparación: `docs/metricas_semana11.md`.
+Robustez: `docs/robustez_semana12.md`.
 Preguntas abiertas: `docs/preguntas_pendientes.md`.
 **Índice de toda la documentación y bitácora: `docs/README.md`.** Cada documento nuevo y cada bloque de trabajo se
 registra ahí, y al terminar una tarea se le dice al usuario dónde quedó documentada.
@@ -66,6 +67,7 @@ make cache-genes      # genes_all.parquet (9,44M genes)
 make validate-atlas   # validación contra RegPrecise -> data/results/validation/
 make metrics-atlas    # métricas NetworkX -> data/results/metrics/
 make comparison-atlas # comparación por taxón -> data/results/comparison/ (después de metrics-atlas)
+make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robustness/ (~15 min, usar nohup)
 make check            # verificaciones previas al commit + pytest
 make hooks            # activa scripts/githooks/pre-commit (una vez por clon)
 curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head

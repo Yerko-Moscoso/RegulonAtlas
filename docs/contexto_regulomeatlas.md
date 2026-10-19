@@ -1,6 +1,6 @@
 # RegulomeAtlas — Documento de contexto del proyecto
 
-*Última actualización: semana 11 (19 de octubre de 2026). Este documento resume el estado del proyecto, las decisiones tomadas y el trabajo hecho en los chats de la carpeta "Redes de regulación bacterianas". Sirve como punto de partida para cualquier conversación nueva.*
+*Última actualización: semana 12 (19 de octubre de 2026). Este documento resume el estado del proyecto, las decisiones tomadas y el trabajo hecho en los chats de la carpeta "Redes de regulación bacterianas". Sirve como punto de partida para cualquier conversación nueva.*
 
 ---
 
@@ -169,6 +169,7 @@ El investigador generó cinco redes para todo el atlas el 2026-09-03 (decisión 
 | D33 | Las cinco redes materializadas y su benchmark P/R/F1 |
 | Post-MVP | Los datos de la base son la fuente principal; el pipeline propio pasa a ser validador independiente |
 | Semana 10 | Validación propia a nivel TF–operón, universo (genoma, TF) curado, recall sobre todo el gold standard y modo `independent` sin autoevaluación (sección 10.2) |
+| Semana 12 | Robustez en dos partes: entre redes (anidamiento, orden, footprinting) y submuestreo de aristas (random, degree-biased, low-confidence; 10–75 %; clases robusta ≥ 0,90 / moderada ≥ 0,70). `n_edges` es trivial en el submuestreo (sección 12) |
 | Semana 11 | Métricas propias sobre el grafo TF (nombre normalizado) → operón; `network_metrics` solo como referencia. Comparación entre genomas por taxón GTDB (no PCA ni clusters), porque es la única con equivalente externo (sección 11.2) |
 
 El registro completo de decisiones lo tiene el investigador y está pendiente de solicitar.
@@ -396,7 +397,32 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 
 ---
 
-## 12. Arquitectura actual
+## 12. Semana 12 — trabajo realizado (19 de octubre, parte A)
+
+Detalle completo en `docs/robustez_semana12.md`.
+
+- **Cierre de la semana 11:** `main` avanzó (fast-forward) hasta `f2d5df3`, con la etiqueta `semana11-metricas`. `main` seguía en la semana 8; ahora incluye las semanas 9 a 11. La etiqueta antigua `semana10-sweep` apunta al MVP (`b628e54`) y no se tocó.
+- **Dos análisis de robustez:** (A) entre redes, que es el plan original, y (B) submuestreo de aristas, que es lo que proponía el prototipo de `Robustness.jsx`.
+- **Exploración:** `scripts/explore_robustness.py`. **Módulo:** `src/networks/atlas_robustness.py` (`make robustness-atlas`, 24 procesos, ~8 min) → `data/results/robustness/`.
+- **Resultados A:**
+  - Las redes están anidadas: high-precision ⊂ validated ⊂ balanced ⊂ permissive, y validated ⊂ no-footprint.
+  - El orden de los genomas se mantiene entre redes vecinas en las métricas de tamaño (ρ 0,75–0,91), pero no entre redes lejanas.
+  - Las métricas de estructura (`frac_largest`, `frac_multi_reg`) dependen de la red.
+  - El footprinting quita ~40 % de los pares y conserva el orden (ρ 0,96).
+- **Resultados B:**
+  - Con el 50 % de las aristas eliminadas, `n_tf`, `n_targets` y `frac_genome_targeted` son robustas en todas las redes y estrategias (ρ ≥ 0,98 en `balanced`). `frac_largest` y `out_degree_entropy` no lo son.
+  - Eliminar las aristas de menor `confidence` degrada la estructura casi tanto como perder los hubs.
+  - En total, 136 de 210 combinaciones son robustas a ese nivel.
+- **Conclusión para la tesis:** las métricas que coinciden con el pipeline externo (semana 11) son las mismas que resultan robustas.
+- **API:** `/api/v1/atlas/robustness/{manifest, nesting, between, footprint, subsampling, subsampling/genome}`. Métodos `getAtlasRobustness*` en `api.js`.
+- **Vista:** `Robustness.jsx` reescrita y en el menú. El router antiguo `/robustness` del MVP sigue respondiendo "pending".
+- **Corrección:** `n_edges` es trivial en las tres estrategias (`38222a8`). El cálculo se repitió con el árbol limpio.
+- **Pruebas:** 28 (`tests/test_api_atlas_robustness.py`).
+- **Pendiente (parte B):** la línea base desde `fimo_hits` necesita exportar 54,6 M filas de MariaDB. Espera la aprobación del usuario.
+
+---
+
+## 13. Arquitectura actual
 
 ```
 MariaDB regulon_atlas (solo SELECT)
@@ -409,12 +435,14 @@ data/cache/atlas/*.parquet       data/cache/mvp/
         ├──────────────► data/results/metrics/
         │   make comparison-atlas (lee metrics/)
         ├──────────────► data/results/comparison/
+        │   make robustness-atlas (lee metrics/ y edges)
+        ├──────────────► data/results/robustness/
         │                               ▼
         │                        data/results/mvp/ (pipeline propio)
         ▼                               │
 FastAPI src/api ── routers: system, graphs, metrics, genomes, motifs,
                    robustness (MVP / pendiente) + atlas + atlas_validation
-                   + atlas_metrics + atlas_comparison
+                   + atlas_metrics + atlas_comparison + atlas_robustness
         │
         ▼
 React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/api.js
@@ -424,14 +452,14 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 
 ---
 
-## 13. Plan de las semanas restantes
+## 14. Plan de las semanas restantes
 
 | Semana | Trabajo |
 |---|---|
 | 9 | Auditoría, caché del atlas, API `/atlas` y `RegulatoryNetwork` (hecho) |
 | 10 | Validación propia de las 5 redes contra RegPrecise, modo independiente, curva P/R, API y `Validation.jsx`; `Metrics.jsx` y `Fingerprints.jsx` con datos reales (hecho). Pendiente: punto del MVP en la curva y RegulonDB si se aprueba |
 | 11 | Métricas propias con NetworkX para los 2.644 genomas y las 5 redes, comparadas con `network_metrics`; comparación por filo/clase/orden/familia; `Metrics`, `Fingerprints` y `Comparison` sobre las métricas propias; `make check` y pruebas (hecho). No se hizo el enriquecimiento funcional opcional |
-| 12 | Robustez (cómo cambian las métricas entre las 5 redes); línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) contra las redes externas. Componente `Robustness` |
+| 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness` (hecho). Línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) contra las redes externas: pendiente de aprobar la exportación |
 | 13 | Componentes restantes (`Pipeline`, `DataProvenance`, `MVP`) y revisión completa. Congelamiento de funciones |
 | 14 | Pruebas (ampliar `tests/`, que ya tiene las pruebas de humo de métricas y comparación; prueba de punta a punta desde un clon limpio con `make all`), README y etiqueta `v1.0` |
 | 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
@@ -455,7 +483,7 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 
 ---
 
-## 14. Cómo presentarlo en el informe
+## 15. Cómo presentarlo en el informe
 
 - Declarar explícitamente que las redes analizadas las generó un pipeline externo del investigador, presentado como **decisión de diseño** (cobertura completa del atlas, filtros de especificidad que el pipeline propio no tiene, evitar duplicar trabajo y un segundo atlas incompatible).
 - Separar la autoría:
@@ -467,7 +495,7 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 
 ---
 
-## 15. Pendientes y preguntas abiertas
+## 16. Pendientes y preguntas abiertas
 
 Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. El índice de toda la documentación y la bitácora de trabajo están en `docs/README.md`. Las más urgentes:
 
@@ -477,7 +505,8 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 ### Pendientes técnicos
 
 - Corregir la línea 8 del `.env`.
-- `Robustness.jsx` llama métodos inexistentes en `api.js` (`getNetworkRobustness`, `getEdgeSubsampling`). Se reescribe en la semana 12. (`Comparison.jsx` ya se reescribió en la semana 11.)
+- Revisar en el navegador `Robustness.jsx` (reescrita en la semana 12).
+- Decidir si se exporta `fimo_hits` para la línea base de la semana 12 (54,6 M filas; alternativa: solo los 312 genomas validables).
 - Revisar en el navegador `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
 - Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`). Los envía el usuario.
 - *(Hecho el 19-10-2026: `make validate-atlas` repetido con el árbol limpio, resultados idénticos; hipótesis del origen de los motivos comprobada.)*
@@ -488,7 +517,7 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 
 ---
 
-## 16. Lecciones técnicas y forma de trabajo
+## 17. Lecciones técnicas y forma de trabajo
 
 ### Lecciones aprendidas
 
@@ -506,7 +535,8 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 - **Calcular offline y servir resultados:** la validación pesada corre con `make`; la API solo lee archivos.
 - **Verificar lo que entra en el commit, no la copia de trabajo:** un archivo local corregido no garantiza un commit sano (`06e5140`). El hook `pre-commit` revisa el índice.
 - **Los campos categóricos pueden traer notas:** `selection` del genoma de reemplazo lleva texto extra; comparar por la primera palabra y contrastar el conteo (2.224) después de cada filtro.
-- **Generar resultados con el árbol limpio:** el manifiesto debe apuntar a un commit que contenga el código que los produjo (`git_dirty: false`).
+- **Generar resultados con el árbol limpio:** el manifiesto debe apuntar a un commit que contenga el código que los produjo (`git_dirty: false`). Si hay documentos a medio editar, se guardan con `git stash` durante **todo** el cálculo, no solo al inicio.
+- **Revisar si una métrica es trivial por construcción:** en el submuestreo, `n_edges` no cambia de orden porque se elimina una fracción fija de pares; contarla como "robusta" infla el resultado.
 
 ### Forma de trabajo
 
@@ -527,7 +557,7 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 
 ---
 
-## 17. Comandos frecuentes
+## 18. Comandos frecuentes
 
 ```bash
 # Rama de trabajo
@@ -550,6 +580,7 @@ curl -s "localhost:8000/api/v1/atlas/validation/summary?universe=genome_tf" | py
 
 # Métricas propias, comparación entre taxones y verificaciones
 make metrics-atlas && make comparison-atlas
+nohup make robustness-atlas > logs/robustness_atlas.log 2>&1 &   # ~8 min
 make check            # antes de cada commit; make hooks una vez por clon
 
 # Chequeos de datos

@@ -20,7 +20,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 
 | Documento | Qué contiene | Actualizado |
 |---|---|---|
-| [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana, arquitectura, plan de semanas 12–16, cómo presentarlo en el informe, pendientes, lecciones y comandos | 19-10-2026 |
+| [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 19-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R3) y borradores de mensaje | 19-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
 | [`../README.md`](../README.md) | README del MVP (semana 8): requisitos y cómo reproducir `make mvp` | 28-09-2026 |
@@ -33,6 +33,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | 10 | [`validacion_semana10.md`](validacion_semana10.md) | OE5 | Validación propia de las 5 redes contra RegPrecise: definición, proyección del gold standard, P/R/F1, modo `independent`, precisión por tier, hallazgos y limitaciones |
 | 11 | [`metricas_semana11.md`](metricas_semana11.md) | OE4 | Métricas topológicas propias, diferencias con `network_metrics`, comparación entre taxones, concordancia con el pipeline externo y prueba del origen de los motivos (8.5) |
 | 11 | [`correcciones_semana11.md`](correcciones_semana11.md) | — | Correcciones C1–C6: import roto, genoma replacement, trazabilidad, verificación pre-commit, `density` externa y documentación |
+| 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas: anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting y submuestreo de aristas. La línea base desde `fimo_hits` está pendiente |
 
 ### Material de referencia
 
@@ -49,6 +50,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | `data/results/validation/regprecise/` | `make validate-atlas` | `validacion_semana10.md`, sección 9 |
 | `data/results/metrics/` | `make metrics-atlas` | `metricas_semana11.md`, sección 11 |
 | `data/results/comparison/` | `make comparison-atlas` | `metricas_semana11.md`, sección 11 |
+| `data/results/robustness/` | `make robustness-atlas` | `robustez_semana12.md`, sección 7 |
 | `data/audit/` | `scripts/explore_*.py`, `scripts/audit_summary.py` | Docstring de cada script |
 | `logs/` | Ejecuciones con `> logs/….log` | Bitácora (abajo) |
 
@@ -58,6 +60,22 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 19-10-2026: semana 12, parte A (robustez)
+
+- `e304236`: `scripts/explore_robustness.py`, `src/networks/atlas_robustness.py` (`make robustness-atlas`), API
+  `/atlas/robustness/*`, `Robustness.jsx` reescrita y en el menú, `tests/test_api_atlas_robustness.py`.
+- `38222a8`: corrección, `n_edges` es trivial en las tres estrategias. El cálculo se repitió con el árbol limpio
+  (manifiesto `38222a8`, `git_dirty: false`); hay 28 pruebas.
+- Resultado: las métricas de tamaño son robustas entre redes vecinas y frente a perder la mitad de las aristas; las de
+  estructura no lo son. → `robustez_semana12.md`; contexto, sección 12.
+- Pendiente: línea base desde `fimo_hits` (requiere aprobar la exportación). → `robustez_semana12.md`, sección 8.
+
+### 19-10-2026: cierre de la semana 11
+
+- `main` avanzó (fast-forward) hasta `f2d5df3` y se creó la etiqueta **`semana11-metricas`**. `main` estaba en la semana 8:
+  la fusión incluye también las semanas 9 y 10. La etiqueta antigua `semana10-sweep` apunta a `b628e54` (MVP), así que su
+  nombre no corresponde a lo que contiene; no se tocó.
 
 ### 19-10-2026: pendientes de la semana 11
 
