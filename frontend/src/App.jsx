@@ -9,11 +9,12 @@ import Metrics from "./pages/Metrics";
 import Validation from "./pages/Validation";
 import Fingerprints from "./pages/Fingerprints";
 import Comparison from "./pages/Comparison";
+import Robustness from "./pages/Robustness";
 
 // Referencia con gold standard (RegulonDB); también es el organismo por defecto.
 const DEFAULT_ORGANISM = "GCF_000005845.2";
 
-// Rutas del MVP más las vistas de la semana 11 (Fingerprints, Comparison). Si llega una página no registrada, se vuelve al Dashboard
+// Rutas del MVP más las vistas de las semanas 11 (Fingerprints, Comparison) y 12 (Robustness). Si llega una página no registrada, se vuelve al Dashboard
 // en vez de mostrar una pantalla vacía.
 const MVP_PAGES = new Set([
   "dashboard",
@@ -24,6 +25,7 @@ const MVP_PAGES = new Set([
   "validation",
   "fingerprints",
   "comparison",
+  "robustness",
 ]);
 
 export default function App() {
@@ -51,6 +53,7 @@ export default function App() {
           {page === "validation" && <Validation initialOrganism={selectedOrganism} />}
           {page === "fingerprints" && <Fingerprints initialOrganism={selectedOrganism} />}
           {page === "comparison" && <Comparison />}
+          {page === "robustness" && <Robustness initialOrganism={selectedOrganism} />}
         </main>
       </div>
     </div>

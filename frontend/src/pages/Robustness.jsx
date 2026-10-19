@@ -1,395 +1,589 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from "recharts";
-import { Loader2, ShieldAlert, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
-import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
+import NetworkSelector from "../components/NetworkSelector";
+import OrganismSearch from "../components/OrganismSearch";
+import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, selectClass } from "../utils/atlas";
 
-const ROBUST_COLORS = {
-  ROBUST: { bg: "#E8F5F0", text: "#176B57", border: "#B8DDD0" },
-  MODERATE: { bg: "#FFFBEB", text: "#92400E", border: "#FCEDB8" },
-  "NOT ROBUST": { bg: "#FEF0F0", text: "#D96C6C", border: "#F8BFBF" },
+// Robustez de las métricas propias (make robustness-atlas):
+//   1. submuestreo de aristas: ¿se conserva el orden de los genomas si la red está incompleta?
+//   2. entre redes: anidamiento, orden de los genomas entre redes y efecto del footprinting.
+
+const STRATEGIES = [
+  { key: "random", label: "Random", color: "#3A9D7C", help: "edges removed uniformly at random" },
+  { key: "degree_biased", label: "Degree-biased", color: "#D97706", help: "edges of high-degree TFs removed first" },
+  { key: "low_confidence", label: "Low confidence", color: "#6D5BD0", help: "lowest-confidence edges removed (like a stricter threshold)" },
+];
+const RATES = [0.1, 0.25, 0.5, 0.75];
+
+const METRICS = [
+  { key: "n_tf", label: "TFs", digits: 0 },
+  { key: "n_targets", label: "Target operons", digits: 0 },
+  { key: "n_edges", label: "TF–operon pairs", digits: 0 },
+  { key: "density", label: "Density", digits: 4 },
+  { key: "edges_per_tf", label: "Edges per TF", digits: 2 },
+  { key: "frac_multi_reg", label: "Multi-regulated fraction", digits: 3 },
+  { key: "frac_genome_targeted", label: "Genome fraction targeted", digits: 3 },
+  { key: "frac_largest", label: "Largest component fraction", digits: 3 },
+  { key: "mean_out_degree", label: "Mean out-degree", digits: 2 },
+  { key: "max_out_degree", label: "Max out-degree", digits: 0 },
+  { key: "mean_in_degree", label: "Mean in-degree", digits: 2 },
+  { key: "out_degree_entropy", label: "Out-degree entropy", digits: 3 },
+  { key: "out_degree_gini", label: "Out-degree Gini", digits: 3 },
+  { key: "hub_share", label: "Hub share", digits: 3 },
+  { key: "n_components", label: "Connected components", digits: 0 },
+];
+
+const CLASSES = {
+  robust: { label: "Robust", cls: "bg-[#E8F5F0] text-[#176B57] border-[#B8DDD0]" },
+  moderate: { label: "Moderate", cls: "bg-[#FFFBEB] text-[#92400E] border-[#FCEDB8]" },
+  not_robust: { label: "Not robust", cls: "bg-[#FEF0F0] text-[#B54848] border-[#F8BFBF]" },
+  trivial: { label: "Trivial", cls: "bg-[#F1F5F9] text-[#475569] border-[#D9E2E7]" },
+  undefined: { label: "Not defined", cls: "bg-[#F1F5F9] text-[#64748B] border-[#D9E2E7]" },
 };
 
-const removeEdgesOptions = ["10%", "25%", "50%", "75%"];
-const samplingOptions = ["Random", "Degree-biased"];
+const NET_ORDER = ["validated", "high-precision", "balanced", "permissive", "no-footprint"];
+const GENOME_COLOR = "#3A9D7C";
+const ATLAS_COLOR = "#D97706";
 
-const STRATEGY_PARAM = {
-  Random: "random",
-  "Degree-biased": "degree_biased",
-};
+const metricInfo = (key) => METRICS.find((m) => m.key === key) ?? { key, label: key, digits: 2 };
+const fmt = (v, digits) =>
+  v == null ? "—" : digits === 0 ? fmtInt(Math.round(v * 10) / 10) : Number(v).toFixed(digits);
+const pct = (v) => (v == null ? "—" : `${Math.round(v * 100)}%`);
+const fmtRho = (v) => (v == null ? "—" : v.toFixed(2));
 
-function formatCell(value) {
-  if (value === null || value === undefined) return "—";
-  if (typeof value === "number") {
-    return Math.abs(value) < 1 ? value.toFixed(4) : value.toFixed(2);
-  }
-  return value;
+function ClassBadge({ value }) {
+  const c = CLASSES[value] ?? CLASSES.undefined;
+  return <span className={`inline-block text-[10px] font-medium px-1.5 py-0.5 rounded border ${c.cls}`}>{c.label}</span>;
 }
 
-export default function Robustness() {
-  // Genome selector state
+function Card({ loading, children }) {
+  return (
+    <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5 relative">
+      {loading && (
+        <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-xl">
+          <Loader2 className="w-6 h-6 text-[#3A9D7C] animate-spin" />
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function SeriesTooltip({ active, payload, label, valueFmt }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-[#D9E2E7] rounded-lg p-3 shadow-lg text-xs">
+      <div className="font-semibold text-[#334155] mb-1">{pct(label)} of edges removed</div>
+      {payload.map((p) => (
+        <div key={p.dataKey} className="flex items-center gap-1.5 text-[#64748B]">
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+          {p.name}: <span className="font-mono text-[#334155]">{valueFmt(p.value)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Matriz 5x5 con sombreado según el valor (0-1)
+function Matrix({ title, subtitle, cells, valueFmt }) {
+  const get = (a, b) => cells.find((c) => c.a === a && c.b === b)?.value;
+  return (
+    <div>
+      <h4 className="text-xs font-semibold text-[#334155]">{title}</h4>
+      <p className="text-[11px] text-[#64748B] mb-2">{subtitle}</p>
+      <table className="text-xs">
+        <thead>
+          <tr>
+            <th />
+            {NET_ORDER.map((n) => (
+              <th key={n} className="px-2 py-1 font-medium text-[#64748B] text-center">{n}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {NET_ORDER.map((a) => (
+            <tr key={a}>
+              <td className="pr-2 py-1 font-medium text-[#64748B] text-right">{a}</td>
+              {NET_ORDER.map((b) => {
+                const v = get(a, b);
+                return (
+                  <td
+                    key={b}
+                    className="px-2 py-1 text-center font-mono text-[#334155] border border-white"
+                    style={{ backgroundColor: v == null ? "#F8FAFC" : `rgba(58,157,124,${0.08 + 0.5 * Math.max(0, v)})` }}
+                  >
+                    {v == null ? "—" : valueFmt(v)}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default function Robustness({ initialOrganism }) {
+  const [networks, setNetworks] = useState([]);
+  const [networkId, setNetworkId] = useState(DEFAULT_NETWORK);
+  const [strategy, setStrategy] = useState("random");
+  const [metric, setMetric] = useState("n_tf");
+  const [rate, setRate] = useState(0.25);
   const [genomes, setGenomes] = useState([]);
-  const [genomesLoading, setGenomesLoading] = useState(true);
-  const [genomesError, setGenomesError] = useState("");
-  const [selectedGenome, setSelectedGenome] = useState("");
+  const [organism, setOrganism] = useState("");
 
-  // Robustness data state
-  const [loading, setLoading] = useState(false);
+  const [summary, setSummary] = useState([]); // submuestreo, todas las estrategias de la red elegida
+  const [genomeRows, setGenomeRows] = useState([]);
+  const [nesting, setNesting] = useState([]);
+  const [between, setBetween] = useState([]);
+  const [footprint, setFootprint] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [genomeLoading, setGenomeLoading] = useState(false);
   const [error, setError] = useState("");
-  const [robustnessData, setRobustnessData] = useState([]);
-  const [meta, setMeta] = useState(null);
+  const [genomeError, setGenomeError] = useState("");
 
-  // Edge Subsampling (Block B) state
-  const [removedEdges, setRemovedEdges] = useState("25%");
-  const [sampling, setSampling] = useState("Random");
-  const [replicates] = useState(10);
-  const [subsamplingLoading, setSubsamplingLoading] = useState(false);
-  const [subsamplingError, setSubsamplingError] = useState("");
-  const [subsamplingRows, setSubsamplingRows] = useState([]);
-
-  // Load available genomes once on mount, restricted to the compared set
+  // 1. Redes y datos que no dependen de la red (anidamiento, footprinting)
   useEffect(() => {
-    const fetchGenomes = async () => {
-      try {
-        setGenomesLoading(true);
-        setGenomesError("");
-        const response = await api.getGenomes(0, 3000);
-        const items = response.data?.items || [];
-        const comparisonOnly = items.filter((item) => COMPARISON_ACCESSIONS.includes(item.accession));
-
-        // Alphabetical order by organism display name (falls back to accession).
-        const sorted = [...comparisonOnly].sort((a, b) =>
-          (a.ncbi_organism || a.accession).localeCompare(b.ncbi_organism || b.accession)
-        );
-
-        setGenomes(sorted);
-
-        if (sorted.length > 0) {
-          setSelectedGenome(sorted[0].accession);
-        } else {
-          setError("No genomes from the compared set are available in the Atlas yet.");
-        }
-      } catch (err) {
-        console.error("Failed to load genome list:", err);
-        setGenomesError("Could not load the list of organisms. Check that the backend is running.");
-      } finally {
-        setGenomesLoading(false);
-      }
-    };
-
-    fetchGenomes();
+    api
+      .getAtlasNetworks()
+      .then((res) => setNetworks(res.data))
+      .catch(() => setError("The network list could not be loaded. Check that the backend is running."));
+    Promise.all([api.getAtlasRobustnessNesting(), api.getAtlasRobustnessFootprint()])
+      .then(([n, f]) => {
+        setNesting(n.data.rows ?? []);
+        setFootprint(f.data.rows ?? []);
+      })
+      .catch((err) =>
+        setError(
+          err?.response?.data?.detail ??
+            "Robustness results could not be loaded. Check that the backend is running and the results exist (make robustness-atlas)."
+        )
+      );
   }, []);
 
-  // Fetch robustness data whenever the selected genome changes
+  // 2. Submuestreo de la red elegida y genomas del atlas con aristas (para el buscador)
   useEffect(() => {
-    if (!selectedGenome) return;
-
-    const fetchRobustness = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        const response = await api.getNetworkRobustness(selectedGenome, {
-          threshold: 1e-6,
-          trials: 5,
+    let cancelled = false;
+    setLoading(true);
+    Promise.all([
+      api.getAtlasRobustnessSubsampling(networkId),
+      api.getAtlasOwnMetrics(networkId, { atlasOnly: true, withEdgesOnly: true }),
+    ])
+      .then(([s, g]) => {
+        if (cancelled) return;
+        setSummary(s.data.rows ?? []);
+        const list = g.data.rows ?? [];
+        setGenomes(list);
+        setOrganism((prev) => {
+          const ok = (id) => list.some((r) => r.accession === id && r.n_edges >= 10);
+          if (prev && ok(prev)) return prev;
+          return [initialOrganism, DEFAULT_GENOME].find((id) => id && ok(id)) ?? list.find((r) => r.n_edges >= 10)?.accession ?? "";
         });
-        setRobustnessData(response.data?.results || []);
-        setMeta({
-          baseEdges: response.data?.base_edges,
-          trials: response.data?.trials,
-        });
-      } catch (err) {
-        console.error("Failed to load robustness stability metrics:", err);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setSummary([]);
         setError(
-          err.response?.status === 404
-            ? `No regulatory interactions are loaded yet for ${selectedGenome}.`
-            : "Could not load the network robustness evaluation. Check that the backend is running."
+          err?.response?.data?.detail ??
+            "Robustness results could not be loaded. Check that the backend is running and the results exist (make robustness-atlas)."
         );
-        setRobustnessData([]);
-        setMeta(null);
-      } finally {
-        setLoading(false);
-      }
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
     };
+  }, [networkId, initialOrganism]);
 
-    fetchRobustness();
-  }, [selectedGenome]);
-
-  // Fetch Block B table whenever genome, removal rate, or strategy changes
+  // 3. Orden de los genomas entre redes para la métrica elegida
   useEffect(() => {
-    if (!selectedGenome) return;
+    api
+      .getAtlasRobustnessBetween(metric)
+      .then((res) => setBetween(res.data.rows ?? []))
+      .catch(() => setBetween([]));
+  }, [metric]);
 
-    const fetchSubsampling = async () => {
-      try {
-        setSubsamplingLoading(true);
-        setSubsamplingError("");
-        const response = await api.getEdgeSubsampling(selectedGenome, {
-          threshold: 1e-6,
-          removal_rate: parseInt(removedEdges, 10) / 100,
-          strategy: STRATEGY_PARAM[sampling],
-          replicates,
-        });
-        setSubsamplingRows(response.data?.metrics || []);
-      } catch (err) {
-        console.error("Failed to load edge subsampling table:", err);
-        setSubsamplingError(
-          err.response?.status === 404
-            ? `No regulatory interactions are loaded yet for ${selectedGenome}.`
-            : "Could not load the edge subsampling evaluation. Check that the backend is running."
-        );
-        setSubsamplingRows([]);
-      } finally {
-        setSubsamplingLoading(false);
-      }
+  // 4. Ficha del genoma elegido
+  useEffect(() => {
+    if (!organism) return;
+    let cancelled = false;
+    setGenomeLoading(true);
+    setGenomeError("");
+    api
+      .getAtlasRobustnessGenome(networkId, organism)
+      .then((res) => !cancelled && setGenomeRows(res.data.rows ?? []))
+      .catch((err) => {
+        if (cancelled) return;
+        setGenomeRows([]);
+        setGenomeError(err?.response?.data?.detail ?? "Subsampling results for this genome could not be loaded.");
+      })
+      .finally(() => !cancelled && setGenomeLoading(false));
+    return () => {
+      cancelled = true;
     };
+  }, [networkId, organism]);
 
-    fetchSubsampling();
-  }, [selectedGenome, removedEdges, sampling, replicates]);
+  const info = metricInfo(metric);
+  const strat = STRATEGIES.find((s) => s.key === strategy);
+  const genome = genomes.find((g) => g.accession === organism);
 
-  const hasData = robustnessData.length > 0;
+  const options = useMemo(
+    () =>
+      genomes.map((g) => ({
+        id: g.accession,
+        label: g.ncbi_organism || g.accession,
+        muted: g.n_edges < 10,
+        meta: g.n_edges < 10 ? `${fmtInt(g.n_edges)} edges (fewer than 10, not subsampled)` : `${fmtInt(g.n_edges)} edges`,
+      })),
+    [genomes]
+  );
+
+  // Curva de estabilidad del orden: una serie por estrategia
+  const rankCurve = useMemo(
+    () => [
+      { rate: 0, ...Object.fromEntries(STRATEGIES.map((s) => [s.key, 1])) },
+      ...RATES.map((r) => ({
+        rate: r,
+        ...Object.fromEntries(
+          STRATEGIES.map((s) => [
+            s.key,
+            summary.find((x) => x.metric === metric && x.strategy === s.key && x.rate === r)?.spearman ?? null,
+          ])
+        ),
+      })),
+    ],
+    [summary, metric]
+  );
+  const isTrivial = summary.some((x) => x.metric === metric && x.trivial);
+
+  // Curva de retención: genoma elegido vs mediana del atlas
+  const retentionCurve = useMemo(
+    () => [
+      { rate: 0, genome: 1, atlas: 1 },
+      ...RATES.map((r) => ({
+        rate: r,
+        genome: genomeRows.find((x) => x.metric === metric && x.strategy === strategy && x.rate === r)?.retention ?? null,
+        atlas:
+          summary.find((x) => x.metric === metric && x.strategy === strategy && x.rate === r)?.retention_median ?? null,
+      })),
+    ],
+    [genomeRows, summary, metric, strategy]
+  );
+
+  const stratSummary = summary.filter((x) => x.strategy === strategy);
+  const cell = (m, r) => stratSummary.find((x) => x.metric === m && x.rate === r);
+  const atRate = stratSummary.filter((x) => x.rate === 0.5 && !x.trivial);
+  const nRobust = atRate.filter((x) => x.robustness === "robust").length;
+
+  const nestingCells = nesting.map((n) => ({ a: n.from_network, b: n.to_network, value: n.share_in_to }));
+  const betweenCells = between.flatMap((r) => [
+    { a: r.a, b: r.b, value: r.spearman },
+    { a: r.b, b: r.a, value: r.spearman },
+  ]).concat(NET_ORDER.map((n) => ({ a: n, b: n, value: 1 })));
 
   return (
-    <div className="space-y-6 max-w-[1100px] relative">
-      {loading && (
-        <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center z-20">
-          <Loader2 className="w-8 h-8 text-[#3A9D7C] animate-spin mb-2" />
-          <p className="text-sm text-[#64748B]">Running network robustness stability analysis...</p>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#334155]">
-            Network Robustness & Incompleteness Evaluation
-          </h1>
-          <p className="text-sm text-[#64748B] mt-1">
-            Assessing topological metric stability under random edge subsampling (10% to 75% removal).
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <label htmlFor="genome-select" className="text-xs font-medium text-[#64748B]">
-            Organism
-          </label>
-          <select
-            id="genome-select"
-            className="text-sm border border-[#D9E2E7] rounded-lg px-3 py-1.5 text-[#334155] bg-white disabled:opacity-50"
-            value={selectedGenome}
-            onChange={(e) => setSelectedGenome(e.target.value)}
-            disabled={genomesLoading || genomes.length === 0}
-          >
-            {genomesLoading && <option>Loading organisms...</option>}
-            {!genomesLoading && genomes.length === 0 && <option>No organisms available</option>}
-            {genomes.map((g) => (
-              <option key={g.accession} value={g.accession}>
-                {g.ncbi_organism || g.accession} ({g.accession})
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="space-y-6 max-w-[1100px]">
+      <div>
+        <h1 className="text-2xl font-semibold text-[#334155]">Metric Robustness</h1>
+        <p className="text-sm text-[#64748B] mt-1">
+          How stable the own topological metrics are when the network is incomplete (edge subsampling) and when a
+          different network definition is used.
+        </p>
       </div>
-
-      {hasData && !error && (
-        <div className="flex items-center gap-2 bg-[#E8F5F0] text-[#176B57] px-3 py-1.5 rounded-lg text-xs font-medium border border-[#B8DDD0] w-fit">
-          <CheckCircle2 size={14} />
-          <span>Stability Benchmark ({meta?.trials ?? "-"} trials, {meta?.baseEdges ?? "-"} base edges)</span>
-        </div>
-      )}
-
-      {genomesError && (
-        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5 flex items-center gap-2">
-          <AlertTriangle size={16} />
-          <span>{genomesError}</span>
-        </div>
-      )}
 
       {error && (
-        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5 flex items-center gap-2">
-          <AlertTriangle size={16} />
-          <span>{error}</span>
+        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
+      )}
+
+      {/* Controles */}
+      <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-4 flex flex-wrap items-end gap-4">
+        <NetworkSelector networks={networks} value={networkId} onChange={setNetworkId} />
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-[#64748B]">Removal strategy</span>
+          <div className="flex rounded-lg border border-[#D9E2E7] overflow-hidden">
+            {STRATEGIES.map((s) => (
+              <button
+                key={s.key}
+                onClick={() => setStrategy(s.key)}
+                title={s.help}
+                className={`px-3 py-1.5 text-xs transition-colors ${
+                  strategy === s.key ? "bg-[#3A9D7C] text-white" : "bg-white text-[#64748B] hover:bg-[#F7FAFC]"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <label className="flex flex-col gap-1">
+          <span className="text-xs text-[#64748B]">Metric</span>
+          <select value={metric} onChange={(e) => setMetric(e.target.value)} className={selectClass}>
+            {METRICS.map((m) => (
+              <option key={m.key} value={m.key}>{m.label}</option>
+            ))}
+          </select>
+        </label>
+        <div className="flex flex-col gap-1 min-w-[260px] flex-1">
+          <span className="text-xs text-[#64748B]">Organism</span>
+          <OrganismSearch options={options} value={organism} onChange={setOrganism} disabled={!options.length} />
+        </div>
+      </div>
+
+      {!loading && atRate.length > 0 && (
+        <div className="bg-[#F0F7FB] border border-[#CFE3EF] rounded-lg px-4 py-3 text-xs text-[#334155] flex gap-2">
+          <Info className="w-4 h-4 text-[#3B82B8] shrink-0 mt-0.5" />
+          <div>
+            With <span className="font-semibold">{strat.label.toLowerCase()}</span> removal of half of the edges ({strat.help}),{" "}
+            <span className="font-semibold">{nRobust} of {atRate.length}</span> metrics keep the ranking of atlas genomes
+            (Spearman ≥ 0.90 between original and subsampled values). Robust ≥ 0.90, moderate ≥ 0.70, not robust &lt; 0.70.
+            Atlas genomes with at least 10 TF–operon pairs; random and degree-biased are averaged over 10 replicates.
+          </div>
         </div>
       )}
 
-      {hasData && (
-        <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-semibold text-[#334155]">Structural Degradation Curves</h3>
-              <p className="text-xs text-[#64748B]">Metric retention ratio vs. percentage of removed regulatory edges</p>
-            </div>
-          </div>
-
-          <ResponsiveContainer width="100%" height={340}>
-            <LineChart data={robustnessData} margin={{ top: 10, right: 30, bottom: 10, left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0F4F8" />
+      {/* 1a. Estabilidad del orden vs tasa de eliminación */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card loading={loading}>
+          <h3 className="text-sm font-semibold text-[#334155]">Rank stability — {info.label}</h3>
+          <p className="text-xs text-[#64748B] mb-3">
+            Spearman correlation across atlas genomes between the original and the subsampled value.
+            {isTrivial && " TF–operon pairs is trivial for random and degree-biased removal (a fixed share is removed)."}
+          </p>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={rankCurve} margin={{ top: 8, right: 16, bottom: 18, left: -8 }}>
+              <CartesianGrid strokeDasharray="2 2" stroke="#F0F4F8" />
               <XAxis
-                dataKey="edge_removal_rate"
+                dataKey="rate"
+                type="number"
+                domain={[0, 0.75]}
+                ticks={[0, ...RATES]}
+                tickFormatter={pct}
                 tick={{ fontSize: 11, fill: "#64748B" }}
-                tickFormatter={(v) => `${v * 100}%`}
-                label={{ value: "Edge Removal Rate (Subsampling)", position: "insideBottom", offset: -5, fontSize: 11, fill: "#64748B" }}
+                stroke="#D9E2E7"
+                label={{ value: "Edges removed", position: "insideBottom", offset: -8, fontSize: 11, fill: "#64748B" }}
               />
-              <YAxis tick={{ fontSize: 11, fill: "#64748B" }} domain={[0, 0.6]} />
-              <Tooltip
-                contentStyle={{ fontSize: 11, borderColor: "#D9E2E7", borderRadius: 8 }}
-                formatter={(v, name) => [v, name.replace("_", " ").toUpperCase()]}
-              />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Line type="monotone" dataKey="modularity" name="Modularity (Q)" stroke="#3A9D7C" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="clustering_coefficient" name="Clustering Coeff." stroke="#3B82B8" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="hierarchy_index" name="Hierarchy Index" stroke="#E9B949" strokeWidth={2} dot={{ r: 4 }} />
+              <YAxis domain={[0, 1]} tick={{ fontSize: 11, fill: "#64748B" }} stroke="#D9E2E7" />
+              <ReferenceLine y={0.9} stroke="#94A3B8" strokeDasharray="4 3" />
+              <ReferenceLine y={0.7} stroke="#CBD5E1" strokeDasharray="4 3" />
+              <Tooltip content={<SeriesTooltip valueFmt={fmtRho} />} />
+              <Legend wrapperStyle={{ fontSize: 11, color: "#64748B" }} />
+              {STRATEGIES.map((s) => (
+                <Line
+                  key={s.key}
+                  dataKey={s.key}
+                  name={s.label}
+                  stroke={s.color}
+                  strokeWidth={s.key === strategy ? 2.5 : 2}
+                  dot={{ r: 4, fill: s.color, stroke: "#FFFFFF", strokeWidth: 2 }}
+                  isAnimationActive={false}
+                  connectNulls
+                />
+              ))}
             </LineChart>
           </ResponsiveContainer>
-        </div>
-      )}
+        </Card>
 
-      <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5 relative">
-        {subsamplingLoading && (
-          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-xl">
-            <Loader2 className="w-6 h-6 text-[#3A9D7C] animate-spin" />
-          </div>
-        )}
+        {/* 1b. Retención del genoma elegido vs mediana del atlas */}
+        <Card loading={genomeLoading}>
+          <h3 className="text-sm font-semibold text-[#334155]">
+            Degradation curve — {genome?.ncbi_organism ?? organism}
+          </h3>
+          <p className="text-xs text-[#64748B] mb-3">
+            {info.label}: subsampled value / original value ({strat.label.toLowerCase()} removal), this genome and the
+            atlas median.
+          </p>
+          {genomeError ? (
+            <div className="text-xs text-[#D96C6C] py-10 text-center">{genomeError}</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={retentionCurve} margin={{ top: 8, right: 16, bottom: 18, left: -8 }}>
+                <CartesianGrid strokeDasharray="2 2" stroke="#F0F4F8" />
+                <XAxis
+                  dataKey="rate"
+                  type="number"
+                  domain={[0, 0.75]}
+                  ticks={[0, ...RATES]}
+                  tickFormatter={pct}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
+                  stroke="#D9E2E7"
+                  label={{ value: "Edges removed", position: "insideBottom", offset: -8, fontSize: 11, fill: "#64748B" }}
+                />
+                <YAxis tick={{ fontSize: 11, fill: "#64748B" }} stroke="#D9E2E7" tickFormatter={(v) => v.toFixed(1)} />
+                <ReferenceLine y={1} stroke="#CBD5E1" />
+                <Tooltip content={<SeriesTooltip valueFmt={(v) => (v == null ? "—" : v.toFixed(3))} />} />
+                <Legend wrapperStyle={{ fontSize: 11, color: "#64748B" }} />
+                <Line dataKey="genome" name="This genome" stroke={GENOME_COLOR} strokeWidth={2}
+                  dot={{ r: 4, fill: GENOME_COLOR, stroke: "#FFFFFF", strokeWidth: 2 }} isAnimationActive={false} connectNulls />
+                <Line dataKey="atlas" name="Atlas median" stroke={ATLAS_COLOR} strokeWidth={2} strokeDasharray="5 3"
+                  dot={{ r: 4, fill: ATLAS_COLOR, stroke: "#FFFFFF", strokeWidth: 2 }} isAnimationActive={false} connectNulls />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </Card>
+      </div>
 
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-bold text-[#64748B] bg-[#F0F4F8] px-2 py-0.5 rounded font-mono">B</span>
-          <h2 className="text-sm font-semibold text-[#334155]">Edge Subsampling</h2>
-        </div>
-        <p className="text-xs text-[#64748B] mb-4 ml-8">
-          Metric stability under simulated interaction data incompleteness.
+      {/* 1c. Tabla métricas x tasa */}
+      <Card loading={loading}>
+        <h3 className="text-sm font-semibold text-[#334155] mb-1">Edge subsampling — all metrics ({strat.label})</h3>
+        <p className="text-xs text-[#64748B] mb-3">
+          Rank stability (Spearman) and median retention across atlas genomes for each removal rate. Click a row to plot it.
         </p>
-
-        <div className="flex flex-wrap items-center gap-5 ml-8 mb-5">
-          <div>
-            <div className="text-[10px] font-medium text-[#64748B] mb-1.5">Removed edges</div>
-            <div className="flex gap-1">
-              {removeEdgesOptions.map((o) => (
-                <button
-                  key={o}
-                  onClick={() => setRemovedEdges(o)}
-                  className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
-                    removedEdges === o
-                      ? "bg-[#3A9D7C] text-white border-[#3A9D7C]"
-                      : "bg-white text-[#64748B] border-[#D9E2E7] hover:bg-[#F7FAFC]"
-                  }`}
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-left text-[#64748B] border-b border-[#D9E2E7]">
+                <th className="py-2 pr-3 font-medium">Metric</th>
+                {RATES.map((r) => (
+                  <th key={r} className="py-2 pr-3 font-medium text-right">{pct(r)} removed</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {METRICS.map((m) => (
+                <tr
+                  key={m.key}
+                  onClick={() => setMetric(m.key)}
+                  className={`border-b border-[#F0F4F8] cursor-pointer hover:bg-[#F7FAFC] ${m.key === metric ? "bg-[#F0F7F4]" : ""}`}
                 >
-                  {o}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className="text-[10px] font-medium text-[#64748B] mb-1.5">Sampling strategy</div>
-            <div className="flex gap-1">
-              {samplingOptions.map((o) => (
-                <button
-                  key={o}
-                  onClick={() => setSampling(o)}
-                  className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
-                    sampling === o
-                      ? "bg-[#3B82B8] text-white border-[#3B82B8]"
-                      : "bg-white text-[#64748B] border-[#D9E2E7] hover:bg-[#F7FAFC]"
-                  }`}
-                >
-                  {o}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className="text-[10px] font-medium text-[#64748B] mb-1.5">Replicates</div>
-            <span className="text-sm font-mono font-medium text-[#334155] bg-[#F7FAFC] border border-[#D9E2E7] px-2.5 py-1 rounded-lg">
-              {replicates}
-            </span>
-          </div>
-        </div>
-
-        {subsamplingError && (
-          <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5 flex items-center gap-2 mb-4 ml-8">
-            <AlertTriangle size={16} />
-            <span>{subsamplingError}</span>
-          </div>
-        )}
-
-        {subsamplingRows.length > 0 && (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#D9E2E7] bg-[#F7FAFC]">
-                    {["Metric", "Original", "Mean", "Std Dev", "CV", "Robustness"].map((h) => (
-                      <th
-                        key={h}
-                        className="text-left text-[11px] font-medium text-[#64748B] px-4 py-2.5 first:pl-5 last:pr-5"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {subsamplingRows.map((row) => {
-                    const style = ROBUST_COLORS[row.robustness] || ROBUST_COLORS["NOT ROBUST"];
+                  <td className="py-1.5 pr-3 text-[#334155]">{m.label}</td>
+                  {RATES.map((r) => {
+                    const c = cell(m.key, r);
                     return (
-                      <tr key={row.metric} className="border-b border-[#F7FAFC] last:border-0">
-                        <td className="px-4 pl-5 py-2.5 text-xs font-medium text-[#334155]">
-                          {row.metric}
-                        </td>
-                        <td className="px-4 py-2.5 font-mono text-xs text-[#334155]">
-                          {formatCell(row.original)}
-                        </td>
-                        <td className="px-4 py-2.5 font-mono text-xs text-[#334155]">
-                          {formatCell(row.mean)}
-                        </td>
-                        <td className="px-4 py-2.5 font-mono text-xs text-[#334155]">
-                          {formatCell(row.std)}
-                        </td>
-                        <td className="px-4 py-2.5 font-mono text-xs text-[#334155]">
-                          {row.cv === null ? "—" : row.cv.toFixed(2)}
-                        </td>
-                        <td className="px-4 pr-5 py-2.5">
-                          <span
-                            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold font-mono border"
-                            style={{
-                              backgroundColor: style.bg,
-                              color: style.text,
-                              borderColor: style.border,
-                            }}
-                          >
-                            {row.robustness}
-                          </span>
-                        </td>
-                      </tr>
+                      <td key={r} className="py-1.5 pr-3 text-right whitespace-nowrap">
+                        <span className="font-mono text-[#334155] mr-1.5">{fmtRho(c?.spearman)}</span>
+                        <span className="font-mono text-[#94A3B8] mr-1.5">{pct(c?.retention_median)}</span>
+                        <ClassBadge value={c?.robustness} />
+                      </td>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="flex items-center gap-4 mt-4 ml-4">
-              {Object.entries(ROBUST_COLORS).map(([k, v]) => (
-                <div key={k} className="flex items-center gap-1.5">
-                  <span
-                    className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded border"
-                    style={{ backgroundColor: v.bg, color: v.text, borderColor: v.border }}
-                  >
-                    {k}
-                  </span>
-                  <span className="text-[10px] text-[#64748B]">
-                    {k === "ROBUST" ? "CV < 0.15" : k === "MODERATE" ? "0.15 ≤ CV < 0.35" : "CV ≥ 0.35"}
-                  </span>
-                </div>
+                </tr>
               ))}
-            </div>
-          </>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-[#94A3B8] mt-2">Each cell: Spearman · median retention · class.</p>
+      </Card>
+
+      {/* 1d. Ficha del genoma */}
+      <Card loading={genomeLoading}>
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+          <div>
+            <h3 className="text-sm font-semibold text-[#334155]">Selected genome — {genome?.ncbi_organism ?? organism}</h3>
+            <p className="text-xs text-[#64748B]">
+              Original value and mean ± SD after removing edges ({strat.label.toLowerCase()}). Class is the atlas-wide
+              rank stability at that rate.
+            </p>
+          </div>
+          <div className="flex rounded-lg border border-[#D9E2E7] overflow-hidden">
+            {RATES.map((r) => (
+              <button
+                key={r}
+                onClick={() => setRate(r)}
+                className={`px-3 py-1.5 text-xs transition-colors ${
+                  rate === r ? "bg-[#3A9D7C] text-white" : "bg-white text-[#64748B] hover:bg-[#F7FAFC]"
+                }`}
+              >
+                {pct(r)}
+              </button>
+            ))}
+          </div>
+        </div>
+        {genomeError ? (
+          <div className="text-xs text-[#D96C6C]">{genomeError}</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-left text-[#64748B] border-b border-[#D9E2E7]">
+                  <th className="py-2 pr-3 font-medium">Metric</th>
+                  <th className="py-2 pr-3 font-medium text-right">Original</th>
+                  <th className="py-2 pr-3 font-medium text-right">After removal (mean ± SD)</th>
+                  <th className="py-2 pr-3 font-medium text-right">Retention</th>
+                  <th className="py-2 font-medium">Atlas class</th>
+                </tr>
+              </thead>
+              <tbody>
+                {METRICS.map((m) => {
+                  const r = genomeRows.find((x) => x.metric === m.key && x.strategy === strategy && x.rate === rate);
+                  return (
+                    <tr key={m.key} className="border-b border-[#F0F4F8]">
+                      <td className="py-1.5 pr-3 text-[#334155]">{m.label}</td>
+                      <td className="py-1.5 pr-3 text-right font-mono text-[#334155]">{fmt(r?.original, m.digits)}</td>
+                      <td className="py-1.5 pr-3 text-right font-mono text-[#334155]">
+                        {fmt(r?.mean, m.digits === 0 ? 1 : m.digits)}
+                        {r?.sd != null && <span className="text-[#94A3B8]"> ± {fmt(r.sd, m.digits === 0 ? 1 : m.digits)}</span>}
+                      </td>
+                      <td className="py-1.5 pr-3 text-right font-mono text-[#64748B]">{pct(r?.retention)}</td>
+                      <td className="py-1.5"><ClassBadge value={cell(m.key, rate)?.robustness} /></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
-      </div>
+      </Card>
+
+      {/* 2. Entre redes */}
+      <Card loading={false}>
+        <h3 className="text-sm font-semibold text-[#334155] mb-1">Between networks</h3>
+        <p className="text-xs text-[#64748B] mb-4">
+          The five networks are nested filters of the same scan. Changing the network changes the values and partly the
+          ranking of genomes.
+        </p>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-x-auto">
+          <Matrix
+            title="Nesting of TF–operon pairs"
+            subtitle="Share of the pairs of the row network that are also in the column network."
+            cells={nestingCells}
+            valueFmt={pct}
+          />
+          <Matrix
+            title={`Ranking of genomes — ${info.label}`}
+            subtitle="Spearman across atlas genomes with edges in both networks."
+            cells={betweenCells}
+            valueFmt={fmtRho}
+          />
+        </div>
+
+        <h4 className="text-xs font-semibold text-[#334155] mt-6">Effect of phylogenetic footprinting</h4>
+        <p className="text-[11px] text-[#64748B] mb-2">
+          validated vs no-footprint: same p-value and tier, only footprinting changes
+          {footprint[0] ? ` (${fmtInt(footprint[0].genomes)} genomes with edges in both).` : "."}
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-left text-[#64748B] border-b border-[#D9E2E7]">
+                <th className="py-2 pr-3 font-medium">Metric</th>
+                <th className="py-2 pr-3 font-medium text-right">Median validated</th>
+                <th className="py-2 pr-3 font-medium text-right">Median no-footprint</th>
+                <th className="py-2 pr-3 font-medium text-right">Median ratio</th>
+                <th className="py-2 font-medium text-right">Spearman</th>
+              </tr>
+            </thead>
+            <tbody>
+              {METRICS.map((m) => {
+                const f = footprint.find((x) => x.metric === m.key);
+                if (!f) return null;
+                return (
+                  <tr key={m.key} className="border-b border-[#F0F4F8]">
+                    <td className="py-1.5 pr-3 text-[#334155]">{m.label}</td>
+                    <td className="py-1.5 pr-3 text-right font-mono text-[#334155]">{fmt(f.median_validated, m.digits)}</td>
+                    <td className="py-1.5 pr-3 text-right font-mono text-[#334155]">{fmt(f.median_no_footprint, m.digits)}</td>
+                    <td className="py-1.5 pr-3 text-right font-mono text-[#64748B]">{fmt(f.median_ratio, 2)}</td>
+                    <td className="py-1.5 text-right font-mono text-[#64748B]">{fmtRho(f.spearman)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </div>
   );
 }

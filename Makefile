@@ -14,7 +14,7 @@ RUN      = $(PYTHON) -m src.pipeline
 CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
-.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks comparison-atlas
+.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks comparison-atlas robustness-atlas
 
 all: mvp
 
@@ -62,6 +62,10 @@ metrics-atlas:
 
 comparison-atlas: data/results/metrics/atlas_metrics.parquet
 	PYTHONPATH=. python src/networks/atlas_comparison.py
+
+# Submuestreo en paralelo (24 procesos por defecto; ~10-20 min las 5 redes). Usar nohup.
+robustness-atlas: data/results/metrics/atlas_metrics.parquet
+	PYTHONPATH=. python src/networks/atlas_robustness.py
 
 data/results/metrics/atlas_metrics.parquet:
 	@echo "Faltan las métricas propias. Ejecuta primero: make metrics-atlas" && exit 1

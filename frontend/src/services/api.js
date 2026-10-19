@@ -114,6 +114,22 @@ export const api = {
   getAtlasComparisonTests: (networkId, level) =>
     apiClient.get('/atlas/comparison/tests', { params: { network_id: networkId, level } }),
 
+  // === ROBUSTEZ DE LAS MÉTRICAS (resultados de make robustness-atlas) ===
+  // strategy: random | degree_biased | low_confidence
+  getAtlasRobustnessManifest: () => apiClient.get('/atlas/robustness/manifest'),
+
+  getAtlasRobustnessNesting: () => apiClient.get('/atlas/robustness/nesting'),
+
+  getAtlasRobustnessBetween: (metric) => apiClient.get('/atlas/robustness/between', { params: { metric } }),
+
+  getAtlasRobustnessFootprint: () => apiClient.get('/atlas/robustness/footprint'),
+
+  getAtlasRobustnessSubsampling: (networkId, strategy) =>
+    apiClient.get('/atlas/robustness/subsampling', { params: { network_id: networkId, strategy } }),
+
+  getAtlasRobustnessGenome: (networkId, accession, strategy) =>
+    apiClient.get('/atlas/robustness/subsampling/genome', { params: { network_id: networkId, accession, strategy } }),
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');

@@ -13,6 +13,7 @@ const labels = {
   validation: "Validation",
   fingerprints: "Topological Fingerprints",
   comparison: "Taxon Comparison",
+  robustness: "Metric Robustness",
 };
 
 const HEALTH_INTERVAL_MS = 30000;
