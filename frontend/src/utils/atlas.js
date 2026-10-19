@@ -4,6 +4,9 @@
 export const DEFAULT_NETWORK = 3; // balanced: mejor F1 (D33)
 export const DEFAULT_GENOME = "GCF_000005845.2"; // E. coli K-12 MG1655
 
+// Genomas del atlas (selection en ATLAS_SELECTIONS); lo comprueba tests/test_api_atlas_metrics.py.
+export const ATLAS_GENOMES = 2224;
+
 // Valores de genomes.selection que forman el atlas (2.224 genomas).
 // El resto (regprecise_source, chromosome_level, expression_validation) son auxiliares.
 export const ATLAS_SELECTIONS = new Set(["representative", "forced", "replacement"]);

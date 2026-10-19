@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { api } from "../services/api";
 import { PROJECT_NAME } from "../config/constants";
-import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
+import { ATLAS_GENOMES, fmtInt } from "../utils/atlas";
 
 const labels = {
   dashboard: "Dashboard",
@@ -60,7 +60,7 @@ export default function Header({ page }) {
         <div className="flex items-center gap-2 text-sm">
           <span className="text-[#64748B] text-xs">Dataset</span>
           <span className="font-medium text-[#334155] text-xs bg-[#F7FAFC] border border-[#D9E2E7] px-2 py-0.5 rounded">
-            {COMPARISON_ACCESSIONS.length} Enterobacteriaceae genomes
+            {fmtInt(ATLAS_GENOMES)} genomes · 5 networks
           </span>
         </div>
         <div className="flex items-center gap-1.5">

@@ -11,42 +11,8 @@ const apiClient = axios.create({
 });
 
 export const api = {
-  // === ORGANISMOS ===
-  getGenomes: (skip = 0, limit = 100) => {
-    // Es CRÍTICO enviar skip y limit como 'params' para que Axios los ponga en la URL
-    return apiClient.get('/genomes/', { params: { skip, limit } });
-  },
-  
-  // Ficha completa (taxonomía, tamaño, genes, operones, TF, aristas, curadas).
-  getGenomeByAccession: (accession) => {
-    return apiClient.get(`/genomes/${accession}`);
-  },
-
-  // Solo los genomas pedidos, con su ficha completa. Usar en vez de
-  // getGenomes(0, 3000) + filtro en el navegador.
-  getGenomesByAccessions: (accessions) => {
-    const params = new URLSearchParams();
-    accessions.forEach((acc) => params.append('accessions', acc));
-    return apiClient.get(`/genomes/?${params.toString()}`);
-  },
-
-  // === MÉTRICAS (OE4 y OE5) ===
-  getValidationMetrics: (accession) => {
-    return apiClient.get(`/metrics/validation/${accession}`);
-  },
-  
-  getTopologyMetrics: (accession) => {
-    return apiClient.get(`/metrics/topology/${accession}`);
-  },
-
-  // Métricas de varios genomas en una sola llamada (?accessions=A&accessions=B).
-  // Se arma la query a mano porque axios, por defecto, serializa los arrays
-  // como accessions[]=A, que FastAPI no reconoce.
-  getTopologySummary: (accessions) => {
-    const params = new URLSearchParams();
-    accessions.forEach((acc) => params.append('accessions', acc));
-    return apiClient.get(`/metrics/topology-summary?${params.toString()}`);
-  },
+  // === ORGANISMOS (catálogo de la caché del atlas) ===
+  getGenomeByAccession: (accession) => apiClient.get(`/genomes/${accession}`),
 
   // === ATLAS (redes reales de la base, caché data/cache/atlas) ===
   getAtlasNetworks: () => apiClient.get('/atlas/networks'),

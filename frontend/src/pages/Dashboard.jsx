@@ -1,293 +1,173 @@
-import { useEffect, useState } from "react";
-import { Dna, Network, GitBranch, CircleCheck, BarChart3, Loader2, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  Loader2, Dna, Network, BarChart3, CircleCheck, FingerprintPattern, GitCompare, ShieldCheck, ChevronRight,
+} from "lucide-react";
 import { api } from "../services/api";
-import { COMPARISON_ACCESSIONS } from "../constants/comparisonGenomes";
+import { ATLAS_GENOMES, fmtInt, fmtP } from "../utils/atlas";
 
-// Genoma de referencia con gold standard.
-const REFERENCE_ACCESSION = "GCF_000005845.2";
-// Umbral de la red en -log10(p); igual a NETWORK_NEG_LOG10_P del backend.
-const VALIDATION_THRESHOLD = 5.0;
-const GOLD_STANDARD = "RegPrecise";
+// Resumen del atlas: las 5 redes con su validación propia (make validate-atlas) y accesos a cada vista.
+// Antes mostraba los 8 genomas del MVP (data/results/mvp).
 
-const MODULES = [
-  {
-    page: "organisms",
-    icon: Dna,
-    title: "Organisms",
-    desc: "Genomes included in the analysis, with their assembly and annotation data.",
-  },
-  {
-    page: "networks",
-    icon: Network,
-    title: "Regulatory Networks",
-    desc: "Interactive TF → target gene network predicted for each genome.",
-  },
-  {
-    page: "metrics",
-    icon: BarChart3,
-    title: "Metrics",
-    desc: "Nodes, edges, density, average degree and hubs of each network.",
-  },
-  {
-    page: "validation",
-    icon: CircleCheck,
-    title: "Validation",
-    desc: `Precision and recall of the E. coli K-12 network against curated ${GOLD_STANDARD} regulons, across FIMO thresholds.`,
-  },
+const VIEWS = [
+  { page: "organisms", label: "Organisms", icon: Dna, text: "Catalog of the 2,644 genomes with their own metrics." },
+  { page: "networks", label: "Regulatory Networks", icon: Network, text: "TF → operon graph of any genome and network." },
+  { page: "metrics", label: "Metrics", icon: BarChart3, text: "Own topological metrics and agreement with the external table." },
+  { page: "validation", label: "Validation", icon: CircleCheck, text: "Precision and recall against RegPrecise, and the own baseline." },
+  { page: "fingerprints", label: "Fingerprints", icon: FingerprintPattern, text: "Percentile profile of a genome against its family and the atlas." },
+  { page: "comparison", label: "Taxon Comparison", icon: GitCompare, text: "Metrics across GTDB phyla, classes, orders and families." },
+  { page: "robustness", label: "Robustness", icon: ShieldCheck, text: "Metric stability across networks and under edge removal." },
 ];
 
-const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
-const fmtPct = (x) => (x == null ? "—" : `${(x * 100).toFixed(1)}%`);
-const f1Score = (p, r) => (p + r > 0 ? (2 * p * r) / (p + r) : 0);
+const pct = (v) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
+const dec = (v) => (v == null ? "—" : Number(v).toFixed(3));
 
-function Spinner({ text }) {
+function Stat({ label, value, sub }) {
   return (
-    <div className="flex items-center justify-center py-10 text-[#64748B] text-sm gap-2">
-      <Loader2 className="w-4 h-4 text-[#3A9D7C] animate-spin" />
-      {text}
-    </div>
-  );
-}
-
-function KpiCard({ icon: Icon, value, label, note, color, bg }) {
-  return (
-    <div className="bg-white rounded-xl border border-[#D9E2E7] p-4 shadow-sm">
-      <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center mb-3`}>
-        <Icon size={16} className={color} />
-      </div>
-      <div className="text-[22px] font-bold font-mono text-[#334155] leading-none mb-1">
-        {value}
-      </div>
-      <div className="text-[11px] text-[#64748B] leading-tight">{label}</div>
-      {note && <div className="text-[10px] text-[#94A3B8] mt-1">{note}</div>}
+    <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm px-4 py-3">
+      <div className="text-xs text-[#64748B]">{label}</div>
+      <div className="text-2xl font-semibold text-[#334155] font-mono mt-0.5">{value}</div>
+      {sub && <div className="text-[11px] text-[#94A3B8] mt-0.5">{sub}</div>}
     </div>
   );
 }
 
 export default function Dashboard({ navigate }) {
-  // Topología y validación se cargan por separado: cada sección aparece
-  // apenas su dato llega, sin esperar a la otra.
-  const [topology, setTopology] = useState(null);
-  const [topologyError, setTopologyError] = useState("");
-  const [validation, setValidation] = useState(null);
-  const [validationState, setValidationState] = useState("loading");
+  const [networks, setNetworks] = useState([]);
+  const [all, setAll] = useState([]); // validación modo all, universo genome_tf
+  const [indep, setIndep] = useState([]); // modo independent
+  const [gold, setGold] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
-
-    api
-      .getTopologySummary(COMPARISON_ACCESSIONS)
-      .then((res) => !cancelled && setTopology(res.data))
-      .catch(() => {
-        if (!cancelled) {
-          setTopology([]);
-          setTopologyError("Network metrics could not be loaded. Check that the backend is running.");
-        }
-      });
-
-    api
-      .getValidationMetrics(REFERENCE_ACCESSION)
-      .then((res) => {
+    Promise.all([
+      api.getAtlasNetworks(),
+      api.getAtlasValidationSummary("regprecise", { mode: "all", universe: "genome_tf" }),
+      api.getAtlasValidationSummary("regprecise", { mode: "independent", universe: "genome_tf" }),
+      api.getAtlasValidationManifest(),
+    ])
+      .then(([n, a, i, m]) => {
         if (cancelled) return;
-        const point = (res.data ?? []).find(
-          (v) => v.neg_log10_pvalue_threshold === VALIDATION_THRESHOLD
-        );
-        setValidation(point ?? null);
-        setValidationState(point ? "ready" : "empty");
+        setNetworks(n.data);
+        setAll(a.data.rows ?? []);
+        setIndep(i.data.rows ?? []);
+        setGold(m.data.gold_stats);
       })
-      .catch(() => !cancelled && setValidationState("error"));
-
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err?.response?.data?.detail ?? "The atlas summary could not be loaded. Check that the backend is running.");
+      })
+      .finally(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const rows = topology ?? [];
-  const totalEdges = rows.reduce((sum, r) => sum + (r.aristas ?? 0), 0);
+  const row = (rows, id) => rows.find((r) => r.network_id === id);
+  const bestF1 = Math.max(...all.map((r) => r.f1 ?? 0));
+  const balanced = row(all, 3);
 
   return (
-    <div className="space-y-6 max-w-[1200px]">
+    <div className="space-y-6 max-w-[1100px]">
       <div>
-        <h1 className="text-2xl font-semibold text-[#334155]">Analysis Overview</h1>
-        <p className="text-sm text-[#64748B] mt-1 max-w-3xl">
-          Prediction of transcription factor regulatory networks from curated binding motifs,
-          topological characterization of each network and validation against curated regulons.
+        <h1 className="text-2xl font-semibold text-[#334155]">RegulomeAtlas</h1>
+        <p className="text-sm text-[#64748B] mt-1">
+          Predicted transcriptional regulatory networks (TF → operon) for {fmtInt(ATLAS_GENOMES)} bacterial genomes, one
+          per GTDB genus. Networks come from an external pipeline; validation, metrics, comparison and robustness are
+          computed by this project.
         </p>
       </div>
 
-      {/* Modules */}
-      <div className="grid grid-cols-4 gap-3">
-        {MODULES.map(({ page, icon: Icon, title, desc }) => (
-          <button
-            key={page}
-            onClick={() => navigate(page)}
-            className="text-left bg-white rounded-xl border border-[#D9E2E7] p-4 shadow-sm hover:border-[#3A9D7C] transition-colors"
-          >
-            <div className="flex items-center gap-2 mb-1.5">
-              <Icon size={15} className="text-[#3A9D7C]" />
-              <span className="text-sm font-semibold text-[#334155]">{title}</span>
-            </div>
-            <p className="text-[12px] text-[#64748B] leading-snug">{desc}</p>
-          </button>
-        ))}
-      </div>
+      {error && (
+        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
+      )}
 
-      {/* KPIs */}
-      <div className="grid grid-cols-4 gap-3">
-        <KpiCard
-          icon={Dna}
-          value={fmtInt(COMPARISON_ACCESSIONS.length)}
-          label="Genomes analyzed"
-          note="Enterobacteriaceae"
-          color="text-[#3A9D7C]"
-          bg="bg-[#E8F5F0]"
-        />
-        <KpiCard
-          icon={Network}
-          value={topology ? `${rows.length} / ${COMPARISON_ACCESSIONS.length}` : "…"}
-          label="Networks built"
-          note={`FIMO p ≤ 1e-${VALIDATION_THRESHOLD}`}
-          color="text-[#3B82B8]"
-          bg="bg-[#DCEFFA]"
-        />
-        <KpiCard
-          icon={GitBranch}
-          value={topology ? fmtInt(totalEdges) : "…"}
-          label="Predicted TF → gene edges"
-          note="all genomes"
-          color="text-[#55B8A5]"
-          bg="bg-[#E8F5F0]"
-        />
-        <KpiCard
-          icon={CircleCheck}
-          value={validationState === "ready" ? "1" : validationState === "loading" ? "…" : "0"}
-          label="Validated organisms"
-          note={`E. coli K-12 vs ${GOLD_STANDARD}`}
-          color="text-[#176B57]"
-          bg="bg-[#E8F5F0]"
-        />
-      </div>
-
-      <div className="grid grid-cols-3 gap-5">
-        {/* Genomes table */}
-        <div className="col-span-2 bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-[#334155]">Networks by genome</h2>
-            <button
-              onClick={() => navigate("metrics")}
-              className="flex items-center gap-1 text-xs text-[#3A9D7C] hover:text-[#176B57]"
-            >
-              Metrics <ArrowRight size={11} />
-            </button>
+      {loading ? (
+        <div className="flex items-center justify-center py-16 text-sm text-[#64748B] gap-2">
+          <Loader2 className="w-5 h-5 text-[#3A9D7C] animate-spin" />
+          Loading the atlas summary…
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Stat label="Atlas genomes" value={fmtInt(ATLAS_GENOMES)} sub="+ 420 auxiliary genomes" />
+            <Stat label="Networks" value={fmtInt(networks.length)} sub="nested filters of one FIMO scan" />
+            <Stat
+              label="Validable genomes"
+              value={fmtInt(gold?.validable_genomes)}
+              sub={`${fmtInt(gold?.gold_tf_operon_pairs)} curated TF–operon pairs (RegPrecise)`}
+            />
+            <Stat label="Best F1 (balanced)" value={dec(balanced?.f1)} sub={`precision ${pct(balanced?.precision)} · recall ${pct(balanced?.recall)}`} />
           </div>
 
-          {topologyError && (
-            <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5 mb-3">
-              {topologyError}
-            </div>
-          )}
-
-          {!topology ? (
-            <Spinner text="Computing network metrics…" />
-          ) : (
-            <>
-              <table className="w-full">
+          <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
+            <h3 className="text-sm font-semibold text-[#334155] mb-1">The five networks</h3>
+            <p className="text-xs text-[#64748B] mb-3">
+              Own validation against RegPrecise (TF → operon, universe genome–TF). Independent mode excludes motifs built
+              from the regulog of the evaluated genome. D33 is the external benchmark, shown only as a reference.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#D9E2E7]">
-                    {["Organism", "TFs", "Targets", "Edges", "Density", "Avg degree", "Hubs"].map((h) => (
-                      <th
-                        key={h}
-                        className="text-left text-[11px] font-medium text-[#64748B] pb-2 pr-3 last:pr-0"
-                      >
-                        {h}
-                      </th>
-                    ))}
+                  <tr className="text-left text-[11px] uppercase tracking-wide text-[#94A3B8] border-b border-[#E2E8F0]">
+                    <th className="py-1.5 font-medium">Network</th>
+                    <th className="py-1.5 font-medium">p · tier ceiling · footprint</th>
+                    <th className="py-1.5 font-medium text-right">TF–operon pairs</th>
+                    <th className="py-1.5 font-medium text-right">Precision</th>
+                    <th className="py-1.5 font-medium text-right">Recall</th>
+                    <th className="py-1.5 font-medium text-right">F1</th>
+                    <th className="py-1.5 font-medium text-right">F1 independent</th>
+                    <th className="py-1.5 font-medium text-right">F1 D33</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r) => (
-                    <tr
-                      key={r.genome_acc}
-                      className="border-b border-[#F7FAFC] last:border-0 hover:bg-[#F7FAFC] cursor-pointer transition-colors"
-                      onClick={() => navigate("organism-detail", r.genome_acc)}
-                    >
-                      <td className="py-2 pr-3">
-                        <div className="text-[12px] font-medium text-[#334155] italic">{r.organism}</div>
-                        <div className="text-[10px] text-[#64748B] font-mono">
-                          {r.genome_acc}
-                          {r.genome_acc === REFERENCE_ACCESSION && " (reference)"}
-                        </div>
-                      </td>
-                      <td className="py-2 pr-3 font-mono text-[12px] text-[#334155]">{fmtInt(r.n_tfs)}</td>
-                      <td className="py-2 pr-3 font-mono text-[12px] text-[#334155]">{fmtInt(r.n_targets)}</td>
-                      <td className="py-2 pr-3 font-mono text-[12px] text-[#334155]">{fmtInt(r.aristas)}</td>
-                      <td className="py-2 pr-3 font-mono text-[12px] text-[#334155]">{r.densidad.toFixed(4)}</td>
-                      <td className="py-2 pr-3 font-mono text-[12px] text-[#334155]">{r.grado_medio.toFixed(2)}</td>
-                      <td className="py-2 font-mono text-[12px] text-[#334155]">{fmtInt(r.hubs)}</td>
-                    </tr>
-                  ))}
+                  {networks.map((n) => {
+                    const a = row(all, n.network_id);
+                    const i = row(indep, n.network_id);
+                    return (
+                      <tr key={n.network_id} className="border-b border-[#F1F5F9]">
+                        <td className="py-1.5 text-[#334155]">
+                          {n.name}
+                          {n.network_id === 3 && <span className="ml-1.5 text-[10px] text-[#3A9D7C]">default</span>}
+                        </td>
+                        <td className="py-1.5 text-xs font-mono text-[#64748B]">
+                          ≤ {fmtP(n.p_threshold)} · {n.tier_ceiling} · ≥ {n.params?.footprint_enrichment_min ?? 0}
+                        </td>
+                        <td className="py-1.5 text-right font-mono">{fmtInt(a?.pairs_total)}</td>
+                        <td className="py-1.5 text-right font-mono">{pct(a?.precision)}</td>
+                        <td className="py-1.5 text-right font-mono">{pct(a?.recall)}</td>
+                        <td className={`py-1.5 text-right font-mono ${a?.f1 === bestF1 ? "font-semibold text-[#176B57]" : ""}`}>
+                          {dec(a?.f1)}
+                        </td>
+                        <td className="py-1.5 text-right font-mono">{dec(i?.f1)}</td>
+                        <td className="py-1.5 text-right font-mono text-[#94A3B8]">{dec(a?.d33_f1)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
-              <p className="text-[10px] text-[#94A3B8] mt-3">
-                Nodes = TFs + targets. Avg degree = edges / nodes. Hubs = TFs regulating more than{" "}
-                {rows[0]?.hub_degree_threshold ?? 20} genes.
-              </p>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
 
-        {/* Validation snapshot */}
-        <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5 flex flex-col">
-          <h2 className="text-sm font-semibold text-[#334155]">Validation</h2>
-          <p className="text-[11px] text-[#64748B] mt-0.5 mb-4">
-            E. coli K-12 MG1655 vs {GOLD_STANDARD}, FIMO p ≤ 1e-{VALIDATION_THRESHOLD}
-          </p>
-
-          {validationState === "loading" && <Spinner text="Loading validation…" />}
-          {validationState === "error" && (
-            <p className="text-[12px] text-[#D96C6C]">Validation results could not be loaded.</p>
-          )}
-          {validationState === "empty" && (
-            <p className="text-[12px] text-[#64748B]">No validation result at this threshold.</p>
-          )}
-          {validationState === "ready" && (
-            <>
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                {[
-                  { label: "Precision", value: validation.precision, color: "#3A9D7C" },
-                  { label: "Recall", value: validation.recall, color: "#3B82B8" },
-                  { label: "F1", value: f1Score(validation.precision, validation.recall), color: "#55B8A5" },
-                ].map((m) => (
-                  <div key={m.label} className="rounded-lg border border-[#D9E2E7] p-2.5 text-center">
-                    <div className="text-lg font-bold font-mono" style={{ color: m.color }}>
-                      {fmtPct(m.value)}
-                    </div>
-                    <div className="text-[10px] text-[#64748B]">{m.label}</div>
-                  </div>
-                ))}
-              </div>
-              <dl className="space-y-1.5 text-[12px]">
-                {[
-                  ["True positives", validation.true_positives],
-                  ["False positives", validation.false_positives],
-                  ["False negatives", validation.false_negatives],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between">
-                    <dt className="text-[#64748B]">{k}</dt>
-                    <dd className="font-mono text-[#334155]">{fmtInt(v)}</dd>
-                  </div>
-                ))}
-              </dl>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {VIEWS.map((v) => (
               <button
-                onClick={() => navigate("validation")}
-                className="mt-auto pt-4 flex items-center gap-1 text-xs text-[#3A9D7C] hover:text-[#176B57]"
+                key={v.page}
+                onClick={() => navigate(v.page)}
+                className="text-left bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-4 hover:border-[#3A9D7C] transition-colors group"
               >
-                Precision and recall across thresholds <ArrowRight size={11} />
+                <div className="flex items-center gap-2">
+                  <v.icon size={16} className="text-[#3A9D7C]" />
+                  <span className="text-sm font-semibold text-[#334155]">{v.label}</span>
+                  <ChevronRight size={14} className="ml-auto text-[#CBD5E1] group-hover:text-[#3A9D7C]" />
+                </div>
+                <p className="text-xs text-[#64748B] mt-1.5">{v.text}</p>
               </button>
-            </>
-          )}
-        </div>
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
