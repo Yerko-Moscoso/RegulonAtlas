@@ -19,8 +19,8 @@ B. Submuestreo de aristas (red incompleta): por genoma del atlas con >= MIN_EDGE
      retención (media / original) por (red, genoma, estrategia, tasa, métrica).
    - subsampling_summary.tsv: por (red, estrategia, tasa, métrica) la retención mediana y el
      Spearman entre el valor original y el submuestreado (¿se conserva el orden de los genomas?),
-     con la clase: robust >= 0,90, moderate >= 0,70, not_robust < 0,70. n_edges con random y
-     degree_biased es trivial (se elimina una fracción fija: retención = 1 - tasa, rho = 1).
+     con la clase: robust >= 0,90, moderate >= 0,70, not_robust < 0,70. n_edges es trivial con
+     las tres estrategias: todas eliminan una fracción fija de pares (retención = 1 - tasa, rho = 1).
 
 La semilla depende de (SEED, red, genoma): los resultados no dependen del orden ni del
 número de procesos.
@@ -183,7 +183,7 @@ def summarize(sub):
     for (net_id, strategy, rate, metric), g in sub.groupby(["network_id", "strategy", "rate", "metric"]):
         ok = g["original"].notna() & g["mean"].notna()
         rho = stats.spearmanr(g.loc[ok, "original"], g.loc[ok, "mean"]).statistic if ok.sum() > 10 else np.nan
-        trivial = metric == "n_edges" and strategy in ("random", "degree_biased")
+        trivial = metric == "n_edges"  # las tres estrategias eliminan una fracción fija de pares
         rows.append({"network_id": net_id, "network": NETWORKS[net_id], "strategy": strategy, "rate": rate,
                      "metric": metric, "genomes": int(ok.sum()),
                      "retention_median": float(g["retention"].median()),
@@ -262,7 +262,7 @@ def main():
                 "retention": "mean over replicates / original value",
                 "spearman": "original vs mean subsampled value across genomes",
                 "classes": f"robust >= {ROBUST}, moderate >= {MODERATE}, not_robust < {MODERATE}; "
-                           "n_edges is trivial under random and degree_biased",
+                           "n_edges is trivial (every strategy removes a fixed share of pairs)",
             },
         },
         "metrics": KEYS,

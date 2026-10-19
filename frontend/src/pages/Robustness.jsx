@@ -351,7 +351,7 @@ export default function Robustness({ initialOrganism }) {
           <h3 className="text-sm font-semibold text-[#334155]">Rank stability — {info.label}</h3>
           <p className="text-xs text-[#64748B] mb-3">
             Spearman correlation across atlas genomes between the original and the subsampled value.
-            {isTrivial && " TF–operon pairs is trivial for random and degree-biased removal (a fixed share is removed)."}
+            {isTrivial && " TF–operon pairs is trivial: every strategy removes a fixed share of pairs."}
           </p>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={rankCurve} margin={{ top: 8, right: 16, bottom: 18, left: -8 }}>

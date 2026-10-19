@@ -26,11 +26,10 @@ def test_networks_are_nested():
                for n in ["validated", "balanced", "permissive", "no-footprint"])
 
 
-def test_n_edges_is_trivial_under_random():
-    rows = client.get("/api/v1/atlas/robustness/subsampling",
-                      params={"network_id": 3, "strategy": "random"}).json()["rows"]
+def test_n_edges_is_trivial_in_every_strategy():
+    rows = client.get("/api/v1/atlas/robustness/subsampling", params={"network_id": 3}).json()["rows"]
     r = [x for x in rows if x["metric"] == "n_edges"]
-    assert len(r) == 4 and all(x["trivial"] and x["robustness"] == "trivial" for x in r)
+    assert len(r) == 12 and all(x["trivial"] and x["robustness"] == "trivial" for x in r)
     assert all(abs(x["retention_median"] - (1 - x["rate"])) < 0.02 for x in r)
 
 
