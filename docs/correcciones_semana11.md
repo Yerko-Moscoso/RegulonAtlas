@@ -86,8 +86,9 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
   - `tests/test_api_atlas_metrics.py` y `pytest.ini`: pruebas de humo con `TestClient`, que no necesitan levantar
     uvicorn. Se omiten si falta `data/results/metrics/`.
   - Se instalaron en el entorno `bioinfo` `pytest 9.1.1` y `httpx 0.28.1`, que `TestClient` necesita.
-    `environment.yml` no está versionado (`.gitignore`), así que hay que instalarlos a mano en otro clon:
-    `pip install pytest httpx`. Starlette prefiere `httpx2` y avisa de que `httpx` está obsoleto. El aviso se
+    *(Corrección del 19-10-2026: aquí decía que `environment.yml` no estaba versionado. Sí lo está; lo que pasaba es
+    que estaba desactualizado. Se regeneró en la limpieza de la semana 12 e incluye `pytest` y `httpx`;
+    ver `limpieza_semana12.md`.)* Starlette prefiere `httpx2` y avisa de que `httpx` está obsoleto. El aviso se
     filtra en `pytest.ini` y no afecta a las pruebas.
 - **Verificación:**
   - Con un índice temporal igual a `06e5140` (`GIT_INDEX_FILE=… git read-tree 06e5140`), el script falla con

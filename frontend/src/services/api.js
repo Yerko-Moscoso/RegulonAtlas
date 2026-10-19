@@ -30,11 +30,6 @@ export const api = {
     return apiClient.get(`/genomes/?${params.toString()}`);
   },
 
-  // === REDES REGULATORIAS (GRAFOS) ===
-  getNetworkGraph: (accession) => {
-    return apiClient.get(`/graphs/${accession}`);
-  },
-
   // === MÉTRICAS (OE4 y OE5) ===
   getValidationMetrics: (accession) => {
     return apiClient.get(`/metrics/validation/${accession}`);

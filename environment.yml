@@ -1,29 +1,39 @@
-name: tf-networks
+# Entorno conda del proyecto RegulomeAtlas (servidor devastator: entorno "bioinfo").
+# Crear:      conda env create -f environment.yml
+# Actualizar: conda env update -f environment.yml --prune
+# Versiones mínimas = las instaladas en bioinfo el 19-10-2026, con las que pasan `make check` y `make mvp`.
+name: bioinfo
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - python=3.11
-  # Bioinformática y secuencias
-  - meme >=5.5.0          # FIMO y MAST
-  - blast >=2.14.0        # Verificación de ortólogos
-  - biopython
-  # Redes y ciencia de datos
-  - networkx
-  - pandas
-  - numpy
-  - scipy
-  - scikit-learn
-  # Ingesta web y scraping
-  - requests
-  - beautifulsoup4
-  - lxml
-  - tqdm
-  # Dashboard y visualización
-  - streamlit
-  - matplotlib
-  - seaborn
-  # Orquestación y base de datos
-  - snakemake
-  - sqlite
+  # Datos y estadística (src/networks, src/validation, scripts)
+  - pandas>=3.0
+  - numpy>=2.4
+  - scipy>=1.17
+  - statsmodels>=0.14
+  - networkx>=3.6
+  # API (src/api); fastapi y pydantic-settings van por pip (abajo)
+  - uvicorn>=0.52
+  - pydantic>=2.13
+  # Caché desde MariaDB (scripts/export_*.py; solo SELECT)
+  - sqlalchemy>=2.0
+  - pymysql>=1.2
+  - python-dotenv>=1.2
+  # Frontend (cd frontend && npm install)
+  - nodejs>=24
+  # Pipeline del MVP y código histórico en legacy/ (FIMO, parseo de RegPrecise/PRODORIC)
+  - meme=5.5.9
+  - biopython>=1.88
+  - requests>=2.34
+  - beautifulsoup4>=4.15
+  - tqdm>=4.70
+  - pip
+  # Igual que en bioinfo: estos vienen de PyPI (con conda chocan con meme por icu/libxml2)
+  - pip:
+      - pyarrow>=23.0
+      - fastapi>=0.141
+      - pydantic-settings>=2.15
+      - pytest>=9.1   # make check
+      - httpx>=0.28   # TestClient

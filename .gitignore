@@ -4,40 +4,35 @@ __pycache__/
 *$py.class
 .venv/
 env/
-*.env
-
-# Jupyter
+.pytest_cache/
 .ipynb_checkpoints/
 
-# Datos crudos, procesados y SQLite
-data/raw/
-data/processed/
-data/*.sqlite
-data/*.db
-data/*.sqlite3
+# Credenciales (nunca versionar; plantilla en .env.example)
+.env
+*.env
 
-# Salidas de herramientas bioinformáticas
+# Frontend
+node_modules/
+
+# Editores y sistema
+.vscode/
+.streamlit/secrets.toml
+.DS_Store
+Thumbs.db
+
+# Registros y salidas de herramientas bioinformáticas
+logs/
 *.log
 fimo_out/
 blast_out/
 *.fai
 *.bt2
 
-# Streamlit / VS Code
-.streamlit/secrets.toml
-.vscode/
-.DS_Store
-Thumbs.db
-# Agregar a .gitignore
-__pycache__/
-*.pyc
-node_modules/
-logs/
-
-# Datos: se versiona solo el caché del MVP (lo necesita `make mvp`).
-# Los resultados se regeneran; para incluir el informe: git add -f data/results/mvp/report.md
+# Datos: todo data/ se regenera (make cache-atlas, make metrics-atlas, ...) y no se versiona.
+# Excepción: el caché del MVP, que necesita `make mvp`.
+# Los archivos de data/results/mvp/ que ya están en git (report.md, *.provenance.json) se agregaron con
+# `git add -f` y siguen versionados; para actualizar el informe: git add -f data/results/mvp/report.md
 data/*
 !data/cache/
 data/cache/*
 !data/cache/mvp/
-.env
