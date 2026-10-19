@@ -29,6 +29,18 @@ def test_no_footprint_is_reproduced_exactly():
     assert nf["jaccard"] == 1.0 and nf["baseline_pairs"] == nf["external_pairs"]
 
 
+def test_edge_level_reproduction_is_exact():
+    """A nivel de arista (genoma, motivo, operón): no-footprint sale de los hits (con n_sites), y validated,
+    high-precision y balanced salen de su red madre con p <= umbral, tier <= techo y footprint >= mínimo."""
+    rows = client.get("/api/v1/atlas/baseline/reproduction-edges").json()["rows"]
+    by = {r["network"]: r for r in rows}
+    assert by["no-footprint"]["source"] == "fimo_hits" and by["no-footprint"]["n_sites_match"] == 1.0
+    for name in ["no-footprint", "validated", "high-precision", "balanced"]:
+        r = by[name]
+        assert r["exact"] is True and r["network_edges"] == r["rule_edges"] == r["shared_edges"], name
+    assert by["permissive"]["exact"] is None  # sin red madre con footprint < 1
+
+
 def test_summary_has_networks_and_baseline():
     rows = client.get("/api/v1/atlas/baseline/summary", params={"mode": "all", "universe": "genome_tf"}).json()["rows"]
     assert sum(r["source"] == "external" for r in rows) == 5

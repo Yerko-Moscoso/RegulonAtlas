@@ -31,6 +31,10 @@ Salidas en data/results/baseline/:
     reproduction.tsv  cada red externa frente a la línea base con SU umbral y SU techo de tier
                       (tabla networks): ¿qué fracción de pares comparten? Mide qué queda del
                       pipeline externo que no es umbral + tier (el footprinting).
+    reproduction_edges.tsv  la misma pregunta a nivel de arista (genoma, motivo, operón):
+                      no-footprint desde los hits (incluido n_sites) y cada red con footprinting
+                      desde una red "madre" que contiene a todas sus candidatas, con la regla
+                      p <= umbral, tier <= techo y footprint_enrichment >= mínimo (networks.params).
     manifest.json
 """
 import argparse
@@ -93,6 +97,61 @@ def collapse(h):
     """Un par por (genoma, TF, operón) con el mejor -log10 p."""
     h = h.sort_values("neg_log10_p", ascending=False, kind="mergesort")
     return h.drop_duplicates(KEY)[KEY + ["neg_log10_p"]].reset_index(drop=True)
+
+
+EDGE_KEY = ["genome_id", "motif_id", "operon_id"]
+# red objetivo -> red madre que contiene a todas sus aristas candidatas (mismo o menor umbral, mayor techo de
+# tier, menor footprint mínimo). permissive (footprint >= 1) no tiene madre: no hay aristas con footprint < 1.
+FOOTPRINT_PARENT = {1: 5, 2: 5, 3: 4}
+
+
+def network_edges(net_id, validable):
+    e = load(f"edges_net{net_id}", ["genome_id", "motif_id", "target_operon", "best_neg_log10_p", "tier",
+                                    "footprint_enrichment", "n_sites"])
+    e = e.rename(columns={"target_operon": "operon_id"})
+    e[EDGE_KEY] = e[EDGE_KEY].astype("int64")
+    return e[e["genome_id"].isin(validable)]
+
+
+def compare_edges(a, b):
+    ai, bi = pd.MultiIndex.from_frame(a[EDGE_KEY]), pd.MultiIndex.from_frame(b[EDGE_KEY])
+    shared = int(ai.isin(bi).sum())
+    return len(ai), len(bi), shared, bool(shared == len(ai) == len(bi))
+
+
+def edge_reproduction(h_all, nets, validable):
+    """Reproducción a nivel de arista (genoma, motivo, operón)."""
+    params = {int(r["network_id"]): (r["name"], -np.log10(r["p_threshold"]), r["tier_ceiling"],
+                                     json.loads(r["params"]).get("footprint_enrichment_min", 0))
+              for _, r in nets.iterrows()}
+    rows = []
+    # no-footprint desde los hits: mismo umbral y techo de tier, sin footprinting
+    name, thr, ceil, _ = params[5]
+    tiers = TIERS[:TIERS.index(ceil) + 1]
+    hits = h_all[(h_all["neg_log10_p"] >= thr - 1e-9) & h_all["tier"].isin(tiers)]
+    from_hits = hits.groupby(EDGE_KEY).size().rename("n_hits").reset_index()
+    target = network_edges(5, validable)
+    n_net, n_rule, shared, exact = compare_edges(target, from_hits)
+    sites = target.merge(from_hits, on=EDGE_KEY)
+    rows.append({"network": name, "source": "fimo_hits", "rule": f"p <= 1e-{thr:.0f}, tier <= {ceil}",
+                 "network_edges": n_net, "rule_edges": n_rule, "shared_edges": shared, "exact": exact,
+                 "n_sites_match": float((sites["n_sites"] == sites["n_hits"]).mean())})
+    # redes con footprinting desde su red madre
+    for net_id, parent in FOOTPRINT_PARENT.items():
+        name, thr, ceil, fp_min = params[net_id]
+        tiers = TIERS[:TIERS.index(ceil) + 1]
+        e = network_edges(parent, validable)
+        rule = e[(e["best_neg_log10_p"] >= thr - 1e-6) & e["tier"].isin(tiers) & (e["footprint_enrichment"] >= fp_min)]
+        n_net, n_rule, shared, exact = compare_edges(network_edges(net_id, validable), rule)
+        rows.append({"network": name, "source": params[parent][0],
+                     "rule": f"p <= 1e-{thr:.0f}, tier <= {ceil}, footprint >= {fp_min}",
+                     "network_edges": n_net, "rule_edges": n_rule, "shared_edges": shared, "exact": exact,
+                     "n_sites_match": np.nan})
+    name, _, _, fp_min = params[4]
+    rows.append({"network": name, "source": None, "rule": f"footprint >= {fp_min}: no parent network with "
+                 "footprint < 1, not checkable", "network_edges": len(network_edges(4, validable)),
+                 "rule_edges": np.nan, "shared_edges": np.nan, "exact": None, "n_sites_match": np.nan})
+    return pd.DataFrame(rows)
 
 
 def summarize(variant, thr, mode, universe, pairs, ev, gold):
@@ -169,6 +228,12 @@ def main():
                         "external_in_baseline", "baseline_kept_by_external", "jaccard"]]
           .to_string(index=False, float_format=lambda x: f"{x:.4g}"))
 
+    # Reproducción a nivel de arista
+    edges_rep = edge_reproduction(h, nets, validable)
+    edges_rep.to_csv(args.out / "reproduction_edges.tsv", sep="\t", index=False)
+    print("\n== Reproducción a nivel de arista (genoma, motivo, operón) ==")
+    print(edges_rep.to_string(index=False))
+
     # Junto a las redes externas (misma validación; el gold ya se limita a los genomas validables)
     if VALIDATION.exists():
         v = pd.read_csv(VALIDATION, sep="\t")
@@ -205,7 +270,7 @@ def main():
         },
         "hits_in_transfer_map": in_tm,
         "gold_stats": gstats,
-        "files": ["summary.tsv", "vs_networks.tsv", "reproduction.tsv"],
+        "files": ["summary.tsv", "vs_networks.tsv", "reproduction.tsv", "reproduction_edges.tsv"],
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
     print(f"\nResultados en {args.out}/")

@@ -60,3 +60,10 @@ def summary(mode: Optional[Mode] = None, universe: Optional[Universe] = None):
 def reproduction():
     """Each external network vs the baseline with its own p-value threshold and tier ceiling."""
     return {"rows": _records(_table("reproduction.tsv"))}
+
+
+@router.get("/reproduction-edges")
+def reproduction_edges():
+    """Edge-level (genome, motif, operon) reproduction: no-footprint from the FIMO hits and each footprinted
+    network from a parent network with its p-value, tier and footprint rule."""
+    return {"rows": _records(_table("reproduction_edges.tsv"))}
