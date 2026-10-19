@@ -11,6 +11,8 @@ const labels = {
   networks: "Regulatory Networks",
   metrics: "Topological Metrics",
   validation: "Validation",
+  fingerprints: "Topological Fingerprints",
+  comparison: "Taxon Comparison",
 };
 
 const HEALTH_INTERVAL_MS = 30000;

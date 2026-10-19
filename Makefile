@@ -14,7 +14,7 @@ RUN      = $(PYTHON) -m src.pipeline
 CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
-.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks
+.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks comparison-atlas
 
 all: mvp
 
@@ -59,6 +59,12 @@ cache-genes:
 
 metrics-atlas:
 	PYTHONPATH=. python src/networks/atlas_metrics.py
+
+comparison-atlas: data/results/metrics/atlas_metrics.parquet
+	PYTHONPATH=. python src/networks/atlas_comparison.py
+
+data/results/metrics/atlas_metrics.parquet:
+	@echo "Faltan las métricas propias. Ejecuta primero: make metrics-atlas" && exit 1
 
 # Verificaciones antes de commit/push (ver scripts/check_commit.sh).
 check:

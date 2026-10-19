@@ -104,6 +104,16 @@ export const api = {
     return apiClient.get(`/atlas/metrics/genomes?${params.toString()}`);
   },
 
+  // === COMPARACIÓN ENTRE TAXONES (resultados de make comparison-atlas) ===
+  // level: phylum | class | order | family
+  getAtlasComparisonManifest: () => apiClient.get('/atlas/comparison/manifest'),
+
+  getAtlasComparisonTaxa: (networkId, level = 'phylum', metric) =>
+    apiClient.get('/atlas/comparison/taxa', { params: { network_id: networkId, level, metric } }),
+
+  getAtlasComparisonTests: (networkId, level) =>
+    apiClient.get('/atlas/comparison/tests', { params: { network_id: networkId, level } }),
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');

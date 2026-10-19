@@ -7,11 +7,13 @@ import OrganismDetail from "./pages/OrganismDetail";
 import RegulatoryNetwork from "./pages/RegulatoryNetwork";
 import Metrics from "./pages/Metrics";
 import Validation from "./pages/Validation";
+import Fingerprints from "./pages/Fingerprints";
+import Comparison from "./pages/Comparison";
 
 // Referencia con gold standard (RegulonDB); también es el organismo por defecto.
 const DEFAULT_ORGANISM = "GCF_000005845.2";
 
-// Rutas del MVP. Si llega una página no registrada, se vuelve al Dashboard
+// Rutas del MVP más las vistas de la semana 11 (Fingerprints, Comparison). Si llega una página no registrada, se vuelve al Dashboard
 // en vez de mostrar una pantalla vacía.
 const MVP_PAGES = new Set([
   "dashboard",
@@ -20,6 +22,8 @@ const MVP_PAGES = new Set([
   "networks",
   "metrics",
   "validation",
+  "fingerprints",
+  "comparison",
 ]);
 
 export default function App() {
@@ -45,6 +49,8 @@ export default function App() {
           {page === "networks" && <RegulatoryNetwork initialOrganism={selectedOrganism} />}
           {page === "metrics" && <Metrics initialOrganism={selectedOrganism} />}
           {page === "validation" && <Validation initialOrganism={selectedOrganism} />}
+          {page === "fingerprints" && <Fingerprints initialOrganism={selectedOrganism} />}
+          {page === "comparison" && <Comparison />}
         </main>
       </div>
     </div>
