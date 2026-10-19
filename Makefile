@@ -14,7 +14,7 @@ RUN      = $(PYTHON) -m src.pipeline
 CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
-.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks comparison-atlas robustness-atlas
+.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks comparison-atlas robustness-atlas cache-fimo baseline-atlas
 
 all: mvp
 
@@ -57,6 +57,10 @@ validate-atlas:
 cache-genes:
 	PYTHONPATH=. python scripts/export_genes_cache.py
 
+# fimo_hits y transfer_map solo de los 312 genomas validables (línea base, semana 12). Usar nohup.
+cache-fimo:
+	PYTHONPATH=. python scripts/export_fimo_cache.py
+
 metrics-atlas:
 	PYTHONPATH=. python src/networks/atlas_metrics.py
 
@@ -66,6 +70,13 @@ comparison-atlas: data/results/metrics/atlas_metrics.parquet
 # Submuestreo en paralelo (24 procesos por defecto; ~10-20 min las 5 redes). Usar nohup.
 robustness-atlas: data/results/metrics/atlas_metrics.parquet
 	PYTHONPATH=. python src/networks/atlas_robustness.py
+
+# Línea base del pipeline propio (red de prueba, 312 genomas validables). Requiere make cache-fimo.
+baseline-atlas: data/cache/atlas/fimo_hits_validation.parquet
+	PYTHONPATH=. python src/networks/atlas_baseline.py
+
+data/cache/atlas/fimo_hits_validation.parquet:
+	@echo "Falta la caché de fimo_hits. Ejecuta primero: make cache-fimo" && exit 1
 
 data/results/metrics/atlas_metrics.parquet:
 	@echo "Faltan las métricas propias. Ejecuta primero: make metrics-atlas" && exit 1

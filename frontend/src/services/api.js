@@ -130,6 +130,14 @@ export const api = {
   getAtlasRobustnessGenome: (networkId, accession, strategy) =>
     apiClient.get('/atlas/robustness/subsampling/genome', { params: { network_id: networkId, accession, strategy } }),
 
+  // === LÍNEA BASE DEL PIPELINE PROPIO (resultados de make baseline-atlas; 312 genomas validables) ===
+  getAtlasBaselineManifest: () => apiClient.get('/atlas/baseline/manifest'),
+
+  getAtlasBaselineSummary: (mode, universe) =>
+    apiClient.get('/atlas/baseline/summary', { params: { mode, universe } }),
+
+  getAtlasBaselineReproduction: () => apiClient.get('/atlas/baseline/reproduction'),
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');
