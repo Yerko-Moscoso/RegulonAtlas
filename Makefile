@@ -1,12 +1,11 @@
-# Pipeline reproducible del MVP (propuesta de tesis, sección 5).
+# RegulomeAtlas: comandos del proyecto. `make help` lista los objetivos.
 #
-#   make cache   Exporta el caché de datos desde MariaDB (solo lectura). Una vez.
-#   make mvp     Regenera todo desde el caché, sin conectarse a la base:
-#                ortólogos -> redes -> métricas -> validación -> informe.
-#   make api     Levanta el backend del dashboard.
-#   make clean   Borra los resultados (no el caché).
-#
-# Parámetros: config/mvp_params.json. Genomas: config/mvp_genomes.txt.
+# Dos flujos:
+#   - Atlas (semanas 9-12): caché de MariaDB (solo SELECT) -> validación, métricas, comparación, robustez y
+#     línea base -> API -> dashboard. Es el flujo principal.
+#   - MVP (semana 8, etiqueta mvp-semana8): pipeline propio sobre 8 genomas desde data/cache/mvp (versionado).
+#     Parámetros: config/mvp_params.json. Genomas: config/mvp_genomes.txt.
+# Los resultados se escriben en data/results/ (no versionado). Ejecutar con el árbol limpio (git_dirty: false).
 
 PYTHON  ?= python
 PARAMS  ?= config/mvp_params.json
@@ -14,14 +13,77 @@ RUN      = $(PYTHON) -m src.pipeline
 CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
-.PHONY: all cache mvp transfer_map networks metrics validation report api clean check test hooks comparison-atlas robustness-atlas cache-fimo baseline-atlas
+.PHONY: help all atlas cache-atlas cache-genes cache-fimo validate-atlas metrics-atlas comparison-atlas \
+        robustness-atlas baseline-atlas api web check test hooks \
+        mvp cache transfer_map networks metrics validation report clean
+
+help:  ## Lista los objetivos
+	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-18s %s\n", $$1, $$2}'
 
 all: mvp
 
-cache:
+# ---------------------------------------------------------------- atlas: caché (MariaDB, solo SELECT)
+cache-atlas:  ## Caché del atlas desde MariaDB -> data/cache/atlas/ (lento, usar nohup)
+	PYTHONPATH=. $(PYTHON) scripts/export_atlas_cache.py
+
+cache-genes:  ## genes_all.parquet (9,44 M genes) para las métricas propias
+	PYTHONPATH=. $(PYTHON) scripts/export_genes_cache.py
+
+cache-fimo:  ## fimo_hits y transfer_map de los 312 genomas validables (línea base)
+	PYTHONPATH=. $(PYTHON) scripts/export_fimo_cache.py
+
+# ---------------------------------------------------------------- atlas: análisis (solo leen la caché)
+atlas:  ## Todo el análisis del atlas en orden (~15 min; usar nohup)
+	$(MAKE) validate-atlas
+	$(MAKE) metrics-atlas
+	$(MAKE) comparison-atlas
+	$(MAKE) robustness-atlas
+	$(MAKE) baseline-atlas
+
+validate-atlas:  ## Validación de las 5 redes contra RegPrecise -> data/results/validation/
+	PYTHONPATH=. $(PYTHON) src/validation/atlas.py --gold regprecise
+
+metrics-atlas:  ## Métricas topológicas propias -> data/results/metrics/
+	PYTHONPATH=. $(PYTHON) src/networks/atlas_metrics.py
+
+comparison-atlas: data/results/metrics/atlas_metrics.parquet  ## Comparación entre taxones -> data/results/comparison/
+	PYTHONPATH=. $(PYTHON) src/networks/atlas_comparison.py
+
+robustness-atlas: data/results/metrics/atlas_metrics.parquet  ## Robustez (24 procesos, ~8 min) -> data/results/robustness/
+	PYTHONPATH=. $(PYTHON) src/networks/atlas_robustness.py
+
+baseline-atlas: data/cache/atlas/fimo_hits_validation.parquet  ## Línea base del pipeline propio -> data/results/baseline/
+	PYTHONPATH=. $(PYTHON) src/networks/atlas_baseline.py
+
+data/cache/atlas/fimo_hits_validation.parquet:
+	@echo "Falta la caché de fimo_hits. Ejecuta primero: make cache-fimo" && exit 1
+
+data/results/metrics/atlas_metrics.parquet:
+	@echo "Faltan las métricas propias. Ejecuta primero: make metrics-atlas" && exit 1
+
+# ---------------------------------------------------------------- dashboard
+api:  ## Backend en el puerto 8000 (http://localhost:8000/docs)
+	uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+web:  ## Frontend de desarrollo (Vite, http://localhost:5173)
+	cd frontend && npm run dev
+
+# ---------------------------------------------------------------- calidad
+check:  ## Antes de cada commit: API, sin get_db, frontend compila, ESLint y pytest
+	scripts/check_commit.sh --worktree
+	PYTHONPATH=. $(PYTHON) -m pytest -q -rs
+
+test:  ## Solo pytest (muestra las pruebas omitidas)
+	PYTHONPATH=. $(PYTHON) -m pytest -q -rs
+
+hooks:  ## Una vez por clon: activa el pre-commit versionado (revisa el índice)
+	git config core.hooksPath scripts/githooks
+
+# ---------------------------------------------------------------- MVP (semana 8)
+cache:  ## MVP: caché desde MariaDB -> data/cache/mvp/ (ya versionado)
 	$(RUN).export_cache --params $(PARAMS)
 
-mvp: transfer_map networks metrics validation report
+mvp: transfer_map networks metrics validation report  ## MVP: pipeline completo desde data/cache/mvp
 	@echo "Listo. Informe: $(RESULTS)/report.md"
 
 transfer_map: $(CACHE)/cache_manifest.json
@@ -42,53 +104,5 @@ report:
 $(CACHE)/cache_manifest.json:
 	@echo "Falta el caché de datos ($(CACHE)). Ejecuta primero: make cache" && exit 1
 
-api:
-	uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
-
-clean:
+clean:  ## MVP: borra data/results/mvp (no el caché)
 	rm -rf $(RESULTS)
-
-cache-atlas:
-	PYTHONPATH=. python scripts/export_atlas_cache.py
-
-validate-atlas:
-	PYTHONPATH=. python src/validation/atlas.py --gold regprecise
-
-cache-genes:
-	PYTHONPATH=. python scripts/export_genes_cache.py
-
-# fimo_hits y transfer_map solo de los 312 genomas validables (línea base, semana 12). Usar nohup.
-cache-fimo:
-	PYTHONPATH=. python scripts/export_fimo_cache.py
-
-metrics-atlas:
-	PYTHONPATH=. python src/networks/atlas_metrics.py
-
-comparison-atlas: data/results/metrics/atlas_metrics.parquet
-	PYTHONPATH=. python src/networks/atlas_comparison.py
-
-# Submuestreo en paralelo (24 procesos por defecto; ~10-20 min las 5 redes). Usar nohup.
-robustness-atlas: data/results/metrics/atlas_metrics.parquet
-	PYTHONPATH=. python src/networks/atlas_robustness.py
-
-# Línea base del pipeline propio (red de prueba, 312 genomas validables). Requiere make cache-fimo.
-baseline-atlas: data/cache/atlas/fimo_hits_validation.parquet
-	PYTHONPATH=. python src/networks/atlas_baseline.py
-
-data/cache/atlas/fimo_hits_validation.parquet:
-	@echo "Falta la caché de fimo_hits. Ejecuta primero: make cache-fimo" && exit 1
-
-data/results/metrics/atlas_metrics.parquet:
-	@echo "Faltan las métricas propias. Ejecuta primero: make metrics-atlas" && exit 1
-
-# Verificaciones antes de commit/push (ver scripts/check_commit.sh).
-check:
-	scripts/check_commit.sh --worktree
-	PYTHONPATH=. python -m pytest -q
-
-test:
-	PYTHONPATH=. python -m pytest -q
-
-# Una vez por clon: activa el pre-commit versionado (revisa el índice, no la copia de trabajo).
-hooks:
-	git config core.hooksPath scripts/githooks
