@@ -25,18 +25,17 @@ Uso (desde ~/proyecto):
 """
 import argparse
 import json
-import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pyarrow.parquet as pq
 
-CACHE = Path("data/cache/atlas")
+from src.atlas_common import (CACHE, KEY, NETWORKS, check_dirty, git_commit, git_dirty, load,  # noqa: F401
+                              norm_locus, norm_tf)
+
 OUT_DEFAULT = Path("data/results/validation")
-NETWORKS = {1: "validated", 2: "high-precision", 3: "balanced", 4: "permissive", 5: "no-footprint"}
 D33 = {  # P, R, F1 reportados por el pipeline externo (referencia, no objetivo)
     1: (0.682, 0.231, 0.345), 2: (0.742, 0.041, 0.078), 3: (0.545, 0.343, 0.421),
     4: (0.307, 0.446, 0.364), 5: (0.548, 0.317, 0.402),
@@ -44,59 +43,15 @@ D33 = {  # P, R, F1 reportados por el pipeline externo (referencia, no objetivo)
 GRID = np.round(np.linspace(0, 1, 101), 2)
 MODES = ("all", "independent")
 UNIVERSES = ("genome_tf", "genome")
-KEY = ["genome_id", "tf", "operon_id"]
 
 
 # ---------------------------------------------------------------- utilidades
-def load(name, cols=None):
-    path = CACHE / f"{name}.parquet"
-    if not path.exists():
-        sys.exit(f"Falta {path}. Ejecuta 'make cache-atlas' primero.")
-    if cols:
-        have = set(pq.read_schema(path).names)
-        missing = [c for c in cols if c not in have]
-        if missing:
-            sys.exit(f"{path.name}: faltan columnas {missing}. Disponibles: {sorted(have)}")
-    return pd.read_parquet(path, columns=cols)
-
-
-def norm_locus(s):
-    s = (s.astype("string").str.strip()
-         .str.replace(r"(?i)^gene[-_]", "", regex=True)
-         .str.upper())
-    return s.replace("", pd.NA)
-
-
-def norm_tf(s):
-    return s.astype("string").str.strip().str.lower().replace("", pd.NA)
-
-
 def safe_div(a, b):
     return float(a) / float(b) if b else float("nan")
 
 
 def f1(p, r):
     return 2 * p * r / (p + r) if p == p and r == r and (p + r) > 0 else float("nan")
-
-
-def git_commit():
-    try:
-        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
-                             capture_output=True, text=True, check=True)
-        return out.stdout.strip()
-    except (OSError, subprocess.CalledProcessError):
-        return None
-
-
-def git_dirty():
-    """True si hay archivos versionados con cambios sin commit: en ese caso git_commit
-    no describe el código que generó los resultados."""
-    try:
-        out = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
-                             capture_output=True, text=True, check=True)
-        return bool(out.stdout.strip())
-    except (OSError, subprocess.CalledProcessError):
-        return None
 
 
 # ---------------------------------------------------------------- gold standard
@@ -281,10 +236,7 @@ def main():
     ap.add_argument("--networks", type=int, nargs="+", default=list(NETWORKS))
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
-    dirty = git_dirty()
-    if dirty:
-        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
-              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
+    dirty = check_dirty()
 
     out = args.out / args.gold
     out.mkdir(parents=True, exist_ok=True)

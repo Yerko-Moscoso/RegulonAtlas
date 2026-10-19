@@ -31,7 +31,7 @@ from pathlib import Path
 import pandas as pd
 from scipy import stats
 
-from src.networks.atlas_metrics import NETWORKS, git_commit, git_dirty
+from src.atlas_common import NETWORKS, check_dirty, git_commit
 
 CACHE = Path("data/cache/atlas")
 METRICS = Path("data/results/metrics/atlas_metrics.parquet")
@@ -140,10 +140,7 @@ def main():
     ap = argparse.ArgumentParser(description="Comparación de métricas propias entre taxones")
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
-    dirty = git_dirty()
-    if dirty:
-        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
-              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
+    dirty = check_dirty()
     args.out.mkdir(parents=True, exist_ok=True)
 
     own, m = load_inputs()

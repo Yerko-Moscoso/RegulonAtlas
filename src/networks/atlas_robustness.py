@@ -41,8 +41,8 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from src.networks.atlas_metrics import (KEY, NETWORKS, genome_metrics, git_commit, git_dirty, load,
-                                        load_genes, norm)
+from src.atlas_common import KEY, NETWORKS, check_dirty, git_commit, load, norm
+from src.networks.atlas_metrics import genome_metrics, load_genes
 
 METRICS = Path("data/results/metrics/atlas_metrics.parquet")
 OUT_DEFAULT = Path("data/results/robustness")
@@ -201,10 +201,7 @@ def main():
     ap.add_argument("--workers", type=int, default=24)
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
-    dirty = git_dirty()
-    if dirty:
-        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
-              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
+    dirty = check_dirty()
     if not METRICS.exists():
         sys.exit(f"Falta {METRICS}. Ejecuta make metrics-atlas primero.")
     args.out.mkdir(parents=True, exist_ok=True)

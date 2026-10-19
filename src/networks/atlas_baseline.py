@@ -46,9 +46,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from src.atlas_common import KEY, NETWORKS, TIERS, check_dirty, git_commit, load, norm_tf
 from src.networks.atlas_metrics import load_pairs
-from src.validation.atlas import (KEY, NETWORKS, build_gold_regprecise, evaluable, f1, git_commit, git_dirty, load,
-                                  load_motifs, norm_tf, safe_div)
+from src.validation.atlas import build_gold_regprecise, evaluable, f1, load_motifs, safe_div
 
 CACHE = Path("data/cache/atlas")
 VALIDATION = Path("data/results/validation/regprecise/summary.tsv")
@@ -56,9 +56,7 @@ OUT_DEFAULT = Path("data/results/baseline")
 THRESHOLDS = [5, 6, 7, 8]  # -log10 p
 MODES = ["all", "independent"]
 UNIVERSES = ["genome_tf", "genome"]
-# Orden de los tiers de más cercano a más lejano (igual que en edges); el techo de balanced es same_class.
-TIERS = ["within_genus", "same_genus", "within_family", "same_family", "within_order", "same_order",
-         "within_class", "same_class", "within_phylum", "same_phylum", "cross_phylum"]
+# TIERS (src/atlas_common.py) va de más cercano a más lejano; el techo de balanced es same_class.
 CEILINGS = {"order_ceiling": TIERS[:TIERS.index("same_order") + 1],
             "class_ceiling": TIERS[:TIERS.index("same_class") + 1]}
 VARIANTS = ["scan", "order_ceiling", "class_ceiling"]
@@ -169,10 +167,7 @@ def main():
     ap = argparse.ArgumentParser(description="Línea base del pipeline propio desde fimo_hits")
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
-    dirty = git_dirty()
-    if dirty:
-        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
-              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
+    dirty = check_dirty()
     args.out.mkdir(parents=True, exist_ok=True)
 
     genomes = load("genomes", ["genome_id", "accession", "ncbi_organism", "gtdb_family", "selection"])

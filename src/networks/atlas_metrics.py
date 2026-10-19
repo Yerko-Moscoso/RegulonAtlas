@@ -21,8 +21,6 @@ Uso (desde ~/proyecto):
 """
 import argparse
 import json
-import subprocess
-import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,13 +28,11 @@ from pathlib import Path
 import networkx as nx
 import numpy as np
 import pandas as pd
-import pyarrow.parquet as pq
 
-CACHE = Path("data/cache/atlas")
+from src.atlas_common import (ATLAS_SELECTIONS, CACHE, KEY, NETWORKS, check_dirty, git_commit,  # noqa: F401
+                              git_dirty, is_atlas_selection, load, norm)
+
 OUT_DEFAULT = Path("data/results/metrics")
-NETWORKS = {1: "validated", 2: "high-precision", 3: "balanced", 4: "permissive", 5: "no-footprint"}
-KEY = ["genome_id", "tf", "operon_id"]
-ATLAS_SELECTIONS = {"representative", "forced", "replacement"}
 
 METRIC_GROUPS = {
     "size": ["n_tf", "n_targets", "n_edges", "n_target_genes"],
@@ -50,43 +46,6 @@ EXTERNAL_COMPARABLE = ["n_tf", "n_targets", "n_edges", "density"]
 
 
 # ---------------------------------------------------------------- utilidades
-def load(name, cols=None):
-    path = CACHE / f"{name}.parquet"
-    if not path.exists():
-        hint = "scripts/export_genes_cache.py" if name == "genes_all" else "make cache-atlas"
-        sys.exit(f"Falta {path}. Ejecuta {hint} primero.")
-    if cols:
-        have = set(pq.read_schema(path).names)
-        missing = [c for c in cols if c not in have]
-        if missing:
-            sys.exit(f"{path.name}: faltan columnas {missing}. Disponibles: {sorted(have)}")
-    return pd.read_parquet(path, columns=cols)
-
-
-def norm(s):
-    return s.astype("string").str.strip().str.lower().replace("", pd.NA)
-
-
-def git_commit():
-    try:
-        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
-                             capture_output=True, text=True, check=True)
-        return out.stdout.strip()
-    except (OSError, subprocess.CalledProcessError):
-        return None
-
-
-def git_dirty():
-    """True si hay archivos versionados con cambios sin commit: en ese caso git_commit
-    no describe el código que generó los resultados."""
-    try:
-        out = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
-                             capture_output=True, text=True, check=True)
-        return bool(out.stdout.strip())
-    except (OSError, subprocess.CalledProcessError):
-        return None
-
-
 def norm_entropy(values):
     """Entropía de Shannon de la distribución de grado, normalizada a [0, 1]."""
     v = np.asarray(values, dtype=float)
@@ -229,10 +188,7 @@ def main():
     ap.add_argument("--networks", type=int, nargs="+", default=list(NETWORKS))
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
-    dirty = git_dirty()
-    if dirty:
-        print("AVISO: hay cambios sin commit; el manifest registrará git_dirty=true. "
-              "Haz commit y vuelve a ejecutar para que los resultados sean trazables.")
+    dirty = check_dirty()
     args.out.mkdir(parents=True, exist_ok=True)
 
     genomes = load("genomes", ["genome_id", "accession", "ncbi_organism", "selection",
@@ -250,7 +206,7 @@ def main():
     own = own.merge(genomes, on="genome_id", how="left")
     # selection puede llevar una nota tras la categoría, p. ej.
     # "replacement (GCF_050942165.1 suppressed in RefSeq 2026)": se compara la primera palabra.
-    own["in_atlas"] = own["selection"].str.split().str[0].isin(ATLAS_SELECTIONS)
+    own["in_atlas"] = is_atlas_selection(own["selection"])
 
     own.to_csv(args.out / "atlas_metrics.tsv", sep="\t", index=False)
     own.to_parquet(args.out / "atlas_metrics.parquet", index=False)

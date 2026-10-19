@@ -30,7 +30,8 @@ import pyarrow.parquet as pq
 from sqlalchemy import bindparam, text
 
 from src.database.connection import get_engine
-from src.validation.atlas import build_gold_regprecise, load
+from src.atlas_common import load
+from src.validation.atlas import build_gold_regprecise
 
 OUT = Path("data/cache/atlas")
 BATCH = 10  # genomas por consulta
