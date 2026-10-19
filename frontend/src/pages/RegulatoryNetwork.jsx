@@ -228,7 +228,6 @@ const parseBenchmark = (source) => {
   const m = source?.match(/P=([\d,.]+)\s+R=([\d,.]+)\s+F1=([\d,.]+)/);
   return m ? { p: m[1].replace(",", "."), r: m[2].replace(",", "."), f1: m[3].replace(",", ".") } : null;
 };
-const fmtP = (p) => (p == null ? "—" : `1e${Math.round(Math.log10(p))}`);
 // Origen del motivo según el prefijo de su clave.
 const motifSource = (key) =>
   key.startsWith("RG") ? "RegPrecise" : key.startsWith("MX") ? "PRODORIC" : "—";

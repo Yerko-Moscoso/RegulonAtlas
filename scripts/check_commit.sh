@@ -11,7 +11,7 @@
 # Comprueba:
 #   1. que la API importa (PYTHONPATH apuntando al snapshot revisado);
 #   2. que ningún archivo de src/api usa get_db ni get_engine (regla de CLAUDE.md);
-#   3. si hay cambios en frontend/, que el frontend compila (vite build).
+#   3. si hay cambios en frontend/, que el frontend compila (vite build) y no tiene errores de ESLint.
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
@@ -57,6 +57,11 @@ if [[ "$frontend_changed" != "0" ]]; then
   fi
   (cd "$SRC/frontend" && npx vite build --outDir "$(mktemp -d)" --emptyOutDir --logLevel error) || {
     echo "[check] ERROR: el frontend no compila." >&2
+    exit 1
+  }
+  echo "[check] frontend sin errores de ESLint (las advertencias no bloquean)"
+  (cd "$SRC/frontend" && npx eslint src --quiet) || {
+    echo "[check] ERROR: ESLint encontró errores (cd frontend && npx eslint src)." >&2
     exit 1
   }
 fi
