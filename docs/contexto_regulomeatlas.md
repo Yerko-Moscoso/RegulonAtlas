@@ -1,6 +1,6 @@
 # RegulomeAtlas — Documento de contexto del proyecto
 
-*Última actualización: semana 10 (14 de octubre de 2026). Este documento resume el estado del proyecto, las decisiones tomadas y el trabajo hecho en los chats de la carpeta "Redes de regulación bacterianas". Sirve como punto de partida para cualquier conversación nueva.*
+*Última actualización: semana 11 (19 de octubre de 2026). Este documento resume el estado del proyecto, las decisiones tomadas y el trabajo hecho en los chats de la carpeta "Redes de regulación bacterianas". Sirve como punto de partida para cualquier conversación nueva.*
 
 ---
 
@@ -67,7 +67,7 @@ La documentación interactiva de la API queda en `http://localhost:8000/docs`.
 |---|---|---|
 | `representative` | 2.220 | Atlas |
 | `forced` | 3 | Atlas |
-| `replacement` | 1 | Atlas (GCF_050942165.1 suprimido → GCF_002993285.1) |
+| `replacement` | 1 | Atlas (GCF_050942165.1 suprimido → GCF_002993285.1). El valor real es `"replacement (GCF_050942165.1 suppressed in RefSeq 2026)"`: se compara la primera palabra |
 | `regprecise_source` | 315 | Auxiliar: genomas de RegPrecise para validación |
 | `chromosome_level` | 104 | Auxiliar |
 | `expression_validation` | 1 | Auxiliar |
@@ -169,6 +169,7 @@ El investigador generó cinco redes para todo el atlas el 2026-09-03 (decisión 
 | D33 | Las cinco redes materializadas y su benchmark P/R/F1 |
 | Post-MVP | Los datos de la base son la fuente principal; el pipeline propio pasa a ser validador independiente |
 | Semana 10 | Validación propia a nivel TF–operón, universo (genoma, TF) curado, recall sobre todo el gold standard y modo `independent` sin autoevaluación (sección 10.2) |
+| Semana 11 | Métricas propias sobre el grafo TF (nombre normalizado) → operón; `network_metrics` solo como referencia. Comparación entre genomas por taxón GTDB (no PCA ni clusters), porque es la única con equivalente externo (sección 11.2) |
 
 El registro completo de decisiones lo tiene el investigador y está pendiente de solicitar.
 
@@ -350,7 +351,51 @@ Detalle completo en `docs/validacion_semana10.md`.
 
 ---
 
-## 11. Arquitectura actual
+## 11. Semana 11 — trabajo realizado (15 al 19 de octubre)
+
+Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md`.
+
+### 11.1 Métricas propias (OE4)
+
+- **Exploración:** `scripts/explore_metrics.py`. Solo se ubica por nombre el ~18 % de los TF (mediana en `balanced`), así que las métricas jerárquicas quedan como cota inferior.
+- **Módulo:** `src/networks/atlas_metrics.py` (`make metrics-atlas`) → `data/results/metrics/` (`atlas_metrics.{parquet,tsv}`, 13.220 filas = 2.644 genomas × 5 redes; `metrics_vs_external.tsv`; `manifest.json`).
+- **Grafo:** TF por nombre normalizado → operón, un par por (genoma, TF, operón) con la mayor `confidence`. Métricas de tamaño, normalizadas (`density = n_edges / (n_tf × n_targets)`), de grado, entropía, Gini, `hub_share` y componentes.
+- **Control:** E. coli K-12 en `balanced` = 118 TF, 342 dianas, 485 pares.
+- **Frente a `network_metrics`:** `n_targets` coincide casi 1:1 (ρ 0,95–0,998); `n_edges` propio ≈ 0,55× el externo; la `density` externa es `n_edges / (n_tf × todos los operones del genoma)` (comprobado en las 6.427 filas), así que no es comparable con la propia. `n_edges` y `n_tf` externos siguen sin poder reproducirse (`preguntas_pendientes.md`, P1).
+
+### 11.2 Comparación entre taxones
+
+- **Criterio:** resultados lo más cercanos posible al pipeline externo. Se eligió la comparación por taxón (opción A) frente a PCA o clusters, porque es la única con equivalente externo.
+- **Exploración:** `scripts/explore_comparison.py`. **Módulo:** `src/networks/atlas_comparison.py` (`make comparison-atlas`) → `data/results/comparison/` (`by_taxon.tsv`, `taxon_tests.tsv`, `manifest.json`).
+- **Definición:** genomas del atlas con aristas y con fila en `network_metrics` (los mismos para ambas fuentes); filo, clase, orden y familia de GTDB; taxones con ≥ 5 genomas; Kruskal–Wallis + ε²; concordancia = Spearman de las medianas por taxón (alta ≥ 0,85).
+- **Resultado:** `n_targets`, `n_edges`, `max_out_degree` y `n_tf` ordenan los taxones como `network_metrics` (ρ ≥ 0,936 en `balanced`); Kruskal–Wallis llega a la misma conclusión en el 95 % de las combinaciones. El taxón explica ~40 % (filo) a >70 % (orden/familia) del tamaño de la red. Las métricas de grado de entrada no son comparables con la tabla externa.
+
+### 11.3 API y vistas
+
+| Endpoint | Devuelve |
+|---|---|
+| `GET /api/v1/atlas/metrics?network_id=&accession=&atlas_only=&with_edges_only=` | Métricas propias de todos los genomas de una red |
+| `GET /api/v1/atlas/metrics/{definitions,summary,compare-external,genomes}` | Manifest, medianas y percentiles, concordancia con la tabla externa, métricas de una lista de genomas |
+| `GET /api/v1/atlas/comparison/taxa?network_id=&level=&metric=` | Distribución propia y externa por taxón (`level` = phylum, class, order, family) |
+| `GET /api/v1/atlas/comparison/tests?network_id=&level=` | Kruskal–Wallis, ε² y concordancia por métrica |
+| `GET /api/v1/atlas/comparison/manifest` | Definición y commit |
+
+- Métodos nuevos en `api.js`: `getAtlasOwnMetrics`, `getAtlasMetricsDefinitions`, `getAtlasMetricsSummary`, `getAtlasMetricsVsExternal`, `getAtlasOwnMetricsForGenomes`, `getAtlasComparisonManifest`, `getAtlasComparisonTaxa` y `getAtlasComparisonTests`.
+- `Metrics.jsx` y `Fingerprints.jsx` usan las métricas propias (E. coli en `balanced`: 485 pares, no los 919 externos).
+- `Comparison.jsx` reescrita como *Taxon Comparison*: mediana propia con rango intercuartílico por taxón, mediana externa como punto, tabla de concordancia y tabla de taxones.
+- `Fingerprints` y `Comparison` se agregaron a `App.jsx`, `Sidebar` y `Header` (antes no eran accesibles).
+- `utils/atlas.js` agrega `isAtlasSelection()`.
+
+### 11.4 Correcciones y control de calidad
+
+- **El commit `06e5140` dejó la API sin arrancar** (`main.py` importaba `atlas_metrics_router`). Se corrigió en `73c7a34`.
+- **El genoma `replacement` (*Gordonia iterans*, `GCF_002993285.1`) quedaba fuera del atlas** porque `selection` lleva una nota; se compara la primera palabra (`a1b5dfc`). El atlas vuelve a tener 2.224 genomas en las métricas.
+- **Trazabilidad:** los manifiestos de métricas, validación y comparación guardan `git_dirty`; los resultados se generan con el árbol limpio.
+- **`make check` y hook `pre-commit` versionado** (`make hooks`): verifican sobre el índice que la API importa, que `src/api` no usa `get_db` y que el frontend compila; `make check` además ejecuta `pytest` (`tests/test_api_atlas_metrics.py`, `tests/test_api_atlas_comparison.py`, 19 pruebas). Se instalaron `pytest` y `httpx` en `bioinfo`.
+
+---
+
+## 12. Arquitectura actual
 
 ```
 MariaDB regulon_atlas (solo SELECT)
@@ -359,28 +404,35 @@ MariaDB regulon_atlas (solo SELECT)
 data/cache/atlas/*.parquet       data/cache/mvp/
         │   make validate-atlas         │  make mvp
         ├──────────────► data/results/validation/
+        │   make metrics-atlas          │
+        ├──────────────► data/results/metrics/
+        │   make comparison-atlas (lee metrics/)
+        ├──────────────► data/results/comparison/
         │                               ▼
         │                        data/results/mvp/ (pipeline propio)
         ▼                               │
 FastAPI src/api ── routers: system, graphs, metrics, genomes, motifs,
                    robustness (MVP / pendiente) + atlas + atlas_validation
+                   + atlas_metrics + atlas_comparison
         │
         ▼
 React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/api.js
+
+make check / pre-commit ── API importa, sin get_db, frontend compila, pytest (tests/)
 ```
 
 ---
 
-## 12. Plan de las semanas restantes
+## 13. Plan de las semanas restantes
 
 | Semana | Trabajo |
 |---|---|
 | 9 | Auditoría, caché del atlas, API `/atlas` y `RegulatoryNetwork` (hecho) |
 | 10 | Validación propia de las 5 redes contra RegPrecise, modo independiente, curva P/R, API y `Validation.jsx`; `Metrics.jsx` y `Fingerprints.jsx` con datos reales (hecho). Pendiente: punto del MVP en la curva y RegulonDB si se aprueba |
-| 11 | Recalcular métricas con NetworkX para los 2.644 genomas y las 5 redes; comparar con `network_metrics`; huellas topológicas y comparación entre genomas por familia/orden/filo. Componentes `Comparison` y `Fingerprints` sobre las métricas propias. Opcional: enriquecimiento funcional con `gene_module`/`kegg_modules` |
+| 11 | Métricas propias con NetworkX para los 2.644 genomas y las 5 redes, comparadas con `network_metrics`; comparación por filo/clase/orden/familia; `Metrics`, `Fingerprints` y `Comparison` sobre las métricas propias; `make check` y pruebas (hecho). No se hizo el enriquecimiento funcional opcional |
 | 12 | Robustez (cómo cambian las métricas entre las 5 redes); línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) contra las redes externas. Componente `Robustness` |
 | 13 | Componentes restantes (`Pipeline`, `DataProvenance`, `MVP`) y revisión completa. Congelamiento de funciones |
-| 14 | Pruebas (`pytest`, tests de API con `httpx`, prueba de punta a punta desde un clon limpio con `make all`), README y etiqueta `v1.0` |
+| 14 | Pruebas (ampliar `tests/`, que ya tiene las pruebas de humo de métricas y comparación; prueba de punta a punta desde un clon limpio con `make all`), README y etiqueta `v1.0` |
 | 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
 | 16 | Preparación de la defensa, guion de demo con capturas de respaldo y holgura |
 
@@ -389,7 +441,7 @@ React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/a
 ### Rol del pipeline propio
 
 - **Semana 10 (hecho):** la validación propia evalúa las 5 redes de forma independiente desde la caché.
-- **Semana 11:** su cálculo con NetworkX genera las métricas propias, con una definición de grafo documentada.
+- **Semana 11 (hecho):** su cálculo con NetworkX genera las métricas propias, con una definición de grafo documentada, y la comparación entre taxones.
 - **Semana 12:** construye la línea base sin filtros sofisticados para medir cuánto aportan los filtros externos.
 - **Semanas 13–14:** queda integrado en `make all` con pruebas, como prueba de reproducibilidad.
 
@@ -402,19 +454,19 @@ React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/a
 
 ---
 
-## 13. Cómo presentarlo en el informe
+## 14. Cómo presentarlo en el informe
 
 - Declarar explícitamente que las redes analizadas las generó un pipeline externo del investigador, presentado como **decisión de diseño** (cobertura completa del atlas, filtros de especificidad que el pipeline propio no tiene, evitar duplicar trabajo y un segundo atlas incompatible).
 - Separar la autoría:
   - **Externo:** la base `regulon_atlas`, las redes materializadas, `network_metrics` y el benchmark D33.
-  - **Propio:** la auditoría de datos, la caché, la API, la validación independiente (definición, modo sin autoevaluación, curva P/R, desglose por tier), el pipeline local como validador y el dashboard.
+  - **Propio:** la auditoría de datos, la caché, la API, la validación independiente (definición, modo sin autoevaluación, curva P/R, desglose por tier), las métricas topológicas propias y la comparación entre taxones con su concordancia con `network_metrics`, el pipeline local como validador, las pruebas y el dashboard.
 - Usar `balanced` como red principal y presentar las cifras de validación como rangos: precisión entre el universo `genome` y `genome_tf`; recall entre el modo `independent` y `all`.
 - Declarar las limitaciones: sin acceso al código del pipeline externo, definición de D33 desconocida, autoevaluación en el benchmark externo, 28 % del gold standard sin mapear, solo una fracción de cada red evaluable, `network_metrics` no reproducible desde `edges` y trazabilidad hacia atrás solo hasta `provenance`.
 - Citar al investigador según lo que él indique.
 
 ---
 
-## 14. Pendientes y preguntas abiertas
+## 15. Pendientes y preguntas abiertas
 
 Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. Las más urgentes:
 
@@ -424,16 +476,18 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 ### Pendientes técnicos
 
 - Corregir la línea 8 del `.env`.
-- Avisos de "análisis pendiente" en `Robustness.jsx` y `Comparison.jsx`, que llaman métodos inexistentes en `api.js` (`getNetworkRobustness`, `getEdgeSubsampling`, `getOrganismProjection`, `getRegulatoryClusters`). Se reescriben en las semanas 11 y 12.
-- Verificar `Fingerprints.jsx` (`balanced` + *E. coli*: Edges = 919; `high-precision`: 207 genomas con métricas).
+- `Robustness.jsx` llama métodos inexistentes en `api.js` (`getNetworkRobustness`, `getEdgeSubsampling`). Se reescribe en la semana 12. (`Comparison.jsx` ya se reescribió en la semana 11.)
+- Revisar en el navegador `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
+- Volver a ejecutar `make validate-atlas` con el árbol limpio: su manifiesto es anterior al campo `git_dirty`.
+- Comprobar si el tamaño de la red por filo se explica por el origen de los motivos (hipótesis de `metricas_semana11.md`, hallazgo 3).
 - Opcional: agregar `gtdb_family`, `gtdb_genus`, `gtdb_species` y `selection` a `CATALOG_COLUMNS` en `routers/genomes.py`.
 - Agregar la red del MVP como punto aparte en la curva de validación.
 - Migrar las vistas que todavía usan `constants/comparisonGenomes.js` y después borrarlo.
-- Mantener `docs/auditoria_semana9.md` y `docs/validacion_semana10.md` al día.
+- Mantener `docs/auditoria_semana9.md`, `docs/validacion_semana10.md`, `docs/metricas_semana11.md` y `docs/correcciones_semana11.md` al día.
 
 ---
 
-## 15. Lecciones técnicas y forma de trabajo
+## 16. Lecciones técnicas y forma de trabajo
 
 ### Lecciones aprendidas
 
@@ -449,6 +503,9 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 - **Sin acceso al código externo, definir la evaluación propia** y usar los valores externos como prueba de cordura, no como objetivo.
 - **Revisar la circularidad en toda validación:** si los motivos se construyeron con el mismo gold standard, separar el modo independiente.
 - **Calcular offline y servir resultados:** la validación pesada corre con `make`; la API solo lee archivos.
+- **Verificar lo que entra en el commit, no la copia de trabajo:** un archivo local corregido no garantiza un commit sano (`06e5140`). El hook `pre-commit` revisa el índice.
+- **Los campos categóricos pueden traer notas:** `selection` del genoma de reemplazo lleva texto extra; comparar por la primera palabra y contrastar el conteo (2.224) después de cada filtro.
+- **Generar resultados con el árbol limpio:** el manifiesto debe apuntar a un commit que contenga el código que los produjo (`git_dirty: false`).
 
 ### Forma de trabajo
 
@@ -469,7 +526,7 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 
 ---
 
-## 16. Comandos frecuentes
+## 17. Comandos frecuentes
 
 ```bash
 # Rama de trabajo
@@ -489,6 +546,10 @@ mysql regulon_atlas -e "SELECT * FROM networks;"
 curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head -30
 curl -s "localhost:8000/api/v1/atlas/networks/3/graph/GCF_000005845.2?max_edges=20" | python -m json.tool | head -50
 curl -s "localhost:8000/api/v1/atlas/validation/summary?universe=genome_tf" | python -m json.tool | head -40
+
+# Métricas propias, comparación entre taxones y verificaciones
+make metrics-atlas && make comparison-atlas
+make check            # antes de cada commit; make hooks una vez por clon
 
 # Chequeos de datos
 python scripts/audit_summary.py

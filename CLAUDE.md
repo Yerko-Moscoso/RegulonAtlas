@@ -5,7 +5,8 @@ regulación transcripcional bacteriana (TF → operón) en 2.224 genomas. El usu
 desarrollador; las redes y la base las generó un investigador con un pipeline externo al que no hay acceso.
 
 Contexto completo: `docs/contexto_regulomeatlas.md`. Léelo al empezar una tarea que no sea trivial.
-Validación: `docs/validacion_semana10.md`. Preguntas abiertas: `docs/preguntas_pendientes.md`.
+Validación: `docs/validacion_semana10.md`. Métricas y comparación: `docs/metricas_semana11.md`.
+Preguntas abiertas: `docs/preguntas_pendientes.md`.
 
 ## Entorno
 
@@ -51,6 +52,8 @@ Validación: `docs/validacion_semana10.md`. Preguntas abiertas: `docs/preguntas_
   `independent` (sin autoevaluación).
 - Métricas propias: `src/networks/atlas_metrics.py`. Las métricas jerárquicas (autorregulación, TF → TF) son solo
   cota inferior: el gen del TF se ubica por nombre en ~20 % de los casos.
+- Comparación entre genomas: por taxón GTDB (`src/networks/atlas_comparison.py`), con los mismos genomas para la métrica
+  propia y la externa; taxones con ≥ 5 genomas. La `density` externa usa otra definición (todos los operones del genoma).
 - `network_metrics` y el benchmark D33 son externos: se muestran solo como referencia.
 
 ## Comandos
@@ -60,6 +63,7 @@ make cache-atlas      # caché parquet desde MariaDB (lento, usar nohup)
 make cache-genes      # genes_all.parquet (9,44M genes)
 make validate-atlas   # validación contra RegPrecise -> data/results/validation/
 make metrics-atlas    # métricas NetworkX -> data/results/metrics/
+make comparison-atlas # comparación por taxón -> data/results/comparison/ (después de metrics-atlas)
 make check            # verificaciones previas al commit + pytest
 make hooks            # activa scripts/githooks/pre-commit (una vez por clon)
 curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
@@ -69,4 +73,5 @@ curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
 
 - E. coli K-12 (`GCF_000005845.2`) en balanced: 118 TF, 342 operones diana, 485 pares TF–operón.
 - Métricas propias: 2.224 genomas con `in_atlas` en cada una de las 5 redes (`tests/test_api_atlas_metrics.py`).
+- Comparación, balanced: 10 filos, 13 clases, 48 órdenes y 83 familias con ≥ 5 genomas (`tests/test_api_atlas_comparison.py`).
 - Validación balanced, `all` / `genome_tf`: P = 0,612, R = 0,332, F1 = 0,431.
