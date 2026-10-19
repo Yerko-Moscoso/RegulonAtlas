@@ -61,6 +61,8 @@ quedó documentado.
 
 ### 19-10-2026: pendientes de la semana 11
 
+Commits: `90a3f23` (código y pruebas) y `df454c6` (documentación).
+
 - **Validación repetida con el árbol limpio.** Resultados idénticos a los de la semana 10 (diferencia 0,0). Manifiesto en
   `63469d5`, `git_dirty: false`. Nueva prueba `tests/test_api_atlas_validation.py` (22 pruebas en total).
   → `correcciones_semana11.md`, C3.
