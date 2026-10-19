@@ -220,8 +220,9 @@ valores de Spearman no cambiaron (misma semilla); solo cambió la clase de `n_ed
 | `data/results/robustness/manifest.json` | Definición, parámetros, commit y `git_dirty` |
 | `data/results/baseline/summary.tsv` | P/R/F1 de la línea base por variante, umbral, modo y universo |
 | `data/results/baseline/vs_networks.tsv` | Línea base y redes externas en una tabla (pares contados en los genomas validables) |
-| `data/results/baseline/reproduction.tsv` | Cada red externa frente a la línea base con su umbral y tier |
-| `data/results/baseline/manifest.json` | Definición, alcance (312 genomas), `hits_in_transfer_map`, commit `7bb4940`, `git_dirty: false` |
+| `data/results/baseline/reproduction.tsv` | Cada red externa frente a la línea base con su umbral y tier (pares TF–operón) |
+| `data/results/baseline/reproduction_edges.tsv` | Reproducción a nivel de arista (genoma, motivo, operón), sección 8.4 |
+| `data/results/baseline/manifest.json` | Definición, alcance (312 genomas), `hits_in_transfer_map`, commit `251811b`, `git_dirty: false` |
 
 ## 8. Análisis C: línea base del pipeline propio desde `fimo_hits`
 
@@ -284,6 +285,31 @@ Pares en los 312 genomas validables:
 - Por lo tanto, a nivel de pares TF–operón, el método convergent-empirical y la calibración de `confidence` **no eliminan
   pares**: solo asignan la `confidence`. Esto responde en parte a P3 de `preguntas_pendientes.md`.
 
+**Comprobación a nivel de arista** (genoma, motivo, operón), agregada el 19-10-2026 en `reproduction_edges.tsv`. La tabla
+anterior compara pares TF–operón, y un par puede venir de varios motivos del mismo TF. Esta comprobación es más estricta:
+cada arista con su motivo.
+
+| Red | Se construye desde | Regla (tabla `networks`) | Aristas de la red | Aristas de la regla | Coincidencia |
+|---|---|---|---|---|---|
+| no-footprint | Hits de `fimo_hits` | p ≤ 1e-7, tier ≤ same_order | 29.807 | 29.807 | **exacta**; además `n_sites` = número de hits en el 100 % de las aristas |
+| validated | no-footprint | p ≤ 1e-7, tier ≤ same_order, footprint ≥ 10 | 15.913 | 15.913 | **exacta** |
+| high-precision | no-footprint | p ≤ 1e-8, tier ≤ same_family, footprint ≥ 50 | 2.273 | 2.273 | **exacta** |
+| balanced | permissive | p ≤ 1e-6, tier ≤ same_class, footprint ≥ 10 | 64.942 | 64.942 | **exacta** |
+| permissive | — | footprint ≥ 1 | 361.985 | — | No comprobable |
+
+- **Cómo se lee:** cada red con footprinting se arma desde una red "madre" que ya contiene a todas sus aristas candidatas,
+  con el valor de `footprint_enrichment` de cada arista. Por ejemplo, `no-footprint` tiene el mismo umbral y tier que
+  `validated`, pero sin mínimo de footprint. A esa madre se le aplican el umbral de p, el techo de tier y el mínimo de
+  footprint que declara `networks.params`.
+- **`permissive` no se puede comprobar así:** su mínimo es footprint ≥ 1, y no hay ninguna red que contenga aristas con
+  footprint menor que 1 para usarla como madre.
+- **Alcance de la afirmación:** se reproduce **qué aristas existen** y cuántos sitios tienen. No se reproduce el cálculo
+  del footprint (se usa el valor que trae cada arista) ni el valor de `confidence`. Solo se comprobó en los 312 genomas
+  validables.
+- **Prueba automática:** `tests/test_api_atlas_baseline.py::test_edge_level_reproduction_is_exact` falla si alguna de las
+  cuatro deja de coincidir exactamente o si `n_sites` deja de coincidir. Lee
+  `/api/v1/atlas/baseline/reproduction-edges`.
+
 ### 8.5 Precisión y recall (universo `genome_tf`)
 
 | Red | Pares | P `all` | R `all` | F1 `all` | P `indep.` | R `indep.` | F1 `indep.` |
@@ -337,7 +363,7 @@ Pares en los 312 genomas validables:
 - API (solo lectura):
   - `/api/v1/atlas/robustness/{manifest, nesting, between, footprint, subsampling, subsampling/genome}` en
     `src/api/routers/atlas_robustness.py`. El router antiguo `/robustness` del MVP sigue respondiendo "pending".
-  - `/api/v1/atlas/baseline/{manifest, summary, reproduction}` en `src/api/routers/atlas_baseline.py`.
+  - `/api/v1/atlas/baseline/{manifest, summary, reproduction, reproduction-edges}` en `src/api/routers/atlas_baseline.py`.
 - Vista `Robustness.jsx` (*Metric Robustness*), en el menú lateral:
   - curva de estabilidad del orden por estrategia;
   - curva de degradación del genoma elegido frente a la mediana del atlas;

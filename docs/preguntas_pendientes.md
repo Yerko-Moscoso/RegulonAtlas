@@ -110,9 +110,10 @@ En gran parte, sí. En `balanced`, el tamaño del genoma y la oferta de motivos 
 
 ### R4. ¿Qué filtros aplica el pipeline externo? (19-10-2026)
 
-A nivel de pares TF–operón: umbral de p, techo de tier de transferencia y footprinting filogenético. `no-footprint` se
-reproduce exactamente desde `fimo_hits` (Jaccard 1,0), y las otras 4 redes están 100 % contenidas en la línea base con su
-mismo umbral y tier. Detalle en `robustez_semana12.md`, sección 8.4.
+Umbral de p, techo de tier de transferencia y footprinting filogenético. A nivel de arista (genoma, motivo, operón),
+`no-footprint` se reproduce exactamente desde `fimo_hits`, y `validated`, `high-precision` y `balanced` se reproducen
+exactamente desde su red madre con el mínimo de footprint de `networks.params`. `permissive` no se puede comprobar.
+Detalle en `robustez_semana12.md`, sección 8.4. Queda abierto cómo se calcula `footprint_enrichment` y la `confidence`.
 
 ## Borradores de mensaje
 

@@ -62,6 +62,13 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 19-10-2026: reproducción a nivel de arista
+
+- `251811b`: `reproduction_edges.tsv`, endpoint `/atlas/baseline/reproduction-edges` y
+  `test_edge_level_reproduction_is_exact` (33 pruebas). `no-footprint` sale exactamente de los hits (con `n_sites`);
+  `validated`, `high-precision` y `balanced`, exactamente de su red madre con el mínimo de footprint.
+  → `robustez_semana12.md`, sección 8.4.
+
 ### 19-10-2026: semana 12, línea base del pipeline propio
 
 - `7bb4940`: `scripts/export_fimo_cache.py` (`make cache-fimo`; 7.376.281 hits y 320.938 pares de `transfer_map`, solo de

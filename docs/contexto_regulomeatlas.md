@@ -422,9 +422,9 @@ Detalle completo en `docs/robustez_semana12.md`.
 - **Línea base del pipeline propio (análisis C).** El usuario aprobó hacerla solo en los 312 genomas validables, porque es una red de prueba.
   - **Datos:** `scripts/export_fimo_cache.py` (`make cache-fimo`) → `fimo_hits_validation.parquet` (7.376.281 hits) y `transfer_map_validation.parquet` (320.938 pares), verificados con `COUNT(*)` por lote.
   - **Módulo:** `src/networks/atlas_baseline.py` (`make baseline-atlas`). Variantes `scan`, `order_ceiling` y `class_ceiling` a p ≤ 1e-5…1e-8, validadas igual que la semana 10.
-  - **Hallazgo clave:** el pipeline externo es **umbral + techo de tier + footprinting** a nivel de pares. `no-footprint` se reproduce **exactamente** desde los hits crudos (Jaccard 1,0), y las otras 4 redes están 100 % dentro de su línea base. El footprinting conserva entre el 27 y el 51 % de los pares; el método convergent-empirical y la calibración no eliminan pares.
+  - **Hallazgo clave:** el pipeline externo es **umbral + techo de tier + footprinting**. A nivel de arista (genoma, motivo, operón), `no-footprint` sale exactamente de los hits (incluido `n_sites`), y `validated`, `high-precision` y `balanced` salen exactamente de su red madre con el mínimo de footprint declarado; `permissive` no es comprobable (`robustez_semana12.md`, 8.4). A nivel de pares: `no-footprint` se reproduce **exactamente** desde los hits crudos (Jaccard 1,0), y las otras 4 redes están 100 % dentro de su línea base. El footprinting conserva entre el 27 y el 51 % de los pares; el método convergent-empirical y la calibración no eliminan pares.
   - **Aporte de los filtros:** con el mismo umbral y tier, el footprinting duplica la precisión de `balanced` (0,312 → 0,612; F1 0,378 → 0,431). Con un tamaño similar, `balanced` supera a la mejor línea base, sobre todo en modo `independent` (F1 0,318 frente a 0,255).
-  - **Integración:** API `/api/v1/atlas/baseline/{manifest, summary, reproduction}` y sección *Own baseline vs external networks* en `Validation.jsx`. 32 pruebas.
+  - **Integración:** API `/api/v1/atlas/baseline/{manifest, summary, reproduction, reproduction-edges}` y sección *Own baseline vs external networks* en `Validation.jsx`. 33 pruebas.
 
 ---
 

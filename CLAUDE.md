@@ -81,6 +81,6 @@ curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
 - E. coli K-12 (`GCF_000005845.2`) en balanced: 118 TF, 342 operones diana, 485 pares TF–operón.
 - Métricas propias: 2.224 genomas con `in_atlas` en cada una de las 5 redes (`tests/test_api_atlas_metrics.py`).
 - Comparación, balanced: 10 filos, 13 clases, 48 órdenes y 83 familias con ≥ 5 genomas (`tests/test_api_atlas_comparison.py`).
-- Línea base: `no-footprint` = hits con p ≤ 1e-7 y tier ≤ same_order (Jaccard 1,0); todas las redes externas están 100 %
-  dentro de su línea base (`tests/test_api_atlas_baseline.py`).
+- Línea base: `no-footprint` = hits con p ≤ 1e-7 y tier ≤ same_order (29.807 aristas, exacto por motivo); validated,
+  high-precision y balanced = su red madre + footprint ≥ mínimo (`tests/test_api_atlas_baseline.py`).
 - Validación balanced, `all` / `genome_tf`: P = 0,612, R = 0,332, F1 = 0,431 (`tests/test_api_atlas_validation.py`).
