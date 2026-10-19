@@ -22,7 +22,7 @@
 - **Servidor:** `devastator`, Ubuntu 22.04, 48 núcleos, 242 GB de RAM, discos NVMe y almacenamiento compartido en `/mnt/biostore`.
 - **Acceso:** VS Code conectado por SSH. Todos los comandos se ejecutan desde la terminal integrada de VS Code. VS Code reenvía automáticamente los puertos (8000 para la API y el de Vite para el frontend).
 - **Sin `tmux`** (no hay permisos). Los procesos largos se lanzan con `nohup … &`, y las credenciales de MariaDB para esos procesos van en `~/.my.cnf` (con `chmod 600`).
-- **Conda:** entorno `bioinfo` para el trabajo bioinformático y uno aparte para el stack de FastAPI.
+- **Conda:** un solo entorno, `bioinfo`, para todo (pipeline, API, pruebas y Node.js). Se reproduce con `conda env create -f environment.yml` (regenerado en la semana 12; algunos paquetes van por pip).
 - **Raíz del proyecto:** `~/proyecto`.
 - **Base de datos:** MariaDB `regulon_atlas`. El usuario `ymoscoso` **solo tiene permiso SELECT**: no puede crear, modificar ni cargar tablas. Todo dato nuevo (por ejemplo RegulonDB) se maneja como archivo dentro del repositorio.
 - **La API ya no consulta MariaDB:** todo se lee desde la caché local `data/cache/atlas/` (parquet) y desde los resultados en `data/results/`. La base solo se usa al regenerar la caché con `make cache-atlas`.
@@ -46,7 +46,7 @@ La documentación interactiva de la API queda en `http://localhost:8000/docs`.
 
 - **Repositorio:** `github.com/Yerko-Moscoso/Proyecto_Bioinfo`.
 - **`main`:** contiene el MVP congelado. La etiqueta **`mvp-semana8`** marca la entrega del MVP.
-- **`dev`:** rama de trabajo desde la semana 9. Los bloques terminados se fusionan a `main` y se etiquetan (por ejemplo, `semana10-validacion`).
+- **`dev`:** rama de trabajo desde la semana 9. Los bloques terminados se fusionan a `main` y se etiquetan: `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. Respaldo antes de la limpieza de la semana 12: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12`.
 - **No se versionan** datos generados (`data/cache/`, `data/audit/*.tsv`, `data/results/`), solo código, SQL y documentación.
 
 ---
@@ -181,7 +181,7 @@ El registro completo de decisiones lo tiene el investigador y está pendiente de
 
 ### 8.1 Módulo de validación del MVP (OE5)
 
-- Vive en `src/validation/benchmark.py`.
+- Vivía en `src/validation/benchmark.py`; desde la semana 12 está archivado en `legacy/pipeline_piloto/benchmark_piloto.py` (el scraper y los parsers, en `legacy/ingestion/`).
 - Se corrigieron tres errores en el benchmark de *B. subtilis*:
   1. `parse_regprecise.py` generaba locus tags falsos (`REG_xxxxx`) porque las fallas del endpoint FASTA de RegPrecise eran silenciosas (`except: pass`). Se arregló parseando las páginas HTML en caché con BeautifulSoup.
   2. `lxml` no encontraba la tabla `operontbl` en el servidor; se cambió a `html.parser`.
@@ -196,7 +196,7 @@ El registro completo de decisiones lo tiene el investigador y está pendiente de
 
 `GCF_000005845.2` (*E. coli* K-12), `GCF_000016305.1` (*K. pneumoniae* MGH 78578), `GCF_000011605.1` (*P. atrosepticum* SCRI1043), `GCF_000006945.2` (*S. enterica* Typhimurium LT2), `GCF_000016325.1` (*Enterobacter* sp. 638), `GCF_000196155.1` (*P. laumondii* TTO1), `GCF_000027205.1` (*E. amylovora* ATCC 49946) y `GCF_000069965.1` (*P. mirabilis* HI4320).
 
-Esta lista sigue en `frontend/src/constants/comparisonGenomes.js`, que todavía importan `Dashboard`, `Robustness`, `OrganismDetail`, `Organisms` y `Header` (ya no `Validation`). No borrar hasta migrar esas vistas.
+Esta lista estaba en `frontend/src/constants/comparisonGenomes.js`, que se eliminó en la semana 12, cuando Dashboard, Organisms, OrganismDetail y Header pasaron a los datos del atlas.
 
 ### 8.3 MVP entregado (etiqueta `mvp-semana8`)
 
@@ -290,11 +290,11 @@ Script `scripts/check_metrics_coverage.py`.
 
 - `routers/genomes.py` y `routers/motifs.py` leen la caché (`lru_cache`; responden 503 si falta).
 - `routers/fingerprints.py` **se eliminó** (devolvía datos inventados con fórmulas fijas), junto con su import y su `include_router`. Ningún archivo de `src/api` usa `get_db` ni `get_engine`.
-- `routers/robustness.py` responde "pending" de forma explícita hasta la semana 12.
+- `routers/robustness.py` respondía "pending" hasta la semana 12; se eliminó en la limpieza de esa semana, igual que `graphs.py`, `metrics.py` y `results.py`, que eran del MVP.
 - Componentes compartidos nuevos:
   - `components/NetworkSelector.jsx` (props `networks`, `value`, `onChange`).
   - `components/OrganismSearch.jsx` (props `options` `[{id, label, muted, meta}]`, `value`, `onChange`, `disabled`).
-  - `utils/atlas.js` (`DEFAULT_NETWORK = 3`, `DEFAULT_GENOME = GCF_000005845.2`, `ATLAS_SELECTIONS`, `fmtInt`, `fmtP`, `parseBenchmark`, `selectClass`).
+  - `utils/atlas.js` (`DEFAULT_NETWORK = 3`, `DEFAULT_GENOME = GCF_000005845.2`, `ATLAS_SELECTIONS`, `fmtInt`, `fmtP`, `parseBenchmark`, `selectClass`; desde la semana 12 también `ATLAS_GENOMES` e `isAtlasSelection`).
 - `RegulatoryNetwork.jsx` usa los componentes compartidos (se corrigió un selector duplicado).
 - `Metrics.jsx`: 2.644 genomas, tarjetas, histograma en el atlas, ranking y tabla de la familia GTDB, con aviso de que `network_metrics` es externo.
 - `Fingerprints.jsx`: percentil de 7 métricas en todo el atlas, radar (genoma + mediana de la familia + mediana del atlas + hasta 4 comparadores) y matriz de la familia.
@@ -426,6 +426,18 @@ Detalle completo en `docs/robustez_semana12.md`.
   - **Aporte de los filtros:** con el mismo umbral y tier, el footprinting duplica la precisión de `balanced` (0,312 → 0,612; F1 0,378 → 0,431). Con un tamaño similar, `balanced` supera a la mejor línea base, sobre todo en modo `independent` (F1 0,318 frente a 0,255).
   - **Integración:** API `/api/v1/atlas/baseline/{manifest, summary, reproduction, reproduction-edges}` y sección *Own baseline vs external networks* en `Validation.jsx`. 33 pruebas.
 
+### 12.1 Limpieza del proyecto
+
+Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limpieza-semana12` (`3802d6e`).
+
+- **Entorno:** `environment.yml` regenerado desde `bioinfo`; resuelve con `conda env create --dry-run`.
+- **Eliminado:** routers `/robustness`, `/graphs` y `/metrics` del MVP, `src/api/results.py`, `comparisonGenomes.js`, métodos antiguos de `api.js` y archivos sin uso. La API ya no depende de `src/pipeline`.
+- **Archivado:** `src/ingestion/` y el pipeline piloto pasaron a `legacy/`, y `data/genomes/` (75 MB) salió de git. Los datos versionados bajaron de 90,1 a 11,8 MB.
+- **Vistas:** Dashboard, Organisms y OrganismDetail usan el atlas (antes, los 8 genomas del MVP). El Header muestra "2,224 genomes · 5 networks".
+- **Código:** `src/atlas_common.py` con las reglas comunes (los 20 archivos de resultados son idénticos antes y después); `utils/metrics.js` con un nombre único por métrica; carga diferida (el paquete JS inicial bajó de 1.278 a 254 kB); `Validation.jsx` dividido; Pydantic al día.
+- **Calidad:** 46 pruebas (13 unitarias nuevas); ESLint en `make check` (0 errores); `make help` y `make atlas`; `.gitignore` ordenado; README reescrito.
+- **Etiquetas:** nuevas `semana09-auditoria` y `semana10-validacion`; eliminada `semana10-sweep` (apuntaba al commit del MVP `b628e54`).
+
 ---
 
 ## 13. Arquitectura actual
@@ -448,14 +460,15 @@ data/cache/atlas/*.parquet       data/cache/mvp/
         │                               ▼
         │                        data/results/mvp/ (pipeline propio)
         ▼                               │
-FastAPI src/api ── routers: system, graphs, metrics, genomes, motifs,
-                   robustness (MVP / pendiente) + atlas + atlas_validation
+FastAPI src/api ── routers: system, genomes, motifs + atlas + atlas_validation
                    + atlas_metrics + atlas_comparison + atlas_robustness + atlas_baseline
+                   (solo leen data/cache/atlas y data/results; src/atlas_common.py para las reglas comunes)
         │
         ▼
 React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/api.js
 
-make check / pre-commit ── API importa, sin get_db, frontend compila, pytest (tests/)
+make check / pre-commit ── API importa, sin get_db, frontend compila, ESLint sin errores, pytest (tests/)
+legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy/README.md
 ```
 
 ---
@@ -469,7 +482,7 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 | 11 | Métricas propias con NetworkX para los 2.644 genomas y las 5 redes, comparadas con `network_metrics`; comparación por filo/clase/orden/familia; `Metrics`, `Fingerprints` y `Comparison` sobre las métricas propias; `make check` y pruebas (hecho). No se hizo el enriquecimiento funcional opcional |
 | 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness`; línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) en los 312 genomas validables, contra las redes externas (hecho) |
 | 13 | Componentes restantes (`Pipeline`, `DataProvenance`, `MVP`) y revisión completa. Congelamiento de funciones |
-| 14 | Pruebas (ampliar `tests/`, que ya tiene las pruebas de humo de métricas y comparación; prueba de punta a punta desde un clon limpio con `make all`), README y etiqueta `v1.0` |
+| 14 | Pruebas (ampliar `tests/`, que ya tiene 46 pruebas unitarias y de humo; prueba de punta a punta desde un clon limpio con `conda env create` + `make atlas`) y etiqueta `v1.0`. El README ya se reescribió en la semana 12 |
 | 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
 | 16 | Preparación de la defensa, guion de demo con capturas de respaldo y holgura |
 
@@ -513,15 +526,14 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 ### Pendientes técnicos
 
 - Corregir la línea 8 del `.env`.
-- Revisar en el navegador `Robustness.jsx` (reescrita en la semana 12).
+- Revisar en el navegador `Robustness.jsx` (reescrita en la semana 12) y las vistas migradas en la limpieza (Dashboard, Organisms, OrganismDetail).
 - Revisar en el navegador la sección *Own baseline vs external networks* de `Validation.jsx`.
 - Revisar en el navegador `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
 - Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`). Los envía el usuario.
 - *(Hecho el 19-10-2026: `make validate-atlas` repetido con el árbol limpio, resultados idénticos; hipótesis del origen de los motivos comprobada.)*
-- Opcional: agregar `gtdb_family`, `gtdb_genus`, `gtdb_species` y `selection` a `CATALOG_COLUMNS` en `routers/genomes.py`.
 - Agregar la red del MVP como punto aparte en la curva de validación.
-- Migrar las vistas que todavía usan `constants/comparisonGenomes.js` y después borrarlo.
-- Mantener `docs/auditoria_semana9.md`, `docs/validacion_semana10.md`, `docs/metricas_semana11.md` y `docs/correcciones_semana11.md` al día.
+- Mantener `docs/auditoria_semana9.md`, `docs/validacion_semana10.md`, `docs/metricas_semana11.md`, `docs/correcciones_semana11.md`, `docs/robustez_semana12.md` y `docs/limpieza_semana12.md` al día.
+- 19 advertencias de ESLint del React Compiler (documentadas en `eslint.config.js`); revisar al tocar esas vistas en la semana 13.
 
 ---
 
@@ -544,6 +556,8 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 - **Verificar lo que entra en el commit, no la copia de trabajo:** un archivo local corregido no garantiza un commit sano (`06e5140`). El hook `pre-commit` revisa el índice.
 - **Los campos categóricos pueden traer notas:** `selection` del genoma de reemplazo lleva texto extra; comparar por la primera palabra y contrastar el conteo (2.224) después de cada filtro.
 - **Generar resultados con el árbol limpio:** el manifiesto debe apuntar a un commit que contenga el código que los produjo (`git_dirty: false`). Si hay documentos a medio editar, se guardan con `git stash` durante **todo** el cálculo, no solo al inicio.
+- **El hook pre-commit sirve:** en la limpieza de la semana 12 bloqueó dos commits que habrían dejado la API o ESLint rotos, porque el índice tenía la mitad de un cambio (por ejemplo, un `git rm` sin el archivo nuevo que lo reemplazaba).
+- **Antes de refactorizar, comparar resultados:** al unificar las funciones comunes se regeneraron los 20 archivos de resultados y se compararon con `assert_frame_equal` (idénticos).
 - **Revisar si una métrica es trivial por construcción:** en el submuestreo, `n_edges` no cambia de orden porque se elimina una fracción fija de pares; contarla como "robusta" infla el resultado.
 
 ### Forma de trabajo
@@ -591,6 +605,7 @@ make metrics-atlas && make comparison-atlas
 nohup make robustness-atlas > logs/robustness_atlas.log 2>&1 &   # ~8 min
 make cache-fimo && make baseline-atlas                            # línea base, 312 genomas (~3 min)
 make check            # antes de cada commit; make hooks una vez por clon
+make help             # lista de comandos; make atlas encadena todo el análisis; make web levanta el frontend
 
 # Chequeos de datos
 python scripts/audit_summary.py

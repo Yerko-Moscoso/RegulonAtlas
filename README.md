@@ -1,79 +1,90 @@
-# RegulonAtlas: redes regulatorias bacterianas predichas
+# RegulomeAtlas
 
-Predicción de redes de regulación transcripcional (factor de transcripción →
-gen) a partir de motivos de unión curados (RegPrecise 3.2, PRODORIC),
-caracterización topológica y validación contra regulones curados, con un
-dashboard web para explorar los resultados.
+Dashboard, validación y métricas sobre redes de regulación transcripcional bacteriana (factor de transcripción →
+operón) predichas en **2.224 genomas** (uno por género de GTDB R232, más 3 referencias). Proyecto de título de Ingeniería
+Informática (Universidad de las Américas, NIDS).
 
-Este README cubre el **MVP**: un corte vertical del sistema completo sobre 8
-genomas de Enterobacteriaceae con regulones curados en RegPrecise
-(`config/mvp_genomes.txt`).
+Las cinco redes las generó un pipeline externo del investigador del proyecto y están en la base MariaDB `regulon_atlas`.
+Este repositorio las audita, las valida contra RegPrecise, calcula métricas topológicas propias, compara los genomas
+entre taxones, mide la robustez de las métricas y las muestra en un dashboard web.
 
-## Requisitos
+**Documentación:** [`docs/README.md`](docs/README.md) es el índice. El documento maestro es
+[`docs/contexto_regulomeatlas.md`](docs/contexto_regulomeatlas.md).
 
-- Python 3.11 con `pandas`, `networkx`, `sqlalchemy`, `fastapi`, `uvicorn` (entorno conda `bioinfo`).
-- Node.js para el frontend (`frontend/`).
-- Solo para `make cache`: acceso de lectura a la base MariaDB `regulon_atlas`.
+## Estructura
 
-## Reproducir los resultados
+| Carpeta | Contenido |
+|---|---|
+| `src/atlas_common.py` | Definiciones comunes (redes, regla de genomas del atlas, lectura de la caché, trazabilidad) |
+| `src/validation/atlas.py` | Validación de las 5 redes contra RegPrecise (semana 10) |
+| `src/networks/atlas_*.py` | Métricas propias, comparación entre taxones, robustez y línea base (semanas 11–12) |
+| `src/api/` | API FastAPI, solo de lectura (no consulta MariaDB) |
+| `frontend/` | Dashboard: Vite + React + Tailwind + Recharts + Cytoscape.js |
+| `scripts/` | Exportación de la caché desde MariaDB (`export_*`), exploraciones previas (`explore_*`) y verificaciones |
+| `src/pipeline/`, `config/` | Pipeline del MVP (semana 8) |
+| `legacy/` | Código histórico que ya no se usa (ingesta y pipeline piloto); ver `legacy/README.md` |
+| `tests/` | Pruebas unitarias y de humo de la API |
+| `docs/` | Documentación por semana, preguntas pendientes y bitácora |
+
+## Instalación
 
 ```bash
-make mvp          # regenera todo desde el caché de datos (no necesita la base)
+conda env create -f environment.yml      # entorno "bioinfo"
+conda activate bioinfo
+cd frontend && npm install && cd ..
+cp .env.example .env                      # credenciales de MariaDB (solo para regenerar la caché)
+make hooks                                # una vez por clon: verificación antes de cada commit
 ```
 
-El caché (`data/cache/mvp/`) ya está en el repositorio. Para volver a
-exportarlo desde la base: `make cache` (una vez, solo lectura).
-
-Informe con los números: `data/results/mvp/report.md`.
-
-## Ver el dashboard
+## Uso
 
 ```bash
-make api                          # backend en http://localhost:8000 (docs en /docs)
-cd frontend && npm install && npm run dev
+make help                 # lista de comandos
+make api                  # backend en http://localhost:8000 (documentación en /docs)
+make web                  # frontend en http://localhost:5173
+make check                # antes de cada commit: API, frontend, ESLint y pytest
 ```
 
-El dashboard muestra exactamente los resultados de `make mvp`; si se vuelve a
-correr el pipeline, se actualiza sin reiniciar el backend.
+Los datos no se versionan. Para regenerarlos desde la base (el usuario solo tiene permiso SELECT):
 
-## Etapas del pipeline
+```bash
+nohup make cache-atlas > logs/cache_atlas.log 2>&1 &    # caché del atlas (lento)
+make cache-genes && make cache-fimo                      # genes completos y hits de los genomas validables
+nohup make atlas > logs/atlas.log 2>&1 &                 # validación, métricas, comparación, robustez, línea base
+```
 
-| Etapa | Módulo | Qué hace | Salida |
-|---|---|---|---|
-| 0 | `export_cache` | Exporta de MariaDB (solo lectura) genomas, genes y operones, motivos, hits FIMO (p ≤ 1e-5), anotaciones eggNOG y regulones curados | `data/cache/mvp/` |
-| 1 | `build_transfer_map` | Detección de ortólogos: qué motivos aplican a cada genoma (reglas `source_genome`, `ortholog`, `ortholog_og`, `name_match`) | `transfer_map/` |
-| 2 | `build_networks` | Red TF → gen: filtro de ortólogos, una arista por par (TF, gen), propagación por operones | `networks/*.edges.tsv` |
-| 3 | `compute_metrics` | 5 métricas básicas con NetworkX (nodos, aristas, densidad, grado medio, hubs), distribución de grados, ranking de TF | `metrics/` |
-| 4 | `validate` | Precisión, recall y F1 por umbral contra RegPrecise, con y sin propagación por operones | `validation/` |
-| 5 | `report` | Informe breve en Markdown | `report.md` |
+Cada carpeta de `data/results/` tiene un `manifest.json` con el commit que la generó y `git_dirty` (debe ser `false`:
+los cálculos se ejecutan con el árbol limpio).
 
-Todos los parámetros están en `config/mvp_params.json` (umbral de la red,
-reglas de elegibilidad, propagación, umbral de hubs, umbrales de validación).
-Cada etapa escribe un `*.provenance.json` con los parámetros, el commit de git
-y el sha256 de sus entradas y salidas; `data/cache/mvp/cache_manifest.json`
-registra las consultas SQL, la versión del servidor y los conteos del caché.
+## Resultados principales
 
-## Decisiones respecto de la propuesta
+| Tema | Resultado | Documento |
+|---|---|---|
+| Validación | `balanced` es la mejor red: F1 = 0,431 (0,318 sin autoevaluación) | `docs/validacion_semana10.md` |
+| Métricas propias | Las métricas de tamaño ordenan los taxones igual que la tabla externa (ρ ≥ 0,94) | `docs/metricas_semana11.md` |
+| Comparación entre taxones | El efecto del filo es en un 88 % metodológico (tamaño del genoma y origen de los motivos) | `docs/metricas_semana11.md`, 8.5 |
+| Robustez | Las métricas de tamaño resisten perder la mitad de las aristas; las de estructura no | `docs/robustez_semana12.md` |
+| Línea base | El pipeline externo es umbral + tier + footprinting; `no-footprint` se reproduce exactamente | `docs/robustez_semana12.md`, 8.4 |
 
-- **Dashboard:** FastAPI + React en lugar de Streamlit, para separar el cálculo
-  (API) de la visualización y enviar al navegador solo subgrafos.
-- **Base de datos:** MariaDB en lugar de SQLite, por el volumen del atlas
-  completo (2.224 genomas, ~10^8 hits FIMO). El MVP no depende de ella: trabaja
-  desde el caché exportado.
-- **Escaneo FIMO:** los hits provienen de la base del proyecto (p ≤ 1e-5). Este
-  repositorio parte de ellos: los exporta con su procedencia y aplica
-  elegibilidad, construcción de red, métricas y validación.
-- **Detección de ortólogos:** grupos ortólogos de eggNOG en lugar de BLAST
-  recíproco o HMM, reutilizando la anotación funcional del atlas.
-- **Gold standard:** regulones curados de RegPrecise 3.2 (E. coli K-12 y
-  Salmonella LT2 validables por coincidencia de locus tags).
+## MVP (semana 8)
 
-## Limitaciones conocidas
+El MVP es un corte vertical del pipeline propio sobre 8 genomas de Enterobacteriaceae (`config/mvp_genomes.txt`), con
+la caché versionada en `data/cache/mvp/`:
 
-- En 6 de los 8 genomas los locus tags de RegPrecise son anteriores a la
-  reanotación PGAP de RefSeq y no coinciden; su validación aparece como
-  `no_overlap` y no es un resultado biológico.
-- Umbrales más permisivos que 1e-5 no se evalúan: la base solo guarda hits con
-  p ≤ 1e-5.
-- Un TF que además es gen blanco cuenta como dos nodos.
-- El tamaño del genoma se estima con el fin del último gen anotado por contig.
+```bash
+make mvp      # transfer_map -> redes con propagación por operones -> métricas -> validación -> informe
+```
+
+El informe queda en `data/results/mvp/report.md`; cada etapa escribe un `*.provenance.json` con los parámetros
+(`config/mvp_params.json`), el commit y el sha256 de sus entradas y salidas. Desde la semana 12 el dashboard muestra el
+atlas y no los resultados del MVP. El dashboard del MVP tal como se entregó está en la etiqueta `mvp-semana8`.
+
+Decisiones del MVP respecto de la propuesta: FastAPI + React en lugar de Streamlit; MariaDB en lugar de SQLite (volumen
+del atlas: ~10⁸ hits FIMO); hits FIMO de la base (p ≤ 1e-5); ortólogos por grupos de eggNOG en lugar de BLAST recíproco;
+gold standard RegPrecise. Limitaciones conocidas: en 6 de los 8 genomas los locus de RegPrecise son anteriores a la
+reanotación PGAP y no coinciden; la base solo guarda hits con p ≤ 1e-5.
+
+## Etiquetas
+
+`mvp-semana8` (entrega del MVP), `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. Las ramas de trabajo
+son `dev` (desarrollo) y `main` (bloques terminados).

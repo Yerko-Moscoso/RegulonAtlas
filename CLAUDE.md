@@ -34,7 +34,9 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - Componentes nuevos: replicar el patrón de un archivo que ya funciona (`useState`/`useEffect`, `Loader2`,
   errores en rojo, `NetworkSelector`, `OrganismSearch`, `utils/atlas.js`).
 - Texto visible del dashboard y mensajes de error de la API en **inglés**. Documentación y comentarios en **español**.
-- No versionar datos generados (`data/cache/`, `data/results/`, `data/audit/*.tsv`).
+- No versionar datos generados (`data/cache/`, `data/results/`, `data/audit/*.tsv`). Excepción: `data/cache/mvp/` (lo usa `make mvp`).
+- `legacy/` es código histórico: no se importa ni se modifica salvo para consultarlo (ver `legacy/README.md`).
+- Nombres visibles de las métricas en el frontend: `frontend/src/utils/metrics.js` (`METRIC_LABELS`).
 - Commits en `dev`; los bloques terminados se fusionan a `main` con una etiqueta (`semanaNN-tema`).
 - **Antes de cada commit**: `make check` (la API importa, sin `get_db` en `src/api`, el frontend compila y pasan
   las pruebas de `tests/`). El hook `pre-commit` (`make hooks`, una vez por clon) revisa el **índice**, no la copia
@@ -53,6 +55,8 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - `motif_key`: `RGnnn` = regulog nnn de RegPrecise; `MX…` = PRODORIC.
 - Validación: nivel TF → operón, universo `genome_tf`, recall sobre todo el gold standard, modos `all` e
   `independent` (sin autoevaluación).
+- Reglas comunes (redes, `KEY`, `TIERS`, regla de `selection`, `load`, normalización, trazabilidad): `src/atlas_common.py`.
+  No copiarlas en otros módulos: importarlas.
 - Métricas propias: `src/networks/atlas_metrics.py`. Las métricas jerárquicas (autorregulación, TF → TF) son solo
   cota inferior: el gen del TF se ubica por nombre en ~20 % de los casos.
 - Comparación entre genomas: por taxón GTDB (`src/networks/atlas_comparison.py`), con los mismos genomas para la métrica
@@ -71,7 +75,8 @@ make comparison-atlas # comparación por taxón -> data/results/comparison/ (des
 make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robustness/ (~8 min, usar nohup)
 make cache-fimo       # fimo_hits + transfer_map de los 312 genomas validables (MariaDB, solo SELECT)
 make baseline-atlas   # línea base del pipeline propio (red de prueba) -> data/results/baseline/
-make check            # verificaciones previas al commit + pytest
+make check            # verificaciones previas al commit (API, frontend, ESLint) + pytest
+make help             # lista de comandos; make atlas = todo el análisis en orden; make web = frontend
 make hooks            # activa scripts/githooks/pre-commit (una vez por clon)
 curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
 ```

@@ -23,7 +23,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 19-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R3) y borradores de mensaje | 19-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
-| [`../README.md`](../README.md) | README del MVP (semana 8): requisitos y cómo reproducir `make mvp` | 28-09-2026 |
+| [`../README.md`](../README.md) | README del proyecto: estructura, instalación, uso, resultados y MVP | 19-10-2026 |
 
 ### Documentos por semana (resultados para la tesis)
 
@@ -33,6 +33,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | 10 | [`validacion_semana10.md`](validacion_semana10.md) | OE5 | Validación propia de las 5 redes contra RegPrecise: definición, proyección del gold standard, P/R/F1, modo `independent`, precisión por tier, hallazgos y limitaciones |
 | 11 | [`metricas_semana11.md`](metricas_semana11.md) | OE4 | Métricas topológicas propias, diferencias con `network_metrics`, comparación entre taxones, concordancia con el pipeline externo y prueba del origen de los motivos (8.5) |
 | 11 | [`correcciones_semana11.md`](correcciones_semana11.md) | — | Correcciones C1–C6: import roto, genoma replacement, trazabilidad, verificación pre-commit, `density` externa y documentación |
+| 12 | [`limpieza_semana12.md`](limpieza_semana12.md) | — | Limpieza del proyecto: respaldo, eliminado y archivado, código común, vistas migradas al atlas, pruebas, ESLint, Makefile, README y segundo análisis |
 | 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas (anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting, submuestreo de aristas) y línea base del pipeline propio desde `fimo_hits` en los 312 genomas validables (sección 8) |
 
 ### Material de referencia
@@ -41,6 +42,8 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 |---|---|
 | [`esquemas.txt`](esquemas.txt) | Salida de `SHOW CREATE TABLE` de `edges`, `motifs`, `operons`, `genes` y `curated_regulons` (copiada de la terminal; tiene códigos de escape al inicio) |
 | `../data/results/mvp/report.md` | Informe generado por `make mvp` (MVP de la semana 8) |
+| [`../legacy/README.md`](../legacy/README.md) | Qué hacía cada script archivado en `legacy/` (ingesta y pipeline piloto) y su ruta anterior |
+| [`../README.md`](../README.md) | Estructura, instalación y uso del proyecto (reescrito en la semana 12) |
 
 ### Dónde están los resultados (no versionados, se regeneran)
 
@@ -61,6 +64,16 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 19-10-2026: limpieza del proyecto
+
+- Respaldo: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12` (`3802d6e`).
+- `1e3a35a` (entorno y código sin uso), `3893d57` (`src/atlas_common.py` y pruebas unitarias), `8978abd` (`legacy/` y
+  genomas fuera de git), `e228f2f` (ESLint), `9b2f4c4` (vistas del MVP migradas al atlas), `0a10f90` (nombres de
+  métricas, carga diferida, Validation dividida), `1cec481` (Makefile). El hook bloqueó dos commits parciales.
+- Verificación: los 20 archivos de resultados son idénticos antes y después; `make mvp` funciona; 46 pruebas pasan;
+  0 errores de ESLint. Etiquetas `semana09-auditoria` y `semana10-validacion` creadas; `semana10-sweep` eliminada.
+  → `limpieza_semana12.md`; contexto, sección 12.1; `README.md`.
 
 ### 19-10-2026: reproducción a nivel de arista
 
