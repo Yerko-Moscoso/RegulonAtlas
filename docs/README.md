@@ -33,7 +33,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | 10 | [`validacion_semana10.md`](validacion_semana10.md) | OE5 | Validación propia de las 5 redes contra RegPrecise: definición, proyección del gold standard, P/R/F1, modo `independent`, precisión por tier, hallazgos y limitaciones |
 | 11 | [`metricas_semana11.md`](metricas_semana11.md) | OE4 | Métricas topológicas propias, diferencias con `network_metrics`, comparación entre taxones, concordancia con el pipeline externo y prueba del origen de los motivos (8.5) |
 | 11 | [`correcciones_semana11.md`](correcciones_semana11.md) | — | Correcciones C1–C6: import roto, genoma replacement, trazabilidad, verificación pre-commit, `density` externa y documentación |
-| 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas: anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting y submuestreo de aristas. La línea base desde `fimo_hits` está pendiente |
+| 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas (anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting, submuestreo de aristas) y línea base del pipeline propio desde `fimo_hits` en los 312 genomas validables (sección 8) |
 
 ### Material de referencia
 
@@ -51,6 +51,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | `data/results/metrics/` | `make metrics-atlas` | `metricas_semana11.md`, sección 11 |
 | `data/results/comparison/` | `make comparison-atlas` | `metricas_semana11.md`, sección 11 |
 | `data/results/robustness/` | `make robustness-atlas` | `robustez_semana12.md`, sección 7 |
+| `data/results/baseline/` | `make cache-fimo`, `make baseline-atlas` | `robustez_semana12.md`, sección 8 |
 | `data/audit/` | `scripts/explore_*.py`, `scripts/audit_summary.py` | Docstring de cada script |
 | `logs/` | Ejecuciones con `> logs/….log` | Bitácora (abajo) |
 
@@ -61,7 +62,16 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
-### 19-10-2026: semana 12, parte A (robustez)
+### 19-10-2026: semana 12, línea base del pipeline propio
+
+- `7bb4940`: `scripts/export_fimo_cache.py` (`make cache-fimo`; 7.376.281 hits y 320.938 pares de `transfer_map`, solo de
+  los 312 genomas validables, verificados con `COUNT(*)`), `src/networks/atlas_baseline.py` (`make baseline-atlas`), API
+  `/atlas/baseline/*`, sección nueva en `Validation.jsx`, `tests/test_api_atlas_baseline.py` (32 pruebas).
+- Resultado: el pipeline externo es umbral + tier + footprinting; `no-footprint` se reproduce exactamente; el
+  footprinting duplica la precisión de `balanced`. Corrige la afirmación del contexto sobre `fimo_hits` (sección 4.5).
+  → `robustez_semana12.md`, sección 8; contexto, sección 12; `preguntas_pendientes.md`, P3, P5 y R4.
+
+### 19-10-2026: semana 12, robustez de las métricas
 
 - `e304236`: `scripts/explore_robustness.py`, `src/networks/atlas_robustness.py` (`make robustness-atlas`), API
   `/atlas/robustness/*`, `Robustness.jsx` reescrita y en el menú, `tests/test_api_atlas_robustness.py`.

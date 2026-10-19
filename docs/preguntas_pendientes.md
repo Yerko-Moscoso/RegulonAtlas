@@ -45,6 +45,10 @@ D33, y ninguno de los dos universos (`genome_tf`, `genome`) la reproduce. Falta 
 Si se calibró con RegPrecise, la curva P/R de la validación también tiene algo de circularidad (`validacion_semana10.md`,
 sección 8).
 
+**Avance (19-10-2026):** la calibración y el método convergent-empirical **no eliminan pares**. Las 5 redes son el umbral
+de p más el techo de tier más el footprinting, y `no-footprint` se reproduce exactamente desde `fimo_hits`
+(`robustez_semana12.md`, sección 8.4). La pregunta queda solo sobre cómo se asigna el valor de `confidence`.
+
 ### P4. ¿Hay una columna canónica para la categoría de `genomes.selection`?
 
 El genoma de reemplazo (`genome_id` 2224, `GCF_002993285.1`, *Gordonia iterans*) tiene
@@ -56,6 +60,11 @@ y que *G. iterans* es el reemplazo previsto de `GCF_050942165.1`.
 
 En `edges` aparecen los dos (por ejemplo, `within_order` y `same_order`) y su precisión es distinta: en `permissive`,
 `within_order` = 0,62 y `same_order` = 0,42 (`validacion_semana10.md`, sección 6.4). La diferencia no está documentada.
+
+**Pista (19-10-2026):** en `transfer_map`, los tiers `within_*` aparecen con la regla `ortholog` y también con las reglas
+de respaldo taxonómico (`tax_fallback_*`); los `same_*` aparecen solo con `ortholog` (`robustez_semana12.md`, sección 8.2).
+Puede que `same_X` signifique "ortólogo del TF en un genoma del mismo X" y `within_X` "dentro del mismo X, por ortólogo o
+por respaldo taxonómico", pero hay que confirmarlo.
 
 ### P6. ¿Se puede acceder al código del pipeline y al registro completo de decisiones (D1–D33)?
 
@@ -98,6 +107,12 @@ lo mismo con las métricas de grado de entrada. Detalle en `metricas_semana11.md
 
 En gran parte, sí. En `balanced`, el tamaño del genoma y la oferta de motivos de su misma familia, orden o clase explican el
 88 % del efecto del filo sobre el número de TF. Detalle en `metricas_semana11.md`, sección 8.5.
+
+### R4. ¿Qué filtros aplica el pipeline externo? (19-10-2026)
+
+A nivel de pares TF–operón: umbral de p, techo de tier de transferencia y footprinting filogenético. `no-footprint` se
+reproduce exactamente desde `fimo_hits` (Jaccard 1,0), y las otras 4 redes están 100 % contenidas en la línea base con su
+mismo umbral y tier. Detalle en `robustez_semana12.md`, sección 8.4.
 
 ## Borradores de mensaje
 

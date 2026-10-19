@@ -95,7 +95,7 @@ El atlas son exactamente **2.224 genomas**. Los otros 420 son auxiliares.
 - FIMO se ejecutó una sola vez para los 2.224 genomas con un umbral permisivo (p ≤ 1e-4): 311,1M hits de TF, 6,6M de reguladores de respuesta y 27.582 hits de RNA (cmscan).
 - En MariaDB solo se cargaron los hits con **p ≤ 1e-5**. Los resultados crudos completos siguen en archivos `.tsv.gz`.
 - `fimo_hits` es el escaneo crudo, **no es la red regulatoria**. Las redes se materializan aparte (`networks` + `edges`) aplicando umbrales a posteriori.
-- `fimo_hits` se escaneó sin el filtro de elegibilidad de `transfer_map`, así que incluye combinaciones TF–genoma que `transfer_map` marcaría como no elegibles.
+- ~~`fimo_hits` se escaneó sin el filtro de elegibilidad de `transfer_map`.~~ **Corregido en la semana 12:** en la base, todos los hits de los 312 genomas validables tienen su par (motivo, genoma) en `transfer_map`, que solo guarda pares elegibles (mediana de 1.075 de 2.141 motivos por genoma). La afirmación original probablemente solo vale para los `.tsv.gz` crudos (`robustez_semana12.md`, sección 8.2).
 
 ---
 
@@ -169,6 +169,7 @@ El investigador generó cinco redes para todo el atlas el 2026-09-03 (decisión 
 | D33 | Las cinco redes materializadas y su benchmark P/R/F1 |
 | Post-MVP | Los datos de la base son la fuente principal; el pipeline propio pasa a ser validador independiente |
 | Semana 10 | Validación propia a nivel TF–operón, universo (genoma, TF) curado, recall sobre todo el gold standard y modo `independent` sin autoevaluación (sección 10.2) |
+| Semana 12 (línea base) | Red de prueba desde `fimo_hits` solo en los 312 genomas validables (no en el atlas); variantes por umbral y techo de tier, sin footprinting; misma validación que la semana 10 |
 | Semana 12 | Robustez en dos partes: entre redes (anidamiento, orden, footprinting) y submuestreo de aristas (random, degree-biased, low-confidence; 10–75 %; clases robusta ≥ 0,90 / moderada ≥ 0,70). `n_edges` es trivial en el submuestreo (sección 12) |
 | Semana 11 | Métricas propias sobre el grafo TF (nombre normalizado) → operón; `network_metrics` solo como referencia. Comparación entre genomas por taxón GTDB (no PCA ni clusters), porque es la única con equivalente externo (sección 11.2) |
 
@@ -397,7 +398,7 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 
 ---
 
-## 12. Semana 12 — trabajo realizado (19 de octubre, parte A)
+## 12. Semana 12 — trabajo realizado (19 de octubre)
 
 Detalle completo en `docs/robustez_semana12.md`.
 
@@ -418,7 +419,12 @@ Detalle completo en `docs/robustez_semana12.md`.
 - **Vista:** `Robustness.jsx` reescrita y en el menú. El router antiguo `/robustness` del MVP sigue respondiendo "pending".
 - **Corrección:** `n_edges` es trivial en las tres estrategias (`38222a8`). El cálculo se repitió con el árbol limpio.
 - **Pruebas:** 28 (`tests/test_api_atlas_robustness.py`).
-- **Pendiente (parte B):** la línea base desde `fimo_hits` necesita exportar 54,6 M filas de MariaDB. Espera la aprobación del usuario.
+- **Línea base del pipeline propio (análisis C).** El usuario aprobó hacerla solo en los 312 genomas validables, porque es una red de prueba.
+  - **Datos:** `scripts/export_fimo_cache.py` (`make cache-fimo`) → `fimo_hits_validation.parquet` (7.376.281 hits) y `transfer_map_validation.parquet` (320.938 pares), verificados con `COUNT(*)` por lote.
+  - **Módulo:** `src/networks/atlas_baseline.py` (`make baseline-atlas`). Variantes `scan`, `order_ceiling` y `class_ceiling` a p ≤ 1e-5…1e-8, validadas igual que la semana 10.
+  - **Hallazgo clave:** el pipeline externo es **umbral + techo de tier + footprinting** a nivel de pares. `no-footprint` se reproduce **exactamente** desde los hits crudos (Jaccard 1,0), y las otras 4 redes están 100 % dentro de su línea base. El footprinting conserva entre el 27 y el 51 % de los pares; el método convergent-empirical y la calibración no eliminan pares.
+  - **Aporte de los filtros:** con el mismo umbral y tier, el footprinting duplica la precisión de `balanced` (0,312 → 0,612; F1 0,378 → 0,431). Con un tamaño similar, `balanced` supera a la mejor línea base, sobre todo en modo `independent` (F1 0,318 frente a 0,255).
+  - **Integración:** API `/api/v1/atlas/baseline/{manifest, summary, reproduction}` y sección *Own baseline vs external networks* en `Validation.jsx`. 32 pruebas.
 
 ---
 
@@ -437,12 +443,14 @@ data/cache/atlas/*.parquet       data/cache/mvp/
         ├──────────────► data/results/comparison/
         │   make robustness-atlas (lee metrics/ y edges)
         ├──────────────► data/results/robustness/
+        │   make cache-fimo (312 genomas)  →  make baseline-atlas
+        ├──────────────► data/results/baseline/
         │                               ▼
         │                        data/results/mvp/ (pipeline propio)
         ▼                               │
 FastAPI src/api ── routers: system, graphs, metrics, genomes, motifs,
                    robustness (MVP / pendiente) + atlas + atlas_validation
-                   + atlas_metrics + atlas_comparison + atlas_robustness
+                   + atlas_metrics + atlas_comparison + atlas_robustness + atlas_baseline
         │
         ▼
 React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/api.js
@@ -459,7 +467,7 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 | 9 | Auditoría, caché del atlas, API `/atlas` y `RegulatoryNetwork` (hecho) |
 | 10 | Validación propia de las 5 redes contra RegPrecise, modo independiente, curva P/R, API y `Validation.jsx`; `Metrics.jsx` y `Fingerprints.jsx` con datos reales (hecho). Pendiente: punto del MVP en la curva y RegulonDB si se aprueba |
 | 11 | Métricas propias con NetworkX para los 2.644 genomas y las 5 redes, comparadas con `network_metrics`; comparación por filo/clase/orden/familia; `Metrics`, `Fingerprints` y `Comparison` sobre las métricas propias; `make check` y pruebas (hecho). No se hizo el enriquecimiento funcional opcional |
-| 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness` (hecho). Línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) contra las redes externas: pendiente de aprobar la exportación |
+| 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness`; línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) en los 312 genomas validables, contra las redes externas (hecho) |
 | 13 | Componentes restantes (`Pipeline`, `DataProvenance`, `MVP`) y revisión completa. Congelamiento de funciones |
 | 14 | Pruebas (ampliar `tests/`, que ya tiene las pruebas de humo de métricas y comparación; prueba de punta a punta desde un clon limpio con `make all`), README y etiqueta `v1.0` |
 | 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
@@ -471,7 +479,7 @@ make check / pre-commit ── API importa, sin get_db, frontend compila, pytest
 
 - **Semana 10 (hecho):** la validación propia evalúa las 5 redes de forma independiente desde la caché.
 - **Semana 11 (hecho):** su cálculo con NetworkX genera las métricas propias, con una definición de grafo documentada, y la comparación entre taxones.
-- **Semana 12:** construye la línea base sin filtros sofisticados para medir cuánto aportan los filtros externos.
+- **Semana 12 (hecho):** la línea base sin filtros sofisticados mide cuánto aportan los filtros externos y reproduce exactamente `no-footprint`.
 - **Semanas 13–14:** queda integrado en `make all` con pruebas, como prueba de reproducibilidad.
 
 ### Plan de RegulonDB (si se aprueba)
@@ -506,7 +514,7 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 
 - Corregir la línea 8 del `.env`.
 - Revisar en el navegador `Robustness.jsx` (reescrita en la semana 12).
-- Decidir si se exporta `fimo_hits` para la línea base de la semana 12 (54,6 M filas; alternativa: solo los 312 genomas validables).
+- Revisar en el navegador la sección *Own baseline vs external networks* de `Validation.jsx`.
 - Revisar en el navegador `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
 - Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`). Los envía el usuario.
 - *(Hecho el 19-10-2026: `make validate-atlas` repetido con el árbol limpio, resultados idénticos; hipótesis del origen de los motivos comprobada.)*
@@ -581,6 +589,7 @@ curl -s "localhost:8000/api/v1/atlas/validation/summary?universe=genome_tf" | py
 # Métricas propias, comparación entre taxones y verificaciones
 make metrics-atlas && make comparison-atlas
 nohup make robustness-atlas > logs/robustness_atlas.log 2>&1 &   # ~8 min
+make cache-fimo && make baseline-atlas                            # línea base, 312 genomas (~3 min)
 make check            # antes de cada commit; make hooks una vez por clon
 
 # Chequeos de datos

@@ -6,7 +6,7 @@ desarrollador; las redes y la base las generó un investigador con un pipeline e
 
 Contexto completo: `docs/contexto_regulomeatlas.md`. Léelo al empezar una tarea que no sea trivial.
 Validación: `docs/validacion_semana10.md`. Métricas y comparación: `docs/metricas_semana11.md`.
-Robustez: `docs/robustez_semana12.md`.
+Robustez y línea base: `docs/robustez_semana12.md`.
 Preguntas abiertas: `docs/preguntas_pendientes.md`.
 **Índice de toda la documentación y bitácora: `docs/README.md`.** Cada documento nuevo y cada bloque de trabajo se
 registra ahí, y al terminar una tarea se le dice al usuario dónde quedó documentada.
@@ -58,6 +58,7 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - Comparación entre genomas: por taxón GTDB (`src/networks/atlas_comparison.py`), con los mismos genomas para la métrica
   propia y la externa; taxones con ≥ 5 genomas. La `density` externa usa otra definición (todos los operones del genoma).
 - `network_metrics` y el benchmark D33 son externos: se muestran solo como referencia.
+- La línea base desde `fimo_hits` es una red de **prueba** solo en los 312 genomas validables; no se muestra como red del atlas.
 
 ## Comandos
 
@@ -67,7 +68,9 @@ make cache-genes      # genes_all.parquet (9,44M genes)
 make validate-atlas   # validación contra RegPrecise -> data/results/validation/
 make metrics-atlas    # métricas NetworkX -> data/results/metrics/
 make comparison-atlas # comparación por taxón -> data/results/comparison/ (después de metrics-atlas)
-make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robustness/ (~15 min, usar nohup)
+make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robustness/ (~8 min, usar nohup)
+make cache-fimo       # fimo_hits + transfer_map de los 312 genomas validables (MariaDB, solo SELECT)
+make baseline-atlas   # línea base del pipeline propio (red de prueba) -> data/results/baseline/
 make check            # verificaciones previas al commit + pytest
 make hooks            # activa scripts/githooks/pre-commit (una vez por clon)
 curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
@@ -78,4 +81,6 @@ curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
 - E. coli K-12 (`GCF_000005845.2`) en balanced: 118 TF, 342 operones diana, 485 pares TF–operón.
 - Métricas propias: 2.224 genomas con `in_atlas` en cada una de las 5 redes (`tests/test_api_atlas_metrics.py`).
 - Comparación, balanced: 10 filos, 13 clases, 48 órdenes y 83 familias con ≥ 5 genomas (`tests/test_api_atlas_comparison.py`).
+- Línea base: `no-footprint` = hits con p ≤ 1e-7 y tier ≤ same_order (Jaccard 1,0); todas las redes externas están 100 %
+  dentro de su línea base (`tests/test_api_atlas_baseline.py`).
 - Validación balanced, `all` / `genome_tf`: P = 0,612, R = 0,332, F1 = 0,431 (`tests/test_api_atlas_validation.py`).

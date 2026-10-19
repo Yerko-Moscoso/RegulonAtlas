@@ -1,7 +1,7 @@
-# Robustez de las métricas propias (semana 12)
+# Robustez de las métricas y línea base del pipeline propio (semana 12)
 
-*19 de octubre de 2026. Primera parte de la semana 12: robustez de las métricas. La línea base del pipeline propio desde
-`fimo_hits` (segunda parte) queda pendiente de aprobación (sección 8).*
+*19 de octubre de 2026. Análisis A y B: robustez de las métricas (secciones 1 a 7). Análisis C: línea base del pipeline
+propio desde `fimo_hits` en los 312 genomas validables (sección 8), aprobada por el usuario el mismo día.*
 
 ## 1. Objetivo
 
@@ -18,6 +18,7 @@ Saber **cuánto se puede confiar en las métricas propias** de la semana 11 fren
 |---|---|---|
 | A. Entre redes | ¿Depende la conclusión de la red elegida? | Plan del proyecto (contexto, sección 14) |
 | B. Submuestreo de aristas | ¿Es estable la métrica si la red está incompleta? | Prototipo de `Robustness.jsx` (Figma) |
+| C. Línea base desde `fimo_hits` | ¿Cuánto aportan los filtros del pipeline externo? | Plan del proyecto; 312 genomas validables (sección 8) |
 
 Exploración previa: `scripts/explore_robustness.py` (salida en `logs/explore_robustness.log` y `data/audit/robustness_*`).
 Módulo final: `src/networks/atlas_robustness.py` (`make robustness-atlas`).
@@ -196,6 +197,8 @@ Fracción de combinaciones (3 estrategias × 5 redes) en que la métrica es robu
 
 ```bash
 make robustness-atlas    # PYTHONPATH=. python src/networks/atlas_robustness.py  (24 procesos, ~8 min)
+make cache-fimo          # fimo_hits y transfer_map de los 312 genomas validables (~1 min, MariaDB solo SELECT)
+make baseline-atlas      # PYTHONPATH=. python src/networks/atlas_baseline.py   (~2 min)
 make check               # incluye tests/test_api_atlas_robustness.py
 ```
 
@@ -215,18 +218,126 @@ valores de Spearman no cambiaron (misma semilla); solo cambió la clase de `n_ed
 | `data/results/robustness/subsampling_genomes.parquet` | Por (red, genoma, estrategia, tasa, métrica): valor original, media, DE y retención |
 | `data/results/robustness/subsampling_summary.tsv` | Por (red, estrategia, tasa, métrica): retención mediana y percentiles 10 y 90, Spearman y clase |
 | `data/results/robustness/manifest.json` | Definición, parámetros, commit y `git_dirty` |
+| `data/results/baseline/summary.tsv` | P/R/F1 de la línea base por variante, umbral, modo y universo |
+| `data/results/baseline/vs_networks.tsv` | Línea base y redes externas en una tabla (pares contados en los genomas validables) |
+| `data/results/baseline/reproduction.tsv` | Cada red externa frente a la línea base con su umbral y tier |
+| `data/results/baseline/manifest.json` | Definición, alcance (312 genomas), `hits_in_transfer_map`, commit `7bb4940`, `git_dirty: false` |
 
-## 8. Pendiente: línea base desde `fimo_hits`
+## 8. Análisis C: línea base del pipeline propio desde `fimo_hits`
 
-El plan incluye una red simple del pipeline propio (umbral de p de 1e-5 a 1e-8, sin footprinting ni tiers) para medir cuánto
-aportan los filtros externos. Necesita exportar `fimo_hits` desde MariaDB (54,6 millones de filas), una consulta pesada sobre
-una base compartida, y está **pendiente de aprobación del usuario**. Según el plan, es lo primero que se recorta si falta
-tiempo. Una alternativa menor es hacerla solo para los 312 genomas validables.
+### 8.1 Objetivo y alcance
+
+Medir **cuánto aportan los filtros del pipeline externo**, armando desde los hits crudos de FIMO una red simple, sin
+footprinting ni calibración, y validándola igual que las 5 redes. Es una **red de prueba**: por decisión del usuario se
+construye solo en los **312 genomas validables** (los que tienen regulones curados de RegPrecise), no en todo el atlas.
+
+### 8.2 Datos
+
+`scripts/export_fimo_cache.py` (`make cache-fimo`) exporta desde MariaDB, solo con SELECT, por lotes de 10 genomas y con los
+índices `idx_fh_genome` e `idx_tm_genome`:
+
+| Archivo (en `data/cache/atlas/`) | Filas | Verificación |
+|---|---|---|
+| `fimo_hits_validation.parquet` | 7.376.281 hits (p ≤ 1e-5) | `COUNT(*)` por lote = filas exportadas |
+| `transfer_map_validation.parquet` | 320.938 pares (motivo, genoma) | `COUNT(*)` por lote = filas exportadas |
+| `validation_genomes.tsv` | 312 genomas | Misma proyección del gold standard que la validación |
+
+La exportación tardó 56 segundos (`logs/export_fimo_cache.log`). Es el 13,5 % de los 54,6 M hits de la base.
+
+**Hallazgo sobre los datos.** `transfer_map` guarda **solo pares elegibles**: una mediana de 1.075 de los 2.141 motivos por
+genoma. Los 308.974 pares (motivo, genoma) con hits están **todos** en `transfer_map`. Por lo tanto, en la base
+`fimo_hits` ya está restringido a pares elegibles, al menos en los genomas validables. Esto corrige lo que decía el
+contexto (sección 4.5), que probablemente solo vale para los `.tsv.gz` crudos.
+
+**Pista sobre los tiers (`preguntas_pendientes.md`, P5).** En `transfer_map`, los tiers `within_*` aparecen con la regla
+`ortholog` y también con reglas de respaldo taxonómico (`tax_fallback_*`), mientras que los tiers `same_*` aparecen solo
+con `ortholog`.
+
+### 8.3 Definición
+
+| Aspecto | Decisión |
+|---|---|
+| Variantes | `scan`: todos los hits con p ≤ umbral. `order_ceiling`: además, tier de transferencia hasta `same_order` (el techo de `validated` y `no-footprint`). `class_ceiling`: hasta `same_class` (el techo de `balanced`). |
+| Umbrales | p ≤ 1e-5, 1e-6, 1e-7 y 1e-8 |
+| Par | El hit apunta al operón de su gen (`genes_validation.operon_id`). TF por nombre normalizado. Un par por (genoma, TF, operón) con el mejor −log10 p. |
+| Validación | La misma de la semana 10 (`src/validation/atlas.py`): modos `all` e `independent`, universos `genome_tf` y `genome`, recall sobre todo el gold standard (37.266 pares) |
+| Sin incluir | Footprinting filogenético, calibración de `confidence` y método convergent-empirical |
+| Reproducción | Cada red externa frente a la línea base con **su** umbral y **su** techo de tier (tabla `networks`), comparando pares |
+
+Módulo: `src/networks/atlas_baseline.py` (`make baseline-atlas`).
+
+### 8.4 El pipeline externo es umbral + tier + footprinting
+
+Pares en los 312 genomas validables:
+
+| Red externa | Umbral · tier · footprint | Pares de la línea base | Pares de la red | Red dentro de la línea base | Línea base que conserva la red |
+|---|---|---|---|---|---|
+| validated | 1e-7 · same_order · ≥ 10 | 23.992 | 12.271 | **100 %** | 51,1 % |
+| high-precision | 1e-8 · same_family · ≥ 50 | 6.110 | 2.049 | **100 %** | 33,5 % |
+| balanced | 1e-6 · same_class · ≥ 10 | 128.993 | 35.107 | **100 %** | 27,2 % |
+| permissive | 1e-6 · cross_phylum · ≥ 1 | 530.174 | 169.055 | **100 %** | 31,9 % |
+| **no-footprint** | 1e-7 · same_order · 0 | 23.992 | 23.992 | **100 %** | **100 %** (Jaccard 1,0) |
+
+- **`no-footprint` se reproduce exactamente** a partir de los hits crudos, usando solo el umbral de p y el techo de tier.
+- Las otras cuatro redes son **subconjuntos** de su línea base. Lo único que las separa es el footprinting, que conserva
+  entre el 27 % y el 51 % de los pares.
+- Por lo tanto, a nivel de pares TF–operón, el método convergent-empirical y la calibración de `confidence` **no eliminan
+  pares**: solo asignan la `confidence`. Esto responde en parte a P3 de `preguntas_pendientes.md`.
+
+### 8.5 Precisión y recall (universo `genome_tf`)
+
+| Red | Pares | P `all` | R `all` | F1 `all` | P `indep.` | R `indep.` | F1 `indep.` |
+|---|---|---|---|---|---|---|---|
+| **balanced** (externa) | 35.107 | 0,612 | 0,332 | **0,431** | 0,582 | 0,219 | **0,318** |
+| validated (externa) | 12.271 | 0,784 | 0,220 | 0,343 | 0,762 | 0,089 | 0,160 |
+| no-footprint (externa) | 23.992 | 0,601 | 0,309 | 0,408 | 0,555 | 0,107 | 0,179 |
+| permissive (externa) | 169.055 | 0,342 | 0,434 | 0,383 | 0,301 | 0,329 | 0,314 |
+| scan, p ≤ 1e-5 | 3.095.720 | 0,042 | 0,689 | 0,079 | 0,035 | 0,520 | 0,066 |
+| scan, p ≤ 1e-6 | 533.883 | 0,162 | 0,556 | 0,251 | 0,130 | 0,387 | 0,195 |
+| scan, p ≤ 1e-7 | 116.815 | 0,378 | 0,412 | 0,394 | 0,306 | 0,256 | 0,279 |
+| scan, p ≤ 1e-8 | 35.515 | 0,560 | 0,283 | 0,376 | 0,467 | 0,156 | 0,233 |
+| order_ceiling, p ≤ 1e-6 | 63.943 | 0,399 | 0,440 | 0,418 | 0,382 | 0,183 | 0,248 |
+| order_ceiling, p ≤ 1e-7 (= no-footprint) | 23.992 | 0,601 | 0,309 | 0,408 | 0,555 | 0,107 | 0,179 |
+| class_ceiling, p ≤ 1e-6 | 128.993 | 0,312 | 0,478 | 0,378 | 0,274 | 0,281 | 0,278 |
+| class_ceiling, p ≤ 1e-7 | 38.249 | 0,535 | 0,339 | 0,415 | 0,471 | 0,175 | 0,255 |
+| class_ceiling, p ≤ 1e-8 | 16.595 | 0,654 | 0,224 | 0,333 | 0,575 | 0,099 | 0,169 |
+
+*(El detalle con el universo `genome` y todas las combinaciones está en `data/results/baseline/summary.tsv`.)*
+
+### 8.6 Hallazgos del análisis C
+
+1. **El footprinting es el filtro que más aporta.** Con el mismo umbral y tier (`class_ceiling` 1e-6 frente a `balanced`),
+   el footprinting quita el 73 % de los pares y **duplica la precisión** (0,312 → 0,612). El F1 sube de 0,378 a 0,431 en
+   modo `all` y de 0,278 a 0,318 en modo `independent`.
+2. **Con el mismo tamaño, los filtros externos siguen ganando**, y la ventaja es mayor sin autoevaluación.
+   `class_ceiling` 1e-7 tiene un tamaño parecido a `balanced` (38 mil frente a 35 mil pares):
+   - modo `all`: P 0,535 frente a 0,612, con el mismo recall (0,339 frente a 0,332);
+   - modo `independent`: P 0,471 frente a 0,582 y R 0,175 frente a 0,219.
+
+   El footprinting no equivale a subir el umbral: elige mejor qué aristas quitar.
+3. **Una red simple bien ajustada queda cerca en modo `all`, pero no en `independent`.** La mejor línea base
+   (`order_ceiling` 1e-6, F1 0,418) queda a 0,013 de `balanced` (0,431). En modo `independent`, la mejor (`scan` 1e-7,
+   F1 0,279) queda a 0,04. Parte de la ventaja aparente de las redes simples viene de la autoevaluación.
+4. **El techo de tier ayuda poco frente a subir el umbral.** A igual umbral, limitar el tier mejora la precisión (por
+   ejemplo, 1e-7: 0,378 en `scan` frente a 0,535 en `class_ceiling`), pero `scan` 1e-8 consigue una precisión parecida
+   (0,560) solo con el umbral.
+5. **El escaneo sin filtros del MVP no sirve como red** (p ≤ 1e-5: P = 0,042 con R = 0,689). Confirma la decisión de la
+   semana 9 de usar las redes de la base como fuente principal.
+
+### 8.7 Limitaciones del análisis C
+
+- Solo cubre los 312 genomas validables, así que no describe el atlas completo.
+- No se puede aplicar el footprinting propio: los datos de footprint (`footprint_enrichment`) solo existen para las aristas
+  ya materializadas. Por eso el aporte del footprinting se mide por diferencia y no se reproduce.
+- La base solo guarda hits con p ≤ 1e-5, así que la línea base no puede bajar de ese umbral.
+- Mismas limitaciones del gold standard que en la semana 10: 28 % sin mapear y RegPrecise incompleto.
 
 ## 9. Integración en el sistema
 
-- API (solo lectura): `/api/v1/atlas/robustness/{manifest, nesting, between, footprint, subsampling, subsampling/genome}` en
-  `src/api/routers/atlas_robustness.py`. El router antiguo `/robustness` del MVP sigue respondiendo "pending".
+- API (solo lectura):
+  - `/api/v1/atlas/robustness/{manifest, nesting, between, footprint, subsampling, subsampling/genome}` en
+    `src/api/routers/atlas_robustness.py`. El router antiguo `/robustness` del MVP sigue respondiendo "pending".
+  - `/api/v1/atlas/baseline/{manifest, summary, reproduction}` en `src/api/routers/atlas_baseline.py`.
 - Vista `Robustness.jsx` (*Metric Robustness*), en el menú lateral:
   - curva de estabilidad del orden por estrategia;
   - curva de degradación del genoma elegido frente a la mediana del atlas;
@@ -234,6 +345,8 @@ tiempo. Una alternativa menor es hacerla solo para los 312 genomas validables.
   - ficha del genoma (original, media ± DE, retención);
   - matrices de anidamiento y de orden entre redes, y tabla del efecto del footprinting.
 - Hasta esta semana, la vista llamaba a `getNetworkRobustness` y `getEdgeSubsampling`, que no existían en `api.js`.
+- Vista `Validation.jsx`: nueva sección *Own baseline vs external networks* al final, con la tabla de reproducción y la de
+  P/R/F1 (sigue el modo y el universo elegidos en la vista).
 
 ## 10. Limitaciones
 
