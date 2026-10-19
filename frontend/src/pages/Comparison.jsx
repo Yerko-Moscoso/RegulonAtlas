@@ -220,6 +220,11 @@ export default function Comparison() {
             <span className="font-semibold">{nSame} of {comparable.length}</span> reach the same Kruskal–Wallis
             conclusion. Absolute values can differ (own edges are one per TF–operon pair), so the comparison is by rank.
             Taxa with at least 5 genomes; network_metrics is external and shown only as a reference.
+            <div className="mt-1.5 text-[#64748B]">
+              Caution: differences between taxa largely reflect the method, not only biology. In balanced, genome size
+              plus the number of motifs that come from the same family, order or class explain 88% of the phylum effect
+              on the number of TFs (scripts/explore_motif_origin.py).
+            </div>
           </div>
         </div>
       )}
