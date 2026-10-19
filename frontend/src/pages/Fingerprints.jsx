@@ -14,6 +14,7 @@ import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
+import { METRIC_LABELS } from "../utils/metrics";
 
 // Huella topológica de cada genoma: su posición (percentil) en cada métrica
 // respecto de los genomas del atlas con aristas en la red elegida. El percentil
@@ -26,14 +27,14 @@ const fmtDec = (digits) => (v) => (v == null ? "—" : Number(v).toFixed(digits)
 const fmtPct = (v) => (v == null ? "—" : `${(Number(v) * 100).toFixed(1)}%`);
 
 const FP_METRICS = [
-  { key: "n_edges", label: "Edges", fmt: fmtInt },
-  { key: "n_tf", label: "TFs", fmt: fmtInt },
-  { key: "edges_per_tf", label: "Edges per TF", fmt: fmtDec(2) },
-  { key: "frac_multi_reg", label: "Multi-regulated targets", fmt: fmtPct },
-  { key: "out_degree_gini", label: "Out-degree Gini", fmt: fmtDec(2) },
-  { key: "hub_share", label: "Hub share", fmt: fmtPct },
-  { key: "frac_genome_targeted", label: "Genome targeted", fmt: fmtPct },
-  { key: "frac_largest", label: "Largest component", fmt: fmtPct },
+  { key: "n_edges", label: METRIC_LABELS.n_edges, fmt: fmtInt },
+  { key: "n_tf", label: METRIC_LABELS.n_tf, fmt: fmtInt },
+  { key: "edges_per_tf", label: METRIC_LABELS.edges_per_tf, fmt: fmtDec(2) },
+  { key: "frac_multi_reg", label: METRIC_LABELS.frac_multi_reg, fmt: fmtPct },
+  { key: "out_degree_gini", label: METRIC_LABELS.out_degree_gini, fmt: fmtDec(2) },
+  { key: "hub_share", label: METRIC_LABELS.hub_share, fmt: fmtPct },
+  { key: "frac_genome_targeted", label: METRIC_LABELS.frac_genome_targeted, fmt: fmtPct },
+  { key: "frac_largest", label: METRIC_LABELS.frac_largest, fmt: fmtPct },
 ];
 
 const MAX_PINNED = 4;

@@ -7,6 +7,7 @@ import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, selectClass } from "../utils/atlas";
+import { METRIC_LABELS } from "../utils/metrics";
 
 // Robustez de las métricas propias (make robustness-atlas):
 //   1. submuestreo de aristas: ¿se conserva el orden de los genomas si la red está incompleta?
@@ -20,21 +21,21 @@ const STRATEGIES = [
 const RATES = [0.1, 0.25, 0.5, 0.75];
 
 const METRICS = [
-  { key: "n_tf", label: "TFs", digits: 0 },
-  { key: "n_targets", label: "Target operons", digits: 0 },
-  { key: "n_edges", label: "TF–operon pairs", digits: 0 },
-  { key: "density", label: "Density", digits: 4 },
-  { key: "edges_per_tf", label: "Edges per TF", digits: 2 },
-  { key: "frac_multi_reg", label: "Multi-regulated fraction", digits: 3 },
-  { key: "frac_genome_targeted", label: "Genome fraction targeted", digits: 3 },
-  { key: "frac_largest", label: "Largest component fraction", digits: 3 },
-  { key: "mean_out_degree", label: "Mean out-degree", digits: 2 },
-  { key: "max_out_degree", label: "Max out-degree", digits: 0 },
-  { key: "mean_in_degree", label: "Mean in-degree", digits: 2 },
-  { key: "out_degree_entropy", label: "Out-degree entropy", digits: 3 },
-  { key: "out_degree_gini", label: "Out-degree Gini", digits: 3 },
-  { key: "hub_share", label: "Hub share", digits: 3 },
-  { key: "n_components", label: "Connected components", digits: 0 },
+  { key: "n_tf", label: METRIC_LABELS.n_tf, digits: 0 },
+  { key: "n_targets", label: METRIC_LABELS.n_targets, digits: 0 },
+  { key: "n_edges", label: METRIC_LABELS.n_edges, digits: 0 },
+  { key: "density", label: METRIC_LABELS.density, digits: 4 },
+  { key: "edges_per_tf", label: METRIC_LABELS.edges_per_tf, digits: 2 },
+  { key: "frac_multi_reg", label: METRIC_LABELS.frac_multi_reg, digits: 3 },
+  { key: "frac_genome_targeted", label: METRIC_LABELS.frac_genome_targeted, digits: 3 },
+  { key: "frac_largest", label: METRIC_LABELS.frac_largest, digits: 3 },
+  { key: "mean_out_degree", label: METRIC_LABELS.mean_out_degree, digits: 2 },
+  { key: "max_out_degree", label: METRIC_LABELS.max_out_degree, digits: 0 },
+  { key: "mean_in_degree", label: METRIC_LABELS.mean_in_degree, digits: 2 },
+  { key: "out_degree_entropy", label: METRIC_LABELS.out_degree_entropy, digits: 3 },
+  { key: "out_degree_gini", label: METRIC_LABELS.out_degree_gini, digits: 3 },
+  { key: "hub_share", label: METRIC_LABELS.hub_share, digits: 3 },
+  { key: "n_components", label: METRIC_LABELS.n_components, digits: 0 },
 ];
 
 const CLASSES = {

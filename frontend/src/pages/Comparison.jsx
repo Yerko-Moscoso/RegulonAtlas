@@ -6,6 +6,7 @@ import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import { DEFAULT_NETWORK, fmtInt, selectClass } from "../utils/atlas";
+import { METRIC_LABELS } from "../utils/metrics";
 
 // Comparación de las métricas propias entre taxones de GTDB (make comparison-atlas).
 // Cada taxón se resume con los mismos genomas para la métrica propia y para network_metrics
@@ -20,17 +21,17 @@ const LEVELS = [
 
 // Orden = de mayor a menor concordancia con network_metrics en la exploración (explore_comparison.py)
 const METRICS = [
-  { key: "n_edges", label: "TF–operon pairs", digits: 0 },
-  { key: "n_targets", label: "Target operons", digits: 0 },
-  { key: "n_tf", label: "TFs", digits: 0 },
-  { key: "max_out_degree", label: "Max out-degree", digits: 0 },
-  { key: "n_components", label: "Connected components", digits: 0 },
-  { key: "frac_largest", label: "Largest component fraction", digits: 3 },
-  { key: "mean_out_degree", label: "Mean out-degree", digits: 2 },
-  { key: "max_in_degree", label: "Max in-degree", digits: 0 },
-  { key: "mean_in_degree", label: "Mean in-degree", digits: 2 },
-  { key: "frac_multi_reg", label: "Multi-regulated fraction", digits: 3 },
-  { key: "density", label: "Density", digits: 4 },
+  { key: "n_edges", label: METRIC_LABELS.n_edges, digits: 0 },
+  { key: "n_targets", label: METRIC_LABELS.n_targets, digits: 0 },
+  { key: "n_tf", label: METRIC_LABELS.n_tf, digits: 0 },
+  { key: "max_out_degree", label: METRIC_LABELS.max_out_degree, digits: 0 },
+  { key: "n_components", label: METRIC_LABELS.n_components, digits: 0 },
+  { key: "frac_largest", label: METRIC_LABELS.frac_largest, digits: 3 },
+  { key: "mean_out_degree", label: METRIC_LABELS.mean_out_degree, digits: 2 },
+  { key: "max_in_degree", label: METRIC_LABELS.max_in_degree, digits: 0 },
+  { key: "mean_in_degree", label: METRIC_LABELS.mean_in_degree, digits: 2 },
+  { key: "frac_multi_reg", label: METRIC_LABELS.frac_multi_reg, digits: 3 },
+  { key: "density", label: METRIC_LABELS.density, digits: 4 },
 ];
 
 const AGREEMENT = {

@@ -1,15 +1,27 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+import { Loader2 } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-import Dashboard from "./pages/Dashboard";
-import Organisms from "./pages/Organisms";
-import OrganismDetail from "./pages/OrganismDetail";
-import RegulatoryNetwork from "./pages/RegulatoryNetwork";
-import Metrics from "./pages/Metrics";
-import Validation from "./pages/Validation";
-import Fingerprints from "./pages/Fingerprints";
-import Comparison from "./pages/Comparison";
-import Robustness from "./pages/Robustness";
+
+// Cada vista se carga al abrirla (React.lazy): Cytoscape y Recharts ya no van en el paquete inicial.
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Organisms = lazy(() => import("./pages/Organisms"));
+const OrganismDetail = lazy(() => import("./pages/OrganismDetail"));
+const RegulatoryNetwork = lazy(() => import("./pages/RegulatoryNetwork"));
+const Metrics = lazy(() => import("./pages/Metrics"));
+const Validation = lazy(() => import("./pages/Validation"));
+const Fingerprints = lazy(() => import("./pages/Fingerprints"));
+const Comparison = lazy(() => import("./pages/Comparison"));
+const Robustness = lazy(() => import("./pages/Robustness"));
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center py-20 text-sm text-[#64748B] gap-2">
+      <Loader2 className="w-5 h-5 text-[#3A9D7C] animate-spin" />
+      Loading view…
+    </div>
+  );
+}
 
 // Referencia con gold standard (RegulonDB); también es el organismo por defecto.
 const DEFAULT_ORGANISM = "GCF_000005845.2";
@@ -43,6 +55,7 @@ export default function App() {
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Header page={page} />
         <main className="flex-1 overflow-auto p-6">
+          <Suspense fallback={<PageLoader />}>
           {page === "dashboard" && <Dashboard navigate={navigate} />}
           {page === "organisms" && <Organisms navigate={navigate} />}
           {page === "organism-detail" && (
@@ -54,6 +67,7 @@ export default function App() {
           {page === "fingerprints" && <Fingerprints initialOrganism={selectedOrganism} />}
           {page === "comparison" && <Comparison />}
           {page === "robustness" && <Robustness initialOrganism={selectedOrganism} />}
+          </Suspense>
         </main>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, parseBenchmark, selectClass } from "../utils/atlas";
+import { METRIC_LABELS } from "../utils/metrics";
 
 // Métricas topológicas propias de las redes del atlas (make metrics-atlas,
 // endpoint /atlas/metrics). Se calculan con NetworkX sobre el grafo dirigido
@@ -19,62 +20,62 @@ const COLOR = { green: "#3A9D7C", blue: "#3B82B8", highlight: "#E9B949" };
 
 // Tarjetas principales
 const MAIN_METRICS = [
-  { key: "n_tf", label: "Transcription factors", fmt: fmtInt, color: "text-[#3A9D7C]" },
-  { key: "n_targets", label: "Target operons", fmt: fmtInt, color: "text-[#3B82B8]" },
-  { key: "n_edges", label: "Edges (TF → operon)", fmt: fmtInt, color: "text-[#55B8A5]" },
-  { key: "density", label: "Density", fmt: fmtDec(4), color: "text-[#3A9D7C]" },
-  { key: "mean_out_degree", label: "Average out-degree", fmt: fmtDec(2), color: "text-[#3B82B8]" },
+  { key: "n_tf", label: METRIC_LABELS.n_tf, fmt: fmtInt, color: "text-[#3A9D7C]" },
+  { key: "n_targets", label: METRIC_LABELS.n_targets, fmt: fmtInt, color: "text-[#3B82B8]" },
+  { key: "n_edges", label: METRIC_LABELS.n_edges, fmt: fmtInt, color: "text-[#55B8A5]" },
+  { key: "density", label: METRIC_LABELS.density, fmt: fmtDec(4), color: "text-[#3A9D7C]" },
+  { key: "mean_out_degree", label: METRIC_LABELS.mean_out_degree, fmt: fmtDec(2), color: "text-[#3B82B8]" },
 ];
 
 // Resto de las métricas, en un panel compacto
 const DETAIL_METRICS = [
-  { key: "max_out_degree", label: "Max out-degree", fmt: fmtInt, hint: "Target operons of the most connected TF" },
-  { key: "mean_in_degree", label: "Average in-degree", fmt: fmtDec(2), hint: "Average number of TFs per target operon" },
-  { key: "max_in_degree", label: "Max in-degree", fmt: fmtInt, hint: "TFs of the most regulated operon" },
-  { key: "frac_multi_reg", label: "Multi-regulated targets", fmt: fmtPct, hint: "Operons regulated by two or more TFs" },
-  { key: "n_target_genes", label: "Target genes", fmt: fmtInt, hint: "Genes in the target operons" },
-  { key: "frac_genome_targeted", label: "Genome targeted", fmt: fmtPct, hint: "Share of the genome's genes in target operons" },
+  { key: "max_out_degree", label: METRIC_LABELS.max_out_degree, fmt: fmtInt, hint: "Target operons of the most connected TF" },
+  { key: "mean_in_degree", label: METRIC_LABELS.mean_in_degree, fmt: fmtDec(2), hint: "Average number of TFs per target operon" },
+  { key: "max_in_degree", label: METRIC_LABELS.max_in_degree, fmt: fmtInt, hint: "TFs of the most regulated operon" },
+  { key: "frac_multi_reg", label: METRIC_LABELS.frac_multi_reg, fmt: fmtPct, hint: "Operons regulated by two or more TFs" },
+  { key: "n_target_genes", label: METRIC_LABELS.n_target_genes, fmt: fmtInt, hint: "Genes in the target operons" },
+  { key: "frac_genome_targeted", label: METRIC_LABELS.frac_genome_targeted, fmt: fmtPct, hint: "Share of the genome's genes in target operons" },
   {
     key: "out_degree_gini",
-    label: "Out-degree Gini",
+    label: METRIC_LABELS.out_degree_gini,
     fmt: fmtDec(2),
     hint: "0: every TF regulates the same number of operons; close to 1: a few TFs regulate most of them",
   },
-  { key: "hub_share", label: "Hub share", fmt: fmtPct, hint: "Share of the edges that come from the most connected TF" },
-  { key: "n_components", label: "Connected components", fmt: fmtInt, hint: "Weakly connected components" },
-  { key: "frac_largest", label: "Largest component", fmt: fmtPct, hint: "Share of the nodes in the largest component" },
+  { key: "hub_share", label: METRIC_LABELS.hub_share, fmt: fmtPct, hint: "Share of the edges that come from the most connected TF" },
+  { key: "n_components", label: METRIC_LABELS.n_components, fmt: fmtInt, hint: "Weakly connected components" },
+  { key: "frac_largest", label: METRIC_LABELS.frac_largest, fmt: fmtPct, hint: "Share of the nodes in the largest component" },
 ];
 
 // Métricas que necesitan ubicar el gen de cada TF por nombre: solo cota inferior
 const LOWER_BOUND_METRICS = [
-  { key: "tf_resolved_rate", label: "TFs located by gene name", fmt: fmtPct },
-  { key: "n_autoreg", label: "Autoregulations", fmt: fmtInt },
-  { key: "n_tf_tf_edges", label: "TF → TF edges", fmt: fmtInt },
+  { key: "tf_resolved_rate", label: METRIC_LABELS.tf_resolved_rate, fmt: fmtPct },
+  { key: "n_autoreg", label: METRIC_LABELS.n_autoreg, fmt: fmtInt },
+  { key: "n_tf_tf_edges", label: METRIC_LABELS.n_tf_tf_edges, fmt: fmtInt },
 ];
 
 // Métricas que se pueden graficar. Los conteos tienen colas largas, así que van en
 // intervalos logarítmicos; las fracciones y promedios en intervalos lineales.
 const CHART_METRICS = [
-  { key: "n_edges", label: "Edges", scale: "log", fmt: fmtInt },
-  { key: "n_tf", label: "Transcription factors", scale: "log", fmt: fmtInt },
-  { key: "n_targets", label: "Target operons", scale: "log", fmt: fmtInt },
-  { key: "edges_per_tf", label: "Edges per TF", scale: "linear", fmt: fmtDec(2) },
-  { key: "density", label: "Density", scale: "linear", fmt: fmtDec(4) },
-  { key: "frac_multi_reg", label: "Multi-regulated targets", scale: "linear", fmt: fmtPct },
-  { key: "out_degree_gini", label: "Out-degree Gini", scale: "linear", fmt: fmtDec(2) },
-  { key: "frac_genome_targeted", label: "Genome targeted", scale: "linear", fmt: fmtPct },
-  { key: "frac_largest", label: "Largest component", scale: "linear", fmt: fmtPct },
+  { key: "n_edges", label: METRIC_LABELS.n_edges, scale: "log", fmt: fmtInt },
+  { key: "n_tf", label: METRIC_LABELS.n_tf, scale: "log", fmt: fmtInt },
+  { key: "n_targets", label: METRIC_LABELS.n_targets, scale: "log", fmt: fmtInt },
+  { key: "edges_per_tf", label: METRIC_LABELS.edges_per_tf, scale: "linear", fmt: fmtDec(2) },
+  { key: "density", label: METRIC_LABELS.density, scale: "linear", fmt: fmtDec(4) },
+  { key: "frac_multi_reg", label: METRIC_LABELS.frac_multi_reg, scale: "linear", fmt: fmtPct },
+  { key: "out_degree_gini", label: METRIC_LABELS.out_degree_gini, scale: "linear", fmt: fmtDec(2) },
+  { key: "frac_genome_targeted", label: METRIC_LABELS.frac_genome_targeted, scale: "linear", fmt: fmtPct },
+  { key: "frac_largest", label: METRIC_LABELS.frac_largest, scale: "linear", fmt: fmtPct },
 ];
 
 const TABLE_COLUMNS = [
-  { key: "n_tf", label: "TFs", fmt: fmtInt },
-  { key: "n_targets", label: "Targets", fmt: fmtInt },
-  { key: "n_edges", label: "Edges", fmt: fmtInt },
-  { key: "density", label: "Density", fmt: fmtDec(4) },
-  { key: "mean_out_degree", label: "Avg. out-deg.", fmt: fmtDec(2) },
-  { key: "frac_multi_reg", label: "Multi-reg.", fmt: fmtPct },
-  { key: "out_degree_gini", label: "Gini", fmt: fmtDec(2) },
-  { key: "frac_largest", label: "Largest comp.", fmt: fmtPct },
+  { key: "n_tf", label: METRIC_LABELS.n_tf, fmt: fmtInt },
+  { key: "n_targets", label: METRIC_LABELS.n_targets, fmt: fmtInt },
+  { key: "n_edges", label: METRIC_LABELS.n_edges, fmt: fmtInt },
+  { key: "density", label: METRIC_LABELS.density, fmt: fmtDec(4) },
+  { key: "mean_out_degree", label: METRIC_LABELS.mean_out_degree, fmt: fmtDec(2) },
+  { key: "frac_multi_reg", label: METRIC_LABELS.frac_multi_reg, fmt: fmtPct },
+  { key: "out_degree_gini", label: METRIC_LABELS.out_degree_gini, fmt: fmtDec(2) },
+  { key: "frac_largest", label: METRIC_LABELS.frac_largest, fmt: fmtPct },
 ];
 
 const EXTERNAL_LABELS = { n_tf: "TFs", n_targets: "targets", n_edges: "edges", density: "density" };
