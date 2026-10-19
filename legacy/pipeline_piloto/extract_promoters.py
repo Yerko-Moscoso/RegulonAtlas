@@ -1,7 +1,6 @@
 import re
 from pathlib import Path
 from Bio import SeqIO
-from Bio.Seq import Seq
 import pandas as pd
 from tqdm import tqdm
 

@@ -3,7 +3,6 @@ import networkx as nx
 from pathlib import Path
 import logging
 import json
-import re
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
