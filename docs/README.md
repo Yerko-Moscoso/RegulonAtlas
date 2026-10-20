@@ -21,6 +21,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | Documento | Qué contiene | Actualizado |
 |---|---|---|
 | [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 19-10-2026 |
+| [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15 al 20-10-2026): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 20-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R3) y borradores de mensaje | 19-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
 | [`../README.md`](../README.md) | README del proyecto: estructura, instalación, uso, resultados y MVP | 19-10-2026 |
@@ -64,6 +65,10 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 20-10-2026: bitácora del trabajo con Claude Code
+
+- Se agregó `bitacora_claude_code.md`, el recorrido completo del 15 al 20-10-2026 para el documento de memoria.
 
 ### 19-10-2026: limpieza del proyecto
 
