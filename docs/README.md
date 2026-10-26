@@ -20,10 +20,10 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 
 | Documento | Qué contiene | Actualizado |
 |---|---|---|
-| [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 19-10-2026 |
+| [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 26-10-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15 al 20-10-2026): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 20-10-2026 |
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
-| [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R3) y borradores de mensaje | 19-10-2026 |
+| [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
 | [`../README.md`](../README.md) | README del proyecto: estructura, instalación, uso, resultados y MVP | 19-10-2026 |
 
@@ -66,6 +66,22 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 26-10-2026: cierre de la semana 12
+
+- **Ramas:** por decisión del estudiante, todo el desarrollo queda solo en `dev`; no se fusiona ni se sube nada a `main`
+  hasta que él lo indique (`main` sigue en `f2d5df3`, semana 11). No se creó etiqueta de la semana 12. La regla quedó en
+  `../CLAUDE.md` y en el contexto, sección 3.
+- **Nombre:** el proyecto pasa a llamarse **RegulonAtlas** (contexto, sección 1); los nombres de archivo no cambian.
+- **Pruebas del MVP:** registro versionado en `db6c33e`; la evidencia queda solo en el servidor (`.gitignore`).
+- **Verificación:** `make check` pasa (46 pruebas); los 5 `manifest.json` de `data/results/` tienen `git_dirty: false`
+  (validation `63469d5`, metrics `ceeb831`, comparison `3ce0f17`, robustness `38222a8`, baseline `251811b`); los 32
+  endpoints GET de la API responden 200 y los valores de control coinciden. Registro de la API y del frontend en
+  `logs/api_cierre_semana12.log` y `logs/web_cierre_semana12.log`. La revisión visual de las vistas la hace el estudiante.
+- **Borradores de mensaje** al investigador y al profesor actualizados con la semana 12 → `preguntas_pendientes.md`.
+- **Línea 8 del `.env`:** sigue pendiente; la corrige el estudiante (Claude no lee ese archivo).
+- **No se hizo (semana 13 o después):** red del MVP en la curva de validación, advertencias de ESLint y procedencia del
+  MVP. → contexto, secciones 12.2, 14 y 16.
 
 ### 26-10-2026: pruebas de aceptación del MVP
 

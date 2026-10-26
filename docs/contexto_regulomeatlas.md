@@ -6,7 +6,7 @@
 
 ## 1. El proyecto
 
-**RegulomeAtlas** es un proyecto de título de Ingeniería Informática en la Universidad de las Américas, dentro del NIDS (Núcleo de Investigación en Data Science).
+**RegulonAtlas** es un proyecto de título de Ingeniería Informática en la Universidad de las Américas, dentro del NIDS (Núcleo de Investigación en Data Science).
 
 - **Objetivo:** predecir y comparar redes de regulación transcripcional (factor de transcripción → genes/operones diana) en 2.224 genomas bacterianos representativos seleccionados desde GTDB R232 + RefSeq.
 - **Flujo completo:** ingesta de genomas → escaneo de motivos → construcción de redes → validación → dashboard de visualización interactiva.
@@ -45,8 +45,8 @@ La documentación interactiva de la API queda en `http://localhost:8000/docs`.
 ## 3. Repositorio y control de versiones
 
 - **Repositorio:** `github.com/Yerko-Moscoso/Proyecto_Bioinfo`.
-- **`main`:** contiene el MVP congelado. La etiqueta **`mvp-semana8`** marca la entrega del MVP.
-- **`dev`:** rama de trabajo desde la semana 9. Los bloques terminados se fusionan a `main` y se etiquetan: `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. Respaldo antes de la limpieza de la semana 12: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12`.
+- **`main`:** llega hasta la semana 11 (`f2d5df3`, etiqueta `semana11-metricas`). La etiqueta **`mvp-semana8`** (`d056fc9`) marca la entrega del MVP.
+- **`dev`:** rama de trabajo desde la semana 9. Hasta la semana 11, los bloques terminados se fusionaron a `main` y se etiquetaron: `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. **Desde el 26-10-2026, todo el desarrollo queda solo en `dev`**: no se fusiona ni se sube nada a `main` hasta que el estudiante lo indique. Respaldo antes de la limpieza de la semana 12: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12`.
 - **No se versionan** datos generados (`data/cache/`, `data/audit/*.tsv`, `data/results/`), solo código, SQL y documentación.
 
 ---
@@ -398,7 +398,7 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 
 ---
 
-## 12. Semana 12 — trabajo realizado (19 de octubre)
+## 12. Semana 12 — trabajo realizado (19 al 26 de octubre)
 
 Detalle completo en `docs/robustez_semana12.md`.
 
@@ -437,6 +437,16 @@ Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limp
 - **Código:** `src/atlas_common.py` con las reglas comunes (los 20 archivos de resultados son idénticos antes y después); `utils/metrics.js` con un nombre único por métrica; carga diferida (el paquete JS inicial bajó de 1.278 a 254 kB); `Validation.jsx` dividido; Pydantic al día.
 - **Calidad:** 46 pruebas (13 unitarias nuevas); ESLint en `make check` (0 errores); `make help` y `make atlas`; `.gitignore` ordenado; README reescrito.
 - **Etiquetas:** nuevas `semana09-auditoria` y `semana10-validacion`; eliminada `semana10-sweep` (apuntaba al commit del MVP `b628e54`).
+
+### 12.2 Cierre de la semana 12 (20 al 26 de octubre)
+
+- **Bitácora de Claude Code** (20-10): `docs/bitacora_claude_code.md`, recorrido del 15 al 20-10-2026 para la memoria.
+- **Pruebas de aceptación del MVP** (26-10, `db6c33e`): CA1–CA6 sobre la etiqueta `mvp-semana8` (`d056fc9`) desde un clon limpio. 6 aprobadas (CA3 con observaciones), 0 fallidas. `make mvp` tarda 19 s y es determinista salvo fechas; E. coli coincide con lo informado. Registro en `docs/evidencia_mvp/pruebas_aceptacion_mvp.md`; la evidencia (registros, capturas, scripts, Excel) queda solo en el servidor (`.gitignore`).
+- **Corrección:** la entrega `mvp-semana8` es `d056fc9`, no `b628e54` como decía la bitácora.
+- **Nombre:** el proyecto pasa a llamarse **RegulonAtlas** (decisión del estudiante, 26-10-2026). Los nombres de archivo (`contexto_regulomeatlas.md`) no cambian.
+- **Verificación del cierre:** los 5 `manifest.json` de resultados tienen `git_dirty: false`; `make check` pasa (46 pruebas); los 32 endpoints GET de la API responden 200 y los valores de control coinciden (E. coli en balanced: 118 TF, 342 operones, 485 pares; validación balanced P = 0,612, R = 0,332, F1 = 0,431). La revisión visual de las vistas la hace el estudiante.
+- **Borradores de mensaje** actualizados con los resultados de la semana 12 (`docs/preguntas_pendientes.md`).
+- **Ramas:** la semana 12 queda solo en `dev`; no se fusionó a `main` ni se creó etiqueta, por decisión del estudiante.
 
 ---
 
@@ -480,7 +490,7 @@ legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy
 | 9 | Auditoría, caché del atlas, API `/atlas` y `RegulatoryNetwork` (hecho) |
 | 10 | Validación propia de las 5 redes contra RegPrecise, modo independiente, curva P/R, API y `Validation.jsx`; `Metrics.jsx` y `Fingerprints.jsx` con datos reales (hecho). Pendiente: punto del MVP en la curva y RegulonDB si se aprueba |
 | 11 | Métricas propias con NetworkX para los 2.644 genomas y las 5 redes, comparadas con `network_metrics`; comparación por filo/clase/orden/familia; `Metrics`, `Fingerprints` y `Comparison` sobre las métricas propias; `make check` y pruebas (hecho). No se hizo el enriquecimiento funcional opcional |
-| 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness`; línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) en los 312 genomas validables, contra las redes externas (hecho) |
+| 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness`; línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) en los 312 genomas validables, contra las redes externas; limpieza; pruebas de aceptación del MVP (hecho, cerrada el 26-10-2026 en `dev`) |
 | 13 | Componentes restantes (`Pipeline`, `DataProvenance`, `MVP`) y revisión completa. Congelamiento de funciones |
 | 14 | Pruebas (ampliar `tests/`, que ya tiene 46 pruebas unitarias y de humo; prueba de punta a punta desde un clon limpio con `conda env create` + `make atlas`) y etiqueta `v1.0`. El README ya se reescribió en la semana 12 |
 | 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
@@ -525,11 +535,10 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 
 ### Pendientes técnicos
 
-- Corregir la línea 8 del `.env`.
-- Revisar en el navegador `Robustness.jsx` (reescrita en la semana 12) y las vistas migradas en la limpieza (Dashboard, Organisms, OrganismDetail).
-- Revisar en el navegador la sección *Own baseline vs external networks* de `Validation.jsx`.
-- Revisar en el navegador `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
-- Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`). Los envía el usuario.
+- Corregir la línea 8 del `.env` (lo hace el estudiante: Claude no lee ese archivo).
+- Revisión visual (la API se verificó el 26-10-2026; ver 12.2): `Robustness.jsx` (reescrita en la semana 12), las vistas migradas en la limpieza (Dashboard, Organisms, OrganismDetail), la sección *Own baseline vs external networks* de `Validation.jsx`, `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
+- Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`, actualizados el 26-10-2026). Los envía el usuario.
+- Observaciones de las pruebas del MVP, sin corregir (la etiqueta `mvp-semana8` queda congelada): la procedencia no registra la versión ni la fecha de descarga de PRODORIC, la fecha de descarga de RegPrecise ni las versiones del entorno; el commit de la caché (`9e0b73c`) ya no existe. Considerarlas en la procedencia del atlas (`DataProvenance`, semana 13).
 - *(Hecho el 19-10-2026: `make validate-atlas` repetido con el árbol limpio, resultados idénticos; hipótesis del origen de los motivos comprobada.)*
 - Agregar la red del MVP como punto aparte en la curva de validación.
 - Mantener `docs/auditoria_semana9.md`, `docs/validacion_semana10.md`, `docs/metricas_semana11.md`, `docs/correcciones_semana11.md`, `docs/robustez_semana12.md` y `docs/limpieza_semana12.md` al día.

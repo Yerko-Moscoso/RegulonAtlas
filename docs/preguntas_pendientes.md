@@ -117,20 +117,31 @@ Detalle en `robustez_semana12.md`, sección 8.4. Queda abierto cómo se calcula 
 
 ## Borradores de mensaje
 
+*Actualizados el 26-10-2026 con los resultados de la semana 12 (`robustez_semana12.md`, sección 8) y las pruebas de
+aceptación del MVP (`evidencia_mvp/pruebas_aceptacion_mvp.md`). Los envía el estudiante.*
+
 **Al investigador:**
 
-> Hola. Estoy terminando la validación y las métricas del atlas, y me quedaron dudas que solo puedes resolver tú:
+> Hola. Estoy terminando la validación y las métricas del atlas. Te cuento un avance: desde `fimo_hits` logré reproducir
+> exactamente `no-footprint` (p ≤ 1e-7 y tier hasta `same_order`), y `validated`, `high-precision` y `balanced` salen
+> exactamente de su red madre con el mínimo de footprint de `networks.params`. O sea, entiendo las redes como umbral + techo
+> de tier + footprinting. Me quedaron dudas que solo puedes resolver tú:
 > (1) cómo se calcularon `n_edges` y `n_tf` de `network_metrics`, porque no logro reproducirlos desde `edges`
 > (E. coli en balanced: 919 aristas frente a 832 filas en `edges`); (2) cómo se calcularon P/R/F1 de D33: nivel TF → gen o
 > TF → operón, versión de RegPrecise, universo de falsos positivos y si se excluyeron los motivos construidos con el mismo
-> regulog; (3) cómo se calibró `confidence`; (4) la diferencia entre los tiers `within_*` y `same_*`; (5) si
-> `GCF_002993285.1` es el reemplazo previsto de `GCF_050942165.1`; y (6) si puedo ver el código del pipeline o el registro de
-> decisiones D1–D33. También quiero confirmar cómo quieres que te cite en el informe. ¡Gracias!
+> regulog; (3) cómo se calculan `footprint_enrichment` y el valor de `confidence` (vi que la calibración no elimina pares,
+> pero no sé si se calibró con RegPrecise); (4) la diferencia entre los tiers `within_*` y `same_*` (mi hipótesis:
+> `same_X` = ortólogo del TF en un genoma del mismo X; `within_X` = dentro del mismo X, por ortólogo o por respaldo
+> taxonómico); (5) si `GCF_002993285.1` es el reemplazo previsto de `GCF_050942165.1`; y (6) si puedo ver el código del
+> pipeline o el registro de decisiones D1–D33. También quiero confirmar cómo quieres que te cite en el informe. ¡Gracias!
 
 **Al profesor:**
 
-> Hola, profesor. Le escribo para confirmar cuatro puntos del proyecto: (1) si aprueba que las redes generadas por el
-> investigador sean la fuente principal y que mi pipeline quede como validador independiente; (2) si puedo presentar
-> `balanced` como red principal, con las cifras de validación como rangos (incluido el modo sin autoevaluación);
-> (3) si la validación con RegulonDB es obligatoria o complementaria; y (4) las fechas y el formato del informe y de la
-> defensa. Saludos.
+> Hola, profesor. Le cuento el estado del proyecto: terminé la validación propia de las 5 redes contra RegPrecise, las
+> métricas topológicas y la comparación entre taxones, y el análisis de robustez (semanas 10 a 12). Además, las pruebas de
+> aceptación del MVP dieron 6 de 6 aprobadas desde un clon limpio. Le escribo para confirmar cuatro puntos:
+> (1) si aprueba que las redes generadas por el investigador sean la fuente principal y que mi pipeline quede como
+> validador independiente (ya reproduce exactamente una de las redes externas); (2) si puedo presentar `balanced` como red
+> principal, con las cifras de validación como rangos (incluido el modo sin autoevaluación: P = 0,58–0,61,
+> F1 = 0,32–0,43); (3) si la validación con RegulonDB es obligatoria o complementaria; y (4) las fechas y el formato del
+> informe y de la defensa. Saludos.

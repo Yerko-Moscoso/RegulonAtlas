@@ -37,7 +37,8 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - No versionar datos generados (`data/cache/`, `data/results/`, `data/audit/*.tsv`). Excepción: `data/cache/mvp/` (lo usa `make mvp`).
 - `legacy/` es código histórico: no se importa ni se modifica salvo para consultarlo (ver `legacy/README.md`).
 - Nombres visibles de las métricas en el frontend: `frontend/src/utils/metrics.js` (`METRIC_LABELS`).
-- Commits en `dev`; los bloques terminados se fusionan a `main` con una etiqueta (`semanaNN-tema`).
+- Commits y push solo en `dev`. **No fusionar ni subir nada a `main`** hasta que el usuario lo indique (decisión del
+  26-10-2026; `main` quedó en la semana 11, `f2d5df3`). Cuando lo indique, la fusión va con una etiqueta (`semanaNN-tema`).
 - **Antes de cada commit**: `make check` (la API importa, sin `get_db` en `src/api`, el frontend compila y pasan
   las pruebas de `tests/`). El hook `pre-commit` (`make hooks`, una vez por clon) revisa el **índice**, no la copia
   de trabajo. No usar `--no-verify` sin avisar.
