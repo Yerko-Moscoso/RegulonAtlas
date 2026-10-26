@@ -94,7 +94,7 @@ El router `/genomes` **se reescribió** en lugar de eliminarse: lee solo la cach
 | E2 | Makefile por secciones, `make help`, `make atlas` (validación → métricas → comparación → robustez → línea base) y `make web`. Las recetas existentes no cambiaron (`make -n mvp` es igual). |
 | E3 | `.gitignore` ordenado. Ignora exactamente los mismos archivos (comprobado con `git ls-files --ignored`), más `.pytest_cache/` de forma explícita. |
 | E4 | Etiquetas nuevas `semana09-auditoria` (`448e6f5`) y `semana10-validacion` (`16b243b`). Se eliminó `semana10-sweep`, que apuntaba a `b628e54` (el commit "mvp-semana 8", no la semana 10); para recrearla: `git tag semana10-sweep b628e54`. |
-| E5 | **Pendiente del usuario:** la línea 8 del `.env` hace que `python-dotenv` muestre un aviso. Claude no lee ese archivo. |
+| E5 | **Pendiente del usuario:** la línea 8 del `.env` hace que `python-dotenv` muestre un aviso. Claude no lee ese archivo. *(Resuelto el 26-10-2026: era un espacio y el estudiante lo borró.)* |
 
 ## 7. Verificación final
 

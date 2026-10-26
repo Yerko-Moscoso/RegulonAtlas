@@ -26,7 +26,7 @@
 - **Raíz del proyecto:** `~/proyecto`.
 - **Base de datos:** MariaDB `regulon_atlas`. El usuario `ymoscoso` **solo tiene permiso SELECT**: no puede crear, modificar ni cargar tablas. Todo dato nuevo (por ejemplo RegulonDB) se maneja como archivo dentro del repositorio.
 - **La API ya no consulta MariaDB:** todo se lee desde la caché local `data/cache/atlas/` (parquet) y desde los resultados en `data/results/`. La base solo se usa al regenerar la caché con `make cache-atlas`.
-- **Credenciales:** se leen de variables de entorno (`DB_PASSWORD`, etc.) desde un `.env` ignorado por git. La conexión del proyecto está en `src/database/connection.py`. La contraseña antigua fue cambiada y eliminada del historial de git. La línea 8 del `.env` tiene un formato que python-dotenv no puede leer (no afecta la conexión; pendiente de corregir).
+- **Credenciales:** se leen de variables de entorno (`DB_PASSWORD`, etc.) desde un `.env` ignorado por git. La conexión del proyecto está en `src/database/connection.py`. La contraseña antigua fue cambiada y eliminada del historial de git. La línea 8 del `.env` tenía un espacio que python-dotenv no podía leer; el estudiante la corrigió el 26-10-2026.
 - **Carpetas de otros usuarios** (`/home/*`) tienen permisos `drwxr-x---`, así que no se pueden leer.
 
 ### Arranque del sistema
@@ -444,7 +444,8 @@ Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limp
 - **Pruebas de aceptación del MVP** (26-10, `db6c33e`): CA1–CA6 sobre la etiqueta `mvp-semana8` (`d056fc9`) desde un clon limpio. 6 aprobadas (CA3 con observaciones), 0 fallidas. `make mvp` tarda 19 s y es determinista salvo fechas; E. coli coincide con lo informado. Registro en `docs/evidencia_mvp/pruebas_aceptacion_mvp.md`; la evidencia (registros, capturas, scripts, Excel) queda solo en el servidor (`.gitignore`).
 - **Corrección:** la entrega `mvp-semana8` es `d056fc9`, no `b628e54` como decía la bitácora.
 - **Nombre:** el proyecto pasa a llamarse **RegulonAtlas** (decisión del estudiante, 26-10-2026). Los nombres de archivo (`contexto_regulomeatlas.md`) no cambian.
-- **Verificación del cierre:** los 5 `manifest.json` de resultados tienen `git_dirty: false`; `make check` pasa (46 pruebas); los 32 endpoints GET de la API responden 200 y los valores de control coinciden (E. coli en balanced: 118 TF, 342 operones, 485 pares; validación balanced P = 0,612, R = 0,332, F1 = 0,431). La revisión visual de las vistas la hace el estudiante.
+- **Verificación del cierre:** los 5 `manifest.json` de resultados tienen `git_dirty: false`; `make check` pasa (46 pruebas); los 32 endpoints GET de la API responden 200 y los valores de control coinciden (E. coli en balanced: 118 TF, 342 operones, 485 pares; validación balanced P = 0,612, R = 0,332, F1 = 0,431). Revisión visual del estudiante (26-10-2026): Robustness, la línea base de Validation, Dashboard, Organisms, OrganismDetail, Fingerprints y Comparison funcionan.
+- **`.env`:** el estudiante borró el espacio de la línea 8 (26-10-2026). Claude no leyó el archivo.
 - **Borradores de mensaje** actualizados con los resultados de la semana 12 (`docs/preguntas_pendientes.md`).
 - **Ramas:** la semana 12 queda solo en `dev`; no se fusionó a `main` ni se creó etiqueta, por decisión del estudiante.
 
@@ -535,8 +536,7 @@ Las preguntas completas para el investigador y el profesor, con un borrador de m
 
 ### Pendientes técnicos
 
-- Corregir la línea 8 del `.env` (lo hace el estudiante: Claude no lee ese archivo).
-- Revisión visual (la API se verificó el 26-10-2026; ver 12.2): `Robustness.jsx` (reescrita en la semana 12), las vistas migradas en la limpieza (Dashboard, Organisms, OrganismDetail), la sección *Own baseline vs external networks* de `Validation.jsx`, `Fingerprints.jsx` y `Comparison.jsx` (*E. coli* en `balanced`: 485 pares propios; `high-precision`: 207 genomas del atlas con métricas en ambas fuentes).
+- *(Hecho el 26-10-2026: línea 8 del `.env` corregida por el estudiante; revisión visual de Robustness, Validation (línea base), Dashboard, Organisms, OrganismDetail, Fingerprints y Comparison sin problemas. Ver 12.2.)*
 - Enviar los mensajes al investigador y al profesor (borradores al final de `docs/preguntas_pendientes.md`, actualizados el 26-10-2026). Los envía el usuario.
 - Observaciones de las pruebas del MVP, sin corregir (la etiqueta `mvp-semana8` queda congelada): la procedencia no registra la versión ni la fecha de descarga de PRODORIC, la fecha de descarga de RegPrecise ni las versiones del entorno; el commit de la caché (`9e0b73c`) ya no existe. Considerarlas en la procedencia del atlas (`DataProvenance`, semana 13).
 - *(Hecho el 19-10-2026: `make validate-atlas` repetido con el árbol limpio, resultados idénticos; hipótesis del origen de los motivos comprobada.)*

@@ -77,9 +77,10 @@ quedó documentado.
 - **Verificación:** `make check` pasa (46 pruebas); los 5 `manifest.json` de `data/results/` tienen `git_dirty: false`
   (validation `63469d5`, metrics `ceeb831`, comparison `3ce0f17`, robustness `38222a8`, baseline `251811b`); los 32
   endpoints GET de la API responden 200 y los valores de control coinciden. Registro de la API y del frontend en
-  `logs/api_cierre_semana12.log` y `logs/web_cierre_semana12.log`. La revisión visual de las vistas la hace el estudiante.
+  `logs/api_cierre_semana12.log` y `logs/web_cierre_semana12.log`. Revisión visual del estudiante: Robustness, la línea base de Validation, Dashboard, Organisms,
+  OrganismDetail, Fingerprints y Comparison funcionan.
 - **Borradores de mensaje** al investigador y al profesor actualizados con la semana 12 → `preguntas_pendientes.md`.
-- **Línea 8 del `.env`:** sigue pendiente; la corrige el estudiante (Claude no lee ese archivo).
+- **Línea 8 del `.env`:** era un espacio; la corrigió el estudiante (Claude no lee ese archivo).
 - **No se hizo (semana 13 o después):** red del MVP en la curva de validación, advertencias de ESLint y procedencia del
   MVP. → contexto, secciones 12.2, 14 y 16.
 
