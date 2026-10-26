@@ -22,6 +22,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 |---|---|---|
 | [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 19-10-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15 al 20-10-2026): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 20-10-2026 |
+| [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R3) y borradores de mensaje | 19-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
 | [`../README.md`](../README.md) | README del proyecto: estructura, instalación, uso, resultados y MVP | 19-10-2026 |
@@ -65,6 +66,17 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 26-10-2026: pruebas de aceptación del MVP
+
+- Pruebas CA1–CA6 ejecutadas sobre la etiqueta `mvp-semana8` (`d056fc9`) en un clon nuevo desde GitHub, con asistencia
+  de Claude Code y revisión del estudiante, sin modificar el código. Resultado: 6 aprobados (CA3 con observaciones),
+  0 fallidos y 0 no verificados. `make mvp` tarda 19 s; dos corridas dan salidas idénticas salvo las fechas de los
+  `*.provenance.json`; la validación de E. coli coincide con los valores informados (1e-5: 6,6 % / 59,5 %; 1e-7:
+  418/683/1.158, 37,97 % / 26,52 %).
+- Observaciones: faltan la versión de PRODORIC, las fechas de descarga y las versiones del entorno en la procedencia;
+  el commit de la caché (`9e0b73c`) ya no existe; la etiqueta apunta a `d056fc9`, no a `b628e54` como decía la entrada
+  del MVP más abajo (ya corregida). → `evidencia_mvp/pruebas_aceptacion_mvp.md` (la evidencia queda solo en el servidor).
 
 ### 20-10-2026: bitácora del trabajo con Claude Code
 
@@ -151,8 +163,10 @@ Commits: `90a3f23` (código y pruebas) y `df454c6` (documentación).
 
 ### 23 al 28-09-2026: MVP (semanas 1–8)
 
-- `c5216c6`, `4745f58`: pipeline reproducible del MVP e informe. `b628e54`: entrega `mvp-semana8`. → `../README.md`,
-  contexto, sección 8.
+- `c5216c6`, `4745f58`: pipeline reproducible del MVP e informe. La etiqueta `mvp-semana8` apunta a `d056fc9`
+  (24-09-2026). `b628e54` (28-09-2026) es posterior: regenera las procedencias y cambia `src/database/connection.py`.
+  *(Corregido el 26-10-2026: antes decía que `b628e54` era la entrega; ver `evidencia_mvp/pruebas_aceptacion_mvp.md`,
+  sección 6.)* → `../README.md`, contexto, sección 8.
 
 ## Cómo mantener esta documentación
 

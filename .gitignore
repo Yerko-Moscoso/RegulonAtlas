@@ -36,3 +36,8 @@ data/*
 !data/cache/
 data/cache/*
 !data/cache/mvp/
+
+# Evidencia de las pruebas de aceptación del MVP: se conserva solo en el servidor (decisión del 26-10-2026).
+# Se versiona únicamente el registro formal.
+docs/evidencia_mvp/*
+!docs/evidencia_mvp/pruebas_aceptacion_mvp.md
