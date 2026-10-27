@@ -96,3 +96,50 @@ interfaz).
   que dice la base. Conviene confirmarlo con el investigador.
 - **Con PRODORIC, el atlas sí está completo.** La observación de las pruebas del MVP (falta la versión de PRODORIC) no
   aplica al atlas: `provenance` registra `2021.9 (API 1.3.1)` y la fecha de descarga.
+
+## 5. Pasada de presentación de las vistas (27-10-2026)
+
+**Pedido del estudiante:** que las vistas sean útiles y accesibles para un investigador bioinformático, sin relleno, y
+poder volver atrás si no convence. **No cambia ningún dato ni cálculo:** solo la forma de mostrar.
+
+### 5.1 Respaldo
+
+Rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13`, ambas en `fd3f3a5` y subidas a
+GitHub antes del primer cambio.
+
+### 5.2 Criterio
+
+Cada vista responde su pregunta en la primera pantalla. El detalle que respalda el resultado (útil si el jurado o un
+investigador pregunta "¿cómo lo sabes?") queda en secciones plegables (`components/Collapsible.jsx`) que, cerradas,
+muestran el resultado en una línea **calculado con los datos** (no texto fijo). No se eliminó ninguna tabla ni gráfico.
+
+### 5.3 Cambios (un commit por bloque)
+
+| Commit | Vista | Cambio | Alto (px), antes → después |
+|---|---|---|---|
+| `3edeff6` | Dashboard, Metrics, Fingerprints, RegulatoryNetwork | Nombre "RegulonAtlas" en los textos visibles (quedaban 5 "RegulomeAtlas") | — |
+| `91605a5` | Validation | Recuadro con el resultado de la red elegida (precisión, recall, fracción evaluable). Desglose por tier y por origen del motivo plegado con su resumen (solo tiers con ≥ 1 % de los pares). Línea base plegada con su resumen. Corregido: columnas de la tabla de desglose que se superponían | 2.962 → 1.780 |
+| `dd7661c` | Robustness | Leyendas arriba (la etiqueta del eje X se montaba sobre ellas). Ficha del genoma y efecto del footprinting plegados con su resumen | 2.894 → 2.014 |
+| `fd2abb1` | Metrics, Data Provenance | Metrics: se quita el pie que repetía la definición del grafo. Data Provenance: conteos de la caché plegados; el detalle "al día" solo aparece si un resultado está desactualizado | 2.059 → 2.031; 1.733 → 1.367 |
+
+Sin cambios: Organisms, Regulatory Networks, Fingerprints (su recuadro explica los percentiles, propio de esa vista),
+Taxon Comparison y Dashboard (su tabla de redes es el resumen de entrada, no una duplicación).
+
+Resúmenes calculados, comprobados contra los documentos de la semana 12 (balanced, modo `all`):
+
+- Validation: "Precision by tier ranges from 34.9 % (same_class) to 78.5 % (within_family); circular pairs 72.3 % vs
+  48.1 % for independent motifs".
+- Línea base: "no-footprint is rebuilt exactly from the raw hits … footprinting keeps 27.2 %–51.1 % of the baseline
+  pairs" (`robustez_semana12.md`, 8.4: 27–51 %).
+- Robustness: "A typical genome keeps 59 % of its TF–operon pairs after footprinting, and 7 of 15 metrics keep the
+  ranking" (footprinting quita ~40 % de los pares).
+
+Verificación: `make check` en cada commit (53 pruebas, 0 errores de ESLint); capturas de las 9 vistas antes y después
+con Chrome sin interfaz, sin errores de consola ni respuestas HTTP fallidas.
+
+### 5.4 Cómo volver atrás
+
+- **Todo:** `git revert --no-edit 3edeff6^..fd2abb1` (crea commits que deshacen los 4 cambios, sin reescribir el
+  historial) y `make check`.
+- **Un bloque:** `git revert --no-edit <commit>` con el commit de la tabla (por ejemplo, solo Robustness: `dd7661c`).
+- **Solo mirar el estado anterior:** `git switch respaldo/pre-presentacion-semana13` (y volver con `git switch dev`).
