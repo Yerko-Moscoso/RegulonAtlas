@@ -10,6 +10,7 @@ El 27-10-2026 el estudiante pidió avanzar por partes, una a la vez:
 |---|---|
 | Endpoint de estado del pipeline (`/api/v1/atlas/status`) | Hecho (`65e9ace`, `fbce952`) |
 | Vista Data Provenance | Hecho (`fbce952`) |
+| Pasada de presentación de las vistas (sección 5) | Hecho y aprobada (`3edeff6`–`fd2abb1`) |
 | Vista Pipeline | Pendiente (se decide después) |
 | Vista MVP | **Descartada** por el estudiante (27-10-2026). `frontend/src/pages/MVP.jsx` sigue como prototipo sin uso |
 | Revisión completa, pipeline propio en `make all` y congelamiento de funciones | Pendiente (se decide después) |
@@ -137,7 +138,12 @@ Resúmenes calculados, comprobados contra los documentos de la semana 12 (balanc
 Verificación: `make check` en cada commit (53 pruebas, 0 errores de ESLint); capturas de las 9 vistas antes y después
 con Chrome sin interfaz, sin errores de consola ni respuestas HTTP fallidas.
 
-### 5.4 Cómo volver atrás
+### 5.4 Decisión
+
+El estudiante revisó las vistas y **aprobó la pasada el 27-10-2026**. La rama y la etiqueta de respaldo se conservan
+por trazabilidad.
+
+### 5.5 Cómo volver atrás
 
 - **Todo:** `git revert --no-edit 3edeff6^..fd2abb1` (crea commits que deshacen los 4 cambios, sin reescribir el
   historial) y `make check`.

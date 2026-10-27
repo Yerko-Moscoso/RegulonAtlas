@@ -73,7 +73,7 @@ quedó documentado.
 - Respaldo previo: rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13` (`fd3f3a5`).
 - `3edeff6` (nombre RegulonAtlas), `91605a5` (Validation), `dd7661c` (Robustness), `fd2abb1` (Metrics y Data
   Provenance): resultado clave arriba y detalle en secciones plegables con su resumen calculado; corregidas las columnas
-  superpuestas de Validation y la leyenda de Robustness. No cambia ningún dato. Pendiente: aprobación del estudiante.
+  superpuestas de Validation y la leyenda de Robustness. No cambia ningún dato. **Aprobada por el estudiante el 27-10-2026**; el respaldo se conserva.
   → `sistema_semana13.md`, sección 5 (incluye cómo revertir).
 
 ### 27-10-2026: semana 13, estado del pipeline y Data Provenance
