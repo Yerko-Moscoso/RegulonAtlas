@@ -67,7 +67,7 @@ export function ErrorMsg({ children }) {
 export function PrecisionBar({ value }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-2 w-32 bg-[#EEF2F5] rounded">
+      <div className="h-2 w-20 bg-[#EEF2F5] rounded shrink-0">
         <div className="h-2 rounded bg-[#3A9D7C]" style={{ width: `${Math.round((value ?? 0) * 100)}%` }} />
       </div>
       <span className="text-xs font-mono text-[#334155] w-12 text-right">{pct(value)}</span>
@@ -82,10 +82,10 @@ export function BreakdownTable({ rows, labelOf, total }) {
       <thead>
         <tr className="text-left text-[11px] uppercase tracking-wide text-[#94A3B8] border-b border-[#E2E8F0]">
           <th className="py-1.5 font-medium">Group</th>
-          <th className="py-1.5 font-medium text-right">Evaluable</th>
-          <th className="py-1.5 font-medium text-right">Share</th>
-          <th className="py-1.5 font-medium text-right">TP</th>
-          <th className="py-1.5 font-medium text-right">FP</th>
+          <th className="py-1.5 pl-3 font-medium text-right">Evaluable</th>
+          <th className="py-1.5 pl-3 font-medium text-right">Share</th>
+          <th className="py-1.5 pl-3 font-medium text-right">TP</th>
+          <th className="py-1.5 pl-3 font-medium text-right">FP</th>
           <th className="py-1.5 font-medium pl-4">Precision</th>
         </tr>
       </thead>
@@ -93,10 +93,10 @@ export function BreakdownTable({ rows, labelOf, total }) {
         {rows.map((r) => (
           <tr key={r.key} className="border-b border-[#F1F5F9]">
             <td className="py-1.5 text-[#334155]">{labelOf(r.key)}</td>
-            <td className="py-1.5 text-right font-mono">{fmtInt(r.pairs_evaluable)}</td>
-            <td className="py-1.5 text-right font-mono text-[#64748B]">{pct(r.pairs_evaluable / total)}</td>
-            <td className="py-1.5 text-right font-mono">{fmtInt(r.TP)}</td>
-            <td className="py-1.5 text-right font-mono">{fmtInt(r.FP)}</td>
+            <td className="py-1.5 pl-3 text-right font-mono whitespace-nowrap">{fmtInt(r.pairs_evaluable)}</td>
+            <td className="py-1.5 pl-3 text-right font-mono whitespace-nowrap text-[#64748B]">{pct(r.pairs_evaluable / total)}</td>
+            <td className="py-1.5 pl-3 text-right font-mono whitespace-nowrap">{fmtInt(r.TP)}</td>
+            <td className="py-1.5 pl-3 text-right font-mono whitespace-nowrap">{fmtInt(r.FP)}</td>
             <td className="py-1.5 pl-4">
               <PrecisionBar value={r.precision} />
             </td>

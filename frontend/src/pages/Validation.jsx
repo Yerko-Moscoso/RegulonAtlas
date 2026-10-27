@@ -17,6 +17,8 @@ import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
 import { pct, pctTick, dec, detail } from "../utils/validation";
 import { Section, Segmented, Stat, Spinner, ErrorMsg, BreakdownTable, CurveTooltip } from "../components/ValidationParts";
 import BaselineSection from "../components/BaselineSection";
+import Collapsible from "../components/Collapsible";
+import { Info } from "lucide-react";
 
 // Validación de las 5 redes del atlas contra RegPrecise.
 // La evaluación se calcula offline (make validate-atlas); esta vista solo lee resultados.
@@ -223,7 +225,25 @@ export default function Validation({ initialOrganism }) {
 
   const gs = manifest?.gold_stats;
   const lostRows = gs ? gs.rows_without_genome + gs.rows_unmatched_locus : null;
-  const selectedName = tableRows.find((r) => r.network_id === networkId)?.network ?? `network ${networkId}`;
+  const selectedRow = tableRows.find((r) => r.network_id === networkId);
+  const selectedName = selectedRow?.network ?? `network ${networkId}`;
+
+  // Resumen de los desgloses para la sección plegada (rango de precisión por tier y precisión circular).
+  // Solo tiers con al menos el 1 % de los pares evaluables: un grupo de 50 pares no representa a la red.
+  const tierScored = tierRows.filter((r) => r.precision != null && r.pairs_evaluable >= 0.01 * tierTotal);
+  const tierMin = tierScored.reduce((m, r) => (m == null || r.precision < m.precision ? r : m), null);
+  const tierMax = tierScored.reduce((m, r) => (m == null || r.precision > m.precision ? r : m), null);
+  const circular = originRows.find((r) => r.key === "self_regulog");
+  const nonCircular = originRows.filter((r) => r.key !== "self_regulog");
+  const nonCircularN = nonCircular.reduce((s, r) => s + r.pairs_evaluable, 0);
+  const nonCircularP = nonCircularN ? nonCircular.reduce((s, r) => s + r.TP, 0) / nonCircularN : null;
+  const breakdownSummary =
+    tierMin && tierMax
+      ? `Precision by tier ranges from ${pct(tierMin.precision)} (${tierMin.key}) to ${pct(tierMax.precision)} (${tierMax.key})` +
+        (circular && nonCircularP != null
+          ? `; circular pairs ${pct(circular.precision)} vs ${pct(nonCircularP)} for independent motifs.`
+          : ".")
+      : null;
 
   // ---------------------------------------------------------------- render
 
@@ -259,6 +279,20 @@ export default function Validation({ initialOrganism }) {
         <Segmented label="Edges" options={MODES} value={mode} onChange={setMode} />
         <Segmented label="Scored predictions" options={UNIVERSES} value={universe} onChange={setUniverse} />
       </div>
+
+      {selectedRow && (
+        <div className="bg-[#F0F7FB] border border-[#CFE3EF] rounded-lg px-4 py-3 text-xs text-[#334155] flex gap-2">
+          <Info className="w-4 h-4 text-[#3B82B8] shrink-0 mt-0.5" />
+          <div>
+            <span className="font-semibold">{selectedName}</span>
+            {mode === "independent" ? " (independent edges)" : ""}: <b>{pct(selectedRow.precision)}</b> of the scored
+            predictions match a curated interaction (precision) and the network recovers <b>{pct(selectedRow.recall)}</b> of
+            the curated TF–operon pairs (recall). Only {pct(selectedRow.pairs_evaluable / selectedRow.pairs_total)} of its{" "}
+            {fmtInt(selectedRow.pairs_total)} pairs can be scored; the rest have no curated regulon to compare with and are
+            not counted as errors.
+          </div>
+        </div>
+      )}
 
       {/* Resumen de las 5 redes */}
       <Section
@@ -430,28 +464,34 @@ export default function Validation({ initialOrganism }) {
 
       {/* Desglose de la red elegida */}
       {detailError && <ErrorMsg>{detailError}</ErrorMsg>}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <Section
-          title="Precision by transfer tier"
-          subtitle="Tier of the motif transfer to the evaluated genome, ordered from closest to most distant relative."
-        >
-          {loadingDetail ? <Spinner /> : <BreakdownTable rows={tierRows} labelOf={(k) => k} total={tierTotal} />}
-        </Section>
-        <Section
-          title="Precision by motif origin"
-          subtitle={
-            mode === "all"
-              ? "Circular pairs come from a RegPrecise motif built with the same regulog that contains the evaluated genome."
-              : "Circular pairs are excluded in independent mode."
-          }
-        >
-          {loadingDetail ? (
-            <Spinner />
-          ) : (
-            <BreakdownTable rows={originRows} labelOf={(k) => ORIGIN_LABELS[k] ?? k} total={originTotal} />
-          )}
-        </Section>
-      </div>
+      <Collapsible
+        title={`Where the precision comes from — ${selectedName}`}
+        subtitle="Precision split by how distant the motif source is (transfer tier) and by where the motif was built (motif origin)."
+        summary={loadingDetail ? null : breakdownSummary}
+      >
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-sm font-semibold text-[#334155]">By transfer tier</h3>
+            <p className="text-xs text-[#64748B] mt-0.5 mb-2">
+              Tier of the motif transfer to the evaluated genome, from closest to most distant relative.
+            </p>
+            {loadingDetail ? <Spinner /> : <BreakdownTable rows={tierRows} labelOf={(k) => k} total={tierTotal} />}
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-[#334155]">By motif origin</h3>
+            <p className="text-xs text-[#64748B] mt-0.5 mb-2">
+              {mode === "all"
+                ? "Circular pairs come from a RegPrecise motif built with the same regulog that contains the evaluated genome."
+                : "Circular pairs are excluded in independent mode."}
+            </p>
+            {loadingDetail ? (
+              <Spinner />
+            ) : (
+              <BreakdownTable rows={originRows} labelOf={(k) => ORIGIN_LABELS[k] ?? k} total={originTotal} />
+            )}
+          </div>
+        </div>
+      </Collapsible>
 
       {/* Por genoma */}
       <Section

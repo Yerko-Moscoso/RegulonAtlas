@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { fmtInt } from "../utils/atlas";
 import { pct, dec, detail } from "../utils/validation";
-import { Section, Spinner, ErrorMsg } from "./ValidationParts";
+import { Spinner, ErrorMsg } from "./ValidationParts";
+import Collapsible from "./Collapsible";
 
 // Red de prueba del pipeline propio desde fimo_hits, solo en los 312 genomas validables (make baseline-atlas).
 const BASELINE_LABEL = { scan: "Scan only", order_ceiling: "Tier ≤ same_order", class_ceiling: "Tier ≤ same_class" };
@@ -52,9 +53,19 @@ export default function BaselineSection({ mode, universe }) {
   const baseline = rows.filter((r) => r.source === "baseline");
   const bestF1 = Math.max(...rows.map((r) => r.f1 ?? 0));
 
+  // Resultado en una línea: qué red se reproduce exacta y cuánto de la línea base conserva el footprinting.
+  const exact = repro.filter((r) => r.external_in_baseline === 1 && r.baseline_kept_by_external === 1).map((r) => r.network);
+  const kept = repro.filter((r) => r.baseline_kept_by_external < 1).map((r) => r.baseline_kept_by_external);
+  const summary =
+    repro.length > 0 && kept.length > 0
+      ? `${exact.length ? `${exact.join(", ")} is rebuilt exactly from the raw hits. ` : ""}` +
+        `Every external pair is in its baseline; footprinting keeps ${pct(Math.min(...kept))}–${pct(Math.max(...kept))} of the baseline pairs.`
+      : null;
+
   return (
-    <Section
+    <Collapsible
       title="Own baseline vs external networks"
+      summary={loading || error ? null : summary}
       subtitle="Test network built by this project directly from the FIMO hits of the 312 validable genomes: a p-value threshold and, optionally, the transfer-tier ceiling of the external networks, without phylogenetic footprinting. Same gold standard and evaluation as above."
     >
       {loading ? (
@@ -139,6 +150,6 @@ export default function BaselineSection({ mode, universe }) {
           </div>
         </div>
       )}
-    </Section>
+    </Collapsible>
   );
 }
