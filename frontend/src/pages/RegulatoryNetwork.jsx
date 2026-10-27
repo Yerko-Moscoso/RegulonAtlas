@@ -557,7 +557,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
       <div>
         <h1 className="text-2xl font-semibold text-[#334155]">Regulatory Network</h1>
         <p className="text-sm text-[#64748B] mt-1">
-          Predicted transcription factor → target operon interactions from the RegulomeAtlas database.
+          Predicted transcription factor → target operon interactions from the RegulonAtlas database.
         </p>
       </div>
 

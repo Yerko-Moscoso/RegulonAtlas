@@ -308,7 +308,7 @@ export default function Metrics({ initialOrganism }) {
         <h1 className="text-2xl font-semibold text-[#334155]">Topological Metrics</h1>
         <p className="text-sm text-[#64748B] mt-1">
           Architecture of each predicted regulatory network (transcription factor → target operon) in the
-          RegulomeAtlas database.
+          RegulonAtlas database.
         </p>
       </div>
 
@@ -347,7 +347,7 @@ export default function Metrics({ initialOrganism }) {
         <Info size={15} className="text-[#64748B] shrink-0 mt-0.5" />
         <div className="text-[12px] text-[#64748B] space-y-1">
           <p>
-            Metrics are computed by RegulomeAtlas with NetworkX from the network edges: one node per transcription factor
+            Metrics are computed by RegulonAtlas with NetworkX from the network edges: one node per transcription factor
             (normalized name) and per target operon, and one edge per TF–operon pair. They replace the metrics reported
             by the external pipeline, which cannot be reproduced from the edges.
           </p>
@@ -576,7 +576,7 @@ export default function Metrics({ initialOrganism }) {
             </table>
           </div>
           <p className="text-[11px] text-[#94A3B8] mt-3">
-            Metrics computed by RegulomeAtlas from the network edges (directed TF → operon graph).
+            Metrics computed by RegulonAtlas from the network edges (directed TF → operon graph).
           </p>
         </div>
       )}

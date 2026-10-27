@@ -71,7 +71,7 @@ export default function Dashboard({ navigate }) {
   return (
     <div className="space-y-6 max-w-[1100px]">
       <div>
-        <h1 className="text-2xl font-semibold text-[#334155]">RegulomeAtlas</h1>
+        <h1 className="text-2xl font-semibold text-[#334155]">RegulonAtlas</h1>
         <p className="text-sm text-[#64748B] mt-1">
           Predicted transcriptional regulatory networks (TF → operon) for {fmtInt(ATLAS_GENOMES)} bacterial genomes, one
           per GTDB genus. Networks come from an external pipeline; validation, metrics, comparison and robustness are

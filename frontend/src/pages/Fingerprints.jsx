@@ -247,7 +247,7 @@ export default function Fingerprints({ initialOrganism }) {
       <div className="flex gap-2.5 items-start bg-[#F7FAFC] border border-[#D9E2E7] rounded-lg px-4 py-2.5">
         <Info size={15} className="text-[#64748B] shrink-0 mt-0.5" />
         <p className="text-[12px] text-[#64748B]">
-          Metrics are computed by RegulomeAtlas from the network edges: a directed graph with one node per transcription
+          Metrics are computed by RegulonAtlas from the network edges: a directed graph with one node per transcription
           factor (normalized name) and per target operon. Percentiles are relative to the {fmtInt(atlasRows.length)} atlas
           genomes with edges in this network. Absolute sizes (edges, TFs) grow strongly with less strict networks;
           compare genomes within the same network.
