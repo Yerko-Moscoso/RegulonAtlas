@@ -8,6 +8,7 @@ import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, selectClass } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
+import Collapsible from "../components/Collapsible";
 
 // Robustez de las métricas propias (make robustness-atlas):
 //   1. submuestreo de aristas: ¿se conserva el orden de los genomas si la red está incompleta?
@@ -280,6 +281,20 @@ export default function Robustness({ initialOrganism }) {
   const atRate = stratSummary.filter((x) => x.rate === 0.5 && !x.trivial);
   const nRobust = atRate.filter((x) => x.robustness === "robust").length;
 
+  // Resumen de la ficha del genoma: métricas que quedan dentro de ±20 % de su valor original a la tasa elegida.
+  const genomeAtRate = genomeRows.filter((x) => x.strategy === strategy && x.rate === rate && x.retention != null);
+  const genomeStable = genomeAtRate.filter((x) => Math.abs(x.retention - 1) <= 0.2).length;
+  const genomeSummary = genomeAtRate.length
+    ? `With ${pct(rate)} of the edges removed (${strat.label.toLowerCase()}), ${genomeStable} of ${genomeAtRate.length} metrics stay within ±20% of their original value in this genome.`
+    : null;
+
+  // Resumen del footprinting: pares que conserva un genoma típico y métricas cuyo orden se mantiene (ρ ≥ 0.90).
+  const fpPairs = footprint.find((x) => x.metric === "n_edges");
+  const fpStable = footprint.filter((x) => x.spearman != null && x.spearman >= 0.9).length;
+  const footprintSummary = fpPairs
+    ? `A typical genome keeps ${pct(fpPairs.median_ratio)} of its TF–operon pairs after footprinting, and ${fpStable} of ${footprint.length} metrics keep the ranking of genomes (Spearman ≥ 0.90).`
+    : null;
+
   const nestingCells = nesting.map((n) => ({ a: n.from_network, b: n.to_network, value: n.share_in_to }));
   const betweenCells = between.flatMap((r) => [
     { a: r.a, b: r.b, value: r.spearman },
@@ -371,7 +386,7 @@ export default function Robustness({ initialOrganism }) {
               <ReferenceLine y={0.9} stroke="#94A3B8" strokeDasharray="4 3" />
               <ReferenceLine y={0.7} stroke="#CBD5E1" strokeDasharray="4 3" />
               <Tooltip content={<SeriesTooltip valueFmt={fmtRho} />} />
-              <Legend wrapperStyle={{ fontSize: 11, color: "#64748B" }} />
+              <Legend verticalAlign="top" height={24} wrapperStyle={{ fontSize: 11, color: "#64748B" }} />
               {STRATEGIES.map((s) => (
                 <Line
                   key={s.key}
@@ -416,7 +431,7 @@ export default function Robustness({ initialOrganism }) {
                 <YAxis tick={{ fontSize: 11, fill: "#64748B" }} stroke="#D9E2E7" tickFormatter={(v) => v.toFixed(1)} />
                 <ReferenceLine y={1} stroke="#CBD5E1" />
                 <Tooltip content={<SeriesTooltip valueFmt={(v) => (v == null ? "—" : v.toFixed(3))} />} />
-                <Legend wrapperStyle={{ fontSize: 11, color: "#64748B" }} />
+                <Legend verticalAlign="top" height={24} wrapperStyle={{ fontSize: 11, color: "#64748B" }} />
                 <Line dataKey="genome" name="This genome" stroke={GENOME_COLOR} strokeWidth={2}
                   dot={{ r: 4, fill: GENOME_COLOR, stroke: "#FFFFFF", strokeWidth: 2 }} isAnimationActive={false} connectNulls />
                 <Line dataKey="atlas" name="Atlas median" stroke={ATLAS_COLOR} strokeWidth={2} strokeDasharray="5 3"
@@ -470,15 +485,12 @@ export default function Robustness({ initialOrganism }) {
       </Card>
 
       {/* 1d. Ficha del genoma */}
-      <Card loading={genomeLoading}>
-        <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-          <div>
-            <h3 className="text-sm font-semibold text-[#334155]">Selected genome — {genome?.ncbi_organism ?? organism}</h3>
-            <p className="text-xs text-[#64748B]">
-              Original value and mean ± SD after removing edges ({strat.label.toLowerCase()}). Class is the atlas-wide
-              rank stability at that rate.
-            </p>
-          </div>
+      <Collapsible
+        title={`Selected genome — ${genome?.ncbi_organism ?? organism}`}
+        subtitle="Original value and mean ± SD after removing edges. Class is the atlas-wide rank stability at that rate."
+        summary={genomeLoading ? null : genomeSummary}
+      >
+        <div className="flex justify-end mb-3">
           <div className="flex rounded-lg border border-[#D9E2E7] overflow-hidden">
             {RATES.map((r) => (
               <button
@@ -493,7 +505,9 @@ export default function Robustness({ initialOrganism }) {
             ))}
           </div>
         </div>
-        {genomeError ? (
+        {genomeLoading ? (
+          <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 text-[#3A9D7C] animate-spin" /></div>
+        ) : genomeError ? (
           <div className="text-xs text-[#D96C6C]">{genomeError}</div>
         ) : (
           <div className="overflow-x-auto">
@@ -527,7 +541,7 @@ export default function Robustness({ initialOrganism }) {
             </table>
           </div>
         )}
-      </Card>
+      </Collapsible>
 
       {/* 2. Entre redes */}
       <Card loading={false}>
@@ -551,11 +565,16 @@ export default function Robustness({ initialOrganism }) {
           />
         </div>
 
-        <h4 className="text-xs font-semibold text-[#334155] mt-6">Effect of phylogenetic footprinting</h4>
-        <p className="text-[11px] text-[#64748B] mb-2">
-          validated vs no-footprint: same p-value and tier, only footprinting changes
-          {footprint[0] ? ` (${fmtInt(footprint[0].genomes)} genomes with edges in both).` : "."}
-        </p>
+      </Card>
+
+      {/* 2b. Efecto del footprinting */}
+      <Collapsible
+        title="Effect of phylogenetic footprinting"
+        subtitle={`validated vs no-footprint: same p-value and tier, only footprinting changes${
+          footprint[0] ? ` (${fmtInt(footprint[0].genomes)} genomes with edges in both).` : "."
+        }`}
+        summary={footprintSummary}
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -584,7 +603,7 @@ export default function Robustness({ initialOrganism }) {
             </tbody>
           </table>
         </div>
-      </Card>
+      </Collapsible>
     </div>
   );
 }
