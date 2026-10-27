@@ -170,16 +170,23 @@ export default function DataProvenance() {
                     <p className="text-[11px] text-[#94A3B8] font-mono mt-1">
                       make {c.make} · {fmtDateTime(c.created_at)}
                     </p>
-                    <table className="w-full text-[11px] mt-2">
-                      <tbody>
-                        {Object.entries(c.tables ?? {}).map(([t, n]) => (
-                          <tr key={t} className="border-t border-[#F0F4F8]">
-                            <td className="py-0.5 pr-2 font-mono text-[#64748B]">{t}</td>
-                            <td className="py-0.5 text-right font-mono text-[#334155]">{fmtInt(n)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    {/* Conteos por tabla: registro de la exportación, plegado (son 13 filas en la caché del atlas) */}
+                    <details className="mt-2">
+                      <summary className="text-[11px] text-[#2563A0] cursor-pointer select-none">
+                        {Object.keys(c.tables ?? {}).length} table{Object.keys(c.tables ?? {}).length === 1 ? "" : "s"} ·{" "}
+                        {fmtInt(Object.values(c.tables ?? {}).reduce((s, n) => s + n, 0))} rows
+                      </summary>
+                      <table className="w-full text-[11px] mt-1">
+                        <tbody>
+                          {Object.entries(c.tables ?? {}).map(([t, n]) => (
+                            <tr key={t} className="border-t border-[#F0F4F8]">
+                              <td className="py-0.5 pr-2 font-mono text-[#64748B]">{t}</td>
+                              <td className="py-0.5 text-right font-mono text-[#334155]">{fmtInt(n)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </details>
                     {c.issues.map((i) => (
                       <p key={i} className="text-[11px] text-[#92400E] mt-1">{i}</p>
                     ))}
@@ -224,8 +231,9 @@ export default function DataProvenance() {
                         </td>
                         <td className="py-1.5 pr-3 text-[#334155]" title={r.up_to_date_detail ?? ""}>
                           {r.up_to_date == null ? "—" : r.up_to_date ? "Yes" : "No"}
-                          {r.up_to_date_detail && (
-                            <div className="text-[11px] text-[#94A3B8] max-w-[220px]">{r.up_to_date_detail}</div>
+                          {/* El detalle solo se muestra cuando hay algo que revisar; si está al día queda en el title */}
+                          {r.up_to_date === false && r.up_to_date_detail && (
+                            <div className="text-[11px] text-[#92400E] max-w-[220px]">{r.up_to_date_detail}</div>
                           )}
                         </td>
                         <td className="py-1.5"><StatusBadge value={r.status} /></td>

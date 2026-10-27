@@ -575,9 +575,6 @@ export default function Metrics({ initialOrganism }) {
               </tbody>
             </table>
           </div>
-          <p className="text-[11px] text-[#94A3B8] mt-3">
-            Metrics computed by RegulonAtlas from the network edges (directed TF → operon graph).
-          </p>
         </div>
       )}
     </div>
