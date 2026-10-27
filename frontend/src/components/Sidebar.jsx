@@ -1,11 +1,11 @@
-import { LayoutDashboard, Dna, Network, BarChart3, CircleCheck, FingerprintPattern, GitCompare, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Dna, Network, BarChart3, CircleCheck, FingerprintPattern, GitCompare, ShieldCheck, FileClock } from "lucide-react";
 import { PROJECT_NAME } from "../config/constants";
 
 // Menú del MVP (propuesta, sección 5): seleccionar organismo, ver su red,
 // sus 5 métricas básicas y la validación de E. coli contra RegulonDB.
 // Semana 11: Fingerprints y Comparison vuelven al menú con las métricas propias.
-// Semana 12: Robustness. Las demás páginas fuera del alcance (Pipeline, Data Provenance,
-// Settings) siguen en /pages y vuelven al menú cuando se implementen.
+// Semana 12: Robustness. Semana 13: Data Provenance (grupo SYSTEM). Pipeline y Settings siguen en /pages
+// y vuelven al menú cuando se implementen; la vista MVP se descartó (26-10-2026).
 const navGroups = [
   {
     title: "OVERVIEW",
@@ -22,6 +22,10 @@ const navGroups = [
       { id: "robustness", label: "Robustness", icon: ShieldCheck },
       { id: "validation", label: "Validation", icon: CircleCheck },
     ],
+  },
+  {
+    title: "SYSTEM",
+    items: [{ id: "provenance", label: "Data Provenance", icon: FileClock }],
   },
 ];
 

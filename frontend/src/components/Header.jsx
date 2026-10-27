@@ -14,6 +14,7 @@ const labels = {
   fingerprints: "Topological Fingerprints",
   comparison: "Taxon Comparison",
   robustness: "Metric Robustness",
+  provenance: "Data Provenance",
 };
 
 const HEALTH_INTERVAL_MS = 30000;

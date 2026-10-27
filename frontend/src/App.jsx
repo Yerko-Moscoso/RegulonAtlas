@@ -13,6 +13,7 @@ const Validation = lazy(() => import("./pages/Validation"));
 const Fingerprints = lazy(() => import("./pages/Fingerprints"));
 const Comparison = lazy(() => import("./pages/Comparison"));
 const Robustness = lazy(() => import("./pages/Robustness"));
+const DataProvenance = lazy(() => import("./pages/DataProvenance"));
 
 function PageLoader() {
   return (
@@ -26,7 +27,7 @@ function PageLoader() {
 // Referencia con gold standard (RegulonDB); también es el organismo por defecto.
 const DEFAULT_ORGANISM = "GCF_000005845.2";
 
-// Rutas del MVP más las vistas de las semanas 11 (Fingerprints, Comparison) y 12 (Robustness). Si llega una página no registrada, se vuelve al Dashboard
+// Rutas del MVP más las vistas de las semanas 11 (Fingerprints, Comparison), 12 (Robustness) y 13 (Data Provenance). Si llega una página no registrada, se vuelve al Dashboard
 // en vez de mostrar una pantalla vacía.
 const MVP_PAGES = new Set([
   "dashboard",
@@ -38,6 +39,7 @@ const MVP_PAGES = new Set([
   "fingerprints",
   "comparison",
   "robustness",
+  "provenance",
 ]);
 
 export default function App() {
@@ -67,6 +69,7 @@ export default function App() {
           {page === "fingerprints" && <Fingerprints initialOrganism={selectedOrganism} />}
           {page === "comparison" && <Comparison />}
           {page === "robustness" && <Robustness initialOrganism={selectedOrganism} />}
+          {page === "provenance" && <DataProvenance />}
           </Suspense>
         </main>
       </div>

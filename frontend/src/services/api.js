@@ -28,6 +28,8 @@ export const api = {
     apiClient.get(`/atlas/networks/${networkId}/metrics`, { params: accession ? { accession } : {} }),
 
   getAtlasProvenance: () => apiClient.get('/atlas/provenance'),
+  // Estado del pipeline: manifiestos de la caché y de cada resultado (semana 13)
+  getAtlasStatus: () => apiClient.get('/atlas/status'),
 
   // === VALIDACIÓN DEL ATLAS (resultados de make validate-atlas) ===
   getAtlasValidationManifest: (gold = 'regprecise') =>

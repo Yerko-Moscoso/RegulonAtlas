@@ -1,221 +1,253 @@
 import { useState, useEffect } from "react";
-import { CheckCircle2, Download, Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2, AlertTriangle, XCircle, Info } from "lucide-react";
 import { api } from "../services/api";
+import { fmtInt } from "../utils/atlas";
 
-const TYPE_STYLE = {
-  Reference: "bg-[#E8F5F0] text-[#176B57]",
-  Genome: "bg-[#DCEFFA] text-[#2563A0]",
-  Functional: "bg-[#F3F4FF] text-[#4F46E5]",
-  Validation: "bg-[#FEF3C7] text-[#92400E]",
-  Predicted: "bg-[#F7FAFC] text-[#64748B]",
+// Procedencia de los datos (semana 13):
+//   1. fuentes externas: tabla provenance de la base (GET /atlas/provenance);
+//   2. exportaciones a caché y trazabilidad de cada resultado: manifiestos (GET /atlas/status).
+
+const STATUS = {
+  ok: { label: "OK", icon: CheckCircle2, cls: "bg-[#E8F5F0] text-[#176B57] border-[#B8DDD0]" },
+  warning: { label: "Check", icon: AlertTriangle, cls: "bg-[#FFFBEB] text-[#92400E] border-[#FCEDB8]" },
+  missing: { label: "Missing", icon: XCircle, cls: "bg-[#FEF0F0] text-[#B54848] border-[#F8BFBF]" },
 };
 
-const REPRODUCIBILITY_CHECKLIST = [
-  "Source recorded",
-  "Version recorded",
-  "Date recorded",
-  "Parameters recorded",
-  "Regenerable result",
-  "Hash verified",
+// Limitaciones documentadas (contexto, secciones 15 y 16). Las de la caché llegan como `notes` de /atlas/status.
+const LIMITATIONS = [
+  "Traceability goes back to the provenance table: the code of the external pipeline and its decision log (D1–D33) are not accessible.",
+  "network_metrics and the D33 benchmark come from the external pipeline and are shown only as reference.",
 ];
 
+const fmtDate = (s) => (s ? String(s).slice(0, 10) : "—");
+const fmtDateTime = (s) => (s ? String(s).replace("T", " ").slice(0, 16) + (String(s).length > 10 ? " UTC" : "") : "—");
+
+function StatusBadge({ value }) {
+  const s = STATUS[value] ?? STATUS.missing;
+  const Icon = s.icon;
+  return (
+    <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border ${s.cls}`}>
+      <Icon size={11} /> {s.label}
+    </span>
+  );
+}
+
+function Card({ title, subtitle, children }) {
+  return (
+    <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
+      <h2 className="text-sm font-semibold text-[#334155]">{title}</h2>
+      {subtitle && <p className="text-xs text-[#64748B] mt-0.5 mb-3">{subtitle}</p>}
+      {children}
+    </div>
+  );
+}
+
+function Th({ children, right }) {
+  return (
+    <th className={`py-2 pr-3 text-[11px] font-medium text-[#64748B] ${right ? "text-right" : "text-left"}`}>
+      {children}
+    </th>
+  );
+}
+
 export default function DataProvenance() {
-  // Estados de datos reales
-  const [provenanceRecords, setProvenanceRecords] = useState([]);
-  const [dataSources, setDataSources] = useState([]);
-  const [summary, setSummary] = useState({
-    totalRecords: 0,
-    dataSourcesCount: 0,
-    predictedResults: 0,
-    reproduciblePct: "—",
-  });
+  const [sources, setSources] = useState([]);
+  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchProvenance = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        // TODO: ajustar a tu endpoint real, se asume:
-        // GET /api/provenance
-        const response = await api.getProvenanceRecords();
-        const data = response.data || {};
-
-        setProvenanceRecords(data.records || []);
-        setDataSources(
-          data.dataSources || [
-            { name: "PRODORIC", url: "prodoric.de" },
-            { name: "RegPrecise", url: "regprecise.lbl.gov" },
-            { name: "NCBI RefSeq", url: "ncbi.nlm.nih.gov" },
-            { name: "KEGG", url: "kegg.jp" },
-            { name: "RegulonDB", url: "regulondb.ccg.unam.mx" },
-          ]
-        );
-        setSummary({
-          totalRecords: data.totalRecords ?? (data.records || []).length,
-          dataSourcesCount: data.dataSourcesCount ?? (data.dataSources || []).length,
-          predictedResults: data.predictedResults ?? 0,
-          reproduciblePct: data.reproduciblePct ?? "—",
-        });
-      } catch (err) {
-        console.error("Error al cargar la trazabilidad de datos:", err);
-        setError("No se pudo cargar la información de procedencia de datos.");
-        setProvenanceRecords([]);
-      } finally {
-        setLoading(false);
-      }
+    let cancelled = false;
+    Promise.all([api.getAtlasProvenance(), api.getAtlasStatus()])
+      .then(([prov, st]) => {
+        if (cancelled) return;
+        setSources(prov.data.sources ?? []);
+        setStatus(st.data);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err?.response?.data?.detail ?? "Could not load the provenance data.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
     };
-
-    fetchProvenance();
   }, []);
 
-  const handleExportCsv = async () => {
-    try {
-      // TODO: ajustar a tu endpoint real, se asume:
-      // GET /api/provenance/export?format=csv (respuesta como blob)
-      const response = await api.exportProvenanceCsv();
-      const blob = new Blob([response.data], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "data_provenance.csv");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (err) {
-      console.error("Error al exportar CSV:", err);
-    }
-  };
+  const steps = status?.steps ?? [];
+  const caches = steps.filter((s) => s.kind === "cache");
+  const results = steps.filter((s) => s.kind === "result");
+  const nCached = caches.reduce((n, s) => n + Object.keys(s.tables ?? {}).length, 0);
+  const nTraceable = results.filter((s) => s.status === "ok").length;
+  const notes = [...new Set(steps.flatMap((s) => s.notes ?? []))];
+
+  const kpis = [
+    { label: "External sources", value: sources.length },
+    { label: "Cached tables", value: nCached },
+    { label: "Results tracked", value: results.length },
+    { label: "Traceable and up to date", value: status ? `${nTraceable} / ${results.length}` : "—" },
+  ];
 
   return (
-    <div className="space-y-5 max-w-[1100px] relative">
-      {loading && (
-        <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center z-20">
-          <Loader2 className="w-8 h-8 text-[#3A9D7C] animate-spin mb-2" />
-          <p className="text-sm text-[#64748B]">Cargando trazabilidad de datos...</p>
-        </div>
-      )}
-
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#334155]">Data Provenance</h1>
-          <p className="text-sm text-[#64748B] mt-1">
-            Track the source, version, date and parameters of every result generated by the
-            framework.
+    <div className="space-y-6 max-w-[1100px]">
+      <div>
+        <h1 className="text-2xl font-semibold text-[#334155]">Data Provenance</h1>
+        <p className="text-sm text-[#64748B] mt-1">
+          Where every number of the atlas comes from: external sources, the export to the local cache, and the code
+          version that produced each result.
+        </p>
+        {status && (
+          <p className="text-xs text-[#94A3B8] mt-1 font-mono">
+            Checked {fmtDateTime(status.checked_at)} · code {status.code.git_commit ?? "—"}
+            {status.code.git_dirty ? " (uncommitted changes)" : ""}
           </p>
-        </div>
-        <button
-          onClick={handleExportCsv}
-          className="flex items-center gap-2 px-3.5 py-2 border border-[#D9E2E7] text-sm text-[#64748B] rounded-lg hover:bg-[#F7FAFC] transition-colors"
-        >
-          <Download size={14} /> Export CSV
-        </button>
+        )}
       </div>
 
       {error && (
-        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">
-          {error}
-        </div>
+        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
       )}
 
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: "Total records", value: summary.totalRecords },
-          { label: "Data sources", value: summary.dataSourcesCount },
-          { label: "Predicted results", value: summary.predictedResults },
-          { label: "Reproducible", value: summary.reproduciblePct },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border border-[#D9E2E7] p-4 shadow-sm">
-            <div className="text-xl font-bold font-mono text-[#334155]">{s.value}</div>
-            <div className="text-xs text-[#64748B] mt-1">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex gap-5">
-        {/* Table */}
-        <div className="flex-1 bg-white rounded-xl border border-[#D9E2E7] shadow-sm overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#D9E2E7] bg-[#F7FAFC]">
-                {["Record", "Source", "Version", "Date", "Parameters", "Type", "Hash"].map((h) => (
-                  <th
-                    key={h}
-                    className="text-left text-[11px] font-medium text-[#64748B] px-4 py-2.5 first:pl-5 last:pr-5"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {provenanceRecords.map((rec, idx) => (
-                <tr
-                  key={rec.id || idx}
-                  className="border-b border-[#F7FAFC] last:border-0 hover:bg-[#F7FAFC] transition-colors"
-                >
-                  <td className="px-4 pl-5 py-2.5 text-xs font-medium text-[#334155]">
-                    {rec.record}
-                  </td>
-                  <td className="px-4 py-2.5 text-xs text-[#334155]">{rec.source}</td>
-                  <td className="px-4 py-2.5 text-xs font-mono text-[#334155]">{rec.version}</td>
-                  <td className="px-4 py-2.5 text-xs font-mono text-[#64748B]">{rec.date}</td>
-                  <td className="px-4 py-2.5 text-[11px] text-[#64748B] max-w-[140px]">
-                    {rec.params}
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${TYPE_STYLE[rec.type] || TYPE_STYLE.Predicted}`}
-                    >
-                      {rec.type}
-                    </span>
-                  </td>
-                  <td className="px-4 pr-5 py-2.5 font-mono text-[10px] text-[#94A3B8]">
-                    {rec.hash}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {!loading && !error && provenanceRecords.length === 0 && (
-            <div className="py-16 text-center">
-              <p className="text-[#64748B] text-sm">No provenance records available.</p>
-            </div>
-          )}
+      {loading ? (
+        <div className="flex items-center justify-center py-20 text-sm text-[#64748B] gap-2">
+          <Loader2 className="w-5 h-5 text-[#3A9D7C] animate-spin" /> Loading provenance…
         </div>
-
-        {/* Reproducibility card */}
-        <div className="w-56 shrink-0 space-y-4">
-          <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-full bg-[#E8F5F0] flex items-center justify-center">
-                <CheckCircle2 size={14} className="text-[#3A9D7C]" />
-              </div>
-              <h3 className="text-sm font-semibold text-[#334155]">Reproducibility</h3>
-            </div>
-            <div className="space-y-2">
-              {REPRODUCIBILITY_CHECKLIST.map((item) => (
-                <div key={item} className="flex items-center gap-2">
-                  <CheckCircle2 size={13} className="text-[#3A9D7C] shrink-0" />
-                  <span className="text-xs text-[#334155]">{item}</span>
+      ) : (
+        !error && (
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {kpis.map((k) => (
+                <div key={k.label} className="bg-white rounded-xl border border-[#D9E2E7] p-4 shadow-sm">
+                  <div className="text-xl font-bold font-mono text-[#334155]">{k.value}</div>
+                  <div className="text-xs text-[#64748B] mt-1">{k.label}</div>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-4">
-            <h3 className="text-sm font-semibold text-[#334155] mb-3">Data Sources</h3>
-            {dataSources.map((s) => (
-              <div key={s.name} className="mb-2 last:mb-0">
-                <div className="text-xs font-medium text-[#334155]">{s.name}</div>
-                <div className="text-[10px] text-[#94A3B8] font-mono">{s.url}</div>
+            <Card
+              title="1. External sources"
+              subtitle="Registered by the external pipeline in the provenance table of the database (values as stored)."
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-[#D9E2E7]">
+                      <Th>Source</Th><Th>Version</Th><Th>Retrieved</Th><Th>Parameters</Th><Th>Notes</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sources.map((s) => (
+                      <tr key={s.prov_id} className="border-b border-[#F0F4F8] align-top">
+                        <td className="py-1.5 pr-3">
+                          <a href={s.url} target="_blank" rel="noreferrer" className="font-medium text-[#2563A0] hover:underline">
+                            {s.source}
+                          </a>
+                        </td>
+                        <td className="py-1.5 pr-3 font-mono text-[#334155]">{s.version}</td>
+                        <td className="py-1.5 pr-3 font-mono text-[#64748B] whitespace-nowrap">{fmtDate(s.retrieved_on)}</td>
+                        <td className="py-1.5 pr-3 text-[#64748B]">{s.params}</td>
+                        <td className="py-1.5 text-[#64748B]">{s.notes}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+            </Card>
+
+            <Card
+              title="2. Local cache"
+              subtitle="Read-only exports from MariaDB (SELECT only). The API and every analysis read these files, never the database."
+            >
+              <div className="grid md:grid-cols-3 gap-4">
+                {caches.map((c) => (
+                  <div key={c.id} className="border border-[#E2E8F0] rounded-lg p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-[#334155]">{c.label}</span>
+                      <StatusBadge value={c.status} />
+                    </div>
+                    <p className="text-[11px] text-[#64748B] mt-1">{c.description}</p>
+                    <p className="text-[11px] text-[#94A3B8] font-mono mt-1">
+                      make {c.make} · {fmtDateTime(c.created_at)}
+                    </p>
+                    <table className="w-full text-[11px] mt-2">
+                      <tbody>
+                        {Object.entries(c.tables ?? {}).map(([t, n]) => (
+                          <tr key={t} className="border-t border-[#F0F4F8]">
+                            <td className="py-0.5 pr-2 font-mono text-[#64748B]">{t}</td>
+                            <td className="py-0.5 text-right font-mono text-[#334155]">{fmtInt(n)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {c.issues.map((i) => (
+                      <p key={i} className="text-[11px] text-[#92400E] mt-1">{i}</p>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card
+              title="3. Results"
+              subtitle="Each result records the commit that produced it. A result is up to date when it was built from the current version of its input."
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-[#D9E2E7]">
+                      <Th>Result</Th><Th>Command</Th><Th>Generated</Th><Th>Commit</Th><Th>Clean tree</Th>
+                      <Th right>Files</Th><Th>Up to date</Th><Th>Status</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((r) => (
+                      <tr key={r.id} className="border-b border-[#F0F4F8] align-top">
+                        <td className="py-1.5 pr-3">
+                          <div className="font-medium text-[#334155]">{r.label}</div>
+                          <div className="text-[11px] text-[#94A3B8]">{r.description}</div>
+                          {r.issues.map((i) => (
+                            <div key={i} className="text-[11px] text-[#92400E] mt-0.5">{i}</div>
+                          ))}
+                        </td>
+                        <td className="py-1.5 pr-3 font-mono text-[#64748B] whitespace-nowrap">make {r.make}</td>
+                        <td className="py-1.5 pr-3 font-mono text-[#64748B] whitespace-nowrap">{fmtDateTime(r.created_at)}</td>
+                        <td className="py-1.5 pr-3 font-mono text-[#334155]">
+                          {r.git_commit ?? "—"}
+                          {r.commit_in_history === false && <span className="text-[#B54848]"> (not in history)</span>}
+                        </td>
+                        <td className="py-1.5 pr-3 text-[#334155]">
+                          {r.git_dirty == null ? "—" : r.git_dirty ? "No" : "Yes"}
+                        </td>
+                        <td className="py-1.5 pr-3 text-right font-mono text-[#334155] whitespace-nowrap">
+                          {r.files_declared - r.files_missing.length} / {r.files_declared}
+                        </td>
+                        <td className="py-1.5 pr-3 text-[#334155]" title={r.up_to_date_detail ?? ""}>
+                          {r.up_to_date == null ? "—" : r.up_to_date ? "Yes" : "No"}
+                          {r.up_to_date_detail && (
+                            <div className="text-[11px] text-[#94A3B8] max-w-[220px]">{r.up_to_date_detail}</div>
+                          )}
+                        </td>
+                        <td className="py-1.5"><StatusBadge value={r.status} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+
+            <Card title="Known limitations">
+              <ul className="space-y-1.5">
+                {[...notes, ...LIMITATIONS].map((l) => (
+                  <li key={l} className="flex gap-2 text-xs text-[#64748B]">
+                    <Info size={13} className="text-[#94A3B8] shrink-0 mt-0.5" /> {l}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </>
+        )
+      )}
     </div>
   );
 }

@@ -92,10 +92,15 @@ def _cache_steps(cache):
             if present and missing:
                 step["issues"].append(f"Tables not exported: {', '.join(missing)}")
         if step["exists"]:
-            step["notes"].append("The export does not record the git commit (only the date).")
+            step["notes"].append("The cache exports record the date and row counts, but not the git commit of the export script.")
         step["status"] = _status(step)
         steps.append(step)
     return steps
+
+
+def _short(ts):
+    """'2026-10-19T13:25:58+00:00' -> '2026-10-19 13:25 UTC' (texto visible)."""
+    return ts[:16].replace("T", " ") + " UTC" if ts and len(ts) > 10 else ts
 
 
 def _up_to_date(s, m, cache, manifests):
@@ -118,7 +123,7 @@ def _up_to_date(s, m, cache, manifests):
         if not fimo:
             return None, "FIMO hits export not found in the cache manifest."
         return m["created_at"] >= fimo["exported_at"], (
-            f"Built on {m['created_at']}; FIMO hits exported on {fimo['exported_at']}.")
+            f"Built on {_short(m['created_at'])}; FIMO hits exported on {_short(fimo['exported_at'])}.")
     raise ValueError(f"Regla de coherencia desconocida: {s['check']}")
 
 
