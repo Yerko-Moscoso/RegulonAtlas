@@ -36,6 +36,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | 11 | [`metricas_semana11.md`](metricas_semana11.md) | OE4 | Métricas topológicas propias, diferencias con `network_metrics`, comparación entre taxones, concordancia con el pipeline externo y prueba del origen de los motivos (8.5) |
 | 11 | [`correcciones_semana11.md`](correcciones_semana11.md) | — | Correcciones C1–C6: import roto, genoma replacement, trazabilidad, verificación pre-commit, `density` externa y documentación |
 | 12 | [`limpieza_semana12.md`](limpieza_semana12.md) | — | Limpieza del proyecto: respaldo, eliminado y archivado, código común, vistas migradas al atlas, pruebas, ESLint, Makefile, README y segundo análisis |
+| 13 | [`sistema_semana13.md`](sistema_semana13.md) | — | Componentes del sistema (en curso): alcance acordado, endpoint de estado del pipeline (`/atlas/status`: reglas, API y pruebas), vista Data Provenance y observaciones (versión de RegPrecise) |
 | 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas (anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting, submuestreo de aristas) y línea base del pipeline propio desde `fimo_hits` en los 312 genomas validables (sección 8) |
 
 ### Material de referencia
@@ -66,6 +67,16 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 27-10-2026: semana 13, estado del pipeline y Data Provenance
+
+- Alcance pedido por el estudiante: solo el endpoint de estado y la vista Data Provenance; la vista MVP se descarta.
+- `65e9ace`: `scripts/explore_status.py`, `src/atlas_status.py` (8 etapas: commit, `git_dirty`, commit en el
+  historial, archivos y si cada resultado está al día con su entrada), `GET /api/v1/atlas/status` y
+  `tests/test_api_atlas_status.py` (7 pruebas; 53 en total).
+- `fbce952`: `DataProvenance.jsx` reescrita con datos reales (fuentes externas, caché, resultados y limitaciones), en el
+  menú bajo SYSTEM. Estado actual: 8/8 etapas en `ok`, 5/5 resultados trazables y al día.
+- Observación: `provenance` registra RegPrecise 3.0; el manifiesto del MVP decía 3.2. → `sistema_semana13.md`.
 
 ### 26-10-2026: cierre de la semana 12
 
