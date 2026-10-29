@@ -68,13 +68,20 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 30-10-2026: semana 13, `make all` corre el atlas
+
+- `make all` pasa a correr todo el análisis del atlas (validación, métricas, comparación, robustez y línea base); el MVP de
+  8 genomas queda solo en `make mvp`. Actualizados `make help`, `README.md`, `CLAUDE.md` y la vista Pipeline.
+- Corrección: la vista Pipeline y `sistema_semana13.md` (6.1) decían que `make atlas` no incluía la línea base; sí la
+  incluía. → `sistema_semana13.md`, sección 6.1; contexto, sección 14.
+
 ### 29-10-2026: semana 13, vista Pipeline y limpieza de prototipos
 
 - `9f55796`: `Pipeline.jsx` con el flujo real en 7 etapas, la autoría de cada parte, el estado de cada etapa propia
   (de `/atlas/status`) y enlaces a las vistas; `StatusBadge.jsx` compartido con Data Provenance. En el menú bajo SYSTEM.
 - `6dd5b18`: se elimina `MVP.jsx` (descartada); Settings descartada (nunca existió como archivo).
 - `e32b0b2`: Organisms abre en orden alfabético por organismo (observación del estudiante).
-- Pendiente, cuando el estudiante lo pida: pipeline propio en `make all`, revisión completa y congelamiento.
+- Pendiente, cuando el estudiante lo pida: revisión completa y congelamiento.
   → `sistema_semana13.md`, sección 6.
 
 ### 27-10-2026: semana 13, pasada de presentación de las vistas

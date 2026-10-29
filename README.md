@@ -50,7 +50,7 @@ Los datos no se versionan. Para regenerarlos desde la base (el usuario solo tien
 ```bash
 nohup make cache-atlas > logs/cache_atlas.log 2>&1 &    # caché del atlas (lento)
 make cache-genes && make cache-fimo                      # genes completos y hits de los genomas validables
-nohup make atlas > logs/atlas.log 2>&1 &                 # validación, métricas, comparación, robustez, línea base
+nohup make all > logs/atlas.log 2>&1 &                   # validación, métricas, comparación, robustez, línea base
 ```
 
 Cada carpeta de `data/results/` tiene un `manifest.json` con el commit que la generó y `git_dirty` (debe ser `false`:
@@ -70,6 +70,8 @@ los cálculos se ejecutan con el árbol limpio).
 
 El MVP es un corte vertical del pipeline propio sobre 8 genomas de Enterobacteriaceae (`config/mvp_genomes.txt`), con
 la caché versionada en `data/cache/mvp/`:
+
+Se ejecuta solo con `make mvp` (no forma parte de `make all`):
 
 ```bash
 make mvp      # transfer_map -> redes con propagación por operones -> métricas -> validación -> informe

@@ -77,7 +77,8 @@ make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robu
 make cache-fimo       # fimo_hits + transfer_map de los 312 genomas validables (MariaDB, solo SELECT)
 make baseline-atlas   # línea base del pipeline propio (red de prueba) -> data/results/baseline/
 make check            # verificaciones previas al commit (API, frontend, ESLint) + pytest
-make help             # lista de comandos; make atlas = todo el análisis en orden; make web = frontend
+make all              # todo el análisis del atlas en orden (= make atlas; ~15 min, usar nohup). El MVP: make mvp
+make help             # lista de comandos; make web = frontend
 make hooks            # activa scripts/githooks/pre-commit (una vez por clon)
 curl -s localhost:8000/api/v1/atlas/networks | python -m json.tool | head
 ```

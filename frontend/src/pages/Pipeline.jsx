@@ -260,8 +260,7 @@ export default function Pipeline({ navigate }) {
               </p>
               <pre className="text-[11px] font-mono bg-[#0F172A] text-[#E2E8F0] rounded-lg p-3 overflow-x-auto">
 {`make cache-atlas cache-genes cache-fimo   # cache from MariaDB (needs database access)
-make atlas            # validation, metrics, taxon comparison and robustness (~15 min)
-make baseline-atlas   # own baseline on the 312 validable genomes
+make all              # validation, metrics, taxon comparison, robustness and own baseline (~15 min)
 make check            # API, frontend and tests`}
               </pre>
             </div>

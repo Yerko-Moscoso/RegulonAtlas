@@ -20,7 +20,7 @@ RESULTS  = data/results/mvp
 help:  ## Lista los objetivos
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-18s %s\n", $$1, $$2}'
 
-all: mvp
+all: atlas  ## Todo el análisis del atlas (igual que make atlas). El MVP de 8 genomas se corre solo con make mvp
 
 # ---------------------------------------------------------------- atlas: caché (MariaDB, solo SELECT)
 cache-atlas:  ## Caché del atlas desde MariaDB -> data/cache/atlas/ (lento, usar nohup)
