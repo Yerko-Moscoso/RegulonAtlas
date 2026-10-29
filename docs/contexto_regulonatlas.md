@@ -477,7 +477,11 @@ FastAPI src/api ── routers: system, genomes, motifs + atlas + atlas_validati
         │
         ▼
 React (Vite + Tailwind + Recharts + Cytoscape.js) ── frontend/src/services/api.js
+   vistas: Dashboard, Organisms (+ OrganismDetail), Regulatory Networks, Metrics, Fingerprints, Taxon Comparison,
+           Robustness, Validation (con la línea base) y, en SYSTEM, Pipeline y Data Provenance (leen /atlas/status)
 
+make all (= make atlas) ── make atlas-ready (caché completa y árbol limpio) → validate → metrics → comparison
+                           → robustness → baseline; el MVP solo con make mvp
 make check / pre-commit ── API importa, sin get_db, frontend compila, ESLint sin errores, pytest (tests/)
 legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy/README.md
 ```
@@ -533,7 +537,7 @@ legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy
 
 Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. El índice de toda la documentación y la bitácora de trabajo están en `docs/README.md`. Las más urgentes:
 
-- **Investigador:** nivel de comparación y versión de RegPrecise en D33; cómo se contaron los FP; si se excluyó la autoevaluación; diferencia entre tiers `within_*` y `same_*`; calibración de `confidence`; acceso al código y al registro de decisiones.
+- **Investigador:** nivel de comparación y versión de RegPrecise en D33; cómo se contaron los FP; si se excluyó la autoevaluación; diferencia entre tiers `within_*` y `same_*`; calibración de `confidence`; acceso al código y al registro de decisiones; versión de RegPrecise (3.0 en `provenance`, 3.2 en el MVP; P7).
 - **Profesor:** aprobación del cambio de alcance; `balanced` como red principal con cifras del modo `independent`; RegulonDB obligatorio o complementario; fechas y formato del informe y la defensa.
 
 ### Pendientes técnicos
