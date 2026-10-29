@@ -3,7 +3,7 @@
 Preguntas abiertas sobre los datos, el pipeline externo y el alcance del proyecto. Cada una indica qué se sabe, qué se probó
 y qué decisión se tomó mientras tanto. Al final hay un borrador de mensaje para el investigador y otro para el profesor.
 
-*Creado el 15-10-2026 (semana 11). Última actualización: 19-10-2026.*
+*Creado el 15-10-2026 (semana 11). Última actualización: 29-10-2026 (P7).*
 
 **Estado de los mensajes:** borradores listos el 19-10-2026, **pendientes de envío por el usuario** (Claude no tiene
 acceso a correo). Al enviarlos, anotar aquí la fecha; al recibir respuesta, pasar la pregunta a "Resueltas".
@@ -70,6 +70,14 @@ por respaldo taxonómico", pero hay que confirmarlo.
 
 El código no está en ningún lugar accesible del servidor (contexto, sección 6). Con él se podrían resolver P1 a P3 y P5.
 
+### P7. ¿Qué versión de RegPrecise se usó: 3.0 o 3.2?
+
+- **Qué se observa:** la tabla `provenance` del atlas registra RegPrecise `3.0 (scraping JSP)`, descargado el
+  18-08-2026; el manifiesto de la caché del MVP (semana 8) decía "RegPrecise 3.2"
+  (`evidencia_mvp/pruebas_aceptacion_mvp.md`, CA3; `sistema_semana13.md`, sección 4).
+- **Por qué importa:** la validación (OE5) se informa "contra RegPrecise"; la versión debe citarse bien en el informe.
+- **Decisión mientras tanto:** el dashboard y la documentación usan lo que dice la base (3.0). No se cambió nada.
+
 ## Para el profesor
 
 ### Q1. ¿Se aprueba el cambio de alcance?
@@ -133,7 +141,8 @@ aceptación del MVP (`evidencia_mvp/pruebas_aceptacion_mvp.md`). Los envía el e
 > pero no sé si se calibró con RegPrecise); (4) la diferencia entre los tiers `within_*` y `same_*` (mi hipótesis:
 > `same_X` = ortólogo del TF en un genoma del mismo X; `within_X` = dentro del mismo X, por ortólogo o por respaldo
 > taxonómico); (5) si `GCF_002993285.1` es el reemplazo previsto de `GCF_050942165.1`; y (6) si puedo ver el código del
-> pipeline o el registro de decisiones D1–D33. También quiero confirmar cómo quieres que te cite en el informe. ¡Gracias!
+> pipeline o el registro de decisiones D1–D33. Además, (7) qué versión de RegPrecise usaste: la tabla `provenance` dice 3.0
+> y una exportación anterior decía 3.2. También quiero confirmar cómo quieres que te cite en el informe. ¡Gracias!
 
 **Al profesor:**
 
