@@ -10,6 +10,8 @@ const apiClient = axios.create({
   },
 });
 
+// Solo los métodos que usan las vistas. La API tiene además endpoints de manifiesto, definiciones y resumen
+// (/atlas/*/manifest, /atlas/metrics/definitions, /summary, /genomes) que no usa el frontend (revisión de la semana 13, C4).
 export const api = {
   // === ORGANISMOS (catálogo de la caché del atlas) ===
   getGenomeByAccession: (accession) => apiClient.get(`/genomes/${accession}`),
@@ -53,24 +55,11 @@ export const api = {
       params: { network_id: networkId, accession, atlas_only: atlasOnly, with_edges_only: withEdgesOnly },
     }),
 
-  getAtlasMetricsDefinitions: () => apiClient.get('/atlas/metrics/definitions'),
-
-  getAtlasMetricsSummary: (networkId, atlasOnly = true) =>
-    apiClient.get('/atlas/metrics/summary', { params: { network_id: networkId, atlas_only: atlasOnly } }),
-
   getAtlasMetricsVsExternal: (networkId) =>
     apiClient.get('/atlas/metrics/compare-external', { params: { network_id: networkId } }),
 
-  getAtlasOwnMetricsForGenomes: (networkId, accessions) => {
-    const params = new URLSearchParams({ network_id: networkId });
-    accessions.forEach((acc) => params.append('accessions', acc));
-    return apiClient.get(`/atlas/metrics/genomes?${params.toString()}`);
-  },
-
   // === COMPARACIÓN ENTRE TAXONES (resultados de make comparison-atlas) ===
   // level: phylum | class | order | family
-  getAtlasComparisonManifest: () => apiClient.get('/atlas/comparison/manifest'),
-
   getAtlasComparisonTaxa: (networkId, level = 'phylum', metric) =>
     apiClient.get('/atlas/comparison/taxa', { params: { network_id: networkId, level, metric } }),
 
@@ -79,8 +68,6 @@ export const api = {
 
   // === ROBUSTEZ DE LAS MÉTRICAS (resultados de make robustness-atlas) ===
   // strategy: random | degree_biased | low_confidence
-  getAtlasRobustnessManifest: () => apiClient.get('/atlas/robustness/manifest'),
-
   getAtlasRobustnessNesting: () => apiClient.get('/atlas/robustness/nesting'),
 
   getAtlasRobustnessBetween: (metric) => apiClient.get('/atlas/robustness/between', { params: { metric } }),
@@ -94,8 +81,6 @@ export const api = {
     apiClient.get('/atlas/robustness/subsampling/genome', { params: { network_id: networkId, accession, strategy } }),
 
   // === LÍNEA BASE DEL PIPELINE PROPIO (resultados de make baseline-atlas; 312 genomas validables) ===
-  getAtlasBaselineManifest: () => apiClient.get('/atlas/baseline/manifest'),
-
   getAtlasBaselineSummary: (mode, universe) =>
     apiClient.get('/atlas/baseline/summary', { params: { mode, universe } }),
 
