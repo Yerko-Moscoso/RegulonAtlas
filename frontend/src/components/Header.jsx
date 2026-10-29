@@ -59,13 +59,14 @@ export default function Header({ page }) {
       </div>
 
       <div className="ml-auto flex items-center gap-5">
-        <div className="flex items-center gap-2 text-sm">
+        {/* whitespace-nowrap: en pantalla angosta no se parte en dos líneas (revisión de la semana 13, C2) */}
+        <div className="flex items-center gap-2 text-sm whitespace-nowrap">
           <span className="text-[#64748B] text-xs">Dataset</span>
           <span className="font-medium text-[#334155] text-xs bg-[#F7FAFC] border border-[#D9E2E7] px-2 py-0.5 rounded">
             {fmtInt(ATLAS_GENOMES)} genomes · 5 networks
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 whitespace-nowrap">
           <span className={`w-1.5 h-1.5 rounded-full inline-block ${s.dot}`} />
           <span className="text-xs text-[#64748B]">{s.text}</span>
         </div>
