@@ -37,6 +37,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | 11 | [`metricas_semana11.md`](metricas_semana11.md) | OE4 | Métricas topológicas propias, diferencias con `network_metrics`, comparación entre taxones, concordancia con el pipeline externo y prueba del origen de los motivos (8.5) |
 | 11 | [`correcciones_semana11.md`](correcciones_semana11.md) | — | Correcciones C1–C6: import roto, genoma replacement, trazabilidad, verificación pre-commit, `density` externa y documentación |
 | 12 | [`limpieza_semana12.md`](limpieza_semana12.md) | — | Limpieza del proyecto: respaldo, eliminado y archivado, código común, vistas migradas al atlas, pruebas, ESLint, Makefile, README y segundo análisis |
+| 13 | [`revision_semana13.md`](revision_semana13.md) | — | Revisión completa del sistema: API, 10 vistas en 1440/900 px, API apagada y sin resultados, teclado, código y documentación. Hallazgos E1, M1–M6, C1–C6 y las 19 advertencias de ESLint con recomendación. Evidencia solo en el servidor (`evidencia_revision_semana13/`) |
 | 13 | [`sistema_semana13.md`](sistema_semana13.md) | — | Componentes del sistema (en curso): alcance acordado, endpoint de estado del pipeline (`/atlas/status`: reglas, API y pruebas), vista Data Provenance, observaciones (versión de RegPrecise) y pasada de presentación de las vistas con cómo revertirla (sección 5) y vista Pipeline con limpieza de prototipos (sección 6) |
 | 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas (anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting, submuestreo de aristas) y línea base del pipeline propio desde `fimo_hits` en los 312 genomas validables (sección 8) |
 
@@ -68,6 +69,15 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 29-10-2026: semana 13, revisión completa del sistema
+
+- Revisión sin correcciones sobre `0a6a618`: 35/35 endpoints 200 (< 250 ms); sin resultados, 24 endpoints dan 503 con el
+  `make` a correr; 10/10 vistas sin errores a 1440 y 900 px; con la API apagada o sin resultados todas avisan; 0 enlaces
+  rotos. Hallazgos: 1 error menor (Dashboard muestra "Networks 0" con la API apagada), 6 mejoras (tablas a 900 px,
+  accesibilidad con teclado, README sin las vistas, pregunta de la versión de RegPrecise, tarjetas del Dashboard) y 6
+  detalles. 19 advertencias de ESLint listadas con recomendación. Resultados intactos (sha256).
+  → `revision_semana13.md`. Pendiente: el estudiante elige qué se corrige.
 
 ### 29-10-2026: semana 13, revisión previa de `make all` y prueba de reproducibilidad
 

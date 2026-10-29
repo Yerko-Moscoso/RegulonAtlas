@@ -45,3 +45,6 @@ docs/evidencia_mvp/*
 # Evidencia de la prueba de reproducibilidad del atlas: solo en el servidor (29-10-2026). Se versiona el registro.
 docs/evidencia_reproducibilidad/*
 !docs/evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md
+
+# Evidencia de la revisión completa de la semana 13 (registros y capturas): solo en el servidor (29-10-2026).
+docs/evidencia_revision_semana13/
