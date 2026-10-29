@@ -88,7 +88,33 @@ como advertencias, no errores. Ninguna produce un fallo visible hoy.
 
 Listado completo (archivo, línea y código): `docs/evidencia_revision_semana13/registros/08_eslint.txt`.
 
-## 5. Siguiente paso
+## 5. Correcciones (29-10-2026)
 
-El estudiante decide qué hallazgos se corrigen (E1, M1–M6, C1–C6 y, si quiere, la advertencia de Fingerprints). Cada
-corrección irá en su propio commit con `make check`. Después viene el congelamiento de funciones.
+El estudiante pidió corregir **todos los hallazgos** (E1, M1–M6, C1–C6) y, de ESLint, **solo la advertencia de
+Fingerprints** (`preserve-manual-memoization`); las otras 18 se mantienen por la recomendación de la sección 4. Cada
+corrección va en su propio commit, con la verificación del hook pre-commit. No cambia ningún dato ni cálculo.
+
+| ID | Commit | Corrección |
+|---|---|---|
+| ESLint | `95375a7` | Fingerprints: la familia se calcula con su propio `useMemo`; advertencias 19 → 18 |
+| E1 | `13f53f1` | Dashboard: la tarjeta Networks muestra "—" sin datos |
+| M6 | `49fa69b` | Dashboard: tarjetas de Pipeline y Data Provenance (9 accesos) |
+| M1 | `85bb0e6` | `components/ScrollX.jsx` (nuevo): scroll horizontal con degradado y aviso "Scroll sideways to see more columns" solo cuando la tabla no cabe. Tablas de redes de Dashboard y Validation sin partir celdas y con separación entre columnas |
+| M2 | `24fc4db` | `ScrollX` en Robustness (submuestreo), Fingerprints (familia) y Data Provenance (Results, con ancho mínimo para la columna Result) |
+| M3 | `1a067ef` | `utils/a11y.js` (nuevo): `clickable()` y `FOCUS_RING`. Los 8 elementos se alcanzan con Tab y se activan con Enter o Espacio; los encabezados de Metrics llevan `aria-sort` |
+| C1 | `bb3c245` | Validation, Pipeline y Data Provenance: "… could not be loaded. Check that the backend is running."; Validation en el recuadro rojo común |
+| C2 | `66491eb` | Cabecera: sin salto de línea en pantalla angosta |
+| C3 | `220b930` | Data Provenance: "—" en Files cuando falta el resultado |
+| C4 | `0049aa0` | `api.js`: 6 métodos sin uso eliminados (30 → 24); los endpoints siguen en la API |
+| C5 | `01e3846` | `clsx` deja de ser dependencia directa (sigue como dependencia interna de Recharts) |
+| M4 | `e190abc` | README: tabla de las 10 vistas |
+| M5 | `80f7e45` | `preguntas_pendientes.md`: P7 (versión de RegPrecise) y el punto (7) en el borrador al investigador |
+| C6 | `ffa5266` | Contexto, sección 13: vistas, `make all` y `make atlas-ready`; P7 en la sección 16 |
+
+**Verificación final:** `make check` (58 pruebas, 0 errores, 18 advertencias de ESLint); las 10 vistas a 1440 y 900 px
+sin errores de consola ni respuestas fallidas; tablas de M1 y M2 revisadas a 900 px; con teclado, Tab hasta una fila
+de Validation y Enter cambia la red elegida; con la API apagada, las 10 vistas dan el mensaje unificado y el Dashboard
+muestra "—"; `data/results/` intacto (sha256). Capturas en `docs/evidencia_revision_semana13/despues_correcciones/`
+(solo en el servidor).
+
+Siguiente paso: el congelamiento de funciones, cuando el estudiante lo pida.
