@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { api } from "../services/api";
 import { ATLAS_GENOMES, fmtInt, fmtP } from "../utils/atlas";
+import ScrollX from "../components/ScrollX";
 
 // Resumen del atlas: las 5 redes con su validación propia (make validate-atlas) y accesos a cada vista.
 // Antes mostraba los 8 genomas del MVP (data/results/mvp).
@@ -111,8 +112,8 @@ export default function Dashboard({ navigate }) {
               Own validation against RegPrecise (TF → operon, universe genome–TF). Independent mode excludes motifs built
               from the regulog of the evaluated genome. D33 is the external benchmark, shown only as a reference.
             </p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <ScrollX>
+              <table className="w-full text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap [&_th+th]:pl-4 [&_td+td]:pl-4">
                 <thead>
                   <tr className="text-left text-[11px] uppercase tracking-wide text-[#94A3B8] border-b border-[#E2E8F0]">
                     <th className="py-1.5 font-medium">Network</th>
@@ -151,7 +152,7 @@ export default function Dashboard({ navigate }) {
                   })}
                 </tbody>
               </table>
-            </div>
+            </ScrollX>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

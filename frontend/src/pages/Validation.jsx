@@ -18,6 +18,7 @@ import { pct, pctTick, dec, detail } from "../utils/validation";
 import { Section, Segmented, Stat, Spinner, ErrorMsg, BreakdownTable, CurveTooltip } from "../components/ValidationParts";
 import BaselineSection from "../components/BaselineSection";
 import Collapsible from "../components/Collapsible";
+import ScrollX from "../components/ScrollX";
 import { Info } from "lucide-react";
 
 // Validación de las 5 redes del atlas contra RegPrecise.
@@ -299,8 +300,8 @@ export default function Validation({ initialOrganism }) {
         title="Networks"
         subtitle="Recall is computed over all curated pairs. D33 are the values reported by the external pipeline; its exact evaluation definition is unknown, so only the ranking is expected to match. Click a row to select the network."
       >
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <ScrollX>
+          <table className="w-full text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap [&_th+th]:pl-4 [&_td+td]:pl-4">
             <thead>
               <tr className="text-left text-[11px] uppercase tracking-wide text-[#94A3B8] border-b border-[#E2E8F0]">
                 <th className="py-2 font-medium">Network</th>
@@ -349,7 +350,7 @@ export default function Validation({ initialOrganism }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollX>
         <p className="text-[11px] text-[#94A3B8] mt-3">
           Predictions outside the scored set are reported as not evaluable, not as false positives: the gold standard is
           incomplete, so the scores describe only the evaluable fraction of each network.
