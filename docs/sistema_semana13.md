@@ -11,9 +11,10 @@ El 27-10-2026 el estudiante pidió avanzar por partes, una a la vez:
 | Endpoint de estado del pipeline (`/api/v1/atlas/status`) | Hecho (`65e9ace`, `fbce952`) |
 | Vista Data Provenance | Hecho (`fbce952`) |
 | Pasada de presentación de las vistas (sección 5) | Hecho y aprobada (`3edeff6`–`fd2abb1`) |
-| Vista Pipeline | Pendiente (se decide después) |
-| Vista MVP | **Descartada** por el estudiante (27-10-2026). `frontend/src/pages/MVP.jsx` sigue como prototipo sin uso |
-| Revisión completa, pipeline propio en `make all` y congelamiento de funciones | Pendiente (se decide después) |
+| Vista Pipeline (sección 6) | Hecho (`9f55796`, 29-10-2026) |
+| Vista MVP | **Descartada** por el estudiante (26-10-2026); `MVP.jsx` eliminado (`6dd5b18`) |
+| Vista Settings | **Descartada** por el estudiante (29-10-2026); nunca existió como archivo |
+| Pipeline propio en `make all`, revisión completa y congelamiento de funciones | Pendiente: se hacen cuando el estudiante lo pida |
 
 ## 2. Endpoint de estado del pipeline
 
@@ -149,3 +150,40 @@ por trazabilidad.
   historial) y `make check`.
 - **Un bloque:** `git revert --no-edit <commit>` con el commit de la tabla (por ejemplo, solo Robustness: `dd7661c`).
 - **Solo mirar el estado anterior:** `git switch respaldo/pre-presentacion-semana13` (y volver con `git switch dev`).
+
+## 6. Vista Pipeline y limpieza de prototipos (29-10-2026)
+
+**Pedido del estudiante:** hacer la vista Pipeline y descartar las vistas MVP y Settings. Lo demás de la semana 13
+(pipeline propio en `make all`, revisión completa, congelamiento) queda para cuando él lo pida.
+
+### 6.1 Vista Pipeline (`9f55796`)
+
+Reemplaza al prototipo, que llamaba a un endpoint inexistente (`getPipelineStatus`). No necesita backend nuevo: usa
+`/atlas/status` (sección 2) y `/atlas/provenance`.
+
+| Etapa | Autoría | Qué muestra |
+|---|---|---|
+| 1. Public sources | Externa | Las 7 fuentes de la tabla `provenance` con su versión |
+| 2. External pipeline | Externa | Escaneo FIMO, transferencia de motivos y los tres filtros que definen las redes (confirmados al reconstruirlas, `robustez_semana12.md`, 8.4) |
+| 3. MariaDB `regulon_atlas` | Externa | Redes, genomas, motivos y filas curadas (conteos de la caché) |
+| 4. Local cache | Propia | Las 3 exportaciones con estado, comando y fecha |
+| 5. Analyses | Propia | Los 5 resultados con estado, comando, de qué dependen, commit y botones a las vistas que los muestran |
+| 6. API, 7. Dashboard | Propia | Que la API solo lee y que cada análisis enlaza a sus vistas |
+
+Arriba hay dos recuadros que separan la autoría (lo que pide el contexto, sección 15) y abajo los comandos para
+regenerar todo. La vista muestra `make atlas` tal como está hoy: no incluye la línea base, que se corre con
+`make baseline-atlas` (incluirla es el pendiente "pipeline propio en `make all`").
+
+Lo único fijo en el código es qué vista muestra cada resultado y la descripción del pipeline externo. El indicador de
+estado pasó a `components/StatusBadge.jsx`, compartido con Data Provenance (sin cambio visible).
+
+### 6.2 Prototipos eliminados (`6dd5b18`)
+
+- `frontend/src/pages/MVP.jsx`: no estaba en el menú y llamaba a un endpoint inexistente. Sigue en el historial de git.
+- Settings: nunca existió como archivo, solo una mención en `Sidebar.jsx`, que se quitó.
+
+### 6.3 Verificación
+
+`make check` (53 pruebas, 0 errores de ESLint); capturas de las 10 vistas sin errores de consola ni respuestas HTTP
+fallidas; los botones de la vista llevan a la vista correcta (probado con Taxon Comparison y Robustness). Estado al
+29-10-2026: 8 de 8 etapas al día.

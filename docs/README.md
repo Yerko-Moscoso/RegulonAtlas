@@ -36,7 +36,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | 11 | [`metricas_semana11.md`](metricas_semana11.md) | OE4 | Métricas topológicas propias, diferencias con `network_metrics`, comparación entre taxones, concordancia con el pipeline externo y prueba del origen de los motivos (8.5) |
 | 11 | [`correcciones_semana11.md`](correcciones_semana11.md) | — | Correcciones C1–C6: import roto, genoma replacement, trazabilidad, verificación pre-commit, `density` externa y documentación |
 | 12 | [`limpieza_semana12.md`](limpieza_semana12.md) | — | Limpieza del proyecto: respaldo, eliminado y archivado, código común, vistas migradas al atlas, pruebas, ESLint, Makefile, README y segundo análisis |
-| 13 | [`sistema_semana13.md`](sistema_semana13.md) | — | Componentes del sistema (en curso): alcance acordado, endpoint de estado del pipeline (`/atlas/status`: reglas, API y pruebas), vista Data Provenance, observaciones (versión de RegPrecise) y pasada de presentación de las vistas con cómo revertirla (sección 5) |
+| 13 | [`sistema_semana13.md`](sistema_semana13.md) | — | Componentes del sistema (en curso): alcance acordado, endpoint de estado del pipeline (`/atlas/status`: reglas, API y pruebas), vista Data Provenance, observaciones (versión de RegPrecise) y pasada de presentación de las vistas con cómo revertirla (sección 5) y vista Pipeline con limpieza de prototipos (sección 6) |
 | 12 | [`robustez_semana12.md`](robustez_semana12.md) | — | Robustez de las métricas (anidamiento de las redes, orden de los genomas entre redes, efecto del footprinting, submuestreo de aristas) y línea base del pipeline propio desde `fimo_hits` en los 312 genomas validables (sección 8) |
 
 ### Material de referencia
@@ -67,6 +67,14 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 29-10-2026: semana 13, vista Pipeline y limpieza de prototipos
+
+- `9f55796`: `Pipeline.jsx` con el flujo real en 7 etapas, la autoría de cada parte, el estado de cada etapa propia
+  (de `/atlas/status`) y enlaces a las vistas; `StatusBadge.jsx` compartido con Data Provenance. En el menú bajo SYSTEM.
+- `6dd5b18`: se elimina `MVP.jsx` (descartada); Settings descartada (nunca existió como archivo).
+- Pendiente, cuando el estudiante lo pida: pipeline propio en `make all`, revisión completa y congelamiento.
+  → `sistema_semana13.md`, sección 6.
 
 ### 27-10-2026: semana 13, pasada de presentación de las vistas
 
