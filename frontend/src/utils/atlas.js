@@ -16,6 +16,9 @@ export const ATLAS_SELECTIONS = new Set(["representative", "forced", "replacemen
 export const isAtlasSelection = (selection) => ATLAS_SELECTIONS.has(String(selection ?? "").split(" ")[0]);
 
 export const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
+// Fecha legible de un manifiesto: "2026-10-19 12:05 UTC" (o solo la fecha si no trae hora).
+export const fmtDateTime = (s) =>
+  s ? String(s).replace("T", " ").slice(0, 16) + (String(s).length > 10 ? " UTC" : "") : "—";
 
 export const fmtP = (p) => (p == null ? "—" : `1e${Math.round(Math.log10(p))}`);
 

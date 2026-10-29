@@ -15,6 +15,7 @@ const labels = {
   comparison: "Taxon Comparison",
   robustness: "Metric Robustness",
   provenance: "Data Provenance",
+  pipeline: "Reproducible Pipeline",
 };
 
 const HEALTH_INTERVAL_MS = 30000;

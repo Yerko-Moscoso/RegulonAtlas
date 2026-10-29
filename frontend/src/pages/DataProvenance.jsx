@@ -1,17 +1,12 @@
 import { useState, useEffect } from "react";
-import { Loader2, CheckCircle2, AlertTriangle, XCircle, Info } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
-import { fmtInt } from "../utils/atlas";
+import { fmtInt, fmtDateTime } from "../utils/atlas";
+import StatusBadge from "../components/StatusBadge";
 
 // Procedencia de los datos (semana 13):
 //   1. fuentes externas: tabla provenance de la base (GET /atlas/provenance);
 //   2. exportaciones a caché y trazabilidad de cada resultado: manifiestos (GET /atlas/status).
-
-const STATUS = {
-  ok: { label: "OK", icon: CheckCircle2, cls: "bg-[#E8F5F0] text-[#176B57] border-[#B8DDD0]" },
-  warning: { label: "Check", icon: AlertTriangle, cls: "bg-[#FFFBEB] text-[#92400E] border-[#FCEDB8]" },
-  missing: { label: "Missing", icon: XCircle, cls: "bg-[#FEF0F0] text-[#B54848] border-[#F8BFBF]" },
-};
 
 // Limitaciones documentadas (contexto, secciones 15 y 16). Las de la caché llegan como `notes` de /atlas/status.
 const LIMITATIONS = [
@@ -20,17 +15,6 @@ const LIMITATIONS = [
 ];
 
 const fmtDate = (s) => (s ? String(s).slice(0, 10) : "—");
-const fmtDateTime = (s) => (s ? String(s).replace("T", " ").slice(0, 16) + (String(s).length > 10 ? " UTC" : "") : "—");
-
-function StatusBadge({ value }) {
-  const s = STATUS[value] ?? STATUS.missing;
-  const Icon = s.icon;
-  return (
-    <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border ${s.cls}`}>
-      <Icon size={11} /> {s.label}
-    </span>
-  );
-}
 
 function Card({ title, subtitle, children }) {
   return (
