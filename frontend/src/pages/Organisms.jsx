@@ -9,6 +9,10 @@ import { DEFAULT_NETWORK, fmtInt, selectClass } from "../utils/atlas";
 
 const PAGE = 100;
 
+// Orden alfabético de nombres: sin distinguir mayúsculas, ignorando signos ("[Enterobacter] lignolyticus" va en la E)
+// y con números como números ("sp. 2" antes que "sp. 10").
+const byName = new Intl.Collator("en", { sensitivity: "base", ignorePunctuation: true, numeric: true });
+
 // key: campo de /atlas/metrics; numeric: se ordena como número
 const COLUMNS = [
   { key: "ncbi_organism", label: "Organism" },
@@ -35,7 +39,8 @@ export default function Organisms({ navigate }) {
   const [search, setSearch] = useState("");
   const [scope, setScope] = useState("atlas");
   const [phylum, setPhylum] = useState("");
-  const [sort, setSort] = useState({ key: "n_edges", dir: "desc" });
+  // Por defecto, orden alfabético por organismo (pedido del estudiante, 29-10-2026).
+  const [sort, setSort] = useState({ key: "ncbi_organism", dir: "asc" });
   const [shown, setShown] = useState(PAGE);
 
   useEffect(() => {
@@ -86,14 +91,20 @@ export default function Organisms({ navigate }) {
       .sort((a, b) => {
         const va = a[sort.key];
         const vb = b[sort.key];
-        const cmp =
-          typeof va === "number" && typeof vb === "number" ? va - vb : String(va ?? "").localeCompare(String(vb ?? ""));
+        // Los valores vacíos van siempre al final, en cualquier dirección.
+        if (va == null || va === "") return vb == null || vb === "" ? 0 : 1;
+        if (vb == null || vb === "") return -1;
+        const cmp = typeof va === "number" && typeof vb === "number" ? va - vb : byName.compare(String(va), String(vb));
         return sort.dir === "asc" ? cmp : -cmp;
       });
   }, [all, scope, phylum, search, sort]);
 
+  // Primer clic: texto de A a Z, números de mayor a menor; el segundo clic invierte el orden.
   function toggleSort(key) {
-    setSort((s) => (s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "desc" }));
+    const numeric = COLUMNS.find((c) => c.key === key)?.numeric;
+    setSort((s) =>
+      s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: numeric ? "desc" : "asc" }
+    );
   }
 
   const network = networks.find((n) => n.network_id === networkId);
