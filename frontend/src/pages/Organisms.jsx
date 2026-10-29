@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { api } from "../services/api";
+import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
 import { DEFAULT_NETWORK, fmtInt, selectClass } from "../utils/atlas";
 
@@ -212,8 +213,8 @@ export default function Organisms({ navigate }) {
                 {rows.slice(0, shown).map((r) => (
                   <tr
                     key={r.accession}
-                    onClick={() => navigate("organism-detail", r.accession)}
-                    className="border-b border-[#F0F4F8] hover:bg-[#F7FAFC] cursor-pointer"
+                    {...clickable(() => navigate("organism-detail", r.accession))}
+                    className={`border-b border-[#F0F4F8] hover:bg-[#F7FAFC] cursor-pointer ${FOCUS_RING}`}
                   >
                     <td className="px-4 py-2.5 pl-5">
                       <div className="text-sm text-[#334155]">{r.ncbi_organism ?? r.accession}</div>

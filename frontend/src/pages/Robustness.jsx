@@ -10,6 +10,7 @@ import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, selectClass } from "../utils/a
 import { METRIC_LABELS } from "../utils/metrics";
 import Collapsible from "../components/Collapsible";
 import ScrollX from "../components/ScrollX";
+import { clickable, FOCUS_RING } from "../utils/a11y";
 
 // Robustez de las métricas propias (make robustness-atlas):
 //   1. submuestreo de aristas: ¿se conserva el orden de los genomas si la red está incompleta?
@@ -463,8 +464,8 @@ export default function Robustness({ initialOrganism }) {
               {METRICS.map((m) => (
                 <tr
                   key={m.key}
-                  onClick={() => setMetric(m.key)}
-                  className={`border-b border-[#F0F4F8] cursor-pointer hover:bg-[#F7FAFC] ${m.key === metric ? "bg-[#F0F7F4]" : ""}`}
+                  {...clickable(() => setMetric(m.key))}
+                  className={`border-b border-[#F0F4F8] cursor-pointer hover:bg-[#F7FAFC] ${FOCUS_RING} ${m.key === metric ? "bg-[#F0F7F4]" : ""}`}
                 >
                   <td className="py-1.5 pr-3 text-[#334155]">{m.label}</td>
                   {RATES.map((r) => {

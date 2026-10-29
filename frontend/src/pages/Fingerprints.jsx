@@ -12,6 +12,7 @@ import {
 import { Loader2, Info, X, Check, Plus } from "lucide-react";
 import { api } from "../services/api";
 import ScrollX from "../components/ScrollX";
+import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
@@ -431,8 +432,8 @@ export default function Fingerprints({ initialOrganism }) {
                             </button>
                           </td>
                           <td
-                            onClick={() => setOrganism(r.accession)}
-                            className={`text-[11px] pr-3 py-1.5 italic cursor-pointer hover:underline ${
+                            {...clickable(() => setOrganism(r.accession))}
+                            className={`text-[11px] pr-3 py-1.5 italic cursor-pointer hover:underline ${FOCUS_RING} ${
                               isSelected ? "text-[#176B57] font-semibold" : "text-[#334155]"
                             }`}
                           >

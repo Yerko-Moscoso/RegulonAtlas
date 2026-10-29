@@ -19,6 +19,7 @@ import { Section, Segmented, Stat, Spinner, ErrorMsg, BreakdownTable, CurveToolt
 import BaselineSection from "../components/BaselineSection";
 import Collapsible from "../components/Collapsible";
 import ScrollX from "../components/ScrollX";
+import { clickable, FOCUS_RING } from "../utils/a11y";
 import { Info } from "lucide-react";
 
 // Validación de las 5 redes del atlas contra RegPrecise.
@@ -318,8 +319,8 @@ export default function Validation({ initialOrganism }) {
               {tableRows.map((r) => (
                 <tr
                   key={r.network_id}
-                  onClick={() => setNetworkId(r.network_id)}
-                  className={`border-b border-[#F1F5F9] cursor-pointer ${
+                  {...clickable(() => setNetworkId(r.network_id))}
+                  className={`border-b border-[#F1F5F9] cursor-pointer ${FOCUS_RING} ${
                     r.network_id === networkId ? "bg-[#F0F7F4]" : "hover:bg-[#F8FAFC]"
                   }`}
                 >

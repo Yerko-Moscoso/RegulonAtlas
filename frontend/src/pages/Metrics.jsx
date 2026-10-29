@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Loader2, Info, ArrowUp, ArrowDown } from "lucide-react";
 import { api } from "../services/api";
+import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, parseBenchmark, selectClass } from "../utils/atlas";
@@ -519,8 +520,9 @@ export default function Metrics({ initialOrganism }) {
               <thead className="sticky top-0 bg-white">
                 <tr className="border-b border-[#D9E2E7]">
                   <th
-                    onClick={() => toggleSort("ncbi_organism")}
-                    className="text-left text-[11px] font-medium text-[#64748B] pb-2 cursor-pointer select-none"
+                    {...clickable(() => toggleSort("ncbi_organism"))}
+                    aria-sort={sort.key === "ncbi_organism" ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+                    className={`text-left text-[11px] font-medium text-[#64748B] pb-2 cursor-pointer select-none ${FOCUS_RING}`}
                   >
                     Organism
                     <SortIcon active={sort.key === "ncbi_organism"} dir={sort.dir} />
@@ -528,8 +530,9 @@ export default function Metrics({ initialOrganism }) {
                   {TABLE_COLUMNS.map((c) => (
                     <th
                       key={c.key}
-                      onClick={() => toggleSort(c.key)}
-                      className="text-right text-[11px] font-medium text-[#64748B] pb-2 pl-3 cursor-pointer select-none whitespace-nowrap"
+                      {...clickable(() => toggleSort(c.key))}
+                      aria-sort={sort.key === c.key ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+                      className={`text-right text-[11px] font-medium text-[#64748B] pb-2 pl-3 cursor-pointer select-none whitespace-nowrap ${FOCUS_RING}`}
                     >
                       {c.label}
                       <SortIcon active={sort.key === c.key} dir={sort.dir} />
@@ -541,8 +544,8 @@ export default function Metrics({ initialOrganism }) {
                 {familyRows.map((r) => (
                   <tr
                     key={r.accession}
-                    onClick={() => setOrganism(r.accession)}
-                    className={`border-b border-[#F7FAFC] cursor-pointer transition-colors ${
+                    {...clickable(() => setOrganism(r.accession))}
+                    className={`border-b border-[#F7FAFC] cursor-pointer transition-colors ${FOCUS_RING} ${
                       r.accession === organism ? "bg-[#E8F5F0]" : "hover:bg-[#F7FAFC]"
                     }`}
                   >

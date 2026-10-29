@@ -4,6 +4,7 @@ import {
 } from "recharts";
 import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
+import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
 import { DEFAULT_NETWORK, fmtInt, selectClass } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
@@ -326,8 +327,8 @@ export default function Comparison() {
               {sortedTests.map((t) => (
                 <tr
                   key={t.metric}
-                  onClick={() => setMetric(t.metric)}
-                  className={`border-b border-[#F0F4F8] cursor-pointer hover:bg-[#F7FAFC] ${
+                  {...clickable(() => setMetric(t.metric))}
+                  className={`border-b border-[#F0F4F8] cursor-pointer hover:bg-[#F7FAFC] ${FOCUS_RING} ${
                     t.metric === metric ? "bg-[#F0F7F4]" : ""
                   }`}
                 >
