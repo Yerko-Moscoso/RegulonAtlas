@@ -56,6 +56,21 @@ nohup make all > logs/atlas.log 2>&1 &                   # validación, métrica
 Cada carpeta de `data/results/` tiene un `manifest.json` con el commit que la generó y `git_dirty` (debe ser `false`:
 los cálculos se ejecutan con el árbol limpio).
 
+## Vistas del dashboard
+
+| Vista | Qué responde |
+|---|---|
+| Dashboard | Resumen del atlas: las 5 redes con su validación y accesos a cada vista |
+| Organisms | Catálogo de los 2.644 genomas (2.224 del atlas y 420 auxiliares) con sus métricas; ficha de cada genoma |
+| Regulatory Networks | Grafo TF → operón de un genoma en cualquiera de las 5 redes |
+| Metrics | Métricas topológicas propias de un genoma, su lugar en el atlas y su familia, y la concordancia con la tabla externa |
+| Fingerprints | Perfil de percentiles de un genoma frente a su familia y al atlas |
+| Taxon Comparison | Cómo cambian las métricas entre filos, clases, órdenes y familias de GTDB |
+| Robustness | Qué métricas resisten la pérdida de aristas y el cambio de red |
+| Validation | Precisión y recall de las 5 redes contra RegPrecise, desgloses y la línea base del pipeline propio |
+| Pipeline | El flujo de punta a punta, quién hizo cada parte y el estado de cada etapa |
+| Data Provenance | Fuentes, exportaciones a la caché y el commit que generó cada resultado |
+
 ## Resultados principales
 
 | Tema | Resultado | Documento |
