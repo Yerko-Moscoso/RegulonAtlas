@@ -18,7 +18,7 @@ El 27-10-2026 el estudiante pidió avanzar por partes, una a la vez:
 | Revisión previa de `make all` (`make atlas-ready`) | Hecho (`7521118`, 29-10-2026) |
 | Prueba de reproducibilidad en un clon aparte | Hecho (29-10-2026): 20/20 archivos idénticos → `evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md` |
 | Revisión completa | Hecha y corregida (29-10-2026): los 13 hallazgos y 1 advertencia de ESLint → `revision_semana13.md`, secciones 2 y 5 |
-| Congelamiento de funciones | Pendiente: después de las correcciones, cuando el estudiante lo pida |
+| Congelamiento de funciones | Hecho (29-10-2026) → `congelamiento_v1.md` |
 
 ## 2. Endpoint de estado del pipeline
 

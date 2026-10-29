@@ -22,6 +22,9 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 
 ## Reglas
 
+- **Funciones congeladas (v1.0, desde el 29-10-2026; `docs/congelamiento_v1.md`).** Solo correcciones de errores, pruebas,
+  documentación y redacción. Una función nueva requiere aprobación explícita del usuario y se registra como excepción en
+  ese documento. Excepción prevista: RegulonDB, si el profesor la exige.
 - **Nunca leer, mostrar ni copiar** `.env` ni `~/.my.cnf` (credenciales).
 - **La API no consulta MariaDB**: solo lee `data/cache/atlas/*.parquet` y `data/results/`. Ningún archivo de
   `src/api` debe usar `get_db` ni `get_engine`.
