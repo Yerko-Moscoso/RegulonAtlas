@@ -201,3 +201,10 @@ organismo de A a Z; el primer clic en una columna de texto ordena de A a Z y en 
 valores vacíos van al final. Los nombres se comparan sin distinguir mayúsculas, ignorando signos ("[Enterobacter]
 lignolyticus" queda en la E) y con números como números ("sp. 2" antes que "sp. 10"). Probado en el navegador: las
 100 primeras filas en orden alfabético, el orden por columnas y su inversión funcionan; sin errores de consola.
+
+## 7. Cierre de la semana (29-10-2026)
+
+El estudiante revisó el software ya congelado y cerró la semana 13. Todos los bloques del alcance (sección 1) están
+hechos; las funciones quedan congeladas (`congelamiento_v1.md`). Estado al cerrar: rama `dev` limpia y en GitHub, `main`
+sin cambios, 58 pruebas, 8 de 8 etapas del pipeline al día y `data/results/` intacto respecto de la prueba de
+reproducibilidad. Siguiente: semana 14 (pruebas y prueba desde cero con `conda env create`).

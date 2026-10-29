@@ -71,6 +71,16 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 29-10-2026: cierre de la semana 13
+
+- El estudiante revisó el software congelado y cerró la semana. Estado al cerrar: `dev` en `ce540b6` (más este commit),
+  limpio y en GitHub; `main` sin cambios (`f2d5df3`); 58 pruebas; 8 de 8 etapas al día; `data/results/` intacto.
+- Hecho en la semana 13: estado del pipeline (`/atlas/status`), vistas Pipeline y Data Provenance, pasada de
+  presentación, orden alfabético de Organisms, `make all` = atlas con revisión previa, nombre RegulonAtlas, prueba de
+  reproducibilidad (20/20 idénticos), revisión completa con sus 13 correcciones y congelamiento de funciones.
+- Siguiente (semana 14): pruebas, prueba desde cero con `conda env create` y, cuando el estudiante lo indique, `v1.0`.
+  → `sistema_semana13.md`; contexto, sección 14.
+
 ### 29-10-2026: semana 13, congelamiento de funciones (v1.0)
 
 - Desde hoy no se agregan funciones: solo correcciones, pruebas, documentación y redacción. Una función nueva requiere
