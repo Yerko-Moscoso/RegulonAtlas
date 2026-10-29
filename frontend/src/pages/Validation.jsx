@@ -109,7 +109,7 @@ export default function Validation({ initialOrganism }) {
         setManifest(manRes.data);
         setSummary(sumRes.data.rows ?? []);
       })
-      .catch((err) => !cancelled && setError(detail(err, "Validation results could not be loaded.")))
+      .catch((err) => !cancelled && setError(detail(err, "Validation results could not be loaded. Check that the backend is running and the results exist (make validate-atlas).")))
       .finally(() => !cancelled && setLoadingBase(false));
     return () => {
       cancelled = true;
@@ -250,10 +250,11 @@ export default function Validation({ initialOrganism }) {
   // ---------------------------------------------------------------- render
 
   if (loadingBase) return <Spinner text="Loading validation results…" />;
+  // Mismo recuadro rojo que las demás vistas (revisión de la semana 13, C1)
   if (error)
     return (
       <div className="p-6">
-        <ErrorMsg>{error}</ErrorMsg>
+        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
       </div>
     );
 

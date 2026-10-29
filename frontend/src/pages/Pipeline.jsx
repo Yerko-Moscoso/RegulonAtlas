@@ -113,7 +113,7 @@ export default function Pipeline({ navigate }) {
         setSources(prov.data.sources ?? []);
       })
       .catch((err) => {
-        if (!cancelled) setError(err?.response?.data?.detail ?? "Could not load the pipeline status.");
+        if (!cancelled) setError(err?.response?.data?.detail ?? "The pipeline status could not be loaded. Check that the backend is running.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

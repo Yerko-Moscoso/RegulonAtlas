@@ -50,7 +50,7 @@ export default function DataProvenance() {
         setStatus(st.data);
       })
       .catch((err) => {
-        if (!cancelled) setError(err?.response?.data?.detail ?? "Could not load the provenance data.");
+        if (!cancelled) setError(err?.response?.data?.detail ?? "The provenance data could not be loaded. Check that the backend is running.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
