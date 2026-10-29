@@ -132,7 +132,8 @@ export default function Fingerprints({ initialOrganism }) {
   const network = networks.find((n) => n.network_id === networkId);
   const genome = byAcc.get(organism);
   const current = genome?.has_edges ? genome : null;
-  const family = genome?.gtdb_family;
+  // Familia como valor propio (texto): así el compilador de React puede conservar el useMemo de familyRows.
+  const family = useMemo(() => byAcc.get(organism)?.gtdb_family, [byAcc, organism]);
 
   // Valores ordenados por métrica (solo genomas del atlas), para calcular percentiles
   const sorted = useMemo(
