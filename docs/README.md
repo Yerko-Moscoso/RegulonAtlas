@@ -73,6 +73,7 @@ quedó documentado.
 - `9f55796`: `Pipeline.jsx` con el flujo real en 7 etapas, la autoría de cada parte, el estado de cada etapa propia
   (de `/atlas/status`) y enlaces a las vistas; `StatusBadge.jsx` compartido con Data Provenance. En el menú bajo SYSTEM.
 - `6dd5b18`: se elimina `MVP.jsx` (descartada); Settings descartada (nunca existió como archivo).
+- `e32b0b2`: Organisms abre en orden alfabético por organismo (observación del estudiante).
 - Pendiente, cuando el estudiante lo pida: pipeline propio en `make all`, revisión completa y congelamiento.
   → `sistema_semana13.md`, sección 6.
 

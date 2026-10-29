@@ -187,3 +187,12 @@ estado pasó a `components/StatusBadge.jsx`, compartido con Data Provenance (sin
 `make check` (53 pruebas, 0 errores de ESLint); capturas de las 10 vistas sin errores de consola ni respuestas HTTP
 fallidas; los botones de la vista llevan a la vista correcta (probado con Taxon Comparison y Robustness). Estado al
 29-10-2026: 8 de 8 etapas al día.
+
+### 6.4 Corrección: orden de Organisms (`e32b0b2`)
+
+Observación del estudiante al revisar: la vista Organisms no mostraba los genomas en orden alfabético (abría ordenada
+por pares TF–operón, de mayor a menor, y el primer clic en una columna de texto ordenaba de Z a A). Ahora abre por
+organismo de A a Z; el primer clic en una columna de texto ordena de A a Z y en una numérica de mayor a menor; los
+valores vacíos van al final. Los nombres se comparan sin distinguir mayúsculas, ignorando signos ("[Enterobacter]
+lignolyticus" queda en la E) y con números como números ("sp. 2" antes que "sp. 10"). Probado en el navegador: las
+100 primeras filas en orden alfabético, el orden por columnas y su inversión funcionan; sin errores de consola.
