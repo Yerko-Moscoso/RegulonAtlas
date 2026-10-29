@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
-  Loader2, Dna, Network, BarChart3, CircleCheck, FingerprintPattern, GitCompare, ShieldCheck, ChevronRight,
+  Loader2, Dna, Network, BarChart3, CircleCheck, FingerprintPattern, GitCompare, ShieldCheck, ChevronRight, Workflow,
+  FileClock,
 } from "lucide-react";
 import { api } from "../services/api";
 import { ATLAS_GENOMES, fmtInt, fmtP } from "../utils/atlas";
@@ -16,6 +17,8 @@ const VIEWS = [
   { page: "fingerprints", label: "Fingerprints", icon: FingerprintPattern, text: "Percentile profile of a genome against its family and the atlas." },
   { page: "comparison", label: "Taxon Comparison", icon: GitCompare, text: "Metrics across GTDB phyla, classes, orders and families." },
   { page: "robustness", label: "Robustness", icon: ShieldCheck, text: "Metric stability across networks and under edge removal." },
+  { page: "pipeline", label: "Pipeline", icon: Workflow, text: "From public databases to this dashboard: who built each part and how to rerun it." },
+  { page: "provenance", label: "Data Provenance", icon: FileClock, text: "Sources, cache exports and the code version behind every result." },
 ];
 
 const pct = (v) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
