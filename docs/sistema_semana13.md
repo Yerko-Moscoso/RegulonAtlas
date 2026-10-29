@@ -14,8 +14,10 @@ El 27-10-2026 el estudiante pidió avanzar por partes, una a la vez:
 | Vista Pipeline (sección 6) | Hecho (`9f55796`, 29-10-2026) |
 | Vista MVP | **Descartada** por el estudiante (26-10-2026); `MVP.jsx` eliminado (`6dd5b18`) |
 | Vista Settings | **Descartada** por el estudiante (29-10-2026); nunca existió como archivo |
-| `make all` corre todo el análisis del atlas | Hecho (30-10-2026); el MVP solo con `make mvp` |
-| Prueba de reproducibilidad en un clon aparte, revisión completa y congelamiento de funciones | Pendiente: se hacen cuando el estudiante lo pida |
+| `make all` corre todo el análisis del atlas | Hecho (29-10-2026); el MVP solo con `make mvp` |
+| Revisión previa de `make all` (`make atlas-ready`) | Hecho (`7521118`, 29-10-2026) |
+| Prueba de reproducibilidad en un clon aparte | Hecho (29-10-2026): 20/20 archivos idénticos → `evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md` |
+| Revisión completa y congelamiento de funciones | Pendiente: se hacen cuando el estudiante lo pida |
 
 ## 2. Endpoint de estado del pipeline
 
@@ -172,8 +174,8 @@ Reemplaza al prototipo, que llamaba a un endpoint inexistente (`getPipelineStatu
 | 6. API, 7. Dashboard | Propia | Que la API solo lee y que cada análisis enlaza a sus vistas |
 
 Arriba hay dos recuadros que separan la autoría (lo que pide el contexto, sección 15) y abajo los comandos para
-regenerar todo: `make all` (desde el 30-10-2026; antes `make atlas`, que ya
-incluía la línea base) y `make check`. *(Corregido el 30-10-2026: este párrafo decía por error que `make atlas` no
+regenerar todo: `make all` (desde el 29-10-2026; antes `make atlas`, que ya
+incluía la línea base) y `make check`. *(Corregido el 29-10-2026: este párrafo decía por error que `make atlas` no
 incluía la línea base.)*
 
 Lo único fijo en el código es qué vista muestra cada resultado y la descripción del pipeline externo. El indicador de

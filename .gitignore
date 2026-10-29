@@ -41,3 +41,7 @@ data/cache/*
 # Se versiona únicamente el registro formal.
 docs/evidencia_mvp/*
 !docs/evidencia_mvp/pruebas_aceptacion_mvp.md
+
+# Evidencia de la prueba de reproducibilidad del atlas: solo en el servidor (29-10-2026). Se versiona el registro.
+docs/evidencia_reproducibilidad/*
+!docs/evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md

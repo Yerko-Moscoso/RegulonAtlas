@@ -23,6 +23,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | [`contexto_regulonatlas.md`](contexto_regulonatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 26-10-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15 al 20-10-2026): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 20-10-2026 |
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
+| [`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`](evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md) | Prueba de reproducibilidad de `make all` desde un clon limpio, comparada con los resultados del dashboard: 20 de 20 archivos idénticos, manifiestos, valores de control, tiempos y limitaciones. La evidencia queda solo en el servidor | 29-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
 | [`../README.md`](../README.md) | README del proyecto: estructura, instalación, uso, resultados y MVP | 19-10-2026 |
@@ -68,7 +69,16 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
-### 30-10-2026: semana 13, `make all` corre el atlas
+### 29-10-2026: semana 13, revisión previa de `make all` y prueba de reproducibilidad
+
+- `7521118`: `scripts/check_atlas_ready.sh` (`make atlas-ready`): `make atlas`/`make all` se detienen en el primer
+  segundo si falta un archivo de la caché (indica la regla) o si hay cambios sin commit. 5 pruebas nuevas (58 en total).
+- Prueba: `make all` en un clon limpio de `7521118` desde GitHub, con la caché enlazada y solo leída. 8 min 17 s.
+  **Los 20 archivos de datos salieron idénticos byte a byte** a los que muestra el dashboard; los manifiestos solo
+  cambian en fecha y commit; 5/5 valores de control y 58/58 pruebas pasan. Resultados y caché del proyecto intactos
+  (sha256 antes y después). Clon borrado. → `evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`.
+
+### 29-10-2026: semana 13, `make all` corre el atlas
 
 - `make all` pasa a correr todo el análisis del atlas (validación, métricas, comparación, robustez y línea base); el MVP de
   8 genomas queda solo en `make mvp`. Actualizados `make help`, `README.md`, `CLAUDE.md` y la vista Pipeline.
