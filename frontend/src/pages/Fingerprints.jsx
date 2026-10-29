@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { Loader2, Info, X, Check, Plus } from "lucide-react";
 import { api } from "../services/api";
+import ScrollX from "../components/ScrollX";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
@@ -386,7 +387,7 @@ export default function Fingerprints({ initialOrganism }) {
                   the radar.
                 </p>
               </div>
-              <div className="max-h-[480px] overflow-auto">
+              <ScrollX className="max-h-[480px] overflow-y-auto">
                 <table className="w-full min-w-max">
                   <thead className="sticky top-0 bg-white z-10">
                     <tr>
@@ -467,7 +468,7 @@ export default function Fingerprints({ initialOrganism }) {
                     })}
                   </tbody>
                 </table>
-              </div>
+              </ScrollX>
               <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#F0F4F8]">
                 <span className="text-[10px] text-[#64748B]">Low percentile in the atlas</span>
                 <div

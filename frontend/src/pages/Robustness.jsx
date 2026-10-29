@@ -9,6 +9,7 @@ import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, selectClass } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
 import Collapsible from "../components/Collapsible";
+import ScrollX from "../components/ScrollX";
 
 // Robustez de las métricas propias (make robustness-atlas):
 //   1. submuestreo de aristas: ¿se conserva el orden de los genomas si la red está incompleta?
@@ -448,7 +449,7 @@ export default function Robustness({ initialOrganism }) {
         <p className="text-xs text-[#64748B] mb-3">
           Rank stability (Spearman) and median retention across atlas genomes for each removal rate. Click a row to plot it.
         </p>
-        <div className="overflow-x-auto">
+        <ScrollX>
           <table className="w-full text-xs">
             <thead>
               <tr className="text-left text-[#64748B] border-b border-[#D9E2E7]">
@@ -480,7 +481,7 @@ export default function Robustness({ initialOrganism }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollX>
         <p className="text-[11px] text-[#94A3B8] mt-2">Each cell: Spearman · median retention · class.</p>
       </Card>
 

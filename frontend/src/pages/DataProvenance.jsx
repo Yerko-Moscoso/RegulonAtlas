@@ -3,6 +3,7 @@ import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
 import { fmtInt, fmtDateTime } from "../utils/atlas";
 import StatusBadge from "../components/StatusBadge";
+import ScrollX from "../components/ScrollX";
 
 // Procedencia de los datos (semana 13):
 //   1. fuentes externas: tabla provenance de la base (GET /atlas/provenance);
@@ -183,7 +184,7 @@ export default function DataProvenance() {
               title="3. Results"
               subtitle="Each result records the commit that produced it. A result is up to date when it was built from the current version of its input."
             >
-              <div className="overflow-x-auto">
+              <ScrollX>
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-[#D9E2E7]">
@@ -194,7 +195,8 @@ export default function DataProvenance() {
                   <tbody>
                     {results.map((r) => (
                       <tr key={r.id} className="border-b border-[#F0F4F8] align-top">
-                        <td className="py-1.5 pr-3">
+                        {/* Ancho mínimo: en pantalla angosta la descripción no queda en una columna de una palabra */}
+                        <td className="py-1.5 pr-3 min-w-[200px]">
                           <div className="font-medium text-[#334155]">{r.label}</div>
                           <div className="text-[11px] text-[#94A3B8]">{r.description}</div>
                           {r.issues.map((i) => (
@@ -225,7 +227,7 @@ export default function DataProvenance() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </ScrollX>
             </Card>
 
             <Card title="Known limitations">
