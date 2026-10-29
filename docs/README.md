@@ -1,4 +1,4 @@
-# Documentación de RegulomeAtlas
+# Documentación de RegulonAtlas
 
 **Este es el punto de entrada de toda la documentación del proyecto.** Toda la documentación vive en `docs/`. Cada documento
 nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qué* hay en cada documento y la bitácora dice
@@ -8,7 +8,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 
 ## Por dónde empezar
 
-1. **`contexto_regulomeatlas.md`**: el documento maestro. Contiene el proyecto, los datos, las decisiones, lo hecho cada
+1. **`contexto_regulonatlas.md`**: el documento maestro. Contiene el proyecto, los datos, las decisiones, lo hecho cada
    semana, la arquitectura, el plan y los pendientes. Si solo se lee un documento, debe ser este.
 2. **Este archivo**: para encontrar el detalle de cada tema.
 3. **`../CLAUDE.md`**: reglas de trabajo y valores de control. Lo lee Claude Code al empezar, pero también sirve como resumen
@@ -20,7 +20,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 
 | Documento | Qué contiene | Actualizado |
 |---|---|---|
-| [`contexto_regulomeatlas.md`](contexto_regulomeatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 26-10-2026 |
+| [`contexto_regulonatlas.md`](contexto_regulonatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 26-10-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15 al 20-10-2026): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 20-10-2026 |
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
@@ -87,7 +87,7 @@ quedó documentado.
 ### 27-10-2026: semana 13, pasada de presentación de las vistas
 
 - Respaldo previo: rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13` (`fd3f3a5`).
-- `3edeff6` (nombre RegulonAtlas), `91605a5` (Validation), `dd7661c` (Robustness), `fd2abb1` (Metrics y Data
+- `3edeff6` (nombre del proyecto unificado en los textos visibles), `91605a5` (Validation), `dd7661c` (Robustness), `fd2abb1` (Metrics y Data
   Provenance): resultado clave arriba y detalle en secciones plegables con su resumen calculado; corregidas las columnas
   superpuestas de Validation y la leyenda de Robustness. No cambia ningún dato. **Aprobada por el estudiante el 27-10-2026**; el respaldo se conserva.
   → `sistema_semana13.md`, sección 5 (incluye cómo revertir).
@@ -107,7 +107,6 @@ quedó documentado.
 - **Ramas:** por decisión del estudiante, todo el desarrollo queda solo en `dev`; no se fusiona ni se sube nada a `main`
   hasta que él lo indique (`main` sigue en `f2d5df3`, semana 11). No se creó etiqueta de la semana 12. La regla quedó en
   `../CLAUDE.md` y en el contexto, sección 3.
-- **Nombre:** el proyecto pasa a llamarse **RegulonAtlas** (contexto, sección 1); los nombres de archivo no cambian.
 - **Pruebas del MVP:** registro versionado en `db6c33e`; la evidencia queda solo en el servidor (`.gitignore`).
 - **Verificación:** `make check` pasa (46 pruebas); los 5 `manifest.json` de `data/results/` tienen `git_dirty: false`
   (validation `63469d5`, metrics `ceeb831`, comparison `3ce0f17`, robustness `38222a8`, baseline `251811b`); los 32
@@ -195,7 +194,7 @@ Commits: `90a3f23` (código y pruebas) y `df454c6` (documentación).
 - `3ce0f17`: `scripts/explore_comparison.py`, `src/networks/atlas_comparison.py` (`make comparison-atlas`), API
   `/atlas/comparison/*`, `Comparison.jsx` reescrita, `Fingerprints` y `Comparison` en el menú.
 - `63469d5`: `metricas_semana11.md`, contexto actualizado con la sección 11, preguntas al investigador y al profesor.
-- `f46562d`: se agregó `contexto_regulomeatlas.md`.
+- `f46562d`: se agregó `contexto_regulonatlas.md`.
 
 ### 15-10-2026: verificación y correcciones de la semana 11
 

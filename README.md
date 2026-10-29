@@ -1,4 +1,4 @@
-# RegulomeAtlas
+# RegulonAtlas
 
 Dashboard, validación y métricas sobre redes de regulación transcripcional bacteriana (factor de transcripción →
 operón) predichas en **2.224 genomas** (uno por género de GTDB R232, más 3 referencias). Proyecto de título de Ingeniería
@@ -9,7 +9,7 @@ Este repositorio las audita, las valida contra RegPrecise, calcula métricas top
 entre taxones, mide la robustez de las métricas y las muestra en un dashboard web.
 
 **Documentación:** [`docs/README.md`](docs/README.md) es el índice. El documento maestro es
-[`docs/contexto_regulomeatlas.md`](docs/contexto_regulomeatlas.md).
+[`docs/contexto_regulonatlas.md`](docs/contexto_regulonatlas.md).
 
 ## Estructura
 

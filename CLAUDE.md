@@ -1,10 +1,10 @@
-# RegulomeAtlas — instrucciones para Claude Code
+# RegulonAtlas — instrucciones para Claude Code
 
 Proyecto de título (Ingeniería Informática, UDLA / NIDS). Dashboard, validación y métricas sobre redes de
 regulación transcripcional bacteriana (TF → operón) en 2.224 genomas. El usuario (Yerko, `ymoscoso`) es el
 desarrollador; las redes y la base las generó un investigador con un pipeline externo al que no hay acceso.
 
-Contexto completo: `docs/contexto_regulomeatlas.md`. Léelo al empezar una tarea que no sea trivial.
+Contexto completo: `docs/contexto_regulonatlas.md`. Léelo al empezar una tarea que no sea trivial.
 Validación: `docs/validacion_semana10.md`. Métricas y comparación: `docs/metricas_semana11.md`.
 Robustez y línea base: `docs/robustez_semana12.md`.
 Preguntas abiertas: `docs/preguntas_pendientes.md`.

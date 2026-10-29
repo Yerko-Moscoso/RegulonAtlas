@@ -119,7 +119,7 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
 - `docs/Claude.md` era una copia idéntica byte a byte de `CLAUDE.md` (comprobado con `cmp`) y no tenía
   seguimiento. Se eliminó.
 - Se creó `docs/preguntas_pendientes.md`, que CLAUDE.md citaba pero no existía.
-- `docs/contexto_regulomeatlas.md` también lo cita CLAUDE.md y no está en el repositorio. Lo agregará
+- `docs/contexto_regulonatlas.md` también lo cita CLAUDE.md y no está en el repositorio. Lo agregará
   el usuario.
 
 ## Estado final

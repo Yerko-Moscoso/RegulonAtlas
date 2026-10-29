@@ -1,4 +1,4 @@
-# Entorno conda del proyecto RegulomeAtlas (servidor devastator: entorno "bioinfo").
+# Entorno conda del proyecto RegulonAtlas (servidor devastator: entorno "bioinfo").
 # Crear:      conda env create -f environment.yml
 # Actualizar: conda env update -f environment.yml --prune
 # Versiones mínimas = las instaladas en bioinfo el 19-10-2026, con las que pasan `make check` y `make mvp`.

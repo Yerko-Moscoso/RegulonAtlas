@@ -1,4 +1,4 @@
-# RegulomeAtlas: comandos del proyecto. `make help` lista los objetivos.
+# RegulonAtlas: comandos del proyecto. `make help` lista los objetivos.
 #
 # Dos flujos:
 #   - Atlas (semanas 9-12): caché de MariaDB (solo SELECT) -> validación, métricas, comparación, robustez y

@@ -1,4 +1,4 @@
-# RegulomeAtlas — Documento de contexto del proyecto
+# RegulonAtlas — Documento de contexto del proyecto
 
 *Última actualización: semana 12 (19 de octubre de 2026). Este documento resume el estado del proyecto, las decisiones tomadas y el trabajo hecho en los chats de la carpeta "Redes de regulación bacterianas". Sirve como punto de partida para cualquier conversación nueva.*
 
@@ -443,7 +443,6 @@ Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limp
 - **Bitácora de Claude Code** (20-10): `docs/bitacora_claude_code.md`, recorrido del 15 al 20-10-2026 para la memoria.
 - **Pruebas de aceptación del MVP** (26-10, `db6c33e`): CA1–CA6 sobre la etiqueta `mvp-semana8` (`d056fc9`) desde un clon limpio. 6 aprobadas (CA3 con observaciones), 0 fallidas. `make mvp` tarda 19 s y es determinista salvo fechas; E. coli coincide con lo informado. Registro en `docs/evidencia_mvp/pruebas_aceptacion_mvp.md`; la evidencia (registros, capturas, scripts, Excel) queda solo en el servidor (`.gitignore`).
 - **Corrección:** la entrega `mvp-semana8` es `d056fc9`, no `b628e54` como decía la bitácora.
-- **Nombre:** el proyecto pasa a llamarse **RegulonAtlas** (decisión del estudiante, 26-10-2026). Los nombres de archivo (`contexto_regulomeatlas.md`) no cambian.
 - **Verificación del cierre:** los 5 `manifest.json` de resultados tienen `git_dirty: false`; `make check` pasa (46 pruebas); los 32 endpoints GET de la API responden 200 y los valores de control coinciden (E. coli en balanced: 118 TF, 342 operones, 485 pares; validación balanced P = 0,612, R = 0,332, F1 = 0,431). Revisión visual del estudiante (26-10-2026): Robustness, la línea base de Validation, Dashboard, Organisms, OrganismDetail, Fingerprints y Comparison funcionan.
 - **`.env`:** el estudiante borró el espacio de la línea 8 (26-10-2026). Claude no leyó el archivo.
 - **Borradores de mensaje** actualizados con los resultados de la semana 12 (`docs/preguntas_pendientes.md`).

@@ -1,4 +1,4 @@
-# Bitácora del trabajo con Claude Code en RegulomeAtlas
+# Bitácora del trabajo con Claude Code en RegulonAtlas
 
 *Del 15-10-2026 (inicio del trabajo con Claude Code) al 20-10-2026. Lo anterior (semanas 1 a 10, la redacción inicial
 de `CLAUDE.md` y el commit `06e5140`) se hizo fuera de estas sesiones y aquí aparece solo como punto de partida.
@@ -35,7 +35,7 @@ El usuario pidió revisar el estado sin modificar archivos.
 | 1 | **El commit `06e5140` dejaba la API sin arrancar.** `main.py` importaba `atlas_metrics_router`, que no existe. | La corrección estaba en la copia local, pero no entró en el commit. Ya estaba publicado en `origin/dev`. |
 | 2 | El atlas tenía 2.223 genomas en vez de 2.224 | El genoma de reemplazo (*Gordonia iterans*, `GCF_002993285.1`) tiene `selection = "replacement (GCF_050942165.1 suppressed in RefSeq 2026)"`. La comparación exacta con `"replacement"` lo dejaba fuera. |
 | 3 | `manifest.json` apuntaba al commit `16b243b`, que no contenía el módulo | Las métricas se calcularon antes del commit, y nada registraba que había cambios sin commit. |
-| 4 | Faltaban `docs/contexto_regulomeatlas.md` y `docs/preguntas_pendientes.md`; `docs/Claude.md` era una copia de `CLAUDE.md` | — |
+| 4 | Faltaban `docs/contexto_regulonatlas.md` y `docs/preguntas_pendientes.md`; `docs/Claude.md` era una copia de `CLAUDE.md` | — |
 | 5 | La `density` propia era entre 3,7 y 170 veces la externa, con correlación negativa | Se resolvió después como diferencia de definición. |
 
 **Limitaciones de la verificación:**
@@ -66,7 +66,7 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
 
 ## 3. Contexto y comparación entre taxones (19-10)
 
-- **`f46562d`:** el usuario agregó `docs/contexto_regulomeatlas.md`. Se señaló lo que estaba desactualizado:
+- **`f46562d`:** el usuario agregó `docs/contexto_regulonatlas.md`. Se señaló lo que estaba desactualizado:
   Fingerprints con 919 aristas, la falta de una sección de la semana 11 y la arquitectura.
 - **Decisión del usuario:** para Comparison, elegir la opción que diera resultados "más cercanos o iguales" a los del
   pipeline externo. Se eligió la **comparación por taxón (opción A)**, porque es la única que tiene equivalente externo.

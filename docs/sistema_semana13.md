@@ -120,7 +120,7 @@ muestran el resultado en una línea **calculado con los datos** (no texto fijo).
 
 | Commit | Vista | Cambio | Alto (px), antes → después |
 |---|---|---|---|
-| `3edeff6` | Dashboard, Metrics, Fingerprints, RegulatoryNetwork | Nombre "RegulonAtlas" en los textos visibles (quedaban 5 "RegulomeAtlas") | — |
+| `3edeff6` | Dashboard, Metrics, Fingerprints, RegulatoryNetwork | Nombre del proyecto unificado en los textos visibles (5 lugares) | — |
 | `91605a5` | Validation | Recuadro con el resultado de la red elegida (precisión, recall, fracción evaluable). Desglose por tier y por origen del motivo plegado con su resumen (solo tiers con ≥ 1 % de los pares). Línea base plegada con su resumen. Corregido: columnas de la tabla de desglose que se superponían | 2.962 → 1.780 |
 | `dd7661c` | Robustness | Leyendas arriba (la etiqueta del eje X se montaba sobre ellas). Ficha del genoma y efecto del footprinting plegados con su resumen | 2.894 → 2.014 |
 | `fd2abb1` | Metrics, Data Provenance | Metrics: se quita el pie que repetía la definición del grafo. Data Provenance: conteos de la caché plegados; el detalle "al día" solo aparece si un resultado está desactualizado | 2.059 → 2.031; 1.733 → 1.367 |
