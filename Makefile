@@ -14,7 +14,7 @@ CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
 .PHONY: help all atlas cache-atlas cache-genes cache-fimo validate-atlas metrics-atlas comparison-atlas \
-        robustness-atlas baseline-atlas api web check test hooks \
+        robustness-atlas baseline-atlas atlas-ready api web check test hooks \
         mvp cache transfer_map networks metrics validation report clean
 
 help:  ## Lista los objetivos
@@ -33,12 +33,15 @@ cache-fimo:  ## fimo_hits y transfer_map de los 312 genomas validables (línea b
 	PYTHONPATH=. $(PYTHON) scripts/export_fimo_cache.py
 
 # ---------------------------------------------------------------- atlas: análisis (solo leen la caché)
-atlas:  ## Todo el análisis del atlas en orden (~15 min; usar nohup)
+atlas: atlas-ready  ## Todo el análisis del atlas en orden (~15 min; usar nohup)
 	$(MAKE) validate-atlas
 	$(MAKE) metrics-atlas
 	$(MAKE) comparison-atlas
 	$(MAKE) robustness-atlas
 	$(MAKE) baseline-atlas
+
+atlas-ready:  ## Revisión previa de make atlas/all: caché completa y árbol limpio (solo lee)
+	@scripts/check_atlas_ready.sh
 
 validate-atlas:  ## Validación de las 5 redes contra RegPrecise -> data/results/validation/
 	PYTHONPATH=. $(PYTHON) src/validation/atlas.py --gold regprecise
