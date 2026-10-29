@@ -92,7 +92,8 @@ export default function Dashboard({ navigate }) {
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Stat label="Atlas genomes" value={fmtInt(ATLAS_GENOMES)} sub="+ 420 auxiliary genomes" />
-            <Stat label="Networks" value={fmtInt(networks.length)} sub="nested filters of one FIMO scan" />
+            {/* Sin datos de la API se muestra "—", no "0" (revisión de la semana 13, E1) */}
+            <Stat label="Networks" value={networks.length ? fmtInt(networks.length) : "—"} sub="nested filters of one FIMO scan" />
             <Stat
               label="Validable genomes"
               value={fmtInt(gold?.validable_genomes)}
