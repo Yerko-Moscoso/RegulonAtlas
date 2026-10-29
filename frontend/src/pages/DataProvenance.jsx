@@ -213,7 +213,8 @@ export default function DataProvenance() {
                           {r.git_dirty == null ? "—" : r.git_dirty ? "No" : "Yes"}
                         </td>
                         <td className="py-1.5 pr-3 text-right font-mono text-[#334155] whitespace-nowrap">
-                          {r.files_declared - r.files_missing.length} / {r.files_declared}
+                          {/* Sin manifiesto no hay archivos declarados: "—" en vez de "0 / 0" (revisión de la semana 13, C3) */}
+                          {r.files_declared ? `${r.files_declared - r.files_missing.length} / ${r.files_declared}` : "—"}
                         </td>
                         <td className="py-1.5 pr-3 text-[#334155]" title={r.up_to_date_detail ?? ""}>
                           {r.up_to_date == null ? "—" : r.up_to_date ? "Yes" : "No"}
