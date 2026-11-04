@@ -1,6 +1,6 @@
 # Bitácora del trabajo con Claude Code en RegulonAtlas
 
-*Del 15-10-2026 (inicio del trabajo con Claude Code) al 20-10-2026. Lo anterior (semanas 1 a 10, la redacción inicial
+*Del 15-10-2026 (inicio del trabajo con Claude Code) al 04-11-2026 (semanas 11 a 13). Lo anterior (semanas 1 a 10, la redacción inicial
 de `CLAUDE.md` y el commit `06e5140`) se hizo fuera de estas sesiones y aquí aparece solo como punto de partida.
 Material de base para el documento de memoria del proyecto. El detalle técnico de cada etapa está en los documentos de
 cada semana (índice en `docs/README.md`).*
@@ -204,7 +204,7 @@ El usuario aprobó aplicar todos los cambios.
 
 ---
 
-## 9. Estado al cerrar (20-10)
+## 9. Estado al 20-10
 
 - **Todo está guardado:** no hay cambios sin commit, `dev` está al día con `origin/dev` y el respaldo está en GitHub.
 - **`main` va 15 commits detrás de `dev`.** Falta cerrar la semana 12 con su etiqueta.
@@ -217,6 +217,108 @@ El usuario aprobó aplicar todos los cambios.
 
 ---
 
+## 10. Cierre de la semana 12 (26-10)
+
+- **Pruebas de aceptación del MVP** (`db6c33e`): CA1–CA6 sobre la etiqueta `mvp-semana8` desde un clon limpio, sin
+  modificar el código. 6 aprobadas (CA3 con observaciones). Se descubrió que la etiqueta apunta a `d056fc9`, no a
+  `b628e54` como decía la bitácora del proyecto; se corrigió el texto, no la etiqueta.
+- **El usuario revisó un plan antes de ejecutar** y decidió, punto por punto:
+  - la evidencia de las pruebas (capturas, registros, scripts) **no se sube a GitHub**; solo el registro formal;
+  - **todo el desarrollo queda en `dev`**; nada a `main` hasta que él lo indique (regla en `CLAUDE.md`).
+- `ef15c4d`: cierre documentado. Verificado: los 5 manifiestos con `git_dirty: false`; los 32 endpoints responden.
+- `cd5fa71`: el usuario revisó las vistas en el navegador (todo funcionaba) y corrigió él mismo la línea 8 del `.env`
+  (un espacio). **Claude no leyó el archivo**, por la regla de credenciales.
+
+---
+
+## 11. Semana 13: estado del pipeline y Data Provenance (27-10)
+
+El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data Provenance. **Descartó la vista MVP.**
+
+| Commit | Contenido |
+|---|---|
+| `65e9ace` | `scripts/explore_status.py` (exploración), `src/atlas_status.py` y `GET /api/v1/atlas/status`: 8 etapas (3 de caché, 5 de resultados) con commit, `git_dirty`, si el commit sigue en el historial, archivos y si cada resultado está al día con su entrada. 7 pruebas (53 en total) |
+| `fbce952` | `DataProvenance.jsx` reescrita con datos reales. El prototipo llamaba a endpoints inexistentes y listaba fuentes que el atlas no usa (KEGG, RegulonDB) |
+| `fd3f3a5` | `docs/sistema_semana13.md` |
+
+- **Observación registrada, sin cambiar nada:** la base dice RegPrecise 3.0; el MVP decía 3.2 (luego pregunta P7).
+
+---
+
+## 12. Pasada de presentación de las vistas (27-10)
+
+- El usuario preguntó si las vistas tenían relleno. Claude separó resultado principal, evidencia de apoyo y relleno, sin
+  cambiar nada.
+- El usuario pidió **un respaldo y luego la corrección**, para poder volver atrás: rama y etiqueta
+  `respaldo-pre-presentacion-semana13` (`fd3f3a5`), subidas a GitHub.
+- Cuatro commits (`3edeff6` a `fd2abb1`): Validation y Robustness con el resultado
+  arriba y el detalle en secciones plegables con su resumen **calculado con los datos**; columnas superpuestas y una
+  leyenda corregidas. Alto de Validation 2.962 → 1.780 px, sin cambiar ningún dato.
+- Capturas antes y después con Chrome sin interfaz. El usuario **aprobó** la pasada (`06acaca`).
+
+---
+
+## 13. Vista Pipeline, prototipos y orden de Organisms (29-10)
+
+- `9f55796`: `Pipeline.jsx` con el flujo real en 7 etapas, **la autoría de cada parte** (pipeline externo o este
+  proyecto), el estado de cada etapa propia y enlaces a las vistas. Sin backend nuevo.
+- `6dd5b18`: se eliminó `MVP.jsx`. El usuario **descartó también Settings**, que nunca existió como archivo.
+- `e32b0b2`: el usuario notó que Organisms no estaba en orden alfabético. Ahora abre por organismo de A a Z, ignorando
+  signos ("[Enterobacter]" en la E) y con números como números.
+
+---
+
+## 14. `make all`, nombre y prueba de reproducibilidad (29-10)
+
+- **Error de Claude:** al proponer el plan, afirmó que `make atlas` no incluía la línea base, y lo dejó escrito en la
+  vista Pipeline. Al leer el Makefile completo vio que sí la incluía y lo informó antes de seguir.
+- `71ead39`: `make all` pasa a correr todo el atlas; el MVP de 8 genomas queda solo en `make mvp`. Se corrigió la vista.
+- `65e079f`: nombre del proyecto unificado en todos los archivos.
+- `7521118`: `make atlas-ready`, una revisión previa que detiene `make all` en el primer segundo si falta la caché o hay
+  cambios sin commit. 5 pruebas (58 en total).
+- **Prueba de reproducibilidad** (`0a6a618`), pedida por el usuario con la condición de **no tocar los resultados que
+  muestra el software**:
+  - clon limpio desde GitHub, caché enlazada solo para lectura, `make all` en 8 min 17 s;
+  - **20 de 20 archivos de datos idénticos byte a byte**; manifiestos iguales salvo fecha y commit; 5/5 valores de
+    control y 58/58 pruebas sobre los resultados nuevos;
+  - resultados y caché del proyecto verificados con sha256 antes, después y tras borrar el clon.
+
+---
+
+## 15. Revisión completa y correcciones (29-10)
+
+- **Revisión sin corregir nada** (`74bc6bf`): 35 endpoints, las 10 vistas a 1440 y 900 px, la API apagada y una API
+  sin resultados (en copias temporales), teclado, código y documentación. Sin errores graves: 1 error menor, 6 mejoras,
+  6 detalles y 19 advertencias de ESLint.
+- **El usuario eligió corregir todo**, salvo 18 advertencias de ESLint que se mantienen por riesgo (patrón de carga de
+  las vistas y dibujo de las redes). Un commit por hallazgo (`95375a7` a `ffa5266`). Los cambios más visibles:
+  - tablas anchas legibles en pantalla angosta (`ScrollX.jsx`, con aviso de más columnas);
+  - filas y encabezados clicables usables con teclado (`utils/a11y.js`);
+  - "—" en vez de "Networks 0" con la API apagada;
+  - README con las 10 vistas y la pregunta P7 sobre la versión de RegPrecise.
+
+---
+
+## 16. Congelamiento de funciones (29-10 y 04-11)
+
+- `ce540b6`: `docs/congelamiento_v1.md` con la lista cerrada de la v1.0, lo que queda fuera, las reglas (solo
+  correcciones, pruebas, documentación y redacción; funciones nuevas solo con aprobación y registradas como excepción)
+  y las limitaciones. La regla también quedó en `CLAUDE.md`. RegulonDB, excepción prevista si el profesor la exige.
+- `d9bcf58`: cierre de la semana 13, tras la revisión del usuario.
+- 04-11: etiqueta **`congelamiento-v1`** sobre `d9bcf58` (solo en `dev`), pedida por el usuario (`bfd42ec`).
+
+---
+
+## 17. Estado al 04-11
+
+- `dev` limpio y en GitHub; `main` sin cambios desde la semana 11 (`f2d5df3`).
+- 58 pruebas; 8 de 8 etapas del pipeline al día; funciones congeladas.
+- **Pendiente del usuario:** enviar los mensajes al investigador y al profesor (borradores con P1–P7 y Q1–Q4).
+- **Lo que sigue:** semana 14 (prueba desde cero con `conda env create`, revisar la cobertura de pruebas y `v1.0` cuando
+  el usuario lo indique), semana 15 (redacción) y semana 16 (defensa).
+
+---
+
 ## Decisiones del usuario a lo largo del trabajo
 
 1. Verificar antes de cambiar, y mostrar los cambios propuestos antes de aplicarlos.
@@ -225,6 +327,15 @@ El usuario aprobó aplicar todos los cambios.
 4. Un único punto de documentación (`docs/README.md`).
 5. Línea base solo en los 312 genomas validables.
 6. Aplicar toda la limpieza, con un respaldo previo.
+7. Todo el desarrollo en `dev`; nada a `main` hasta nuevo aviso.
+8. La evidencia de las pruebas queda en el servidor; en GitHub solo los registros formales.
+9. Avanzar por partes, revisando un plan antes de cada ejecución.
+10. Descartar las vistas MVP y Settings.
+11. Antes de cambios grandes en la presentación, un respaldo para poder volver atrás.
+12. `make all` corre el atlas; el MVP solo con `make mvp`.
+13. Las pruebas no deben tocar los resultados que muestra el software (clon o copia aparte, con comparación).
+14. Corregir todos los hallazgos de la revisión, y de ESLint solo lo de bajo riesgo.
+15. Congelar las funciones al cierre de la semana 13 y marcarlo con una etiqueta.
 
 ## Errores de Claude y cómo se corrigieron
 
@@ -236,3 +347,9 @@ El usuario aprobó aplicar todos los cambios.
 | `pkill` que cortó la propia terminal | Sin consecuencias |
 | Conflicto de nombres B/C en el documento de la semana 12 | Renombrado |
 | Afirmaciones sin verificar (cobertura de motivos, cifras del segundo análisis) | Marcadas como hipótesis o reemplazadas por mediciones |
+| "`make atlas` no incluye la línea base" (leyó solo parte de la regla del Makefile), escrito en la vista Pipeline | Informado al usuario; corregido en `71ead39` |
+| Fecha "30-10-2026" en vez de 29-10 en la documentación de `make all` | Corregido en `0a6a618` |
+| La primera versión de `StatusBadge.jsx` exportaba una función junto al componente (error de ESLint) | Movida a `utils/atlas.js` antes del commit |
+| Script de valores de control con nombres de nivel taxonómico equivocados | Corregido y probado contra los resultados actuales antes de usarlo |
+| Tabla de enlaces del índice apuntaba a `docs/pruebas_aceptacion_mvp.md`, que estaba en `evidencia_mvp/` | Corregido en `db6c33e` |
+| `pkill` que cortó la propia terminal (otra vez) | Sin consecuencias; se repitió el paso |
