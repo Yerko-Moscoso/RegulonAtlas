@@ -48,3 +48,7 @@ docs/evidencia_reproducibilidad/*
 
 # Evidencia de la revisión completa de la semana 13 (registros y capturas): solo en el servidor (29-10-2026).
 docs/evidencia_revision_semana13/
+
+# Prueba desde cero (semana 14): Excel, registros y capturas solo en el servidor (04-11-2026). Se versiona el registro.
+docs/evidencia_instalacion/*
+!docs/evidencia_instalacion/prueba_desde_cero.md

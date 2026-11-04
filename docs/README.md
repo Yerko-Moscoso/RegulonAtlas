@@ -24,6 +24,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | [`congelamiento_v1.md`](congelamiento_v1.md) | Congelamiento de funciones de la v1.0: lista cerrada de análisis, API (35 rutas), 10 vistas y calidad; lo que queda fuera; reglas después del congelamiento; registro de excepciones y limitaciones | 29-10-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15-10 al 04-11-2026, semanas 11 a 13): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 04-11-2026 |
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
+| [`evidencia_instalacion/prueba_desde_cero.md`](evidencia_instalacion/prueba_desde_cero.md) | Prueba desde cero (semana 14): clon de `congelamiento-v1`, entorno nuevo desde `environment.yml`, comparación con los resultados del dashboard (20/20 con los mismos valores) y 109 casos de prueba (108 aprobados). El Excel `casos_de_prueba_v1.xlsx` y la evidencia quedan solo en el servidor | 04-11-2026 |
 | [`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`](evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md) | Prueba de reproducibilidad de `make all` desde un clon limpio, comparada con los resultados del dashboard: 20 de 20 archivos idénticos, manifiestos, valores de control, tiempos y limitaciones. La evidencia queda solo en el servidor | 29-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
@@ -70,6 +71,18 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 04-11-2026: semana 14, prueba desde cero ejecutada
+
+- Clon de `congelamiento-v1`, entorno nuevo desde `environment.yml` (10 paquetes en versiones más recientes que
+  `bioinfo`), caché enlazada solo para lectura. `make all` en 8 min 34 s: **20 de 20 archivos con los mismos valores** que
+  el dashboard (16 idénticos byte a byte; 4 difieren solo en metadatos de pyarrow o en el 17.º dígito), 5/5 valores de
+  control, 58/58 pruebas.
+- **109 casos de prueba** (instalación, revisión previa, análisis, comparación, control, calidad, 35 rutas de la API,
+  errores, API sin resultados, 10 vistas, 18 funciones y aislamiento): **108 aprobados**. Falla INS-03: `npm install`
+  (README) modifica `package-lock.json` y `make all` se niega a correr; con `npm ci` funciona (hallazgo H1, pendiente de
+  decisión). Resultados, caché y `bioinfo` intactos; clon y entorno borrados.
+  → `evidencia_instalacion/prueba_desde_cero.md`; Excel `evidencia_instalacion/casos_de_prueba_v1.xlsx` (solo servidor).
 
 ### 04-11-2026: semana 14, plan de la prueba desde cero (sin ejecutar)
 
