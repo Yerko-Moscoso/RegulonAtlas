@@ -36,6 +36,10 @@ cp .env.example .env                      # credenciales de MariaDB (solo para r
 make hooks                                # una vez por clon: verificación antes de cada commit
 ```
 
+Si ya existe un entorno llamado `bioinfo` (por ejemplo, en el servidor `devastator`), `conda env create -f environment.yml`
+fallará por el nombre repetido. En ese caso se crea con otro nombre (`conda env create -n <nombre> -f environment.yml`) o
+en una carpeta (`-p <carpeta>`), y se activa ese.
+
 ## Uso
 
 ```bash

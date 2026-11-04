@@ -71,6 +71,14 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 04-11-2026: semana 14, plan de la prueba desde cero (sin ejecutar)
+
+- Decisiones del estudiante: probar la etiqueta `congelamiento-v1` (mismo código que `dev`); incluir la revisión de las
+  10 vistas desde la instalación nueva; en el README solo mencionar el choque de nombre con un entorno `bioinfo`
+  existente. Opción de caché: por confirmar. La prueba se ejecuta cuando el estudiante lo indique.
+- `README.md`: nota en "Instalación" para crear el entorno con otro nombre (`-n`) o en una carpeta (`-p`) si ya existe
+  `bioinfo`.
+
 ### 04-11-2026: bitácora de Claude Code al día
 
 - `bitacora_claude_code.md` amplía el recorrido hasta el 04-11-2026: secciones 10 a 17 (cierre de la semana 12, semana
