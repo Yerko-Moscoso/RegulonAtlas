@@ -75,7 +75,7 @@ quedó documentado.
 
 - Decisiones del estudiante: probar la etiqueta `congelamiento-v1` (mismo código que `dev`); incluir la revisión de las
   10 vistas desde la instalación nueva; en el README solo mencionar el choque de nombre con un entorno `bioinfo`
-  existente. Opción de caché: por confirmar. La prueba se ejecuta cuando el estudiante lo indique.
+  existente. Caché: opción a (reutilizar la actual, enlazada solo para lectura; sin MariaDB), confirmada por el estudiante. La prueba se ejecuta cuando el estudiante lo indique.
 - `README.md`: nota en "Instalación" para crear el entorno con otro nombre (`-n`) o en una carpeta (`-p`) si ya existe
   `bioinfo`.
 
