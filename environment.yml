@@ -21,7 +21,7 @@ dependencies:
   - sqlalchemy>=2.0
   - pymysql>=1.2
   - python-dotenv>=1.2
-  # Frontend (cd frontend && npm install)
+  # Frontend (cd frontend && npm ci)
   - nodejs>=24
   # Pipeline del MVP y código histórico en legacy/ (FIMO, parseo de RegPrecise/PRODORIC)
   - meme=5.5.9

@@ -14,7 +14,7 @@ archivos de datos con los mismos valores (16 idénticos byte a byte), los 5 valo
 automáticas. **108 de 109 casos de prueba aprobados (99,1 %).**
 
 El caso fallido (INS-03) es de documentación: la instrucción del README `npm install` modifica `package-lock.json`, y con
-eso `make all` se niega a correr. Con `npm ci` todo funciona (hallazgo H1, sección 7).
+eso `make all` se niega a correr. Con `npm ci` todo funciona (hallazgo H1, sección 7). **El README ya se corrigió para usar `npm ci`.**
 
 Nada del proyecto cambió: los resultados del dashboard, la caché y el entorno `bioinfo` quedaron idénticos (sha256 y
 lista de paquetes), y el clon y el entorno temporal se borraron.
@@ -148,7 +148,7 @@ hoja **Resumen** se calcula con fórmulas sobre esa hoja.
 
 | ID | Tipo | Hallazgo | Recomendación |
 |---|---|---|---|
-| **H1** | **Fallo (documentación)** | `cd frontend && npm install`, como dice el README, modifica `package-lock.json`: npm 11.6 agrega metadatos `"peer": true` (16 líneas). Los paquetes son los mismos, pero el clon queda con cambios sin commit y la revisión previa de `make all` se niega a correr (INS-03 falla; REV-02 lo confirma). | Cambiar en el README `npm install` por **`npm ci`**, que instala exactamente lo del lock sin modificarlo (INS-04, aprobado). Es una corrección de documentación permitida por el congelamiento; **requiere aprobación del estudiante**. |
+| **H1** | **Fallo (documentación)** | `cd frontend && npm install`, como dice el README, modifica `package-lock.json`: npm 11.6 agrega metadatos `"peer": true` (16 líneas). Los paquetes son los mismos, pero el clon queda con cambios sin commit y la revisión previa de `make all` se niega a correr (INS-03 falla; REV-02 lo confirma). | Cambiar en el README `npm install` por **`npm ci`**, que instala exactamente lo del lock sin modificarlo (INS-04, aprobado). Es una corrección de documentación permitida por el congelamiento. **Corregido el 04-11-2026 con aprobación del estudiante** (README y comentario de `environment.yml`). |
 | H2 | Observación | `environment.yml` pide versiones mínimas: el entorno nuevo trajo 10 paquetes más recientes. Los resultados coinciden igual. | Mantener. Para reproducir también los bytes de los Parquet, guardar además las versiones exactas (`conda env export`). |
 | H3 | Observación | 4 archivos difieren en bytes con los mismos valores (versión de pyarrow en los Parquet; 17.º dígito de algunos decimales). | Ninguna: no cambia ningún resultado. |
 | H4 | Observación | Recién instalado, `make check` pasa con 23 pruebas y 35 omitidas (necesitan resultados); tras `make all` pasan las 58. | Indicar en el README que la batería completa requiere `make all` antes. |

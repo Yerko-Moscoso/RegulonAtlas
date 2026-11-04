@@ -72,6 +72,12 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 04-11-2026: semana 14, corrección H1 (`npm ci`)
+
+- Con aprobación del estudiante, el README (y el comentario de `environment.yml`) indican `npm ci` en vez de `npm install`:
+  instala exactamente lo de `package-lock.json` sin modificarlo, así `make all` no se detiene en una instalación nueva.
+  Corrección de documentación, permitida por el congelamiento. → `evidencia_instalacion/prueba_desde_cero.md`, H1.
+
 ### 04-11-2026: semana 14, prueba desde cero ejecutada
 
 - Clon de `congelamiento-v1`, entorno nuevo desde `environment.yml` (10 paquetes en versiones más recientes que

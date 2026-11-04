@@ -31,7 +31,7 @@ entre taxones, mide la robustez de las métricas y las muestra en un dashboard w
 ```bash
 conda env create -f environment.yml      # entorno "bioinfo"
 conda activate bioinfo
-cd frontend && npm install && cd ..
+cd frontend && npm ci && cd ..           # instala exactamente lo de package-lock.json, sin modificarlo
 cp .env.example .env                      # credenciales de MariaDB (solo para regenerar la caché)
 make hooks                                # una vez por clon: verificación antes de cada commit
 ```
