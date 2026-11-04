@@ -103,5 +103,6 @@ reanotación PGAP y no coinciden; la base solo guarda hits con p ≤ 1e-5.
 
 ## Etiquetas
 
-`mvp-semana8` (entrega del MVP), `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. Las ramas de trabajo
-son `dev` (desarrollo) y `main` (bloques terminados).
+`mvp-semana8` (entrega del MVP), `semana09-auditoria`, `semana10-validacion`, `semana11-metricas` y `congelamiento-v1`
+(funciones congeladas al cierre de la semana 13; `docs/congelamiento_v1.md`). El desarrollo está en `dev`; `main` llega
+hasta la semana 11 y no recibe cambios hasta que el estudiante lo indique.

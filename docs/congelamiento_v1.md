@@ -1,7 +1,7 @@
 # Congelamiento de funciones de RegulonAtlas v1.0
 
-*Congelado el 29-10-2026, al cierre de la semana 13, a pedido del estudiante, sobre el commit de `dev` que agrega este
-documento (sigue a `f7617e4`).* El sistema se congela después de la revisión completa y sus correcciones
+*Congelado el 29-10-2026, al cierre de la semana 13, a pedido del estudiante. La etiqueta **`congelamiento-v1`** (creada
+el 04-11-2026, en `dev` y en GitHub; no en `main`) marca el estado congelado: commit `d9bcf58`.* El sistema se congela después de la revisión completa y sus correcciones
 (`revision_semana13.md`) y de la prueba de reproducibilidad (`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`).
 
 ## 1. Qué significa

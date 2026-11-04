@@ -71,6 +71,11 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 04-11-2026: etiqueta `congelamiento-v1`
+
+- Etiqueta anotada `congelamiento-v1` sobre `d9bcf58` (cierre de la semana 13), subida a GitHub. Solo en `dev`; `main` sin
+  cambios. → `congelamiento_v1.md`.
+
 ### 29-10-2026: cierre de la semana 13
 
 - El estudiante revisó el software congelado y cerró la semana. Estado al cerrar: `dev` en `ce540b6` (más este commit),
