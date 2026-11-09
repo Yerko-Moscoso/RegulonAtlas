@@ -54,17 +54,16 @@ RESULT_ENDPOINTS = [
 ]
 
 CACHE_ENDPOINTS = [
+    # /atlas/networks y /atlas/provenance respondían 500 sin caché (hallazgo H2, semana 14; corregido en
+    # src/api/routers/atlas.py con _manifest). Ver docs/pruebas_semana14.md, sección 7.
+    "/atlas/networks",
+    "/atlas/provenance",
     "/atlas/networks/3/genomes",
     "/atlas/networks/3/metrics",
     f"/atlas/networks/3/graph/{ECOLI}",
     "/genomes/",
     "/motifs/",
 ]
-
-# Hallazgo de la semana 14 (H2 en docs/pruebas_semana14.md): sin caché, estos dos leen manifest.json antes de
-# comprobar si existe y responden 500. No se corrige sin aprobación (congelamiento v1.0). strict=True: si se
-# corrige, la prueba pasa a fallar para recordar quitar la marca.
-CACHE_ENDPOINTS_500 = ["/atlas/networks", "/atlas/provenance"]
 
 client = TestClient(app, raise_server_exceptions=False)
 
@@ -94,12 +93,6 @@ def test_cache_endpoint_without_cache_is_503(empty_data, path):
     r = client.get(f"/api/v1{path}")
     assert r.status_code == 503
     assert "make cache-atlas" in r.json()["detail"]
-
-
-@pytest.mark.xfail(strict=True, reason="H2 (semana 14): responde 500 sin caché; pendiente de decisión")
-@pytest.mark.parametrize("path", CACHE_ENDPOINTS_500)
-def test_cache_endpoint_reading_manifest_without_cache_is_503(empty_data, path):
-    assert client.get(f"/api/v1{path}").status_code == 503
 
 
 def test_health_and_status_work_without_data(empty_data):

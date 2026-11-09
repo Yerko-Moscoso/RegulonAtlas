@@ -21,6 +21,14 @@ def _tabla(nombre: str) -> pd.DataFrame:
     return pd.read_parquet(ruta)
 
 
+def _manifest() -> dict:
+    """Lee manifest.json de la caché; si falta, 503 como _tabla (hallazgo H2, semana 14: antes respondía 500)."""
+    ruta = CACHE / "manifest.json"
+    if not ruta.exists():
+        raise HTTPException(503, f"Missing {ruta.name}; run 'make cache-atlas'.")
+    return json.loads(ruta.read_text())
+
+
 def _json(df: pd.DataFrame) -> list[dict]:
     """DataFrame -> JSON seguro: NaN -> null, fechas ISO, tipos numpy -> nativos."""
     return json.loads(df.to_json(orient="records", date_format="iso", force_ascii=False))
@@ -61,7 +69,7 @@ def _aristas_por_genoma(network_id: int) -> pd.DataFrame:
 @router.get("/networks")
 def listar_redes():
     """Las 5 redes materializadas, con sus parámetros y número de aristas."""
-    manifest = json.loads((CACHE / "manifest.json").read_text())
+    manifest = _manifest()
     salida = []
     for r in _json(_tabla("networks")):
         if isinstance(r.get("params"), str):
@@ -167,5 +175,5 @@ def grafo(network_id: int, accession: str,
 @router.get("/provenance")
 def procedencia():
     """Fuentes de datos (tabla provenance) y registro de la exportación a caché."""
-    manifest = json.loads((CACHE / "manifest.json").read_text())
+    manifest = _manifest()
     return {"cache": manifest, "sources": _json(_tabla("provenance"))}
