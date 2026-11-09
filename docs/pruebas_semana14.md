@@ -7,23 +7,24 @@ salida de `make check`.
 
 ## 1. Resultado
 
-**Aprobada, con un hallazgo menor (H2) pendiente de decisión.** Se agregaron **65 pruebas** en 3 archivos nuevos. La
-suite pasa de **58 a 123 pruebas**: 121 aprobadas y 2 marcadas como *falla esperada* (`xfail`), que documentan el
-hallazgo H2. `make check` pasa.
+**Aprobada, con un hallazgo menor (H2) ya corregido.** Se agregaron **65 pruebas** en 3 archivos nuevos. La suite pasa
+de **58 a 123 pruebas**. Al principio quedaron 121 aprobadas y 2 marcadas como *falla esperada* (`xfail`) por el
+hallazgo H2; el estudiante aprobó corregirlo el mismo día y ahora pasan **123 de 123**. `make check` pasa.
 
 | | Antes (`6b2867c`) | Después (`fb11872`) |
 |---|---|---|
-| Pruebas en el proyecto | 58 aprobadas | 121 aprobadas + 2 fallas esperadas (H2) |
-| Pruebas que corren en un clon sin `data/` | 23 (35 se omiten) | **86** (las mismas 35 se omiten) |
+| Pruebas en el proyecto | 58 aprobadas | 123 aprobadas (121 + 2 fallas esperadas hasta la corrección de H2, `71771e2`) |
+| Pruebas que corren en un clon sin `data/` | 23 (35 se omiten) | **88** (las mismas 35 se omiten) |
 | Funciones de cálculo con prueba propia | normalización, métricas, submuestreo, `safe_div`, `f1` | además: toda la cadena de la validación, la línea base, la comparación y la robustez |
-| Comportamiento de la API sin datos | revisado a mano (semana 13) | 30 endpoints comprobados en cada `make check` |
+| Comportamiento de la API sin datos | revisado a mano (semana 13) | 32 endpoints comprobados en cada `make check` |
 
-**Nada de lo existente cambió:** no se modificó ningún archivo de `src/`, del frontend ni de las pruebas anteriores;
+**Nada de lo existente cambió:** las pruebas no modificaron ningún archivo de `src/`, del frontend ni de las pruebas anteriores;
 las 58 pruebas anteriores siguen pasando, y los 75 archivos de `data/results/` y `data/cache/` quedaron idénticos
 (sha256 antes y después).
 
-**Hallazgo H2:** sin la caché, `/atlas/networks` y `/atlas/provenance` responden 500 (error interno) en lugar de 503
-con la instrucción `make cache-atlas`. No se corrigió (sección 7).
+**Hallazgo H2:** sin la caché, `/atlas/networks` y `/atlas/provenance` respondían 500 (error interno) en lugar de 503
+con la instrucción `make cache-atlas`. Corregido con aprobación del estudiante en `71771e2`, el único cambio en `src/`
+(sección 7).
 
 ## 2. Objetivo y alcance
 
@@ -63,6 +64,7 @@ comportamiento de la API sin datos quede comprobado en cada commit.
      `/motifs/`, `/atlas/networks`, `/atlas/networks/3/genomes` y `/atlas/metrics/summary` responden 200 con los
      datos reales;
    - clon limpio del repositorio, sin `data/`: 86 aprobadas, 35 omitidas, 2 fallas esperadas, 0 fallidas. Clon borrado.
+     Después de corregir H2: 88 aprobadas y 35 omitidas.
 5. **Un commit por bloque**, cada uno después de `make check` (y del hook pre-commit), con push a `origin/dev`.
 
 ## 5. Pruebas agregadas
@@ -110,8 +112,7 @@ tiene regulón en g1), g1 fur→op20 (0,40, TP), g2 crp→op31 (0,60, FP), g3 le
 | Prueba | Qué comprueba | Resultado |
 |---|---|---|
 | `test_results_endpoint_without_results_is_503` (25 casos) | Cada endpoint de validación (7), métricas (5), comparación (3), robustez (6) y línea base (4) responde 503 y nombra su regla de `make` | 25/25 |
-| `test_cache_endpoint_without_cache_is_503` (5 casos) | `/atlas/networks/3/genomes`, `/atlas/networks/3/metrics`, `/atlas/networks/3/graph/…`, `/genomes/` y `/motifs/` responden 503 con `make cache-atlas` | 5/5 |
-| `test_cache_endpoint_reading_manifest_without_cache_is_503` (2 casos) | Lo mismo para `/atlas/networks` y `/atlas/provenance` | **Responden 500: falla esperada (H2)** |
+| `test_cache_endpoint_without_cache_is_503` (7 casos) | `/atlas/networks`, `/atlas/provenance`, `/atlas/networks/3/genomes`, `/atlas/networks/3/metrics`, `/atlas/networks/3/graph/…`, `/genomes/` y `/motifs/` responden 503 con `make cache-atlas` | 7/7 (los 2 primeros, desde la corrección de H2; antes eran una prueba aparte con `xfail`) |
 | `test_health_and_status_work_without_data` | `/health` y `/atlas/status`, que el dashboard usa para avisar qué falta, responden sin datos | 200 |
 | `test_every_results_endpoint_is_listed` | Las rutas de resultados de la API coinciden con la lista de la prueba: un endpoint nuevo obliga a agregarlo | Coinciden (24 rutas) |
 
@@ -130,11 +131,22 @@ La numeración sigue la de la prueba desde cero (H1, `evidencia_instalacion/prue
 
 | ID | Tipo | Descripción | Estado |
 |---|---|---|---|
-| H2 | Error menor | Sin `data/cache/atlas/`, `GET /api/v1/atlas/networks` y `GET /api/v1/atlas/provenance` leen `manifest.json` antes de comprobar si existe y responden **500** sin mensaje, en vez de **503** con `make cache-atlas` como los otros 30 endpoints. Solo ocurre si falta la caché (no en el uso normal ni en la revisión de la semana 13, que retiró los resultados pero no la caché). El dashboard igual avisa que la API falló, pero sin decir qué correr. | **Pendiente de decisión del estudiante.** Registrado con `xfail(strict=True)`: si se corrige, esas 2 pruebas pasan a fallar para recordar quitar la marca |
+| H2 | Error menor | Sin `data/cache/atlas/`, `GET /api/v1/atlas/networks` y `GET /api/v1/atlas/provenance` leían `manifest.json` sin comprobar si existe y respondían **500** sin mensaje, en vez de **503** con `make cache-atlas` como los otros 30 endpoints. Solo ocurría si faltaba la caché (no en el uso normal ni en la revisión de la semana 13, que retiró los resultados pero no la caché). El dashboard mostraba entonces su texto genérico (*"Check that the backend is running"*), engañoso porque la API sí estaba corriendo. | **Corregido el 09-11-2026** (`71771e2`), con aprobación del estudiante |
 
-Corrección propuesta, si se aprueba (está permitida por el congelamiento como corrección de error): en
-`src/api/routers/atlas.py`, leer `manifest.json` con una función que responda 503 si no existe, igual que `_tabla`;
-quitar la marca `xfail` y comprobar que las 2 pruebas pasan.
+### 7.1 Corrección de H2
+
+Corrección de error, permitida por el congelamiento (`congelamiento_v1.md`, sección 4, regla 1); no es una función
+nueva ni cambia ningún dato.
+
+- **Cambio:** función nueva `_manifest()` en `src/api/routers/atlas.py`. Lee `manifest.json` y, si falta, responde 503
+  con `Missing manifest.json; run 'make cache-atlas'.`, igual que `_tabla()`. Los dos endpoints la usan en lugar de
+  leer el archivo directamente.
+- **Pruebas:** se quitó la marca `xfail`; los dos endpoints pasan a la lista `CACHE_ENDPOINTS` del bloque C, que
+  además comprueba el mensaje. Resultado: 123 de 123.
+- **Verificación:** con la caché presente, las respuestas de `/atlas/networks` y `/atlas/provenance` son idénticas
+  byte a byte a las de antes del cambio; los 75 archivos de `data/results/` y `data/cache/` quedaron idénticos (sha256);
+  `make check` pasa. No hay que recalcular ningún resultado.
+- **Cómo revertirla:** `git revert 71771e2` (vuelve el 500 y la prueba con `xfail`).
 
 ## 8. Limitaciones
 
@@ -151,15 +163,16 @@ quitar la marca `xfail` y comprobar que las 2 pruebas pasan.
 | `9586f67` | Bloque A: `tests/test_unit_validation.py` (12 pruebas) |
 | `6a77bfa` | Bloque B: `tests/test_unit_baseline_comparison.py` (19 pruebas) |
 | `fb11872` | Bloque C: `tests/test_api_sin_resultados.py` (34 pruebas, 2 con falla esperada) |
-| (este documento) | `docs/pruebas_semana14.md`, índice y bitácora en `docs/README.md` y contexto |
+| `8b819a1` | Este documento, índice y bitácora en `docs/README.md` y contexto |
+| `71771e2` | Corrección de H2 en `src/api/routers/atlas.py`; se quita el `xfail` |
 
 ## 10. Cómo repetirla
 
 ```bash
 cd ~/proyecto && conda activate bioinfo
-make check                                   # todas: 121 aprobadas + 2 fallas esperadas
+make check                                   # todas: 123 aprobadas
 make test                                    # solo pytest, muestra las omitidas
-PYTHONPATH=. pytest -q -rx tests/test_unit_validation.py tests/test_unit_baseline_comparison.py tests/test_api_sin_resultados.py
+PYTHONPATH=. pytest -q tests/test_unit_validation.py tests/test_unit_baseline_comparison.py tests/test_api_sin_resultados.py
 ```
 
-En un clon sin `data/` se espera: 86 aprobadas, 35 omitidas y 2 fallas esperadas.
+En un clon sin `data/` se espera: 88 aprobadas y 35 omitidas.
