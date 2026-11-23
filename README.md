@@ -46,6 +46,7 @@ en una carpeta (`-p <carpeta>`), y se activa ese.
 make help                 # lista de comandos
 make api                  # backend en http://localhost:8000 (documentación en /docs)
 make web                  # frontend en http://localhost:5173
+make extensions  # ampliaciones E1-E7, fuera de make all (antes: make regulondb). Ver docs/ampliaciones_semana14.md
 make check                # antes de cada commit: API, frontend, ESLint y pytest
 ```
 

@@ -28,6 +28,7 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - **Nunca leer, mostrar ni copiar** `.env` ni `~/.my.cnf` (credenciales).
 - **La API no consulta MariaDB**: solo lee `data/cache/atlas/*.parquet` y `data/results/`. Ningún archivo de
   `src/api` debe usar `get_db` ni `get_engine`.
+- **RegulonDB:** uso académico; no integrarlo en otra base. `data/raw/regulondb/` no se versiona y la API solo entrega cifras agregadas.
 - **Calcular offline, servir resultados**: el cálculo pesado va en un módulo con regla de `make`; la API solo lee.
 - **No inventar métodos de API**: antes de escribir un componente, leer `frontend/src/services/api.js` y la forma
   real de la respuesta (con `curl` contra `localhost:8000`).
@@ -79,6 +80,7 @@ make comparison-atlas # comparación por taxón -> data/results/comparison/ (des
 make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robustness/ (~8 min, usar nohup)
 make cache-fimo       # fimo_hits + transfer_map de los 312 genomas validables (MariaDB, solo SELECT)
 make baseline-atlas   # línea base del pipeline propio (red de prueba) -> data/results/baseline/
+make extensions       # ampliaciones E1-E7 (fuera de make all; RegulonDB: antes make regulondb). docs/ampliaciones_semana14.md
 make check            # verificaciones previas al commit (API, frontend, ESLint) + pytest
 make all              # todo el análisis del atlas en orden (= make atlas; ~15 min, usar nohup). El MVP: make mvp
 make help             # lista de comandos; make web = frontend

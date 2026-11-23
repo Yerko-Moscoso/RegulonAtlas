@@ -26,6 +26,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
 | [`evidencia_instalacion/prueba_desde_cero.md`](evidencia_instalacion/prueba_desde_cero.md) | Prueba desde cero (semana 14): clon de `congelamiento-v1`, entorno nuevo desde `environment.yml`, comparación con los resultados del dashboard (20/20 con los mismos valores) y 109 casos de prueba (108 aprobados). El Excel `casos_de_prueba_v1.xlsx` y la evidencia quedan solo en el servidor | 04-11-2026 |
 | [`pruebas_semana14.md`](pruebas_semana14.md) | Ampliación de las pruebas automáticas (semana 14): 65 pruebas nuevas en 3 bloques (validación, línea base/comparación/robustez y API sin datos), de 58 a 123; cómo se aisló lo existente; hallazgo H2 (500 sin caché en 2 endpoints) y su corrección | 09-11-2026 |
+| [`ampliaciones_semana14.md`](ampliaciones_semana14.md) | Excepciones E1–E7 (23-11-2026): intervalos de confianza, modos lado a lado, comparación ajustada, precisión esperada por genoma, RegulonDB, MVP frente al atlas y avisos de cobertura; método, resultados, verificación y limitaciones | 23-11-2026 |
 | [`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`](evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md) | Prueba de reproducibilidad de `make all` desde un clon limpio, comparada con los resultados del dashboard: 20 de 20 archivos idénticos, manifiestos, valores de control, tiempos y limitaciones. La evidencia queda solo en el servidor | 29-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
@@ -63,6 +64,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | `data/results/comparison/` | `make comparison-atlas` | `metricas_semana11.md`, sección 11 |
 | `data/results/robustness/` | `make robustness-atlas` | `robustez_semana12.md`, sección 7 |
 | `data/results/baseline/` | `make cache-fimo`, `make baseline-atlas` | `robustez_semana12.md`, sección 8 |
+| `data/results/validation_ci/`, `comparison_adjusted/`, `reliability/`, `validation_mvp/`, `validation/regulondb*/` | `make extensions` (RegulonDB: antes `make regulondb`) | `ampliaciones_semana14.md` |
 | `data/audit/` | `scripts/explore_*.py`, `scripts/audit_summary.py` | Docstring de cada script |
 | `logs/` | Ejecuciones con `> logs/….log` | Bitácora (abajo) |
 
@@ -72,6 +74,14 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 23-11-2026: semana 14, ampliaciones E1–E7
+
+- Aprobadas por el estudiante como excepciones al congelamiento. Commits `6300436` a `400764d`; salidas nuevas con `make extensions`
+  (fuera de `make all`). Resultados congelados intactos (sha256); **147 de 147 pruebas**; vistas revisadas en navegador.
+- Hallazgos: `balanced` no siempre se distingue de la segunda red (IC por familia); la precisión de `balanced` se sostiene en
+  RegulonDB (0,578), aunque su recall es de 6 %; sin autoevaluación, el MVP casi iguala a `balanced` en sus 8 genomas (F1 0,307
+  frente a 0,321); el indicador por genoma es débil. → `ampliaciones_semana14.md`.
 
 ### 09-11-2026: semana 14, corrección de H2
 

@@ -83,13 +83,15 @@ Robustness, Validation (con la línea base) y, en SYSTEM, Pipeline y Data Proven
 
 | Fecha | Función | Motivo | Aprobación | Commit |
 |---|---|---|---|---|
-| 23-11-2026 | E1. Intervalos de confianza (bootstrap) de P, R y F1 | Saber si las diferencias entre redes son reales | Estudiante, 23-11-2026 (punto 1) | Ver bitácora |
-| 23-11-2026 | E2. Validation: modos `all` e `independent` lado a lado | No mostrar solo la cifra más favorable | Estudiante, 23-11-2026 (punto 2) | Ver bitácora |
-| 23-11-2026 | E3. Comparación entre taxones ajustada por tamaño del genoma y oferta de motivos | Separar el efecto metodológico del taxón | Estudiante, 23-11-2026 (punto 3) | Ver bitácora |
-| 23-11-2026 | E4. Indicador de confiabilidad por genoma | Orientar en los genomas sin gold standard | Estudiante, 23-11-2026 (punto 4) | Ver bitácora |
-| 23-11-2026 | E5. Validación con RegulonDB (*E. coli* K-12) | Segundo gold standard, con evidencia experimental | Estudiante, 23-11-2026 (punto 6) | Ver bitácora |
-| 23-11-2026 | E6. Red del MVP frente a las redes del atlas | Pendiente desde la semana 10 | Estudiante, 23-11-2026 (punto 7) | Ver bitácora |
-| 23-11-2026 | E7. Avisos de cobertura junto a las cifras | Evitar leer las cifras como cobertura total | Estudiante, 23-11-2026 (punto 8) | Ver bitácora |
+| 23-11-2026 | E1. Intervalos de confianza (bootstrap) de P, R y F1 | Saber si las diferencias entre redes son reales | Estudiante, 23-11-2026 (punto 1) | `a14b0ea`, `400764d` |
+| 23-11-2026 | E2. Validation: modos `all` e `independent` lado a lado | No mostrar solo la cifra más favorable | Estudiante, 23-11-2026 (punto 2) | `400764d` |
+| 23-11-2026 | E3. Comparación entre taxones ajustada por tamaño del genoma y oferta de motivos | Separar el efecto metodológico del taxón | Estudiante, 23-11-2026 (punto 3) | `2c2b60a`, `a14b0ea`, `400764d` |
+| 23-11-2026 | E4. Indicador de confiabilidad por genoma | Orientar en los genomas sin gold standard | Estudiante, 23-11-2026 (punto 4) | `a14b0ea`, `400764d` |
+| 23-11-2026 | E5. Validación con RegulonDB (*E. coli* K-12) | Segundo gold standard, con evidencia experimental | Estudiante, 23-11-2026 (punto 6) | `362e98e`, `400764d` |
+| 23-11-2026 | E6. Red del MVP frente a las redes del atlas | Pendiente desde la semana 10 | Estudiante, 23-11-2026 (punto 7) | `a14b0ea`, `400764d` |
+| 23-11-2026 | E7. Avisos de cobertura junto a las cifras | Evitar leer las cifras como cobertura total | Estudiante, 23-11-2026 (punto 8) | `400764d` |
+
+Detalle y resultados de E1 a E7: `ampliaciones_semana14.md`. No forman parte de `make all` (`make extensions`).
 
 ## 6. Limitaciones con las que se congela
 
