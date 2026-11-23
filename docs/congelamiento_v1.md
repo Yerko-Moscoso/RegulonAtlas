@@ -90,14 +90,15 @@ Robustness, Validation (con la línea base) y, en SYSTEM, Pipeline y Data Proven
 | 23-11-2026 | E5. Validación con RegulonDB (*E. coli* K-12) | Segundo gold standard, con evidencia experimental | Estudiante, 23-11-2026 (punto 6) | `362e98e`, `400764d` |
 | 23-11-2026 | E6. Red del MVP frente a las redes del atlas | Pendiente desde la semana 10 | Estudiante, 23-11-2026 (punto 7) | `a14b0ea`, `400764d` |
 | 23-11-2026 | E7. Avisos de cobertura junto a las cifras | Evitar leer las cifras como cobertura total | Estudiante, 23-11-2026 (punto 8) | `400764d` |
+| 23-11-2026 | E8. Solo información explícita: se quitan las referencias a una decisión externa sin registro disponible | Que quien replique el proyecto no dependa de un documento inaccesible. No cambia ningún resultado propio | Estudiante, 23-11-2026 | `9892032`, `147fea2` |
 
 Detalle y resultados de E1 a E7: `ampliaciones_semana14.md`. No forman parte de `make all` (`make extensions`).
 
 ## 6. Limitaciones con las que se congela
 
-- Sin acceso al código del pipeline externo ni a su registro de decisiones (D1–D33); la trazabilidad llega hasta la
+- Sin acceso al código del pipeline externo ni al registro de decisiones del investigador; la trazabilidad llega hasta la
   tabla `provenance`.
-- Definición exacta del benchmark D33 desconocida, con autoevaluación; `network_metrics` no se reproduce desde `edges`.
+- `network_metrics` no se reproduce desde `edges`. Las notas de `networks.params.source` traen valores P/R/F1 cuya definición no se puede verificar: no se usan ni se muestran.
 - 28 % de las filas curadas de RegPrecise no se pueden usar (sin genoma o sin locus) y solo una fracción de cada red es
   evaluable (por ejemplo, 9,7 % de los pares de `balanced`).
 - Versión de RegPrecise por confirmar (3.0 en `provenance`, 3.2 en el MVP; P7).

@@ -133,25 +133,25 @@ La base tiene 41 tablas en tres capas (genómica, motivos/escaneo, redes/validac
 
 ## 6. Redes materializadas por el pipeline externo
 
-El investigador generó cinco redes para todo el atlas el 2026-09-03 (decisión D33). Todas usan el método `convergent-empirical + phylo-footprint decoy` y fueron evaluadas contra RegPrecise 3.0 (`prov_id = 5`).
+El investigador generó cinco redes para todo el atlas (`created_on` = 2026-09-03). Todas registran el método `convergent-empirical + phylo-footprint decoy` y están asociadas en la base a la fuente RegPrecise 3.0 (`prov_id = 5`).
 
-| ID | Red | p | Tier máximo | Footprint ≥ | P | R | F1 | Aristas | Genomas |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | validated | 1e-7 | same_order | 10 | 0,682 | 0,231 | 0,345 | 77.503 | 1.427 |
-| 2 | high-precision | 1e-8 | same_family | 50 | 0,742 | 0,041 | 0,078 | 5.711 | 338 |
-| 3 | **balanced** | 1e-6 | same_class | 10 | 0,545 | 0,343 | **0,421** | 383.903 | 2.088 |
-| 4 | permissive | 1e-6 | cross_phylum | 1 | 0,307 | 0,446 | 0,364 | 2.551.734 | 2.634 |
-| 5 | no-footprint | 1e-7 | same_order | 0 | 0,548 | 0,317 | 0,402 | 133.241 | 1.515 |
+| ID | Red | p | Tier máximo | Footprint ≥ | Aristas | Genomas |
+|---|---|---|---|---|---|---|
+| 1 | validated | 1e-7 | same_order | 10 | 77.503 | 1.427 |
+| 2 | high-precision | 1e-8 | same_family | 50 | 5.711 | 338 |
+| 3 | **balanced** | 1e-6 | same_class | 10 | 383.903 | 2.088 |
+| 4 | permissive | 1e-6 | cross_phylum | 1 | 2.551.734 | 2.634 |
+| 5 | no-footprint | 1e-7 | same_order | 0 | 133.241 | 1.515 |
 
-- **`balanced`** es el punto recomendado por F1 y la red por defecto del dashboard. La validación propia de la semana 10 lo confirma (sección 10.3).
-- **`validated` vs `no-footprint`** es un experimento controlado: mismo umbral y tier, solo cambia el footprinting. D33 informa 1,24× de precisión; la validación propia da 1,30× (modo `all`) y 1,37× (modo `independent`).
+- **`balanced`** es la red por defecto del dashboard: tiene el F1 más alto en 3 de las 4 combinaciones de la validación propia (sección 10.3), aunque no siempre se distingue de la segunda red (`ampliaciones_semana14.md`, sección 2).
+- **`validated` vs `no-footprint`** es un experimento controlado: mismo umbral y tier, solo cambia el footprinting. La validación propia da 1,30× (modo `all`) y 1,37× (modo `independent`).
 - La cobertura cae con la exigencia: incluso `balanced` deja ~560 de los 2.644 genomas sin aristas, y `high-precision` cubre solo 338.
 
 ### Sobre el pipeline externo
 
 - El código no está en ningún lugar accesible del servidor. Se buscó con `locate`, `find` y `grep` en `/mnt/biostore` y `/home` sin resultado; probablemente está en la carpeta privada del investigador o en otra máquina.
-- Lo que se sabe de él viene de la base: los parámetros en `networks.params`, la procedencia en `provenance` y las referencias a decisiones numeradas (D10–D33).
-- **Estrategia adoptada:** no depender de él. Toda evaluación y métrica que se presenta como propia se define y calcula desde la caché, y los valores externos (D33, `network_metrics`) se muestran solo como referencia.
+- Lo que se sabe de él viene de la base: los parámetros en `networks.params`, la procedencia en `provenance` y las referencias a decisiones numeradas del investigador, cuyo registro no está disponible.
+- **Estrategia adoptada:** no depender de él. Toda evaluación y métrica que se presenta como propia se define y calcula desde la caché, y `network_metrics` se muestra solo como referencia externa. Los valores P/R/F1 anotados en `networks.params.source` no se usan ni se muestran, porque no se puede verificar cómo se calcularon.
 
 ---
 
@@ -166,7 +166,7 @@ El investigador generó cinco redes para todo el atlas el 2026-09-03 (decisión 
 | D12 | 43 familias de RNA de Rfam |
 | D13 | Regla de transferencia de motivos: ortólogo del TF por COG + respaldo taxonómico con un tier por par (motivo, genoma) |
 | D15 | Catálogo final de 2.141 motivos de TF |
-| D33 | Las cinco redes materializadas y su benchmark P/R/F1 |
+| Redes (03-09-2026) | Las cinco redes materializadas, con sus filtros en `networks.params` |
 | Post-MVP | Los datos de la base son la fuente principal; el pipeline propio pasa a ser validador independiente |
 | Semana 10 | Validación propia a nivel TF–operón, universo (genoma, TF) curado, recall sobre todo el gold standard y modo `independent` sin autoevaluación (sección 10.2) |
 | Semana 12 (línea base) | Red de prueba desde `fimo_hits` solo en los 312 genomas validables (no en el atlas); variantes por umbral y techo de tier, sin footprinting; misma validación que la semana 10 |
@@ -275,7 +275,7 @@ Script `scripts/check_metrics_coverage.py`.
 
 ### 9.7 Dashboard: `RegulatoryNetwork.jsx` con datos reales
 
-- Selector de red (por defecto `balanced` con *E. coli* K-12), con el benchmark de D33 en inglés.
+- Selector de red (por defecto `balanced` con *E. coli* K-12), con los filtros de la red.
 - Buscador de organismos con sugerencias sobre los 2.644 genomas, navegable con teclado; marca en gris los que no tienen aristas en la red actual. El organismo se mantiene al cambiar de red.
 - Filtros de confianza mínima y de límite de aristas dibujadas.
 - Grafo con TF en verde y operones en azul; el grosor refleja `confidence`. Panel lateral con familia, motivos (`RG` = RegPrecise, `MX` = PRODORIC), genes del operón, confianza y tier.
@@ -294,7 +294,7 @@ Script `scripts/check_metrics_coverage.py`.
 - Componentes compartidos nuevos:
   - `components/NetworkSelector.jsx` (props `networks`, `value`, `onChange`).
   - `components/OrganismSearch.jsx` (props `options` `[{id, label, muted, meta}]`, `value`, `onChange`, `disabled`).
-  - `utils/atlas.js` (`DEFAULT_NETWORK = 3`, `DEFAULT_GENOME = GCF_000005845.2`, `ATLAS_SELECTIONS`, `fmtInt`, `fmtP`, `parseBenchmark`, `selectClass`; desde la semana 12 también `ATLAS_GENOMES` e `isAtlasSelection`).
+  - `utils/atlas.js` (`DEFAULT_NETWORK = 3`, `DEFAULT_GENOME = GCF_000005845.2`, `ATLAS_SELECTIONS`, `fmtInt`, `fmtP`, `networkFilters`, `selectClass`; desde la semana 12 también `ATLAS_GENOMES` e `isAtlasSelection`).
 - `RegulatoryNetwork.jsx` usa los componentes compartidos (se corrigió un selector duplicado).
 - `Metrics.jsx`: 2.644 genomas, tarjetas, histograma en el atlas, ranking y tabla de la familia GTDB, con aviso de que `network_metrics` es externo.
 - `Fingerprints.jsx`: percentil de 7 métricas en todo el atlas, radar (genoma + mediana de la familia + mediana del atlas + hasta 4 comparadores) y matriz de la familia.
@@ -318,19 +318,18 @@ Detalle completo en `docs/validacion_semana10.md`.
 
 ### 10.3 Resultados principales
 
-| Red | P | R | F1 | F1 `independent` | D33 P / R / F1 |
-|---|---|---|---|---|---|
-| validated | 0,784 | 0,220 | 0,343 | 0,160 | 0,682 / 0,231 / 0,345 |
-| high-precision | 0,861 | 0,043 | 0,081 | 0,019 | 0,742 / 0,041 / 0,078 |
-| **balanced** | 0,612 | 0,332 | **0,431** | **0,318** | 0,545 / 0,343 / 0,421 |
-| permissive | 0,342 | 0,434 | 0,383 | 0,314 | 0,307 / 0,446 / 0,364 |
-| no-footprint | 0,601 | 0,309 | 0,408 | 0,179 | 0,548 / 0,317 / 0,402 |
+| Red | P | R | F1 | F1 `independent` |
+|---|---|---|---|---|
+| validated | 0,784 | 0,220 | 0,343 | 0,160 |
+| high-precision | 0,861 | 0,043 | 0,081 | 0,019 |
+| **balanced** | 0,612 | 0,332 | **0,431** | **0,318** |
+| permissive | 0,342 | 0,434 | 0,383 | 0,314 |
+| no-footprint | 0,601 | 0,309 | 0,408 | 0,179 |
 
 *(Universo `genome_tf`; P, R y F1 en modo `all`.)*
 
-- **Prueba de cordura superada:** el recall reproduce D33 con diferencia ≤ 0,012 y el orden de F1 es el mismo.
-- **Precisión propia 0,04 a 0,12 más alta que D33.** El universo estricto `genome` tampoco la explica; queda como diferencia de definición.
-- **La circularidad infla el recall:** en modo `independent` el recall cae entre 24 % y 79 % (`balanced` de 0,332 a 0,219; `validated` de 0,220 a 0,089), mientras la precisión baja como mucho 0,11. D33 casi seguro incluye autoevaluación.
+- **La precisión depende del universo evaluado:** al pasar de `genome_tf` a `genome` (modo `all`) baja entre 0,085 y 0,259 (`balanced`, de 0,612 a 0,353).
+- **La circularidad infla el recall:** en modo `independent` el recall cae entre 24 % y 79 % (`balanced` de 0,332 a 0,219; `validated` de 0,220 a 0,089), mientras la precisión baja como mucho 0,11.
 - **`balanced` es la mejor red** en 3 de las 4 combinaciones de modo y universo.
 - **La precisión cae con la distancia taxonómica** del motivo transferido: en `permissive`, de 0,74 (`within_family`) a 0,05 (`cross_phylum`).
 - **Solo una fracción de cada red es evaluable:** 9,7 % de los pares en `balanced`, 3,8 % en `permissive`.
@@ -342,14 +341,14 @@ Detalle completo en `docs/validacion_semana10.md`.
 | Endpoint | Devuelve |
 |---|---|
 | `GET /api/v1/atlas/validation/manifest` | Definición de la evaluación, estadísticas del gold standard, commit y fecha |
-| `GET /api/v1/atlas/validation/summary?mode=&universe=` | P/R/F1 por red, modo y universo, con D33 |
+| `GET /api/v1/atlas/validation/summary?mode=&universe=` | P/R/F1 por red, modo y universo |
 | `GET /api/v1/atlas/validation/curve?network_id=&mode=` | Curva P/R (sin `network_id` devuelve las 5 redes) |
 | `GET /api/v1/atlas/validation/breakdown/{tier\|origin}?network_id=&mode=` | Precisión por tier o por origen del motivo |
 | `GET /api/v1/atlas/validation/genomes?network_id=&mode=&accession=&limit=` | TP/FP/FN, precisión y recall por genoma |
 | `GET /api/v1/atlas/validation/locus-mapping?max_rate=` | Tasa de emparejamiento de locus por genoma |
 
 - Métodos nuevos en `api.js`: `getAtlasValidationManifest`, `getAtlasValidationSummary`, `getAtlasValidationCurve`, `getAtlasValidationBreakdown` y `getAtlasValidationGenomes`.
-- `Validation.jsx` reescrita: selector de red, modo (`all`/`independent`) y universo; tabla de las 5 redes con D33; curvas P/R de las 5 redes con los puntos de D33; curva de umbral de `confidence` con la fracción de pares conservados; desglose por tier y por origen; ficha por genoma para los 312 genomas validables. Funciona con todos los genomas.
+- `Validation.jsx` reescrita: selector de red, modo (`all`/`independent`) y universo; tabla de las 5 redes con sus filtros; curvas P/R de las 5 redes; curva de umbral de `confidence` con la fracción de pares conservados; desglose por tier y por origen; ficha por genoma para los 312 genomas validables. Funciona con todos los genomas.
 
 ---
 
@@ -525,10 +524,10 @@ legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy
 
 - Declarar explícitamente que las redes analizadas las generó un pipeline externo del investigador, presentado como **decisión de diseño** (cobertura completa del atlas, filtros de especificidad que el pipeline propio no tiene, evitar duplicar trabajo y un segundo atlas incompatible).
 - Separar la autoría:
-  - **Externo:** la base `regulon_atlas`, las redes materializadas, `network_metrics` y el benchmark D33.
+  - **Externo:** la base `regulon_atlas`, las redes materializadas y `network_metrics`.
   - **Propio:** la auditoría de datos, la caché, la API, la validación independiente (definición, modo sin autoevaluación, curva P/R, desglose por tier), las métricas topológicas propias y la comparación entre taxones con su concordancia con `network_metrics`, el pipeline local como validador, las pruebas y el dashboard.
 - Usar `balanced` como red principal y presentar las cifras de validación como rangos: precisión entre el universo `genome` y `genome_tf`; recall entre el modo `independent` y `all`.
-- Declarar las limitaciones: sin acceso al código del pipeline externo, definición de D33 desconocida, autoevaluación en el benchmark externo, 28 % del gold standard sin mapear, solo una fracción de cada red evaluable, `network_metrics` no reproducible desde `edges` y trazabilidad hacia atrás solo hasta `provenance`.
+- Declarar las limitaciones: sin acceso al código del pipeline externo, valores P/R/F1 anotados en la base sin definición verificable (no se usan), 28 % del gold standard sin mapear, solo una fracción de cada red evaluable, `network_metrics` no reproducible desde `edges` y trazabilidad hacia atrás solo hasta `provenance`.
 - Citar al investigador según lo que él indique.
 
 ---
@@ -537,7 +536,7 @@ legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy
 
 Las preguntas completas para el investigador y el profesor, con un borrador de mensaje, están en `docs/preguntas_pendientes.md`. El índice de toda la documentación y la bitácora de trabajo están en `docs/README.md`. Las más urgentes:
 
-- **Investigador:** nivel de comparación y versión de RegPrecise en D33; cómo se contaron los FP; si se excluyó la autoevaluación; diferencia entre tiers `within_*` y `same_*`; calibración de `confidence`; acceso al código y al registro de decisiones; versión de RegPrecise (3.0 en `provenance`, 3.2 en el MVP; P7).
+- **Investigador:** cómo se calcularon los P/R/F1 anotados en `networks.params.source` (nivel de comparación, versión de RegPrecise); cómo se contaron los FP; si se excluyó la autoevaluación; diferencia entre tiers `within_*` y `same_*`; calibración de `confidence`; acceso al código y al registro de decisiones; versión de RegPrecise (3.0 en `provenance`, 3.2 en el MVP; P7).
 - **Profesor:** aprobación del cambio de alcance; `balanced` como red principal con cifras del modo `independent`; RegulonDB obligatorio o complementario; fechas y formato del informe y la defensa.
 
 ### Pendientes técnicos

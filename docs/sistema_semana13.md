@@ -87,7 +87,7 @@ inexistentes (`getProvenanceRecords`, `exportProvenanceCsv`) y listaba fuentes q
 | 1. External sources | `/atlas/provenance` (tabla `provenance`) | Fuente, versión, fecha de descarga, parámetros y notas, tal como están en la base |
 | 2. Local cache | `/atlas/status` | Las 3 exportaciones con fecha, comando y filas por tabla |
 | 3. Results | `/atlas/status` | Por resultado: comando, fecha, commit, árbol limpio, archivos, si está al día (con el detalle) y estado |
-| Known limitations | notas de `/atlas/status` + lista fija | Caché sin commit; trazabilidad solo hasta `provenance`; `network_metrics` y D33 son externos |
+| Known limitations | notas de `/atlas/status` + lista fija | Caché sin commit; trazabilidad solo hasta `provenance`; `network_metrics` es externo |
 
 Verificación: `make check` sin errores de ESLint en los archivos tocados; captura con Chrome sin interfaz a 1440 y 900 px
 de ancho, sin errores de consola y con todas las llamadas a la API en 200. Las capturas no se versionan.

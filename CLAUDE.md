@@ -66,7 +66,7 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
   cota inferior: el gen del TF se ubica por nombre en ~20 % de los casos.
 - Comparación entre genomas: por taxón GTDB (`src/networks/atlas_comparison.py`), con los mismos genomas para la métrica
   propia y la externa; taxones con ≥ 5 genomas. La `density` externa usa otra definición (todos los operones del genoma).
-- `network_metrics` y el benchmark D33 son externos: se muestran solo como referencia.
+- `network_metrics` es externo: se muestra solo como referencia. Los valores P/R/F1 anotados en `networks.params.source` no se muestran: su definición no se puede verificar.
 - La línea base desde `fimo_hits` es una red de **prueba** solo en los 312 genomas validables; no se muestra como red del atlas.
 
 ## Comandos

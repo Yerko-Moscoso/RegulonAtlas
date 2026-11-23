@@ -20,13 +20,13 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 
 | Documento | Qué contiene | Actualizado |
 |---|---|---|
-| [`contexto_regulonatlas.md`](contexto_regulonatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (D1–D33 y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 09-11-2026 |
+| [`contexto_regulonatlas.md`](contexto_regulonatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (del investigador y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 09-11-2026 |
 | [`congelamiento_v1.md`](congelamiento_v1.md) | Congelamiento de funciones de la v1.0: lista cerrada de análisis, API (35 rutas), 10 vistas y calidad; lo que queda fuera; reglas después del congelamiento; registro de excepciones y limitaciones | 29-10-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15-10 al 04-11-2026, semanas 11 a 13): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 04-11-2026 |
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
 | [`evidencia_instalacion/prueba_desde_cero.md`](evidencia_instalacion/prueba_desde_cero.md) | Prueba desde cero (semana 14): clon de `congelamiento-v1`, entorno nuevo desde `environment.yml`, comparación con los resultados del dashboard (20/20 con los mismos valores) y 109 casos de prueba (108 aprobados). El Excel `casos_de_prueba_v1.xlsx` y la evidencia quedan solo en el servidor | 04-11-2026 |
 | [`pruebas_semana14.md`](pruebas_semana14.md) | Ampliación de las pruebas automáticas (semana 14): 65 pruebas nuevas en 3 bloques (validación, línea base/comparación/robustez y API sin datos), de 58 a 123; cómo se aisló lo existente; hallazgo H2 (500 sin caché en 2 endpoints) y su corrección | 09-11-2026 |
-| [`ampliaciones_semana14.md`](ampliaciones_semana14.md) | Excepciones E1–E7 (23-11-2026): intervalos de confianza, modos lado a lado, comparación ajustada, precisión esperada por genoma, RegulonDB, MVP frente al atlas y avisos de cobertura; método, resultados, verificación y limitaciones | 23-11-2026 |
+| [`ampliaciones_semana14.md`](ampliaciones_semana14.md) | Excepciones E1–E8 (23-11-2026): intervalos de confianza, modos lado a lado, comparación ajustada, precisión esperada por genoma, RegulonDB, MVP frente al atlas, avisos de cobertura y solo información explícita; método, resultados, verificación y limitaciones | 23-11-2026 |
 | [`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`](evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md) | Prueba de reproducibilidad de `make all` desde un clon limpio, comparada con los resultados del dashboard: 20 de 20 archivos idénticos, manifiestos, valores de control, tiempos y limitaciones. La evidencia queda solo en el servidor | 29-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
 | [`../CLAUDE.md`](../CLAUDE.md) | Reglas del proyecto, definiciones del dominio, comandos y valores de control | 19-10-2026 |
@@ -74,6 +74,13 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 23-11-2026: semana 14, solo información explícita (E8)
+
+- A pedido del estudiante, el sistema deja de mostrar valores externos que remiten a un registro de decisiones inaccesible; en su
+  lugar muestra los filtros de cada red. `9892032` (dashboard) y `147fea2` (API, validación y pruebas). Sin regenerar resultados:
+  72 archivos con sha256 idéntico; en 97 consultas a la API solo desaparecen esos valores; **149 de 149 pruebas**.
+  → `ampliaciones_semana14.md`, sección 10.
 
 ### 23-11-2026: semana 14, ampliaciones E1–E7
 

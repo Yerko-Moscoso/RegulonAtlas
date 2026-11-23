@@ -5,7 +5,7 @@
 - Sin hits: 2 micoplasmas (sin TF elegibles, documentado en bitácora 2026-08-20).
 - Ventanas promotoras de hasta 350 pb río arriba (max hit_stop = 350).
 - Hits por umbral: 1e-6 = 10,1M; 1e-7 = 2,7M; 1e-8 = 1,0M.
-- Redes materializadas por el pipeline externo: 5 (validated, high-precision, balanced, permissive, no-footprint), con P/R/F1 de la decisión D33 contra RegPrecise 3.0 (prov_id 5).
+- Redes materializadas por el pipeline externo: 5 (validated, high-precision, balanced, permissive, no-footprint), asociadas en la base a la fuente RegPrecise 3.0 (prov_id 5).
 - Decisión: el dashboard muestra las redes de la base; el pipeline local se usa como validador independiente.
 
 ## network_metrics vs edges

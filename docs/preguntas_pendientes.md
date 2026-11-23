@@ -30,14 +30,14 @@ acceso a correo). Al enviarlos, anotar aquí la fecha; al recibir respuesta, pas
 - **Decisión mientras tanto:** `network_metrics` solo se muestra como referencia externa. La comparación entre taxones de la
   semana 11 mide la concordancia por rangos (`metricas_semana11.md`, sección 8).
 
-### P2. ¿Con qué definición se calculó el benchmark D33?
+### P2. ¿Cómo se calcularon los valores P/R/F1 anotados en `networks.params.source`?
 
-Viene de la semana 10 (`validacion_semana10.md`, hallazgo 2): la precisión propia es entre 0,04 y 0,12 más alta que la de
-D33, y ninguno de los dos universos (`genome_tf`, `genome`) la reproduce. Falta saber:
+Cada red trae en la base una nota con valores P/R/F1. La precisión propia es entre 0,04 y 0,12 más alta que la anotada, y
+ninguno de los dos universos (`genome_tf`, `genome`) la reproduce. Mientras no se aclare, esas notas no se usan. Falta saber:
 
 - el nivel de comparación (TF → gen o TF → operón) y la versión de RegPrecise;
 - cómo se contaron los falsos positivos (qué universo);
-- si se excluyó la autoevaluación (motivos construidos con el mismo regulog). El recall de D33 coincide con nuestro modo
+- si se excluyó la autoevaluación (motivos construidos con el mismo regulog). El recall anotado se parece al de nuestro modo
   `all`, lo que sugiere que no se excluyó.
 
 ### P3. ¿Cómo se calibró `confidence`?
@@ -66,7 +66,7 @@ de respaldo taxonómico (`tax_fallback_*`); los `same_*` aparecen solo con `orth
 Puede que `same_X` signifique "ortólogo del TF en un genoma del mismo X" y `within_X` "dentro del mismo X, por ortólogo o
 por respaldo taxonómico", pero hay que confirmarlo.
 
-### P6. ¿Se puede acceder al código del pipeline y al registro completo de decisiones (D1–D33)?
+### P6. ¿Se puede acceder al código del pipeline y al registro completo de decisiones?
 
 El código no está en ningún lugar accesible del servidor (contexto, sección 6). Con él se podrían resolver P1 a P3 y P5.
 
@@ -135,13 +135,13 @@ aceptación del MVP (`evidencia_mvp/pruebas_aceptacion_mvp.md`). Los envía el e
 > exactamente de su red madre con el mínimo de footprint de `networks.params`. O sea, entiendo las redes como umbral + techo
 > de tier + footprinting. Me quedaron dudas que solo puedes resolver tú:
 > (1) cómo se calcularon `n_edges` y `n_tf` de `network_metrics`, porque no logro reproducirlos desde `edges`
-> (E. coli en balanced: 919 aristas frente a 832 filas en `edges`); (2) cómo se calcularon P/R/F1 de D33: nivel TF → gen o
+> (E. coli en balanced: 919 aristas frente a 832 filas en `edges`); (2) cómo se calcularon los P/R/F1 anotados en `networks.params.source`: nivel TF → gen o
 > TF → operón, versión de RegPrecise, universo de falsos positivos y si se excluyeron los motivos construidos con el mismo
 > regulog; (3) cómo se calculan `footprint_enrichment` y el valor de `confidence` (vi que la calibración no elimina pares,
 > pero no sé si se calibró con RegPrecise); (4) la diferencia entre los tiers `within_*` y `same_*` (mi hipótesis:
 > `same_X` = ortólogo del TF en un genoma del mismo X; `within_X` = dentro del mismo X, por ortólogo o por respaldo
 > taxonómico); (5) si `GCF_002993285.1` es el reemplazo previsto de `GCF_050942165.1`; y (6) si puedo ver el código del
-> pipeline o el registro de decisiones D1–D33. Además, (7) qué versión de RegPrecise usaste: la tabla `provenance` dice 3.0
+> pipeline o el registro de decisiones. Además, (7) qué versión de RegPrecise usaste: la tabla `provenance` dice 3.0
 > y una exportación anterior decía 3.2. También quiero confirmar cómo quieres que te cite en el informe. ¡Gracias!
 
 **Al profesor:**

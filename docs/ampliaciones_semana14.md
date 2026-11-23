@@ -132,7 +132,7 @@ la nota de las métricas jerárquicas ahora dice que el gen del TF se ubica en c
 
 ## 8. Verificación
 
-- `make check`: **147 de 147 pruebas** (24 nuevas en `tests/test_extensions.py`), ESLint sin errores.
+- `make check`: **147 de 147 pruebas** al cerrar E1–E7 (24 nuevas en `tests/test_extensions.py`; 149 tras E8), ESLint sin errores.
 - Los 6 manifiestos nuevos tienen `git_dirty: false` (commit `400764d`).
 - `data/results/` congelado: sha256 idéntico en validación, métricas, comparación, robustez y línea base.
 - Navegador (Chromium) a 1440 y 900 px: Validation, Comparison, Fingerprints, Metrics, Regulatory Network y Organisms sin errores
@@ -145,3 +145,31 @@ la nota de las métricas jerárquicas ahora dice que el gen del TF se ubica en c
   actualiza, una descarga futura puede cambiar sus cifras; `data/raw/regulondb/manifest.json` guarda versión y sha256.
 - La API pasa de 35 a 43 rutas GET; la lista de la sección 2.2 del congelamiento describe la v1.0 original.
 - El mensaje del commit `400764d` dice "E1-E8"; son E1 a E7.
+
+## 10. E8: solo información explícita
+
+**Motivo.** Las notas de `networks.params.source` traen valores P/R/F1 que remiten a un registro de decisiones del investigador
+al que no tenemos acceso. Quien replique el proyecto tampoco lo tendría, así que el sistema muestra solo lo que consta en los datos
+o se calcula aquí (commits `9892032` y `147fea2`).
+
+| Antes | Ahora |
+|---|---|
+| Valores P/R/F1 externos en Validation, Dashboard, Metrics y Regulatory Network | Filtros de cada red (p, techo de tier y footprint) y, en Dashboard, pares evaluables |
+| Puntos externos en la curva P/R | Solo las curvas propias |
+| La API entregaba esas columnas y la nota `params.source` | Entrega solo columnas propias (`SUMMARY_COLUMNS`) y filtros |
+| `src/validation/atlas.py` escribía esas columnas | Ya no las escribe |
+
+**No cambió ningún dato propio:**
+
+- Los 72 archivos de `data/results/` tienen el mismo sha256 antes y después. No se regeneró ninguno.
+- En 97 consultas a las 43 rutas de la API, lo único que desaparece son las 3 columnas externas y la nota `source`. Las otras
+  diferencias son la hora de la consulta y el indicador de cambios sin commit de `/atlas/status`.
+- Repetir la validación en otra carpeta da los mismos valores en las 16 columnas del resumen y los otros 5 archivos byte a byte.
+- Las 10 vistas se revisaron a 1440 y 900 px, sin errores de consola.
+
+**Para quien replique.** Los `summary.tsv` ya generados conservan 3 columnas antiguas que la API ignora. Una corrida nueva los crea
+con 16 columnas, así que **esos archivos ya no serán iguales byte a byte a los de esta copia**, aunque sus valores sí lo sean. La nota
+sigue en la base y en `data/cache/atlas/networks.parquet`, porque son datos externos de solo lectura.
+
+**Qué se pierde.** Ya no se compara nuestra validación con los valores anotados por el investigador. Esa diferencia queda solo como
+pregunta abierta (P2 de `preguntas_pendientes.md`).
