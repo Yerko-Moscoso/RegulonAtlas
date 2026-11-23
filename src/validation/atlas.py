@@ -43,6 +43,17 @@ D33 = {  # P, R, F1 reportados por el pipeline externo (referencia, no objetivo)
 GRID = np.round(np.linspace(0, 1, 101), 2)
 MODES = ("all", "independent")
 UNIVERSES = ("genome_tf", "genome")
+ECOLI = "GCF_000005845.2"
+REGULONDB = Path("data/raw/regulondb")
+# Niveles de confianza de RegulonDB: C confirmado, S fuerte, W débil, ? desconocido
+REGULONDB_LEVELS = {"regulondb": {"C", "S", "W", "?"}, "regulondb_strong": {"C", "S"}}
+# Nombre en RegulonDB -> nombre en el atlas. Salen de los sinónimos de gen y producto de la propia RegulonDB
+# (GeneProductAllIdentifiersSet); ver scripts/explore_regulondb.py.
+REGULONDB_ALIASES = {
+    "dpia": ["citb"], "cuer": ["copr"], "cra": ["frur"], "lrha": ["genr"], "nagc": ["nagr"], "ydfh": ["rspr"],
+    "cdar": ["sdar"], "hprr": ["yedw"], "plar": ["yiaj"], "flhdc": ["flhd-flhc"], "galr": ["galr/gals"],
+    "gals": ["galr/gals"],
+}
 
 
 # ---------------------------------------------------------------- utilidades
@@ -112,11 +123,80 @@ def build_gold_regprecise(genomes):
     return gold, membership, mapping, stats
 
 
+def regprecise_membership(genomes):
+    """Pares (regulog, genoma) de RegPrecise: definen la autoevaluación también con otro gold standard."""
+    cur = load("curated_regulons", ["regulog_id", "genome_name"])
+    gmap = load("regprecise_genome_map", ["genome_name", "accession"])
+    cur = cur.merge(gmap.drop_duplicates("genome_name"), on="genome_name").merge(
+        genomes[["genome_id", "accession"]], on="accession")
+    return cur[["regulog_id", "genome_id"]].astype("int64").drop_duplicates()
+
+
+def regulondb_tf_names(regulators):
+    """Regulador de RegulonDB -> nombres (en minúsculas) con los que aparece en el atlas."""
+    names = regulators.str.strip().str.lower()
+    return names.map(lambda n: [n] + REGULONDB_ALIASES.get(n, []))
+
+
+def build_gold_regulondb(genomes, levels):
+    """Gold standard de E. coli K-12: TF -> operón desde NetworkRegulatorGene (solo reguladores TF)."""
+    net_path, ids_path = REGULONDB / "NetworkRegulatorGene.tsv", REGULONDB / "GeneProductAllIdentifiersSet.tsv"
+    if not net_path.exists() or not ids_path.exists():
+        sys.exit("Faltan los archivos de RegulonDB. Ejecuta primero: make regulondb")
+    net = pd.read_csv(net_path, sep="\t", keep_default_na=False)
+    net.columns = ["regulator_id", "regulator", "regulator_gene", "gene_id", "gene", "function", "level"]
+    ids = pd.read_csv(ids_path, sep="\t", usecols=[0, 6], keep_default_na=False)
+    ids.columns = ["gene_id", "db_ids"]
+    ids["lt"] = norm_locus(ids["db_ids"].str.extract(r"\[REFSEQ:(b\d{4})\]", expand=False))
+
+    n_rows = len(net)
+    tf = net[net["regulator_id"].str.startswith("RDBECOLITFC") & net["level"].isin(levels)].copy()
+    n_tf_rows = len(tf)
+    genome = genomes.loc[genomes["accession"] == ECOLI, ["genome_id", "accession", "ncbi_organism", "selection"]]
+    genome_id = int(genome["genome_id"].iloc[0])
+    genes = load("genes_validation", ["genome_id", "locus_tag", "operon_id"])
+    genes = genes[genes["genome_id"].astype("int64") == genome_id].copy()
+    genes["lt"] = norm_locus(genes["locus_tag"])
+
+    tf = tf.merge(ids[["gene_id", "lt"]], on="gene_id", how="left").merge(
+        genes[["lt", "operon_id"]].dropna().drop_duplicates("lt"), on="lt", how="left")
+    unmatched = int(tf["operon_id"].isna().sum())
+    mapped = tf.dropna(subset=["operon_id"]).copy()
+    mapped["tf"] = regulondb_tf_names(mapped["regulator"])
+    gold = mapped.explode("tf")[["tf", "operon_id"]].drop_duplicates().assign(genome_id=genome_id)
+    gold["tf"] = gold["tf"].astype("string")
+    gold["operon_id"] = gold["operon_id"].astype("int64")
+    gold = gold[KEY].reset_index(drop=True)
+
+    mapping = pd.DataFrame([{"genome_id": genome_id, "locus_tag": n_tf_rows - unmatched, "old_locus_tag": 0,
+                             "none": unmatched, "n_curated": n_tf_rows,
+                             "map_rate": 1 - unmatched / n_tf_rows if n_tf_rows else float("nan")}]).merge(
+        genome, on="genome_id")
+    meta = json.loads((REGULONDB / "manifest.json").read_text())["files"]["NetworkRegulatorGene"]
+    stats = {
+        "source": f"RegulonDB {meta['rdbVersion']} (NetworkRegulatorGene, {meta['creationDate']})",
+        "confidence_levels": sorted(levels),
+        "curated_rows": n_tf_rows,
+        "regulator_rows_all_types": n_rows,
+        "rows_without_genome": 0,
+        "rows_matched_locus_tag": n_tf_rows - unmatched,
+        "rows_matched_old_locus_tag": 0,
+        "rows_unmatched_locus": unmatched,
+        "validable_genomes": 1,
+        "gold_genome_tf_pairs": int(gold["tf"].nunique()),
+        "gold_tf_operon_pairs": int(len(gold)),
+        "tf_aliases": REGULONDB_ALIASES,
+        "license": meta["license"],
+        "citation": meta["citation"],
+    }
+    return gold, regprecise_membership(genomes), mapping, stats
+
+
 def build_gold(name, genomes):
     if name == "regprecise":
         return build_gold_regprecise(genomes)
-    if name == "regulondb":
-        sys.exit("Gold standard 'regulondb' aún no implementado (pendiente de aprobación y descarga).")
+    if name in REGULONDB_LEVELS:
+        return build_gold_regulondb(genomes, REGULONDB_LEVELS[name])
     sys.exit(f"Gold standard desconocido: {name}")
 
 
@@ -232,7 +312,7 @@ def by_genome(net_id, mode, ev, gold, genomes):
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description="Validación de las redes del atlas")
-    ap.add_argument("--gold", choices=["regprecise", "regulondb"], default="regprecise")
+    ap.add_argument("--gold", choices=["regprecise", *REGULONDB_LEVELS], default="regprecise")
     ap.add_argument("--networks", type=int, nargs="+", default=list(NETWORKS))
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
     args = ap.parse_args()
@@ -266,8 +346,11 @@ def main():
                 origins.append(breakdown(net_id, mode, ev, "origin"))
                 genomes_tbl.append(by_genome(net_id, mode, ev, gold, genomes))
 
+    summary = pd.DataFrame(summary)
+    if args.gold != "regprecise":  # D33 se calculó contra RegPrecise: no es referencia para otro gold standard
+        summary[["d33_precision", "d33_recall", "d33_f1"]] = float("nan")
     files = {
-        "summary.tsv": pd.DataFrame(summary),
+        "summary.tsv": summary,
         "pr_curve.tsv": pd.DataFrame(curve),
         "by_tier.tsv": pd.concat(tiers),
         "by_origin.tsv": pd.concat(origins),

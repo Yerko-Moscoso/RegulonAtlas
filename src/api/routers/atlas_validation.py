@@ -14,7 +14,7 @@ from fastapi import APIRouter, HTTPException, Query
 router = APIRouter(prefix="/atlas/validation", tags=["atlas-validation"])
 
 RESULTS = Path("data/results/validation")
-Gold = Literal["regprecise", "regulondb"]
+Gold = Literal["regprecise", "regulondb", "regulondb_strong"]
 Mode = Literal["all", "independent"]
 Universe = Literal["genome_tf", "genome"]
 
