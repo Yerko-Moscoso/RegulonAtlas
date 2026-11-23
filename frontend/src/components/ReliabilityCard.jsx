@@ -56,7 +56,7 @@ export default function ReliabilityCard({ accession, networkId, networks = [] })
               <th className="py-1.5 font-medium">Network</th>
               <th className="py-1.5 font-medium text-right">Expected precision</th>
               <th className="py-1.5 font-medium text-right">Typical error</th>
-              <th className="py-1.5 font-medium text-right">Pairs</th>
+              <th className="py-1.5 font-medium text-right">Pairs used</th>
               <th className="py-1.5 font-medium text-right">From same family or closer</th>
               <th className="py-1.5 font-medium text-right">Directly checked</th>
               <th className="py-1.5 pl-4 font-medium">Estimate quality</th>
@@ -81,7 +81,8 @@ export default function ReliabilityCard({ accession, networkId, networks = [] })
         </table>
       </div>
       <p className="text-[11px] text-[#94A3B8] mt-2">
-        Checked by cross-validation across GTDB families. The estimate mainly reflects the network; use it as a rough
+        Pairs used excludes pairs whose motif comes from a regulog containing this genome, so it can be lower than the
+        network total. Checked by cross-validation across GTDB families. The estimate mainly reflects the network; use it as a rough
         guide, not as a measured precision for this genome.
       </p>
     </div>

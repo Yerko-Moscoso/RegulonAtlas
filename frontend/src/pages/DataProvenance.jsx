@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
 import { fmtInt, fmtDateTime } from "../utils/atlas";
+import { provenanceText } from "../utils/provenance";
 import StatusBadge from "../components/StatusBadge";
 import ScrollX from "../components/ScrollX";
 
@@ -71,7 +72,7 @@ export default function DataProvenance() {
     { label: "External sources", value: sources.length },
     { label: "Cached tables", value: nCached },
     { label: "Results tracked", value: results.length },
-    { label: "Traceable and up to date", value: status ? `${nTraceable} / ${results.length}` : "—" },
+    { label: "Traceable, no warnings", value: status ? `${nTraceable} / ${results.length}` : "—" },
   ];
 
   return (
@@ -112,7 +113,7 @@ export default function DataProvenance() {
 
             <Card
               title="1. External sources"
-              subtitle="Registered by the external pipeline in the provenance table of the database (values as stored)."
+              subtitle="Registered by the external pipeline in the provenance table of the database, shown in English and without its internal decision codes."
             >
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
@@ -129,10 +130,10 @@ export default function DataProvenance() {
                             {s.source}
                           </a>
                         </td>
-                        <td className="py-1.5 pr-3 font-mono text-[#334155]">{s.version}</td>
+                        <td className="py-1.5 pr-3 font-mono text-[#334155]">{provenanceText(s.version)}</td>
                         <td className="py-1.5 pr-3 font-mono text-[#64748B] whitespace-nowrap">{fmtDate(s.retrieved_on)}</td>
-                        <td className="py-1.5 pr-3 text-[#64748B]">{s.params}</td>
-                        <td className="py-1.5 text-[#64748B]">{s.notes}</td>
+                        <td className="py-1.5 pr-3 text-[#64748B]">{provenanceText(s.params)}</td>
+                        <td className="py-1.5 text-[#64748B]">{provenanceText(s.notes)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -165,7 +166,7 @@ export default function DataProvenance() {
                         <tbody>
                           {Object.entries(c.tables ?? {}).map(([t, n]) => (
                             <tr key={t} className="border-t border-[#F0F4F8]">
-                              <td className="py-0.5 pr-2 font-mono text-[#64748B]">{t}</td>
+                              <td data-no-i18n className="py-0.5 pr-2 font-mono text-[#64748B]">{t}</td>
                               <td className="py-0.5 text-right font-mono text-[#334155]">{fmtInt(n)}</td>
                             </tr>
                           ))}
@@ -182,7 +183,7 @@ export default function DataProvenance() {
 
             <Card
               title="3. Results"
-              subtitle="Each result records the commit that produced it. A result is up to date when it was built from the current version of its input."
+              subtitle="Each result records the commit that produced it. A result is up to date when it was built from the current version of its input; a dash means it does not record that version."
             >
               <ScrollX>
                 <table className="w-full text-xs">

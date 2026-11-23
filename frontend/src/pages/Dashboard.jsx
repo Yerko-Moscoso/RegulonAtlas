@@ -40,6 +40,7 @@ export default function Dashboard({ navigate }) {
   const [all, setAll] = useState([]); // validación modo all, universo genome_tf
   const [indep, setIndep] = useState([]); // modo independent
   const [gold, setGold] = useState(null);
+  const [coverage, setCoverage] = useState(null); // pares evaluables: todos los genomas y solo atlas
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -50,13 +51,15 @@ export default function Dashboard({ navigate }) {
       api.getAtlasValidationSummary("regprecise", { mode: "all", universe: "genome_tf" }),
       api.getAtlasValidationSummary("regprecise", { mode: "independent", universe: "genome_tf" }),
       api.getAtlasValidationManifest(),
+      api.getAtlasValidationCoverage().catch(() => null), // sin cobertura, el resumen se muestra igual
     ])
-      .then(([n, a, i, m]) => {
+      .then(([n, a, i, m, c]) => {
         if (cancelled) return;
         setNetworks(n.data);
         setAll(a.data.rows ?? []);
         setIndep(i.data.rows ?? []);
         setGold(m.data.gold_stats);
+        setCoverage(c?.data ?? null);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -71,6 +74,8 @@ export default function Dashboard({ navigate }) {
   const row = (rows, id) => rows.find((r) => r.network_id === id);
   const bestF1 = Math.max(...all.map((r) => r.f1 ?? 0));
   const balanced = row(all, 3);
+  const balancedIndep = row(indep, 3);
+  const validableInAtlas = coverage?.rows?.[0]?.atlas_genomes_validable;
 
   return (
     <div className="space-y-6 max-w-[1100px]">
@@ -78,7 +83,7 @@ export default function Dashboard({ navigate }) {
         <h1 className="text-2xl font-semibold text-[#334155]">RegulonAtlas</h1>
         <p className="text-sm text-[#64748B] mt-1">
           Predicted transcriptional regulatory networks (TF → operon) for {fmtInt(ATLAS_GENOMES)} bacterial genomes, one
-          per GTDB genus. Networks come from an external pipeline; validation, metrics, comparison and robustness are
+          per GTDB genus plus 3 references. Networks come from an external pipeline; validation, metrics, comparison and robustness are
           computed by this project.
         </p>
       </div>
@@ -101,16 +106,20 @@ export default function Dashboard({ navigate }) {
             <Stat
               label="Validable genomes"
               value={fmtInt(gold?.validable_genomes)}
-              sub={`${fmtInt(gold?.gold_tf_operon_pairs)} curated TF–operon pairs (RegPrecise)`}
+              sub={`${validableInAtlas == null ? "" : `${fmtInt(validableInAtlas)} in the atlas · `}${fmtInt(gold?.gold_tf_operon_pairs)} curated TF–operon pairs (RegPrecise)`}
             />
-            <Stat label="Best F1 (balanced)" value={dec(balanced?.f1)} sub={`precision ${pct(balanced?.precision)} · recall ${pct(balanced?.recall)}`} />
+            <Stat
+              label="Best F1 (balanced, all edges)"
+              value={dec(balanced?.f1)}
+              sub={`independent: ${dec(balancedIndep?.f1)} · precision ${pct(balanced?.precision)} · recall ${pct(balanced?.recall)}`}
+            />
           </div>
 
           <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">
             <h3 className="text-sm font-semibold text-[#334155] mb-1">The five networks</h3>
             <p className="text-xs text-[#64748B] mb-3">
               Own validation against RegPrecise (TF → operon, universe genome–TF). Independent mode excludes motifs built
-              from the regulog of the evaluated genome.
+              from the regulog of the evaluated genome. Pairs count all {fmtInt(coverage?.genomes_total ?? 2644)} genomes.
             </p>
             <ScrollX>
               <table className="w-full text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap [&_th+th]:pl-4 [&_td+td]:pl-4">
@@ -123,13 +132,15 @@ export default function Dashboard({ navigate }) {
                     <th className="py-1.5 font-medium text-right">Recall</th>
                     <th className="py-1.5 font-medium text-right">F1</th>
                     <th className="py-1.5 font-medium text-right">F1 independent</th>
-                    <th className="py-1.5 font-medium text-right">Evaluable pairs</th>
+                    <th className="py-1.5 font-medium text-right">Evaluable, all genomes</th>
+                    <th className="py-1.5 font-medium text-right">Evaluable, atlas</th>
                   </tr>
                 </thead>
                 <tbody>
                   {networks.map((n) => {
                     const a = row(all, n.network_id);
                     const i = row(indep, n.network_id);
+                    const cov = coverage?.rows?.find((r) => r.network_id === n.network_id);
                     return (
                       <tr key={n.network_id} className="border-b border-[#F1F5F9]">
                         <td className="py-1.5 text-[#334155]">
@@ -147,12 +158,21 @@ export default function Dashboard({ navigate }) {
                         </td>
                         <td className="py-1.5 text-right font-mono">{dec(i?.f1)}</td>
                         <td className="py-1.5 text-right font-mono text-[#64748B]">{a?.pairs_total ? pct(a.pairs_evaluable / a.pairs_total) : "—"}</td>
+                        <td className="py-1.5 text-right font-mono text-[#64748B]">
+                          {cov?.atlas_pairs_total ? pct(cov.atlas_pairs_evaluable / cov.atlas_pairs_total) : "—"}
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </ScrollX>
+            {validableInAtlas != null && (
+              <p className="text-[11px] text-[#94A3B8] mt-2">
+                Precision, recall and F1 come mainly from auxiliary genomes: only {fmtInt(validableInAtlas)} of the{" "}
+                {fmtInt(gold?.validable_genomes)} validable genomes belong to the atlas.
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -3,6 +3,8 @@ import { ArrowLeft, Loader2, Network, BarChart3, FingerprintPattern, ShieldCheck
 import { api } from "../services/api";
 import { DEFAULT_GENOME, fmtInt } from "../utils/atlas";
 import ReliabilityCard from "../components/ReliabilityCard";
+import DownloadButton from "../components/DownloadButton";
+import { DEFAULT_MAX_EDGES, graphKey, renderGraphPng } from "../utils/networkLayout";
 
 // Ficha de un genoma del atlas: catálogo (data/cache/atlas/genomes), métricas propias en las 5 redes
 // (make metrics-atlas) y validación contra RegPrecise si tiene regulones curados (make validate-atlas).
@@ -68,6 +70,21 @@ export default function OrganismDetail({ navigate, organismId }) {
   const validable = Object.values(validation).some(Boolean);
   const balanced = metrics[3];
 
+  // Las imágenes son las de Regulatory Networks con sus filtros iniciales, una por red
+  const downloadReport = async () => {
+    const graphs = await Promise.all(
+      NETWORK_IDS.map((n) => api.getAtlasGraph(n, genome.accession, { minConfidence: 0, maxEdges: DEFAULT_MAX_EDGES }))
+    );
+    const images = graphs
+      .map((r, i) => ({
+        network_id: NETWORK_IDS[i],
+        png: renderGraphPng(r.data, graphKey(NETWORK_IDS[i], genome.accession, 0, DEFAULT_MAX_EDGES)),
+        shown_edges: r.data.shown_edges,
+      }))
+      .filter((image) => image.png);
+    return api.downloadOrganismReport(genome.accession, images);
+  };
+
   const links = [
     { page: "networks", label: "Regulatory network", icon: Network },
     { page: "metrics", label: "Metrics", icon: BarChart3 },
@@ -120,6 +137,12 @@ export default function OrganismDetail({ navigate, organismId }) {
                       {l.label}
                     </button>
                   ))}
+                  <DownloadButton
+                    label="Download report"
+                    filename={`RegulonAtlas_${genome.accession}_all_networks.xlsx`}
+                    request={downloadReport}
+                    title="Excel file with this organism and its five complete networks"
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-5">

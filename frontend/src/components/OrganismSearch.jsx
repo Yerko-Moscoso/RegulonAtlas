@@ -57,6 +57,7 @@ export default function OrganismSearch({ options, value, onChange, disabled }) {
       <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none" />
       <input
         role="combobox"
+        aria-label="Search organism or accession"
         aria-expanded={open}
         aria-controls="organism-suggestions"
         aria-activedescendant={open && matches[active] ? `organism-${matches[active].id}` : undefined}

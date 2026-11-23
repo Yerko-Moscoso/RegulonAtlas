@@ -1,5 +1,6 @@
 import { LayoutDashboard, Dna, Network, BarChart3, CircleCheck, FingerprintPattern, GitCompare, ShieldCheck, FileClock, Workflow } from "lucide-react";
 import { PROJECT_NAME } from "../config/constants";
+import LanguageToggle from "./LanguageToggle";
 
 // Menú del MVP (propuesta, sección 5): seleccionar organismo, ver su red,
 // sus 5 métricas básicas y la validación de E. coli contra RegulonDB.
@@ -92,6 +93,8 @@ export default function Sidebar({ activePage, navigate }) {
           </div>
         ))}
       </nav>
+
+      <LanguageToggle />
     </aside>
   );
 }

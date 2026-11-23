@@ -1,227 +1,28 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import cytoscape from "cytoscape";
-import fcose from "cytoscape-fcose";
 import CytoscapeComponent from "react-cytoscapejs";
 import { Search, X, Info, Loader2 } from "lucide-react";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import { networkFilters } from "../utils/atlas";
 import CoverageNote from "../components/CoverageNote";
+import DownloadButton from "../components/DownloadButton";
+import {
+  CONFIDENCE_OPTIONS,
+  CYTOSCAPE_STYLESHEET,
+  DEFAULT_GENOME,
+  DEFAULT_NETWORK,
+  EDGE_LIMITS,
+  LABEL_ALL_NODES,
+  NODE_COLOR,
+  PNG_OPTIONS,
+  PRESET_LAYOUT,
+  computePositions,
+  fitView,
+  hashString,
+  readSeed,
+  saveSeed,
+} from "../utils/networkLayout";
 
-cytoscape.use(fcose);
-
-// Red real del atlas: TF -> operón (D10). El operón se etiqueta con el gen del
-// mejor sitio de unión. Grosor de arista = confidence calibrada.
-const NODE_COLOR = { TF: "#3A9D7C", Operon: "#3B82B8" };
-const NODE_BORDER = { TF: "#176B57", Operon: "#2563A0" };
-const DEFAULT_NETWORK = 3; // balanced: red por defecto
-const DEFAULT_GENOME = "GCF_000005845.2"; // E. coli K-12 MG1655
-const CONFIDENCE_OPTIONS = [0, 0.3, 0.5, 0.7, 0.9];
-const EDGE_LIMITS = [200, 500, 1000, 2000];
-
-const CYTOSCAPE_STYLESHEET = [
-  {
-    selector: "node",
-    style: {
-      "background-color": (ele) => NODE_COLOR[ele.data("node_type")] || "#94A3B8",
-      "border-color": (ele) => NODE_BORDER[ele.data("node_type")] || "#64748B",
-      "border-width": 1.5,
-      label: (ele) => (ele.data("node_type") === "TF" ? ele.data("label") : ""),
-      "font-size": 9,
-      color: "#334155",
-      "text-valign": "bottom",
-      "text-margin-y": 4,
-      width: (ele) => (ele.data("node_type") === "TF" ? 22 : 12),
-      height: (ele) => (ele.data("node_type") === "TF" ? 22 : 12),
-    },
-  },
-  {
-    selector: "node:selected",
-    style: {
-      "border-width": 4,
-      "border-color": "#176B57",
-      label: "data(label)",
-      "font-size": 11,
-      "font-weight": "bold",
-      "z-index": 999,
-    },
-  },
-  {
-    // Redes pequeñas: se muestran también los nombres de los operones
-    selector: "node.labeled",
-    style: { label: "data(label)", "font-size": 10 },
-  },
-  {
-    selector: "node.highlighted",
-    style: {
-      "border-width": 4,
-      "border-color": "#E9B949",
-      label: "data(label)",
-      "font-size": 10,
-      "z-index": 998,
-    },
-  },
-  { selector: "node.dimmed, edge.dimmed", style: { opacity: 0.15 } },
-  {
-    selector: "edge",
-    style: {
-      width: "mapData(weight, 0, 1, 0.5, 3)",
-      "line-color": "#CBD5E1",
-      "target-arrow-color": "#CBD5E1",
-      "target-arrow-shape": "triangle",
-      "curve-style": "bezier",
-      "arrow-scale": 0.7,
-      opacity: 0.6,
-    },
-  },
-  {
-    selector: "edge:selected",
-    style: {
-      "line-color": "#3A9D7C",
-      "target-arrow-color": "#3A9D7C",
-      width: 3,
-      opacity: 1,
-      "z-index": 999,
-    },
-  },
-];
-
-// Las posiciones se calculan ANTES de entregarle los nodos a Cytoscape (en una
-// instancia sin pantalla) y viajan dentro de cada nodo. Así el grafo aparece ya
-// dibujado al seleccionar el organismo, sin depender de cuándo termina de montarse.
-const PRESET_LAYOUT = { name: "preset", fit: false };
-const SEED_STORAGE_PREFIX = "regulatory-network-layout-seed:";
-
-// Hash FNV-1a de un texto -> entero de 32 bits (semilla por defecto de cada subgrafo)
-const hashString = (text) => {
-  let h = 2166136261;
-  for (let i = 0; i < text.length; i++) {
-    h ^= text.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-};
-
-// Generador pseudoaleatorio con semilla (mulberry32)
-const seededRandom = (seed) => {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-};
-
-const readSeed = (key) => {
-  try {
-    const saved = window.localStorage.getItem(SEED_STORAGE_PREFIX + key);
-    return saved == null ? null : Number(saved);
-  } catch {
-    return null;
-  }
-};
-
-const saveSeed = (key, seed) => {
-  try {
-    window.localStorage.setItem(SEED_STORAGE_PREFIX + key, String(seed));
-  } catch {
-    // Sin almacenamiento disponible: la semilla nueva vale solo para esta sesión
-  }
-};
-
-// Por debajo de estos tamaños, fcose no siempre separa bien los nodos (con 1 TF y
-// 1 operón los deja uno encima del otro), así que se usa un layout en dos filas.
-const SMALL_GRAPH_NODES = 12;
-const LABEL_ALL_NODES = 60;
-const MAX_FIT_ZOOM = 1.6;
-
-// Mezcla determinista: la misma semilla da siempre el mismo orden
-const seededShuffle = (items, seed) => {
-  const rand = seededRandom(seed);
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-};
-
-// TF en la fila de arriba, operones en la de abajo, centrados.
-const runTwoRowLayout = (cy, seed) => {
-  const gapX = 120;
-  const rowY = { TF: 0, Operon: 160 };
-  ["TF", "Operon"].forEach((type) => {
-    const row = seededShuffle(cy.nodes(`[node_type = "${type}"]`).toArray(), seed);
-    row.forEach((node, i) => node.position({ x: (i - (row.length - 1) / 2) * gapX, y: rowY[type] }));
-  });
-};
-
-// true si todos los nodos quedaron prácticamente en el mismo punto
-const nodesCollapsed = (cy) => {
-  const bb = cy.nodes().boundingBox({ includeLabels: false });
-  return cy.nodes().length > 1 && bb.w < 40 && bb.h < 40;
-};
-
-// Encuadra la red sin acercar demasiado las redes pequeñas
-const fitView = (cy) => {
-  cy.fit(undefined, 40);
-  if (cy.zoom() > MAX_FIT_ZOOM) {
-    cy.zoom(MAX_FIT_ZOOM);
-    cy.center();
-  }
-};
-
-const snapshotPositions = (cy) => {
-  const positions = {};
-  cy.nodes().forEach((n) => {
-    positions[n.id()] = { ...n.position() };
-  });
-  return positions;
-};
-
-const FCOSE_LAYOUT = {
-  name: "fcose",
-  quality: "default",
-  animate: false,
-  randomize: true,
-  nodeRepulsion: 6500,
-  idealEdgeLength: 50,
-  padding: 30,
-  fit: false,
-};
-
-// Calcula las posiciones de un subgrafo con una semilla, en una instancia de
-// Cytoscape sin pantalla. fcose parte de posiciones aleatorias: mientras corre se
-// reemplaza Math.random por un generador con semilla, así la misma semilla da
-// siempre el mismo dibujo. Las redes muy pequeñas van en dos filas (TF arriba,
-// operones abajo), porque fcose puede dejarlas encimadas.
-const computePositions = (nodes, edges, seed) => {
-  const cy = cytoscape({
-    headless: true,
-    styleEnabled: true,
-    style: CYTOSCAPE_STYLESHEET,
-    elements: [...nodes, ...edges],
-  });
-  try {
-    if (cy.nodes().length <= SMALL_GRAPH_NODES) {
-      runTwoRowLayout(cy, seed);
-    } else {
-      const originalRandom = Math.random;
-      Math.random = seededRandom(seed);
-      try {
-        cy.layout(FCOSE_LAYOUT).run();
-      } finally {
-        Math.random = originalRandom;
-      }
-      if (nodesCollapsed(cy)) runTwoRowLayout(cy, seed);
-    }
-    return snapshotPositions(cy);
-  } finally {
-    cy.destroy();
-  }
-};
 
 const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
 // Origen del motivo según el prefijo de su clave.
@@ -281,6 +82,7 @@ function OrganismSearch({ options, value, onChange, disabled }) {
       <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none" />
       <input
         role="combobox"
+        aria-label="Search organism or accession"
         aria-expanded={open}
         aria-controls="organism-suggestions"
         aria-activedescendant={open && matches[active] ? `organism-${matches[active].id}` : undefined}
@@ -367,6 +169,8 @@ export default function RegulatoryNetwork({ initialOrganism }) {
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const cyRef = useRef(null);
+  const fittedCyRef = useRef(null); // última instancia de Cytoscape ya encuadrada
+  const panelRef = useRef(null);
   // Posiciones ya calculadas en esta sesión, por subgrafo (red + organismo + filtros)
   const positionsRef = useRef(new Map());
   const seedsRef = useRef(new Map());
@@ -502,6 +306,27 @@ export default function RegulatoryNetwork({ initialOrganism }) {
     return () => cancelAnimationFrame(frame);
   }, [cyElements, loading]);
 
+  // Al cambiar el tamaño del panel (ventana, barra de filtros) la red completa se vuelve a encuadrar
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return undefined;
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const cy = cyRef.current;
+        if (!cy || cy.destroyed() || cy.nodes().length === 0) return;
+        cy.resize();
+        fitView(cy);
+      });
+    });
+    observer.observe(panel);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   // Única forma de cambiar el dibujo: una semilla nueva, que queda guardada.
   const rearrange = () => {
     if (!graph) return;
@@ -564,7 +389,9 @@ export default function RegulatoryNetwork({ initialOrganism }) {
 
         <div className="flex flex-col gap-1">
           <span className="text-xs text-[#64748B]">
-            Organism ({fmtInt(organismsWithEdges)} of {fmtInt(organismList.length)} have edges in this network)
+            {loadingGenomes && organismList.length === 0
+              ? "Organism (Loading genomes…)"
+              : `Organism (${fmtInt(organismsWithEdges)} of ${fmtInt(organismList.length)} have edges in this network)`}
           </span>
           <OrganismSearch
             options={organismList}
@@ -600,6 +427,22 @@ export default function RegulatoryNetwork({ initialOrganism }) {
           </select>
         </label>
 
+        <DownloadButton
+          label="Download network"
+          filename={`RegulonAtlas_${organism}_${network?.name ?? networkId}${minConfidence > 0 ? `_conf${minConfidence}` : ""}.xlsx`}
+          request={() =>
+            api.downloadNetworkReport(networkId, organism, {
+              minConfidence,
+              // La imagen es exactamente la red dibujada en pantalla
+              image: cyRef.current && rawEdges.length > 0
+                ? { network_id: networkId, png: cyRef.current.png(PNG_OPTIONS), shown_edges: graph.shown_edges }
+                : null,
+            })
+          }
+          disabled={loading || !graph || graph.filtered_edges === 0}
+          title="Excel file with every edge that passes the network and confidence filters, not only the edges drawn"
+        />
+
         {graph && (
           <div className="ml-auto text-xs text-[#64748B] text-right">
             <div className="font-mono text-[#334155]">
@@ -618,7 +461,9 @@ export default function RegulatoryNetwork({ initialOrganism }) {
       </div>
 
       <div className="flex gap-4 flex-1 min-h-[500px]">
-        <div className="flex-1 bg-white border border-[#D9E2E7] rounded-xl shadow-sm overflow-hidden relative">
+        <div className="flex-1 min-w-0 bg-white border border-[#D9E2E7] rounded-xl shadow-sm overflow-hidden flex flex-col">
+          {/* La leyenda va debajo de este panel: así nunca tapa nodos de la red */}
+          <div ref={panelRef} data-testid="network-canvas" className="relative flex-1 min-h-0">
           {loading && (
             <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-20">
               <Loader2 className="w-8 h-8 text-[#3A9D7C] animate-spin mb-2" />
@@ -656,6 +501,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Find TF or gene"
                 placeholder="Find TF or gene"
                 className="pl-9 pr-3 py-2 text-sm bg-white border border-[#D9E2E7] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] w-48"
               />
@@ -667,9 +513,18 @@ export default function RegulatoryNetwork({ initialOrganism }) {
               elements={cyElements}
               stylesheet={CYTOSCAPE_STYLESHEET}
               layout={PRESET_LAYOUT}
-              style={{ width: "100%", height: "100%" }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
               cy={(cy) => {
                 cyRef.current = cy;
+                // El componente puede crear otra instancia al montarse: cada instancia nueva se encuadra una vez
+                if (fittedCyRef.current !== cy) {
+                  fittedCyRef.current = cy;
+                  requestAnimationFrame(() => {
+                    if (cy.destroyed()) return;
+                    cy.resize();
+                    fitView(cy);
+                  });
+                }
                 cy.removeListener("tap");
                 cy.on("tap", "node", (evt) => {
                   const id = evt.target.id();
@@ -682,13 +537,15 @@ export default function RegulatoryNetwork({ initialOrganism }) {
             />
           )}
 
-          <div className="absolute bottom-4 left-4 bg-white border border-[#D9E2E7] rounded-lg p-3 shadow-sm">
-            <div className="text-xs font-semibold text-[#64748B] mb-2">Legend</div>
+          </div>
+
+          <div data-testid="network-legend" className="shrink-0 border-t border-[#D9E2E7] px-4 py-2 flex flex-wrap items-center gap-x-5 gap-y-1">
+            <div className="text-xs font-semibold text-[#64748B]">Legend</div>
             {[
               { type: "TF", label: "Transcription factor" },
               { type: "Operon", label: "Target operon (named by its best-site gene)" },
             ].map((l) => (
-              <div key={l.type} className="flex items-center gap-2 mb-1.5">
+              <div key={l.type} className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: NODE_COLOR[l.type] }} />
                 <span className="text-xs text-[#64748B]">{l.label}</span>
               </div>

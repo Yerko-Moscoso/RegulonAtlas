@@ -166,6 +166,7 @@ export default function Organisms({ navigate }) {
               setSearch(e.target.value);
               setShown(PAGE);
             }}
+            aria-label="Search by name, family or accession"
             placeholder="Search by name, family or accession"
             className="pl-8 pr-3 py-1.5 text-sm bg-white border border-[#D9E2E7] rounded-lg text-[#334155] placeholder-[#94A3B8] focus:outline-none focus:ring-1 focus:ring-[#3A9D7C] focus:border-[#3A9D7C] w-72"
           />

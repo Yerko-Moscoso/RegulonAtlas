@@ -131,6 +131,19 @@ export default function Validation({ initialOrganism }) {
     };
   }, [mode]);
 
+  // Cobertura en todos los genomas y solo en el atlas; si falla, el resto de la vista sigue funcionando
+  const [coverage, setCoverage] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .getAtlasValidationCoverage()
+      .then((res) => !cancelled && setCoverage(res.data))
+      .catch(() => !cancelled && setCoverage(null));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Desglose por tier/origen y tabla por genoma de la red elegida
   useEffect(() => {
     let cancelled = false;
@@ -227,6 +240,7 @@ export default function Validation({ initialOrganism }) {
   const gs = manifest?.gold_stats;
   const lostRows = gs ? gs.rows_without_genome + gs.rows_unmatched_locus : null;
   const selectedRow = tableRows.find((r) => r.network_id === networkId);
+  const coverageRow = coverage?.rows?.find((r) => r.network_id === networkId);
   const selectedName = selectedRow?.network ?? `network ${networkId}`;
 
   // Resumen de los desgloses para la sección plegada (rango de precisión por tier y precisión circular).
@@ -252,19 +266,18 @@ export default function Validation({ initialOrganism }) {
   // Mismo recuadro rojo que las demás vistas (revisión de la semana 13, C1)
   if (error)
     return (
-      <div className="p-6">
-        <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
-      </div>
+      <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
     );
 
   return (
-    <div className="flex flex-col gap-5 p-6">
+    <div className="flex flex-col gap-5">
       <header>
-        <h1 className="text-xl font-semibold text-[#1E293B]">Validation against RegPrecise 3.0</h1>
+        <h1 className="text-2xl font-semibold text-[#334155]">Validation against RegPrecise</h1>
         <p className="text-sm text-[#64748B] mt-1 max-w-4xl">
           Predicted TF → operon interactions compared with curated regulons. Curated genes are projected to their
           operon; TFs are matched by normalized name. Results are computed offline and read from{" "}
-          <span className="font-mono text-xs">data/results/validation</span>.
+          <span className="font-mono text-xs">data/results/validation</span>. Recorded RegPrecise version: 3.0, pending
+          confirmation.
         </p>
         {gs && (
           <p className="text-xs text-[#64748B] mt-2">
@@ -290,8 +303,18 @@ export default function Validation({ initialOrganism }) {
             {mode === "independent" ? " (independent edges)" : ""}: <b>{pct(selectedRow.precision)}</b> of the scored
             predictions match a curated interaction (precision) and the network recovers <b>{pct(selectedRow.recall)}</b> of
             the curated TF–operon pairs (recall). Only {pct(selectedRow.pairs_evaluable / selectedRow.pairs_total)} of its{" "}
-            {fmtInt(selectedRow.pairs_total)} pairs can be scored; the rest have no curated regulon to compare with and are
-            not counted as errors.
+            {fmtInt(selectedRow.pairs_total)} pairs across all genomes can be scored; the rest have no curated regulon to
+            compare with and are not counted as errors.
+            {coverageRow && (
+              <>
+                {" "}
+                These scores come mainly from auxiliary genomes: {fmtInt(coverageRow.atlas_genomes_validable)} of the{" "}
+                {fmtInt(coverageRow.genomes_validable)} validable genomes are in the atlas
+                {mode === "all" && universe === "genome_tf"
+                  ? `, where ${pct(coverageRow.atlas_pairs_evaluable / coverageRow.atlas_pairs_total)} of the pairs can be scored.`
+                  : "."}
+              </>
+            )}
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Loader2, ArrowDown, Database, Server, LayoutDashboard, Globe, Cog, Terminal } from "lucide-react";
 import { api } from "../services/api";
 import { fmtInt, fmtDateTime } from "../utils/atlas";
+import { provenanceText } from "../utils/provenance";
 import StatusBadge from "../components/StatusBadge";
 
 // Flujo del sistema de punta a punta (semana 13), con la autoría de cada parte.
@@ -20,6 +21,15 @@ const SHOWN_IN = {
   comparison: [{ page: "comparison", label: "Taxon Comparison" }],
   robustness: [{ page: "robustness", label: "Robustness" }],
   baseline: [{ page: "validation", label: "Validation (baseline)" }],
+  regulondb: [{ page: "validation", label: "Validation" }],
+  "regulondb-strong": [{ page: "validation", label: "Validation" }],
+  "validation-ci": [{ page: "validation", label: "Validation" }],
+  "comparison-adjusted": [{ page: "comparison", label: "Taxon Comparison" }],
+  reliability: [
+    { page: "organisms", label: "Organisms" },
+    { page: "fingerprints", label: "Fingerprints" },
+  ],
+  "validation-mvp": [{ page: "validation", label: "Validation" }],
 };
 
 const OWNER = {
@@ -183,7 +193,7 @@ export default function Pipeline({ navigate }) {
                 <div className="flex flex-wrap gap-1.5">
                   {sources.map((s) => (
                     <span key={s.prov_id} className="text-[11px] px-2 py-0.5 rounded bg-white border border-[#E2E8F0] text-[#334155]">
-                      {s.source} <span className="font-mono text-[#94A3B8]">{s.version}</span>
+                      {s.source} <span className="font-mono text-[#94A3B8]">{provenanceText(s.version)}</span>
                     </span>
                   ))}
                 </div>
@@ -260,6 +270,7 @@ export default function Pipeline({ navigate }) {
               <pre className="text-[11px] font-mono bg-[#0F172A] text-[#E2E8F0] rounded-lg p-3 overflow-x-auto">
 {`make cache-atlas cache-genes cache-fimo   # cache from MariaDB (needs database access)
 make all              # validation, metrics, taxon comparison, robustness and own baseline (~15 min)
+make extensions       # intervals, adjusted comparison, expected precision, RegulonDB and MVP
 make check            # API, frontend and tests`}
               </pre>
             </div>

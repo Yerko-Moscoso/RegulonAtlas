@@ -237,7 +237,9 @@ export default function Fingerprints({ initialOrganism }) {
         <NetworkSelector networks={networks} value={networkId} onChange={setNetworkId} />
         <div className="flex flex-col gap-1">
           <span className="text-xs text-[#64748B]">
-            Organism ({fmtInt(rows.length)} of {fmtInt(all.length)} genomes have edges in this network)
+            {loading && all.length === 0
+              ? "Organism (Loading genomes…)"
+              : `Organism (${fmtInt(rows.length)} of ${fmtInt(all.length)} genomes have edges in this network)`}
           </span>
           <OrganismSearch options={options} value={organism} onChange={setOrganism} disabled={loading && all.length === 0} />
         </div>

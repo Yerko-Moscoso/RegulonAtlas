@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getLanguage } from '../i18n/translator';
 
 // Usamos la variable de entorno o localhost por defecto
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
@@ -26,6 +27,20 @@ export const api = {
       params: { min_confidence: minConfidence, max_edges: maxEdges },
     }),
 
+  // === DESCARGAS EN EXCEL (E9) ===
+  // POST solo para enviar las imágenes dibujadas en el navegador; la API no guarda nada
+  downloadOrganismReport: (accession, images = []) =>
+    apiClient.post(`/atlas/export/organism/${accession}`, { images }, {
+      params: { lang: getLanguage() }, // el Excel sale en el idioma activo
+      responseType: 'blob',
+    }),
+
+  downloadNetworkReport: (networkId, accession, { minConfidence = 0, image = null } = {}) =>
+    apiClient.post(`/atlas/export/network/${networkId}/${accession}`, { images: image ? [image] : [] }, {
+      params: { min_confidence: minConfidence, lang: getLanguage() },
+      responseType: 'blob',
+    }),
+
   getAtlasMetrics: (networkId, accession) =>
     apiClient.get(`/atlas/networks/${networkId}/metrics`, { params: accession ? { accession } : {} }),
 
@@ -39,6 +54,9 @@ export const api = {
 
   getAtlasValidationSummary: (gold = 'regprecise', { mode, universe } = {}) =>
     apiClient.get('/atlas/validation/summary', { params: { gold, mode, universe } }),
+
+  // Cobertura de la validación: todos los genomas y solo los del atlas
+  getAtlasValidationCoverage: () => apiClient.get('/atlas/validation/coverage'),
 
   getAtlasValidationCurve: (networkId, mode = 'all', gold = 'regprecise') =>
     apiClient.get('/atlas/validation/curve', { params: { gold, network_id: networkId, mode } }),

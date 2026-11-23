@@ -326,7 +326,9 @@ export default function Metrics({ initialOrganism }) {
 
         <div className="flex flex-col gap-1">
           <span className="text-xs text-[#64748B]">
-            Organism ({fmtInt(rows.length)} of {fmtInt(all.length)} genomes have edges in this network)
+            {loading && all.length === 0
+              ? "Organism (Loading genomes…)"
+              : `Organism (${fmtInt(rows.length)} of ${fmtInt(all.length)} genomes have edges in this network)`}
           </span>
           <OrganismSearch options={options} value={organism} onChange={setOrganism} disabled={loading && all.length === 0} />
         </div>
@@ -412,7 +414,7 @@ export default function Metrics({ initialOrganism }) {
       {/* Métrica de los gráficos */}
       <div className="flex items-center gap-2">
         <span className="text-xs text-[#64748B]">Charts show</span>
-        <select value={chartKey} onChange={(e) => setChartKey(e.target.value)} className={selectClass}>
+        <select aria-label="Metric shown in the charts" value={chartKey} onChange={(e) => setChartKey(e.target.value)} className={selectClass}>
           {CHART_METRICS.map((m) => (
             <option key={m.key} value={m.key}>
               {m.label}
