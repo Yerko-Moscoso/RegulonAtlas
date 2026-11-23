@@ -75,6 +75,15 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 23-11-2026: repositorio RegulonAtlas y ensayo de despliegue de la v1.0
+
+- El repositorio en GitHub ahora se llama `Yerko-Moscoso/RegulonAtlas`; `v1.0` (`a6afa54`) está publicada. Los registros de
+  pruebas anteriores conservan la URL antigua.
+- Ensayo local de la v1.0 sin `.git`, `.env`, MariaDB ni `data/raw/`, con `data/cache/atlas/` y `data/results/` (313 MB): el
+  frontend compila con `VITE_API_URL=/api/v1`, las rutas GET de la API responden y la API usó 521 MB de RAM.
+- **Hallazgo:** `npm ci` falla sobre la v1.0 porque el `package-lock.json` está incompleto (`@emnapi/runtime@1.11.3`). El
+  ensayo compiló con las dependencias ya instaladas en `devastator`. → `contexto_regulonatlas.md`, sección 3.
+
 ### 23-11-2026: semana 14, cierre previo a la v1.0 (E9–E12)
 
 - **E9, Excel:** descarga desde Organisms (5 redes) y Regulatory Networks, con las imágenes del dashboard. `b5a0fd9`, `9ea6dbc`.
