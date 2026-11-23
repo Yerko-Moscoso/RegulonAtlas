@@ -14,6 +14,8 @@ dependencies:
   - scipy>=1.17
   - statsmodels>=0.14
   - networkx>=3.6
+  # Imágenes de las redes en el reporte Excel (src/api/routers/atlas_export.py)
+  - pillow>=12.3
   # API (src/api); fastapi y pydantic-settings van por pip (abajo)
   - uvicorn>=0.52
   - pydantic>=2.13
@@ -35,5 +37,6 @@ dependencies:
       - pyarrow>=23.0
       - fastapi>=0.141
       - pydantic-settings>=2.15
+      - openpyxl>=3.1   # descarga en Excel (src/api/routers/atlas_export.py)
       - pytest>=9.1   # make check
       - httpx>=0.28   # TestClient

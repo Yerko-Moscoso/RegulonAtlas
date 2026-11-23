@@ -64,6 +64,28 @@ def _aristas_por_genoma(network_id: int) -> pd.DataFrame:
     return e.groupby("genome_id").size().rename("n_edges").reset_index()
 
 
+def pares_tf_operon(network_id: int, genome_id: int, min_confidence: float = 0.0):
+    """Aristas de un genoma y sus pares TF-operón (regla única del grafo y de la descarga en Excel).
+
+    Un TF puede tener varios motivos y su nombre puede variar en mayúsculas entre fuentes: se agrupa por nombre
+    normalizado y operón, conservando la arista de mayor confidence. Devuelve (aristas filtradas, pares, total de
+    pares antes de aplicar min_confidence).
+    """
+    e = _tabla(f"edges_net{network_id}")
+    e = e[e.genome_id == genome_id]
+    e = e.merge(_tabla("motifs")[["motif_id", "motif_key"]], on="motif_id", how="left")
+    e = e.assign(tf_key=e.tf_name.str.casefold())
+
+    ordenar = dict(by="confidence", ascending=False, na_position="last")
+    total_pares = len(e.drop_duplicates(["tf_key", "target_operon"]))
+
+    if min_confidence > 0:
+        e = e[e.confidence.fillna(0) >= min_confidence]
+
+    pares = e.sort_values(**ordenar).drop_duplicates(["tf_key", "target_operon"])
+    return e, pares, total_pares
+
+
 # ----------------------------------------------------------------- endpoints
 
 @router.get("/networks")
@@ -119,21 +141,11 @@ def grafo(network_id: int, accession: str,
     red = _red(network_id)
     genoma = _genoma(accession)
 
-    e = _tabla(f"edges_net{network_id}")
-    e = e[e.genome_id == int(genoma.genome_id)]
-    e = e.merge(_tabla("motifs")[["motif_id", "motif_key"]], on="motif_id", how="left")
-    e = e.assign(tf_key=e.tf_name.str.casefold())
-
-    ordenar = dict(by="confidence", ascending=False, na_position="last")
-    total_pares = len(e.drop_duplicates(["tf_key", "target_operon"]))
-
-    if min_confidence > 0:
-        e = e[e.confidence.fillna(0) >= min_confidence]
+    e, pares, total_pares = pares_tf_operon(network_id, int(genoma.genome_id), min_confidence)
 
     # Motivos de cada TF en este genoma (antes de colapsar aristas)
     motivos = e.groupby("tf_key").motif_key.apply(lambda s: sorted(s.dropna().unique().tolist()))
 
-    pares = e.sort_values(**ordenar).drop_duplicates(["tf_key", "target_operon"])
     filtradas = len(pares)
     pares = pares.head(max_edges)
 
