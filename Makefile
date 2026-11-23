@@ -14,7 +14,8 @@ CACHE    = data/cache/mvp
 RESULTS  = data/results/mvp
 
 .PHONY: help all atlas cache-atlas cache-genes cache-fimo validate-atlas metrics-atlas comparison-atlas \
-        robustness-atlas baseline-atlas atlas-ready api web check test hooks \
+        robustness-atlas baseline-atlas atlas-ready regulondb validate-regulondb ci-atlas adjusted-atlas \
+        reliability-atlas mvp-point extensions api web check test hooks \
         mvp cache transfer_map networks metrics validation report clean
 
 help:  ## Lista los objetivos
@@ -57,6 +58,29 @@ robustness-atlas: data/results/metrics/atlas_metrics.parquet  ## Robustez (24 pr
 
 baseline-atlas: data/cache/atlas/fimo_hits_validation.parquet  ## Línea base del pipeline propio -> data/results/baseline/
 	PYTHONPATH=. $(PYTHON) src/networks/atlas_baseline.py
+
+# ---------------------------------------------------------------- ampliaciones (excepciones E1-E7 del congelamiento)
+# No forman parte de make all: leen los resultados congelados y escriben en carpetas propias.
+extensions: validate-regulondb ci-atlas adjusted-atlas reliability-atlas mvp-point  ## Todas las ampliaciones
+
+regulondb:  ## Descarga RegulonDB -> data/raw/regulondb/ (no versionado; uso académico)
+	PYTHONPATH=. $(PYTHON) scripts/download_regulondb.py
+
+validate-regulondb:  ## Validación en E. coli K-12 contra RegulonDB (requiere make regulondb)
+	PYTHONPATH=. $(PYTHON) src/validation/atlas.py --gold regulondb
+	PYTHONPATH=. $(PYTHON) src/validation/atlas.py --gold regulondb_strong
+
+ci-atlas:  ## Intervalos de confianza de P, R y F1 -> data/results/validation_ci/
+	PYTHONPATH=. $(PYTHON) src/validation/atlas_ci.py
+
+adjusted-atlas:  ## Comparación entre taxones ajustada -> data/results/comparison_adjusted/
+	PYTHONPATH=. $(PYTHON) src/networks/atlas_adjusted.py
+
+reliability-atlas:  ## Precisión esperada por genoma -> data/results/reliability/
+	PYTHONPATH=. $(PYTHON) src/networks/atlas_reliability.py
+
+mvp-point:  ## MVP frente al atlas en los mismos 8 genomas -> data/results/validation_mvp/
+	PYTHONPATH=. $(PYTHON) src/validation/atlas_mvp_point.py
 
 data/cache/atlas/fimo_hits_validation.parquet:
 	@echo "Falta la caché de fimo_hits. Ejecuta primero: make cache-fimo" && exit 1
