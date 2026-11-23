@@ -7,6 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.api.main import app
+from src.api.routers.atlas_validation import SUMMARY_COLUMNS
 from src.networks.atlas_adjusted import r2_fit
 from src.networks.atlas_reliability import calibration_status, tier_precision
 from src.validation.atlas import REGULONDB_ALIASES, regulondb_tf_names
@@ -104,6 +105,19 @@ def test_mvp_points_cover_thresholds_and_networks():
 
 
 @pytest.mark.skipif(not (R / "validation/regulondb/summary.tsv").exists(), reason="Falta make validate-regulondb")
-def test_regulondb_is_aggregate_and_has_no_d33():
+def test_regulondb_is_aggregate():
     rows = client.get("/api/v1/atlas/validation/summary", params={"gold": "regulondb"}).json()["rows"]
-    assert rows and all(r["d33_f1"] is None and r["genomes_evaluated"] == 1 for r in rows)
+    assert rows and all(list(r) == SUMMARY_COLUMNS and r["genomes_evaluated"] == 1 for r in rows)
+
+
+@pytest.mark.skipif(not (R / "validation/regprecise/summary.tsv").exists(), reason="Falta make validate-atlas")
+def test_summary_only_returns_own_values():
+    rows = client.get("/api/v1/atlas/validation/summary").json()["rows"]
+    assert rows and all(list(r) == SUMMARY_COLUMNS for r in rows)
+
+
+@pytest.mark.skipif(not Path("data/cache/atlas/networks.parquet").exists(), reason="Falta make cache-atlas")
+def test_networks_expose_only_explicit_filters():
+    nets = client.get("/api/v1/atlas/networks").json()
+    assert len(nets) == 5
+    assert all(set(n["params"]) == {"p_max", "footprint_enrichment_min", "tier_max_rank"} for n in nets)

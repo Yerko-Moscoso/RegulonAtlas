@@ -13,7 +13,7 @@ Definición (documentada en docs/ y en manifest.json):
       genome_tf  (por defecto) solo predicciones de pares (genoma, TF) con regulón curado.
       genome     todas las predicciones de genomas validables (variante estricta).
     Lo que queda fuera del universo se reporta como "no evaluable", no como FP.
-  - Recall: sobre TODO el gold standard proyectado (igual que D33).
+  - Recall: sobre TODO el gold standard proyectado.
   - Modos:
       all          todas las aristas.
       independent  excluye aristas cuyo motivo de RegPrecise proviene de un regulog
@@ -36,10 +36,6 @@ from src.atlas_common import (CACHE, KEY, NETWORKS, check_dirty, git_commit, git
                               norm_locus, norm_tf)
 
 OUT_DEFAULT = Path("data/results/validation")
-D33 = {  # P, R, F1 reportados por el pipeline externo (referencia, no objetivo)
-    1: (0.682, 0.231, 0.345), 2: (0.742, 0.041, 0.078), 3: (0.545, 0.343, 0.421),
-    4: (0.307, 0.446, 0.364), 5: (0.548, 0.317, 0.402),
-}
 GRID = np.round(np.linspace(0, 1, 101), 2)
 MODES = ("all", "independent")
 UNIVERSES = ("genome_tf", "genome")
@@ -261,7 +257,6 @@ def summarize(net_id, mode, universe, pairs, ev, gold):
         "precision": p, "recall": r, "f1": f1(p, r),
         "precision_macro_median": float((per_g["tp"] / per_g["n"]).median()) if len(per_g) else None,
         "recall_macro_median": float((per_g["tp"] / per_g["n_gold"]).median()) if len(per_g) else None,
-        "d33_precision": D33[net_id][0], "d33_recall": D33[net_id][1], "d33_f1": D33[net_id][2],
     }
 
 
@@ -346,11 +341,8 @@ def main():
                 origins.append(breakdown(net_id, mode, ev, "origin"))
                 genomes_tbl.append(by_genome(net_id, mode, ev, gold, genomes))
 
-    summary = pd.DataFrame(summary)
-    if args.gold != "regprecise":  # D33 se calculó contra RegPrecise: no es referencia para otro gold standard
-        summary[["d33_precision", "d33_recall", "d33_f1"]] = float("nan")
     files = {
-        "summary.tsv": summary,
+        "summary.tsv": pd.DataFrame(summary),
         "pr_curve.tsv": pd.DataFrame(curve),
         "by_tier.tsv": pd.concat(tiers),
         "by_origin.tsv": pd.concat(origins),

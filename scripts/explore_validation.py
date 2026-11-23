@@ -28,14 +28,7 @@ import pyarrow.parquet as pq
 CACHE = Path("data/cache/atlas")
 OUT = Path("data/audit")
 
-# Referencia de D33 (no se espera coincidencia exacta: definición de la evaluación desconocida)
-D33 = {
-    1: ("validated", 0.682, 0.231, 0.345),
-    2: ("high-precision", 0.742, 0.041, 0.078),
-    3: ("balanced", 0.545, 0.343, 0.421),
-    4: ("permissive", 0.307, 0.446, 0.364),
-    5: ("no-footprint", 0.548, 0.317, 0.402),
-}
+NETWORK_NAMES = {1: "validated", 2: "high-precision", 3: "balanced", 4: "permissive", 5: "no-footprint"}
 
 
 def load(name, cols=None):
@@ -181,7 +174,7 @@ def evaluate(net_id, gold, genomes):
     cov = by_genome[by_genome["has_edges"]]
     summary = {
         "network_id": net_id,
-        "name": D33[net_id][0],
+        "name": NETWORK_NAMES[net_id],
         "tf_operon_pairs": int(len(pairs)),
         "pairs_in_evaluable_universe": int(len(ev)),
         "pairs_not_evaluable": int(len(pairs) - len(ev)),
@@ -192,7 +185,6 @@ def evaluate(net_id, gold, genomes):
         "recall_micro_covered": r_cov, "f1_covered": f_cov,
         "precision_macro_median": float(cov["precision"].median()) if len(cov) else None,
         "recall_macro_median": float(cov["recall"].median()) if len(cov) else None,
-        "d33_P_R_F1": D33[net_id][1:],
     }
     return summary, by_genome, by_tier
 
@@ -216,15 +208,12 @@ def main():
 
     summaries, genomes_tbl, tiers_tbl = [], [], []
     print("\n== Por red (nivel TF -> operón) ==")
-    print(f"{'red':16s} {'P':>6s} {'R_all':>6s} {'F1_all':>6s} {'R_cov':>6s} {'F1_cov':>6s}"
-          f"   | D33 P / R / F1")
-    for net_id in D33:
+    print(f"{'red':16s} {'P':>6s} {'R_all':>6s} {'F1_all':>6s} {'R_cov':>6s} {'F1_cov':>6s}")
+    for net_id in NETWORK_NAMES:
         s, bg, bt = evaluate(net_id, gold, genomes)
         summaries.append(s); genomes_tbl.append(bg); tiers_tbl.append(bt)
-        d = s["d33_P_R_F1"]
         print(f"{s['name']:16s} {s['precision_micro']:6.3f} {s['recall_micro_all_gold']:6.3f} "
-              f"{s['f1_all_gold']:6.3f} {s['recall_micro_covered']:6.3f} {s['f1_covered']:6.3f}"
-              f"   | {d[0]:.3f} / {d[1]:.3f} / {d[2]:.3f}")
+              f"{s['f1_all_gold']:6.3f} {s['recall_micro_covered']:6.3f} {s['f1_covered']:6.3f}")
         print(f"{'':16s} pares={s['tf_operon_pairs']:,}  evaluables={s['pairs_in_evaluable_universe']:,}  "
               f"genomas validables con aristas={s['validable_genomes_with_edges']}")
 

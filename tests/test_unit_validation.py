@@ -13,6 +13,7 @@ Caso de juguete (TF ya normalizado, red 3 = balanced):
     g4 lexa op50                g2 crp  op31  conf 0.60                  FP          FP
                                 g3 lexa op10  conf 0.95 (g3 sin gold)    fuera       fuera
 """
+from src.api.routers.atlas_validation import SUMMARY_COLUMNS
 import math
 
 import pandas as pd
@@ -89,7 +90,8 @@ def test_summarize_genome_tf_counts_by_hand(pairs, gold):
     assert s["genomes_evaluated"] == 2
     assert s["precision_macro_median"] == pytest.approx((2 / 3 + 0) / 2)   # g1 2/3, g2 0/1
     assert s["recall_macro_median"] == pytest.approx((2 / 3 + 0) / 2)
-    assert s["network"] == "balanced" and s["d33_f1"] == 0.421
+    assert s["network"] == "balanced"
+    assert list(s) == SUMMARY_COLUMNS  # el resumen solo trae valores calculados por la validación
 
 
 def test_summarize_genome_universe_counts_by_hand(pairs, gold):

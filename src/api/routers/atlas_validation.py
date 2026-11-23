@@ -17,6 +17,10 @@ RESULTS = Path("data/results/validation")
 Gold = Literal["regprecise", "regulondb", "regulondb_strong"]
 Mode = Literal["all", "independent"]
 Universe = Literal["genome_tf", "genome"]
+# Solo se entregan valores calculados por esta validación, aunque un summary.tsv anterior traiga más columnas
+SUMMARY_COLUMNS = ["network_id", "network", "mode", "universe", "pairs_total", "pairs_evaluable", "pairs_not_evaluable",
+                   "genomes_evaluated", "TP", "FP", "FN", "precision", "recall", "f1", "precision_macro_median",
+                   "recall_macro_median"]
 
 
 @lru_cache(maxsize=32)
@@ -66,8 +70,8 @@ def summary(
     mode: Optional[Mode] = None,
     universe: Optional[Universe] = None,
 ):
-    """P/R/F1 per network, mode and universe, with the D33 reference values."""
-    df = _filter(_table(gold, "summary.tsv"), mode=mode, universe=universe)
+    """P/R/F1 per network, mode and universe."""
+    df = _filter(_table(gold, "summary.tsv")[SUMMARY_COLUMNS], mode=mode, universe=universe)
     return {"gold": gold, "rows": _records(df)}
 
 

@@ -74,6 +74,8 @@ def listar_redes():
     for r in _json(_tabla("networks")):
         if isinstance(r.get("params"), str):
             r["params"] = json.loads(r["params"])
+        # "source" es una nota libre del pipeline externo sin definición verificable: solo se entregan los filtros
+        r["params"].pop("source", None)
         r["n_edges"] = manifest["tablas"].get(f"edges_net{r['network_id']}")
         salida.append(r)
     return salida
