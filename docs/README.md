@@ -81,8 +81,10 @@ quedó documentado.
   pruebas anteriores conservan la URL antigua.
 - Ensayo local de la v1.0 sin `.git`, `.env`, MariaDB ni `data/raw/`, con `data/cache/atlas/` y `data/results/` (313 MB): el
   frontend compila con `VITE_API_URL=/api/v1`, las rutas GET de la API responden y la API usó 521 MB de RAM.
-- **Hallazgo:** `npm ci` falla sobre la v1.0 porque el `package-lock.json` está incompleto (`@emnapi/runtime@1.11.3`). El
-  ensayo compiló con las dependencias ya instaladas en `devastator`. → `contexto_regulonatlas.md`, sección 3.
+- **Hallazgo:** `npm ci` fallaba sobre la v1.0 original (`a6afa54`) porque el `package-lock.json` estaba incompleto
+  (`@emnapi/runtime@1.11.3`). El ensayo compiló con las dependencias ya instaladas en `devastator`.
+- **Corrección:** por decisión del estudiante, el lock se completó (3 entradas opcionales y marcas `peer` de 17 paquetes, sin
+  cambios de versión, URL ni integridad) y la etiqueta `v1.0` se movió a ese commit. → `contexto_regulonatlas.md`, sección 3.
 
 ### 23-11-2026: semana 14, cierre previo a la v1.0 (E9–E12)
 
