@@ -164,8 +164,7 @@ export default function Pipeline({ navigate }) {
                 <OwnerBadge owner="external" />
                 <p className="text-xs text-[#475569] mt-2">
                   Genome selection, motif scanning, transfer and filtering, the <span className="font-mono">regulon_atlas</span>{" "}
-                  database with the five networks, <span className="font-mono">network_metrics</span> and the D33
-                  benchmark. Built by the researcher; its code is not available to this project.
+                  database with the five networks and <span className="font-mono">network_metrics</span>. Built by the researcher; its code is not available to this project.
                 </p>
               </div>
               <div className="rounded-xl border border-[#B8DDD0] bg-[#F0F7F4] p-4">

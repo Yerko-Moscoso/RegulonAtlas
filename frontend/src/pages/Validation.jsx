@@ -8,12 +8,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceDot,
 } from "recharts";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
-import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
+import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, fmtP } from "../utils/atlas";
 import { pct, pctTick, dec, detail } from "../utils/validation";
 import { Section, Segmented, Stat, Spinner, ErrorMsg, BreakdownTable, CurveTooltip } from "../components/ValidationParts";
 import BaselineSection from "../components/BaselineSection";
@@ -32,7 +31,7 @@ const MODES = [
   {
     id: "all",
     label: "All edges",
-    hint: "Includes motifs built from the same RegPrecise regulog as the evaluated genome (comparable with D33).",
+    hint: "Includes motifs built from the same RegPrecise regulog as the evaluated genome.",
   },
   {
     id: "independent",
@@ -172,6 +171,10 @@ export default function Validation({ initialOrganism }) {
     [summary, mode, universe]
   );
   const bestF1 = Math.max(...tableRows.map((r) => r.f1 ?? 0), 0);
+  const filtersOf = (id) => {
+    const n = networks.find((x) => x.network_id === id);
+    return n ? `≤ ${fmtP(n.p_threshold)} · ${n.tier_ceiling} · ≥ ${n.params?.footprint_enrichment_min ?? 0}` : "—";
+  };
 
   const curvesByNetwork = useMemo(() => {
     const groups = {};
@@ -187,11 +190,6 @@ export default function Validation({ initialOrganism }) {
     const m = Math.max(0.1, ...curve.map((p) => p.recall ?? 0));
     return Math.min(1, Math.ceil(m * 10) / 10);
   }, [curve]);
-
-  const d33Points = useMemo(
-    () => summary.filter((r) => r.mode === "all" && r.universe === "genome_tf"),
-    [summary]
-  );
 
   const thresholdData = useMemo(() => {
     const pts = curve.filter((p) => p.network_id === networkId).sort((a, b) => a.min_confidence - b.min_confidence);
@@ -301,7 +299,7 @@ export default function Validation({ initialOrganism }) {
       {/* Resumen de las 5 redes */}
       <Section
         title="Networks"
-        subtitle="Recall is computed over all curated pairs. D33 are the values reported by the external pipeline; its exact evaluation definition is unknown, so only the ranking is expected to match. Click a row to select the network."
+        subtitle="Recall is computed over all curated pairs. Click a row to select the network."
       >
         <ScrollX>
           <table className="w-full text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap [&_th+th]:pl-4 [&_td+td]:pl-4">
@@ -311,7 +309,7 @@ export default function Validation({ initialOrganism }) {
                 <th className="py-2 font-medium text-right">Precision</th>
                 <th className="py-2 font-medium text-right">Recall</th>
                 <th className="py-2 font-medium text-right">F1</th>
-                <th className="py-2 font-medium text-right">D33 P / R / F1</th>
+                <th className="py-2 font-medium text-right">p · tier ceiling · footprint</th>
                 <th className="py-2 font-medium text-right">Evaluable pairs</th>
                 <th className="py-2 font-medium text-right">Genomes</th>
                 <th className="py-2 font-medium text-right">Median P / R per genome</th>
@@ -339,7 +337,7 @@ export default function Validation({ initialOrganism }) {
                     {dec(r.f1)}
                   </td>
                   <td className="py-2 text-right font-mono text-[#94A3B8]">
-                    {dec(r.d33_precision)} / {dec(r.d33_recall)} / {dec(r.d33_f1)}
+                    {filtersOf(r.network_id)}
                   </td>
                   <td className="py-2 text-right font-mono">
                     {fmtInt(r.pairs_evaluable)}
@@ -368,7 +366,7 @@ export default function Validation({ initialOrganism }) {
           title="Precision–recall curves"
           subtitle={`Each curve sweeps the minimum edge confidence from 1 to 0 (curated TFs only, ${
             mode === "all" ? "all edges" : "independent edges"
-          }). Hollow dots: values reported in D33.`}
+          }).`}
         >
           {loadingCurve ? (
             <Spinner />
@@ -407,17 +405,6 @@ export default function Validation({ initialOrganism }) {
                     dot={false}
                     type="linear"
                     isAnimationActive={false}
-                  />
-                ))}
-                {d33Points.map((r) => (
-                  <ReferenceDot
-                    key={`d33-${r.network_id}`}
-                    x={r.d33_recall}
-                    y={r.d33_precision}
-                    r={5}
-                    fill="#fff"
-                    stroke={NET_COLORS[r.network_id]}
-                    strokeWidth={2}
                   />
                 ))}
               </LineChart>

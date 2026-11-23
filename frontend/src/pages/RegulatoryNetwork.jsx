@@ -5,6 +5,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 import { Search, X, Info, Loader2 } from "lucide-react";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
+import { networkFilters } from "../utils/atlas";
 import CoverageNote from "../components/CoverageNote";
 
 cytoscape.use(fcose);
@@ -13,7 +14,7 @@ cytoscape.use(fcose);
 // mejor sitio de unión. Grosor de arista = confidence calibrada.
 const NODE_COLOR = { TF: "#3A9D7C", Operon: "#3B82B8" };
 const NODE_BORDER = { TF: "#176B57", Operon: "#2563A0" };
-const DEFAULT_NETWORK = 3; // balanced: mejor F1 (D33)
+const DEFAULT_NETWORK = 3; // balanced: red por defecto
 const DEFAULT_GENOME = "GCF_000005845.2"; // E. coli K-12 MG1655
 const CONFIDENCE_OPTIONS = [0, 0.3, 0.5, 0.7, 0.9];
 const EDGE_LIMITS = [200, 500, 1000, 2000];
@@ -223,12 +224,6 @@ const computePositions = (nodes, edges, seed) => {
 };
 
 const fmtInt = (n) => (n == null ? "—" : Number(n).toLocaleString("en-US"));
-// params.source viene en español desde la base ("... P=0,545 R=0,343 F1=0,421 ...");
-// se extraen solo los números para mostrarlos en inglés.
-const parseBenchmark = (source) => {
-  const m = source?.match(/P=([\d,.]+)\s+R=([\d,.]+)\s+F1=([\d,.]+)/);
-  return m ? { p: m[1].replace(",", "."), r: m[2].replace(",", "."), f1: m[3].replace(",", ".") } : null;
-};
 // Origen del motivo según el prefijo de su clave.
 const motifSource = (key) =>
   key.startsWith("RG") ? "RegPrecise" : key.startsWith("MX") ? "PRODORIC" : "—";
@@ -453,7 +448,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
   }, [networkId, organism, minConfidence, maxEdges]);
 
   const network = networks.find((n) => n.network_id === networkId);
-  const benchmark = parseBenchmark(network?.params?.source);
+  const filters = networkFilters(network);
   const organismsWithEdges = useMemo(() => organismList.filter((o) => o.nEdges > 0).length, [organismList]);
   const organismLabel = organismList.find((o) => o.id === organism)?.label ?? organism;
   const rawNodes = graph?.elements?.nodes ?? [];
@@ -617,11 +612,7 @@ export default function RegulatoryNetwork({ initialOrganism }) {
                 : ""}
               highest-confidence edges first
             </div>
-            {benchmark && (
-              <div className="text-[11px] mt-0.5 text-[#94A3B8]">
-                Benchmark against RegPrecise: precision {benchmark.p}, recall {benchmark.r}, F1 {benchmark.f1}
-              </div>
-            )}
+            {filters && <div className="text-[11px] mt-0.5 text-[#94A3B8]">Network filters: {filters}</div>}
           </div>
         )}
       </div>

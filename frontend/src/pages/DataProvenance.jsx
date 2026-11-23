@@ -11,8 +11,8 @@ import ScrollX from "../components/ScrollX";
 
 // Limitaciones documentadas (contexto, secciones 15 y 16). Las de la caché llegan como `notes` de /atlas/status.
 const LIMITATIONS = [
-  "Traceability goes back to the provenance table: the code of the external pipeline and its decision log (D1–D33) are not accessible.",
-  "network_metrics and the D33 benchmark come from the external pipeline and are shown only as reference.",
+  "Traceability goes back to the provenance table: the code of the external pipeline and the researcher's decision log are not accessible.",
+  "network_metrics comes from the external pipeline and is shown only as reference.",
 ];
 
 const fmtDate = (s) => (s ? String(s).slice(0, 10) : "—");

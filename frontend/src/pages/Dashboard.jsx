@@ -110,7 +110,7 @@ export default function Dashboard({ navigate }) {
             <h3 className="text-sm font-semibold text-[#334155] mb-1">The five networks</h3>
             <p className="text-xs text-[#64748B] mb-3">
               Own validation against RegPrecise (TF → operon, universe genome–TF). Independent mode excludes motifs built
-              from the regulog of the evaluated genome. D33 is the external benchmark, shown only as a reference.
+              from the regulog of the evaluated genome.
             </p>
             <ScrollX>
               <table className="w-full text-sm [&_th]:whitespace-nowrap [&_td]:whitespace-nowrap [&_th+th]:pl-4 [&_td+td]:pl-4">
@@ -123,7 +123,7 @@ export default function Dashboard({ navigate }) {
                     <th className="py-1.5 font-medium text-right">Recall</th>
                     <th className="py-1.5 font-medium text-right">F1</th>
                     <th className="py-1.5 font-medium text-right">F1 independent</th>
-                    <th className="py-1.5 font-medium text-right">F1 D33</th>
+                    <th className="py-1.5 font-medium text-right">Evaluable pairs</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -146,7 +146,7 @@ export default function Dashboard({ navigate }) {
                           {dec(a?.f1)}
                         </td>
                         <td className="py-1.5 text-right font-mono">{dec(i?.f1)}</td>
-                        <td className="py-1.5 text-right font-mono text-[#94A3B8]">{dec(a?.d33_f1)}</td>
+                        <td className="py-1.5 text-right font-mono text-[#64748B]">{a?.pairs_total ? pct(a.pairs_evaluable / a.pairs_total) : "—"}</td>
                       </tr>
                     );
                   })}

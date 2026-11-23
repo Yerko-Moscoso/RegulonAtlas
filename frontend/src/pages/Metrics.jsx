@@ -6,7 +6,7 @@ import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
 import CoverageNote from "../components/CoverageNote";
 import OrganismSearch from "../components/OrganismSearch";
-import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, parseBenchmark, selectClass } from "../utils/atlas";
+import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, networkFilters, selectClass } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
 
 // Métricas topológicas propias de las redes del atlas (make metrics-atlas,
@@ -216,7 +216,7 @@ export default function Metrics({ initialOrganism }) {
   const rows = useMemo(() => all.filter((r) => r.has_edges), [all]); // genomas con aristas
   const atlasRows = useMemo(() => rows.filter((r) => r.in_atlas), [rows]);
   const network = networks.find((n) => n.network_id === networkId);
-  const benchmark = parseBenchmark(network?.params?.source);
+  const filters = networkFilters(network);
   const genome = byAcc.get(organism);
   const current = genome?.has_edges ? genome : null;
   const chartMetric = CHART_METRICS.find((m) => m.key === chartKey);
@@ -338,11 +338,7 @@ export default function Metrics({ initialOrganism }) {
               {!genome.in_atlas && <span className="text-[#94A3B8]"> Auxiliary genome ({genome.selection}).</span>}
             </div>
           )}
-          {benchmark && (
-            <div className="text-[11px] mt-0.5 text-[#94A3B8]">
-              Benchmark against RegPrecise (D33): precision {benchmark.p}, recall {benchmark.r}, F1 {benchmark.f1}
-            </div>
-          )}
+          {filters && <div className="text-[11px] mt-0.5 text-[#94A3B8]">Network filters: {filters}</div>}
         </div>
       </div>
 
