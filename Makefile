@@ -15,7 +15,7 @@ RESULTS  = data/results/mvp
 
 .PHONY: help all atlas cache-atlas cache-genes cache-fimo validate-atlas metrics-atlas comparison-atlas \
         robustness-atlas baseline-atlas atlas-ready regulondb validate-regulondb ci-atlas adjusted-atlas \
-        reliability-atlas mvp-point extensions api web check test hooks \
+        reliability-atlas mvp-point extensions api web check test test-ui hooks \
         mvp cache transfer_map networks metrics validation report clean
 
 help:  ## Lista los objetivos
@@ -96,9 +96,13 @@ web:  ## Frontend de desarrollo (Vite, http://localhost:5173)
 	cd frontend && npm run dev
 
 # ---------------------------------------------------------------- calidad
-check:  ## Antes de cada commit: API, sin get_db, frontend compila, ESLint y pytest
+check:  ## Antes de cada commit: API, sin get_db, frontend compila, ESLint, pytest e interfaz
 	scripts/check_commit.sh --worktree
 	PYTHONPATH=. $(PYTHON) -m pytest -q -rs
+	scripts/check_ui.sh
+
+test-ui:  ## Solo las pruebas de interfaz (Playwright, puertos 18000 y 15173)
+	scripts/check_ui.sh
 
 test:  ## Solo pytest (muestra las pruebas omitidas)
 	PYTHONPATH=. $(PYTHON) -m pytest -q -rs
