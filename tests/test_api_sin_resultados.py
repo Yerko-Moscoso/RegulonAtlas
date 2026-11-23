@@ -28,6 +28,7 @@ CACHED = [r_atlas._tabla, r_genomes._catalog, r_motifs._motifs]
 RESULT_ENDPOINTS = [
     ("/atlas/validation/manifest", "make validate-atlas"),
     ("/atlas/validation/summary", "make validate-atlas"),
+    ("/atlas/validation/coverage", "make validate-atlas"),
     ("/atlas/validation/curve", "make validate-atlas"),
     ("/atlas/validation/breakdown/tier", "make validate-atlas"),
     ("/atlas/validation/breakdown/origin", "make validate-atlas"),

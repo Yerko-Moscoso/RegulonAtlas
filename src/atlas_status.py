@@ -47,6 +47,25 @@ RESULT_STEPS = [
     {"id": "baseline", "label": "Own pipeline baseline", "make": "baseline-atlas",
      "dir": "data/results/baseline", "depends_on": ["cache-fimo"], "check": "fimo",
      "description": "Test network rebuilt from raw hits on the 312 validable genomes (not an atlas network)."},
+    # Ampliaciones E1, E3, E4, E5 y E6 (make extensions, fuera de make all)
+    {"id": "regulondb", "label": "Validation vs RegulonDB", "make": "validate-regulondb",
+     "dir": "data/results/validation/regulondb", "depends_on": ["cache-atlas"], "check": "cache",
+     "description": "Second gold standard for E. coli K-12 (aggregate figures only)."},
+    {"id": "regulondb-strong", "label": "RegulonDB, strong evidence", "make": "validate-regulondb",
+     "dir": "data/results/validation/regulondb_strong", "depends_on": ["cache-atlas"], "check": "cache",
+     "description": "Same validation using only RegulonDB interactions with strong evidence."},
+    {"id": "validation-ci", "label": "Confidence intervals", "make": "ci-atlas",
+     "dir": "data/results/validation_ci", "depends_on": ["validation"], "check": "validation",
+     "description": "Bootstrap intervals of precision, recall and F1."},
+    {"id": "comparison-adjusted", "label": "Adjusted taxon comparison", "make": "adjusted-atlas",
+     "dir": "data/results/comparison_adjusted", "depends_on": ["metrics"], "check": "unrecorded",
+     "description": "Taxon comparison adjusted for genome size and motif supply."},
+    {"id": "reliability", "label": "Expected precision", "make": "reliability-atlas",
+     "dir": "data/results/reliability", "depends_on": ["cache-atlas"], "check": "unrecorded",
+     "description": "Per-genome estimate from the transfer tiers of its edges."},
+    {"id": "validation-mvp", "label": "MVP vs atlas", "make": "mvp-point",
+     "dir": "data/results/validation_mvp", "depends_on": ["cache-atlas"], "check": "unrecorded",
+     "description": "MVP network and atlas networks evaluated on the same 8 genomes."},
 ]
 
 
@@ -124,6 +143,14 @@ def _up_to_date(s, m, cache, manifests):
             return None, "FIMO hits export not found in the cache manifest."
         return m["created_at"] >= fimo["exported_at"], (
             f"Built on {_short(m['created_at'])}; FIMO hits exported on {_short(fimo['exported_at'])}.")
+    if s["check"] == "validation":
+        current = (manifests.get("validation") or {}).get("git_commit")
+        used = m.get("validation_commit")
+        if current is None:
+            return None, "Validation manifest not found."
+        return used == current, f"Built from validation {used}; current validation: {current}."
+    if s["check"] == "unrecorded":
+        return None, "This result records its commit, but not the version of its input."
     raise ValueError(f"Regla de coherencia desconocida: {s['check']}")
 
 

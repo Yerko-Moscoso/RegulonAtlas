@@ -11,6 +11,8 @@ from typing import Literal, Optional
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query
 
+from src.api.routers import atlas_metrics
+
 router = APIRouter(prefix="/atlas/validation", tags=["atlas-validation"])
 
 RESULTS = Path("data/results/validation")
@@ -75,6 +77,29 @@ def summary(
     return {"gold": gold, "rows": _records(df)}
 
 
+@router.get("/coverage")
+def coverage():
+    """Evaluable pairs (mode all, universe genome-TF) across all genomes and within the atlas genomes."""
+    evaluados = _filter(_table("regprecise", "by_genome.tsv"), mode="all")
+    redes = atlas_metrics._metrics()[["genome_id", "network_id", "n_edges", "in_atlas"]]
+    cruce = evaluados.merge(redes, on=["genome_id", "network_id"], how="left")
+    filas = []
+    for network_id, red in redes.groupby("network_id"):
+        ev = cruce[cruce.network_id == network_id]
+        en_atlas = ev[ev.in_atlas.eq(True)]
+        filas.append({
+            "network_id": int(network_id),
+            "pairs_total": int(red.n_edges.sum()),
+            "pairs_evaluable": int(ev.pairs_evaluable.sum()),
+            "atlas_pairs_total": int(red[red.in_atlas].n_edges.sum()),
+            "atlas_pairs_evaluable": int(en_atlas.pairs_evaluable.sum()),
+            "genomes_validable": int(ev.genome_id.nunique()),
+            "atlas_genomes_validable": int(en_atlas.genome_id.nunique()),
+        })
+    return {"genomes_total": int(redes.genome_id.nunique()),
+            "genomes_atlas": int(redes[redes.in_atlas].genome_id.nunique()), "rows": filas}
+
+
 @router.get("/curve")
 def curve(
     gold: Gold = "regprecise",
@@ -110,6 +135,8 @@ def genomes(
 ):
     """Per-genome TP/FP/FN, precision and recall for one network and mode."""
     df = _filter(_table(gold, "by_genome.tsv"), network_id=network_id, mode=mode)
+    if df.empty:
+        raise HTTPException(status_code=404, detail=f"Network {network_id} has no validation results in {gold}.")
     if accession:
         df = df[df["accession"] == accession]
         if df.empty:

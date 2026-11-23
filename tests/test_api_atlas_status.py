@@ -14,7 +14,8 @@ from src.atlas_status import pipeline_status
 
 client = TestClient(app)
 STEP_IDS = ["cache-atlas", "cache-genes", "cache-fimo",
-            "validation", "metrics", "comparison", "robustness", "baseline"]
+            "validation", "metrics", "comparison", "robustness", "baseline",
+            "regulondb", "regulondb-strong", "validation-ci", "comparison-adjusted", "reliability", "validation-mvp"]
 HAS_RESULTS = all(Path(p).exists() for p in [
     "data/cache/atlas/manifest.json", "data/results/metrics/manifest.json",
     "data/results/validation/regprecise/manifest.json"])
@@ -103,6 +104,14 @@ def test_detects_dirty_tree_and_missing_files(tmp_path):
     assert s["files_missing"] == ["a.tsv"]
     assert any("git_dirty" in i for i in s["issues"])
     assert any(i.startswith("Missing files") for i in s["issues"])
+
+
+def test_detects_intervals_built_from_old_validation(tmp_path):
+    _fake_atlas(tmp_path)
+    _write(tmp_path, "data/results/validation_ci", {"created_at": "2026-10-20T00:00:00+00:00", "git_commit": "ci1",
+                                                     "git_dirty": False, "validation_commit": "old", "files": []})
+    s = _steps(tmp_path)["validation-ci"]
+    assert s["up_to_date"] is False and s["status"] == "warning"
 
 
 def test_missing_manifests(tmp_path):
