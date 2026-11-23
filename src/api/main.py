@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.config import get_settings
-from src.api.routers import system, genomes, motifs, atlas, atlas_validation, atlas_metrics, atlas_comparison, atlas_robustness, atlas_baseline, atlas_status
+from src.api.routers import system, genomes, motifs, atlas, atlas_validation, atlas_metrics, atlas_comparison, atlas_robustness, atlas_baseline, atlas_status, atlas_extensions
 
 settings = get_settings()
 
@@ -30,6 +30,7 @@ app.include_router(atlas_comparison.router, prefix="/api/v1")
 app.include_router(atlas_robustness.router, prefix="/api/v1")
 app.include_router(atlas_baseline.router, prefix="/api/v1")
 app.include_router(atlas_status.router, prefix="/api/v1")
+app.include_router(atlas_extensions.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
