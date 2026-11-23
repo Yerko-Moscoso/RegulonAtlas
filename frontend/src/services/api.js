@@ -86,6 +86,26 @@ export const api = {
 
   getAtlasBaselineReproduction: () => apiClient.get('/atlas/baseline/reproduction'),
 
+  // === AMPLIACIONES DE LA V1.0 (make extensions; excepciones E1-E7 del congelamiento) ===
+  getValidationCI: (scheme = 'family', mode) =>
+    apiClient.get('/atlas/extensions/validation-ci', { params: { scheme, mode } }),
+
+  getF1Differences: (scheme = 'family', mode) =>
+    apiClient.get('/atlas/extensions/f1-differences', { params: { scheme, mode } }),
+
+  getMvpPoints: (mode = 'all') => apiClient.get('/atlas/extensions/mvp-points', { params: { mode } }),
+
+  getAdjustedTaxa: (networkId, level, metric) =>
+    apiClient.get('/atlas/extensions/adjusted/taxa', { params: { network_id: networkId, level, metric } }),
+
+  getAdjustedTests: (networkId, level, metric) =>
+    apiClient.get('/atlas/extensions/adjusted/tests', { params: { network_id: networkId, level, metric } }),
+
+  getReliability: (accession, networkId) =>
+    apiClient.get('/atlas/extensions/reliability', { params: { accession, network_id: networkId } }),
+
+  getReliabilityCalibration: () => apiClient.get('/atlas/extensions/reliability/calibration'),
+
   // === SISTEMA ===
   getHealth: () => {
     return apiClient.get('/health');

@@ -15,6 +15,8 @@ import ScrollX from "../components/ScrollX";
 import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
 import OrganismSearch from "../components/OrganismSearch";
+import CoverageNote from "../components/CoverageNote";
+import ReliabilityCard from "../components/ReliabilityCard";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
 
@@ -285,6 +287,9 @@ export default function Fingerprints({ initialOrganism }) {
           })}
         </div>
       )}
+
+      {!loading && current && <CoverageNote networkId={networkId} />}
+      {!loading && current && <ReliabilityCard accession={current.accession} networkId={networkId} networks={networks} />}
 
       {!loading && (current || familyRows.length > 0) && (
         <>

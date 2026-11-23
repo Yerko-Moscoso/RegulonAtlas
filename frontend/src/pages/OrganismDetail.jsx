@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Loader2, Network, BarChart3, FingerprintPattern, ShieldCheck } from "lucide-react";
 import { api } from "../services/api";
 import { DEFAULT_GENOME, fmtInt } from "../utils/atlas";
+import ReliabilityCard from "../components/ReliabilityCard";
 
 // Ficha de un genoma del atlas: catálogo (data/cache/atlas/genomes), métricas propias en las 5 redes
 // (make metrics-atlas) y validación contra RegPrecise si tiene regulones curados (make validate-atlas).
@@ -179,6 +180,8 @@ export default function OrganismDetail({ navigate, organismId }) {
                 </p>
               )}
             </div>
+
+            <ReliabilityCard accession={genome.accession} networks={networks} />
           </>
         )
       )}

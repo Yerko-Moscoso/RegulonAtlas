@@ -4,6 +4,7 @@ import { Loader2, Info, ArrowUp, ArrowDown } from "lucide-react";
 import { api } from "../services/api";
 import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
+import CoverageNote from "../components/CoverageNote";
 import OrganismSearch from "../components/OrganismSearch";
 import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, parseBenchmark, selectClass } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
@@ -313,6 +314,8 @@ export default function Metrics({ initialOrganism }) {
         </p>
       </div>
 
+      <CoverageNote networkId={networkId} />
+
       {error && (
         <div className="bg-[#FEF0F0] border border-[#F8BFBF] text-[#D96C6C] text-sm rounded-lg px-4 py-2.5">{error}</div>
       )}
@@ -395,7 +398,7 @@ export default function Metrics({ initialOrganism }) {
             <div className="mt-4 pt-3 border-t border-[#F0F4F8]">
               <p className="text-[11px] text-[#94A3B8] mb-2">
                 Lower bound: TF → TF edges need the gene of each TF, which can only be located by gene name. This works
-                for a minority of TFs in most genomes, so these values are not comparable between genomes.
+                for a minority of TFs (median about 18% in balanced), so these values are not comparable between genomes.
               </p>
               <dl className="grid grid-cols-3 gap-x-8 gap-y-2.5">
                 {LOWER_BOUND_METRICS.map((m) => (

@@ -6,6 +6,8 @@ import { Loader2, Info } from "lucide-react";
 import { api } from "../services/api";
 import { clickable, FOCUS_RING } from "../utils/a11y";
 import NetworkSelector from "../components/NetworkSelector";
+import AdjustedTaxa from "../components/AdjustedTaxa";
+import CoverageNote from "../components/CoverageNote";
 import { DEFAULT_NETWORK, fmtInt, selectClass } from "../utils/atlas";
 import { METRIC_LABELS } from "../utils/metrics";
 
@@ -211,6 +213,8 @@ export default function Comparison() {
         </label>
       </div>
 
+      <CoverageNote networkId={networkId} />
+
       {/* Resumen de concordancia */}
       {!loading && comparable.length > 0 && (
         <div className="bg-[#F0F7FB] border border-[#CFE3EF] rounded-lg px-4 py-3 text-xs text-[#334155] flex gap-2">
@@ -300,6 +304,8 @@ export default function Comparison() {
           !loading && <div className="text-sm text-[#94A3B8] py-10 text-center">No taxa with at least 5 genomes.</div>
         )}
       </div>
+
+      <AdjustedTaxa networkId={networkId} level={level} metric={metric} metricLabel={info.label} />
 
       {/* Concordancia por métrica */}
       <div className="bg-white rounded-xl border border-[#D9E2E7] shadow-sm p-5">

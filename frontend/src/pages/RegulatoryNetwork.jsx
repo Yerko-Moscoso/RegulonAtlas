@@ -5,6 +5,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 import { Search, X, Info, Loader2 } from "lucide-react";
 import { api } from "../services/api";
 import NetworkSelector from "../components/NetworkSelector";
+import CoverageNote from "../components/CoverageNote";
 
 cytoscape.use(fcose);
 
@@ -560,6 +561,8 @@ export default function RegulatoryNetwork({ initialOrganism }) {
           Predicted transcription factor → target operon interactions from the RegulonAtlas database.
         </p>
       </div>
+
+      <CoverageNote networkId={networkId} />
 
       <div className="bg-white border border-[#D9E2E7] rounded-xl p-3 flex flex-wrap items-end gap-4 shadow-sm">
         <NetworkSelector networks={networks} value={networkId} onChange={setNetworkId} />
