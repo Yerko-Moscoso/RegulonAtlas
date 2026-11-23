@@ -127,7 +127,8 @@ Los filtros externos superan al MVP con todas las aristas, pero **sin autoevalua
 
 ## 7. E7: avisos de cobertura
 
-`CoverageNote.jsx` indica qué parte de la red elegida se puede comprobar contra regulones curados (9,7 % en `balanced`). En Metrics,
+`CoverageNote.jsx` indica qué parte de la red elegida se puede comprobar contra regulones curados (en `balanced`, 9,7 % en los 2.644 genomas y 1,8 % en
+los 2.224 del atlas; separación agregada en la excepción E12). En Metrics,
 la nota de las métricas jerárquicas ahora dice que el gen del TF se ubica en cerca del 18 % de los casos (mediana, `balanced`).
 
 ## 8. Verificación

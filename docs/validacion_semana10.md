@@ -69,6 +69,11 @@ El código del pipeline externo no está disponible (sección 6 del contexto). L
 | permissive | 1.245.159 | 47.245 (3,8 %) | 0,342 | 0,434 | 0,383 |
 | no-footprint | 107.754 | 19.196 (17,8 %) | 0,601 | 0,309 | 0,408 |
 
+La columna "Evaluables" usa los pares de los **2.644 genomas**, incluidos los 420 auxiliares. Solo en los **2.224 genomas del atlas**, la
+cobertura es 3,1 % en `validated`, 3,8 % en `high-precision`, **1,8 % en `balanced`** (2.960 de 166.646 pares), 0,7 % en `permissive` y
+2,7 % en `no-footprint`. Solo **57 de los 312 genomas validables** pertenecen al atlas, así que P, R y F1 provienen principalmente de
+genomas auxiliares. *(Aclaración del 23-11-2026; los resultados no cambiaron.)*
+
 ### 6.2 Las cuatro combinaciones (F1)
 
 | Red | `all` / `genome_tf` | `all` / `genome` | `independent` / `genome_tf` | `independent` / `genome` |
@@ -114,7 +119,8 @@ El desglose completo de todas las redes y modos está en `by_tier.tsv` y `by_ori
 
 ## 8. Limitaciones
 
-- La validación describe solo la fracción evaluable de cada red: 9,7 % de los pares en `balanced` y 3,8 % en `permissive`.
+- La validación describe solo la fracción evaluable de cada red: en `balanced`, 9,7 % de los pares de los 2.644 genomas y 1,8 % de los
+  pares de los 2.224 genomas del atlas; en `permissive`, 3,8 % y 0,7 %. Solo 57 de los 312 genomas validables pertenecen al atlas.
 - El 28 % del gold standard se pierde al mapear genomas y locus.
 - RegPrecise es incompleto: un "falso positivo" puede ser una interacción real no curada.
 - Los motivos de PRODORIC no se marcan como circulares, aunque algunos provienen de organismos que también están en RegPrecise.

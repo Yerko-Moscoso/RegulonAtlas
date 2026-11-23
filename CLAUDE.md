@@ -37,14 +37,16 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - **Explorar antes de construir**: un script en `scripts/explore_*.py` fija las decisiones antes del módulo final.
 - Componentes nuevos: replicar el patrón de un archivo que ya funciona (`useState`/`useEffect`, `Loader2`,
   errores en rojo, `NetworkSelector`, `OrganismSearch`, `utils/atlas.js`).
-- Texto visible del dashboard y mensajes de error de la API en **inglés**. Documentación y comentarios en **español**.
+- Texto base del dashboard y mensajes de error de la API en **inglés**. Documentación y comentarios en **español**. Todo texto
+  visible nuevo se traduce en `frontend/src/i18n/es.js`, y el del Excel en `src/api/export_i18n.py`. No se traducen datos ni
+  identificadores (organismos, TF, genes, redes, tiers, motivos, comandos).
 - No versionar datos generados (`data/cache/`, `data/results/`, `data/audit/*.tsv`). Excepción: `data/cache/mvp/` (lo usa `make mvp`).
 - `legacy/` es código histórico: no se importa ni se modifica salvo para consultarlo (ver `legacy/README.md`).
 - Nombres visibles de las métricas en el frontend: `frontend/src/utils/metrics.js` (`METRIC_LABELS`).
 - Commits y push solo en `dev`. **No fusionar ni subir nada a `main`** hasta que el usuario lo indique (decisión del
   26-10-2026; `main` quedó en la semana 11, `f2d5df3`). Cuando lo indique, la fusión va con una etiqueta (`semanaNN-tema`).
 - **Antes de cada commit**: `make check` (la API importa, sin `get_db` en `src/api`, el frontend compila y pasan
-  las pruebas de `tests/`). El hook `pre-commit` (`make hooks`, una vez por clon) revisa el **índice**, no la copia
+  las pruebas de `tests/` y de interfaz en `frontend/tests/ui/`, con los puertos 18000 y 15173). El hook `pre-commit` (`make hooks`, una vez por clon) revisa el **índice**, no la copia
   de trabajo. No usar `--no-verify` sin avisar.
 - **Resultados trazables**: `make metrics-atlas` y `make validate-atlas` se ejecutan con el árbol limpio (todo
   con commit). Si `manifest.json` trae `git_dirty: true`, se repite el cálculo después del commit.
@@ -81,7 +83,8 @@ make robustness-atlas # robustez: entre redes + submuestreo -> data/results/robu
 make cache-fimo       # fimo_hits + transfer_map de los 312 genomas validables (MariaDB, solo SELECT)
 make baseline-atlas   # línea base del pipeline propio (red de prueba) -> data/results/baseline/
 make extensions       # ampliaciones E1-E7 (fuera de make all; RegulonDB: antes make regulondb). docs/ampliaciones_semana14.md
-make check            # verificaciones previas al commit (API, frontend, ESLint) + pytest
+make check            # verificaciones previas al commit (API, frontend, ESLint) + pytest + interfaz
+make test-ui          # solo pruebas de interfaz (Playwright)
 make all              # todo el análisis del atlas en orden (= make atlas; ~15 min, usar nohup). El MVP: make mvp
 make help             # lista de comandos; make web = frontend
 make hooks            # activa scripts/githooks/pre-commit (una vez por clon)

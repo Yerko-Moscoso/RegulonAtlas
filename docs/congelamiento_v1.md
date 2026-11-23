@@ -25,7 +25,11 @@ excepción (sección 4).
 | Todo el análisis en orden, con revisión previa | `make all` (= `make atlas`, con `make atlas-ready`) | Los cinco anteriores | `sistema_semana13.md` (6), prueba de reproducibilidad |
 | MVP de 8 genomas (congelado en su etiqueta `mvp-semana8`) | `make mvp` | `data/results/mvp/` | `evidencia_mvp/pruebas_aceptacion_mvp.md` |
 
-### 2.2 API (FastAPI, solo lectura; 35 rutas GET)
+### 2.2 API (FastAPI, sin escritura; 35 rutas GET al congelar, 46 rutas en la v1.0)
+
+Con las excepciones de la sección 5, la API tiene **46 rutas: 44 GET y 2 POST**. Los POST (`/atlas/export/organism/{accession}` y
+`/atlas/export/network/{network_id}/{accession}`) solo reciben las imágenes dibujadas en el navegador para armar el Excel: no
+guardan nada ni consultan MariaDB. La tabla siguiente conserva los grupos del congelamiento.
 
 | Grupo | Rutas | Qué sirve |
 |---|---|---|
@@ -45,7 +49,8 @@ La API nunca consulta MariaDB. Sin resultados responde 503 con el comando `make`
 
 Dashboard, Organisms (con la ficha OrganismDetail), Regulatory Networks, Metrics, Fingerprints, Taxon Comparison,
 Robustness, Validation (con la línea base) y, en SYSTEM, Pipeline y Data Provenance. Qué responde cada una: `README.md`,
-"Vistas del dashboard".
+"Vistas del dashboard". Desde las excepciones E9 y E10, Organisms y Regulatory Networks descargan un Excel, y todo el dashboard
+y el Excel se pueden usar en inglés o español.
 
 ### 2.4 Calidad
 
@@ -56,6 +61,10 @@ Robustness, Validation (con la línea base) y, en SYSTEM, Pipeline y Data Proven
 | ESLint | 0 errores; 18 advertencias del React Compiler aceptadas (`revision_semana13.md`, sección 4) |
 | Reproducibilidad | `make all` desde un clon limpio reproduce byte a byte los 20 archivos de resultados |
 | Trazabilidad | Cada resultado con `manifest.json` (commit y `git_dirty: false`), visible en Data Provenance |
+
+Estado de calidad de la v1.0, con las excepciones: **173 pruebas de API y unitarias y 8 de interfaz** en `make check`; ESLint con 0
+errores y 22 advertencias; `npm audit` sin vulnerabilidades (23-11-2026); 11 resultados y 3 cachés en Pipeline, sin advertencias.
+Tres resultados (comparación ajustada, precisión esperada y MVP) registran su commit, pero no la versión de su entrada.
 
 ## 3. Qué queda fuera explícitamente
 
@@ -91,6 +100,10 @@ Robustness, Validation (con la línea base) y, en SYSTEM, Pipeline y Data Proven
 | 23-11-2026 | E6. Red del MVP frente a las redes del atlas | Pendiente desde la semana 10 | Estudiante, 23-11-2026 (punto 7) | `a14b0ea`, `400764d` |
 | 23-11-2026 | E7. Avisos de cobertura junto a las cifras | Evitar leer las cifras como cobertura total | Estudiante, 23-11-2026 (punto 8) | `400764d` |
 | 23-11-2026 | E8. Solo información explícita: se quitan las referencias a una decisión externa sin registro disponible | Que quien replique el proyecto no dependa de un documento inaccesible. No cambia ningún resultado propio | Estudiante, 23-11-2026 | `9892032`, `147fea2` |
+| 23-11-2026 | E9. Reporte Excel por organismo (5 redes) y por red, con las imágenes del dashboard | Descargar la información y la red de un organismo | Estudiante, 23-11-2026 | `b5a0fd9`, `9ea6dbc` |
+| 23-11-2026 | E10. Botón de idioma inglés/español en el dashboard y Excel en el idioma activo | Usar el sistema en ambos idiomas, sin traducir datos ni identificadores | Estudiante, 23-11-2026 | `b5a0fd9`, `9ea6dbc` |
+| 23-11-2026 | E11. Pruebas de interfaz con Playwright en `make check` | Comprobar las vistas reales en un navegador | Estudiante, 23-11-2026 | `942eb3b`, `bd924be` |
+| 23-11-2026 | E12. Repaso general: cobertura separada entre todos los genomas y el atlas, trazabilidad de E1–E6 y correcciones visibles | No presentar la cobertura de todos los genomas como cobertura del atlas | Estudiante, 23-11-2026 | `c031735`, `9ea6dbc` |
 
 Detalle y resultados de E1 a E7: `ampliaciones_semana14.md`. No forman parte de `make all` (`make extensions`).
 
@@ -100,7 +113,8 @@ Detalle y resultados de E1 a E7: `ampliaciones_semana14.md`. No forman parte de 
   tabla `provenance`.
 - `network_metrics` no se reproduce desde `edges`. Las notas de `networks.params.source` traen valores P/R/F1 cuya definición no se puede verificar: no se usan ni se muestran.
 - 28 % de las filas curadas de RegPrecise no se pueden usar (sin genoma o sin locus) y solo una fracción de cada red es
-  evaluable (por ejemplo, 9,7 % de los pares de `balanced`).
+  evaluable (por ejemplo, en `balanced`, 9,7 % de los pares de los 2.644 genomas y 1,8 % de los pares de los 2.224 genomas del
+  atlas). Solo 57 de los 312 genomas validables pertenecen al atlas: P, R y F1 provienen principalmente de genomas auxiliares.
 - Versión de RegPrecise por confirmar (3.0 en `provenance`, 3.2 en el MVP; P7).
 - Las exportaciones de la caché registran fecha y filas, pero no el commit del script.
 - Reproducibilidad probada desde la caché, en el mismo servidor y entorno; crear el entorno desde cero (`conda env

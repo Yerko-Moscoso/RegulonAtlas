@@ -20,8 +20,8 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 
 | Documento | Qué contiene | Actualizado |
 |---|---|---|
-| [`contexto_regulonatlas.md`](contexto_regulonatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (del investigador y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 09-11-2026 |
-| [`congelamiento_v1.md`](congelamiento_v1.md) | Congelamiento de funciones de la v1.0: lista cerrada de análisis, API (35 rutas), 10 vistas y calidad; lo que queda fuera; reglas después del congelamiento; registro de excepciones y limitaciones | 29-10-2026 |
+| [`contexto_regulonatlas.md`](contexto_regulonatlas.md) | Documento maestro: proyecto, infraestructura, datos, esquema de la base, redes externas, decisiones (del investigador y semanales), historia semana a semana (hasta la 12, con su cierre en 12.2), arquitectura, plan, cómo presentarlo en el informe, pendientes, lecciones y comandos | 23-11-2026 |
+| [`congelamiento_v1.md`](congelamiento_v1.md) | Congelamiento de funciones de la v1.0: lista cerrada de análisis, API (35 rutas al congelar, 46 en la v1.0), 10 vistas y calidad; lo que queda fuera; reglas después del congelamiento; registro de excepciones E1–E12 y limitaciones | 23-11-2026 |
 | [`bitacora_claude_code.md`](bitacora_claude_code.md) | Bitácora completa del trabajo con Claude Code (15-10 al 04-11-2026, semanas 11 a 13): decisiones, cambios, errores y correcciones, con sus commits. Base para el documento de memoria | 04-11-2026 |
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
 | [`evidencia_instalacion/prueba_desde_cero.md`](evidencia_instalacion/prueba_desde_cero.md) | Prueba desde cero (semana 14): clon de `congelamiento-v1`, entorno nuevo desde `environment.yml`, comparación con los resultados del dashboard (20/20 con los mismos valores) y 109 casos de prueba (108 aprobados). El Excel `casos_de_prueba_v1.xlsx` y la evidencia quedan solo en el servidor | 04-11-2026 |
@@ -74,6 +74,18 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 23-11-2026: semana 14, cierre previo a la v1.0 (E9–E12)
+
+- **E9, Excel:** descarga desde Organisms (5 redes) y Regulatory Networks, con las imágenes del dashboard. `b5a0fd9`, `9ea6dbc`.
+- **E10, idioma:** botón inglés/español en el menú; el Excel sale en el idioma activo; no se traducen datos ni identificadores.
+  `frontend/src/i18n/` y `src/api/export_i18n.py`. `b5a0fd9`, `9ea6dbc`.
+- **E11, interfaz:** 8 pruebas con Playwright dentro de `make check` (`scripts/check_ui.sh`, puertos 18000 y 15173). `942eb3b`, `bd924be`.
+- **E12, repaso general:** cobertura separada (`balanced`: 9,7 % en todos los genomas y 1,8 % en el atlas; 57 de 312 genomas validables
+  en el atlas), encuadre de la red, leyenda fuera del dibujo, Data Provenance sin códigos de decisión, "Pairs used", trazabilidad de
+  E1–E6, título y logo de RegulonAtlas, accesibilidad y 404 en validación. `c031735`, `9ea6dbc`.
+- Frontend `regulonatlas` 1.0.0, con `axios`, `vite`, `follow-redirects` y `source-map-js` actualizados: `npm audit` sin vulnerabilidades.
+  `942eb3b`. No se recalculó ningún resultado. **173 pruebas de API y unitarias y 8 de interfaz.** → `congelamiento_v1.md`, secciones 2, 5 y 6.
 
 ### 23-11-2026: semana 14, solo información explícita (E8)
 

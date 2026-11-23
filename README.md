@@ -32,6 +32,7 @@ entre taxones, mide la robustez de las métricas y las muestra en un dashboard w
 conda env create -f environment.yml      # entorno "bioinfo"
 conda activate bioinfo
 cd frontend && npm ci && cd ..           # instala exactamente lo de package-lock.json, sin modificarlo
+(cd frontend && npx playwright install chromium)  # navegador de las pruebas de interfaz de make check
 cp .env.example .env                      # credenciales de MariaDB (solo para regenerar la caché)
 make hooks                                # una vez por clon: verificación antes de cada commit
 ```
@@ -47,7 +48,8 @@ make help                 # lista de comandos
 make api                  # backend en http://localhost:8000 (documentación en /docs)
 make web                  # frontend en http://localhost:5173
 make extensions  # ampliaciones E1-E7, fuera de make all (antes: make regulondb). Ver docs/ampliaciones_semana14.md
-make check                # antes de cada commit: API, frontend, ESLint y pytest
+make check                # antes de cada commit: API, frontend, ESLint, pytest e interfaz
+make test-ui              # solo las pruebas de interfaz (Playwright, puertos 18000 y 15173)
 ```
 
 Los datos no se versionan. Para regenerarlos desde la base (el usuario solo tiene permiso SELECT):
@@ -75,6 +77,10 @@ los cálculos se ejecutan con el árbol limpio).
 | Validation | Precisión y recall de las 5 redes contra RegPrecise, desgloses y la línea base del pipeline propio |
 | Pipeline | El flujo de punta a punta, quién hizo cada parte y el estado de cada etapa |
 | Data Provenance | Fuentes, exportaciones a la caché y el commit que generó cada resultado |
+
+Desde la ficha de Organisms se descarga un Excel con la información del genoma y sus 5 redes; desde Regulatory Networks, un Excel
+con la red elegida. Ambos incluyen las imágenes del dashboard. El botón inferior del menú cambia el dashboard y el Excel entre
+inglés y español; los datos e identificadores no se traducen.
 
 ## Resultados principales
 

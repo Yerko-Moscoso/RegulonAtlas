@@ -332,7 +332,9 @@ Detalle completo en `docs/validacion_semana10.md`.
 - **La circularidad infla el recall:** en modo `independent` el recall cae entre 24 % y 79 % (`balanced` de 0,332 a 0,219; `validated` de 0,220 a 0,089), mientras la precisión baja como mucho 0,11.
 - **`balanced` es la mejor red** en 3 de las 4 combinaciones de modo y universo.
 - **La precisión cae con la distancia taxonómica** del motivo transferido: en `permissive`, de 0,74 (`within_family`) a 0,05 (`cross_phylum`).
-- **Solo una fracción de cada red es evaluable:** 9,7 % de los pares en `balanced`, 3,8 % en `permissive`.
+- **Solo una fracción de cada red es evaluable:** 9,7 % de los pares en `balanced` y 3,8 % en `permissive`, contando los 2.644 genomas.
+  Solo en los 2.224 genomas del atlas son **1,8 %** y **0,7 %**, y solo 57 de los 312 genomas validables pertenecen al atlas: P, R y F1
+  provienen principalmente de genomas auxiliares (aclaración del 23-11-2026; los resultados no cambiaron).
 
 ### 10.4 API y vista de validación
 
