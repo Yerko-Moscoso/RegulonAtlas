@@ -50,11 +50,11 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
 
 | Commit | Cambio |
 |---|---|
-| `73c7a34` | Arreglo del import en `main.py`. Es un commit nuevo encima, sin reescribir el historial, porque `06e5140` ya estaba publicado. |
-| `a1b5dfc` | El genoma de reemplazo vuelve al atlas: se compara la primera palabra de `selection` y se agrega `isAtlasSelection()` en el frontend. Los manifiestos registran `git_dirty`. |
-| `ceeb831` | `scripts/check_commit.sh`, un hook `pre-commit` versionado (`make hooks`), `make check` y las primeras pruebas de la API. Revisa el **índice**, no la copia de trabajo, y se comprobó que habría bloqueado `06e5140`. Se instalaron `pytest` y `httpx` en `bioinfo`. |
-| (sin commit) | Se repitió `make metrics-atlas` con el árbol limpio: manifiesto en `ceeb831`, `git_dirty: false`. |
-| `9801b4f` | `docs/correcciones_semana11.md` (C1 a C6) y `docs/preguntas_pendientes.md` (P1 a P4). |
+| `b79dbe6` | Arreglo del import en `main.py`. Es un commit nuevo encima, sin reescribir el historial, porque `06e5140` ya estaba publicado. |
+| `4ad2652` | El genoma de reemplazo vuelve al atlas: se compara la primera palabra de `selection` y se agrega `isAtlasSelection()` en el frontend. Los manifiestos registran `git_dirty`. |
+| `d14814e` | `scripts/check_commit.sh`, un hook `pre-commit` versionado (`make hooks`), `make check` y las primeras pruebas de la API. Revisa el **índice**, no la copia de trabajo, y se comprobó que habría bloqueado `06e5140`. Se instalaron `pytest` y `httpx` en `bioinfo`. |
+| (sin commit) | Se repitió `make metrics-atlas` con el árbol limpio: manifiesto en `d14814e`, `git_dirty: false`. |
+| `2352b3b` | `docs/correcciones_semana11.md` (C1 a C6) y `docs/preguntas_pendientes.md` (P1 a P4). |
 
 - Se eliminó `docs/Claude.md`, idéntico a `CLAUDE.md` (comprobado con `cmp`).
 - **Hallazgos:**
@@ -66,18 +66,18 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
 
 ## 3. Contexto y comparación entre taxones (19-10)
 
-- **`f46562d`:** el usuario agregó `docs/contexto_regulonatlas.md`. Se señaló lo que estaba desactualizado:
+- **`33c0162`:** el usuario agregó `docs/contexto_regulonatlas.md`. Se señaló lo que estaba desactualizado:
   Fingerprints con 919 aristas, la falta de una sección de la semana 11 y la arquitectura.
 - **Decisión del usuario:** para Comparison, elegir la opción que diera resultados "más cercanos o iguales" a los del
   pipeline externo. Se eligió la **comparación por taxón (opción A)**, porque es la única que tiene equivalente externo.
   PCA y clusters no tienen con qué compararse.
 - **`scripts/explore_comparison.py`** fijó las decisiones: mínimo de 5 genomas por taxón, las 11 métricas con
   equivalente externo y Spearman de las medianas por taxón como medida de concordancia.
-- **`3ce0f17`:**
+- **`2287c0f`:**
   - `src/networks/atlas_comparison.py` (`make comparison-atlas`), la API `/atlas/comparison/*` y `Comparison.jsx`
     reescrita. La versión anterior llamaba a `getOrganismProjection` y `getRegulatoryClusters`, que no existían.
   - **Hallazgo:** Fingerprints y Comparison no estaban en el menú. Se agregaron.
-- **`63469d5`:** `docs/metricas_semana11.md`, y actualización del contexto y de las preguntas pendientes.
+- **`6fb7f0a`:** `docs/metricas_semana11.md`, y actualización del contexto y de las preguntas pendientes.
 - **Resultados:**
   - `n_targets`, `n_edges`, `max_out_degree` y `n_tf` ordenan los taxones igual que la tabla externa (ρ ≥ 0,936 en
     `balanced`).
@@ -91,15 +91,15 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
 ## 4. Cierre de pendientes de la semana 11 (19-10)
 
 - **Validación repetida** con el árbol limpio. El resultado fue **idéntico** al de la semana 10 (diferencia 0,0) y el
-  manifiesto quedó en `63469d5`. Se agregó `tests/test_api_atlas_validation.py`.
+  manifiesto quedó en `6fb7f0a`. Se agregó `tests/test_api_atlas_validation.py`.
 - **Hipótesis del origen de los motivos** (`scripts/explore_motif_origin.py`):
   - se ubicó en GTDB el origen del 98–100 % de los motivos;
   - en `balanced`, el tamaño del genoma más la oferta de motivos cercanos explican el **88 % del efecto del filo**;
   - Comparison.jsx ahora lo advierte.
 - **Mensajes** al investigador y al profesor: listos en `preguntas_pendientes.md`, pendientes de que el usuario los envíe.
 - **Decisión del usuario:** tener un lugar único para la documentación. Se creó **`docs/README.md`** (índice y bitácora).
-- **Commits:** `90a3f23`, `df454c6` y `f2d5df3`.
-- **Cierre de la semana 11:** fast-forward de `main` hasta `f2d5df3` y etiqueta `semana11-metricas`. Con eso `main`
+- **Commits:** `8860fd3`, `5b80cab` y `a0f974a`.
+- **Cierre de la semana 11:** fast-forward de `main` hasta `a0f974a` y etiqueta `semana11-metricas`. Con eso `main`
   incluye también las semanas 9 y 10. Se detectó que `semana10-sweep` apuntaba al MVP.
 
 ---
@@ -109,7 +109,7 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
 - **Decisión:** hacer los dos análisis.
   - **A. Entre redes**, que era lo que decía el plan.
   - **B. Submuestreo de aristas**, que era lo que proponía el prototipo de Robustness.jsx.
-- **`e304236`:** `scripts/explore_robustness.py`, `src/networks/atlas_robustness.py` (24 procesos, semilla por genoma),
+- **`9febf65`:** `scripts/explore_robustness.py`, `src/networks/atlas_robustness.py` (24 procesos, semilla por genoma),
   la API `/atlas/robustness/*`, `Robustness.jsx` reescrita y en el menú, y las pruebas.
 - **Resultados:**
   - Las redes están **anidadas** (high-precision ⊂ validated ⊂ balanced ⊂ permissive).
@@ -117,12 +117,12 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
   - Las métricas de tamaño resisten perder el 50 % de las aristas (ρ ≥ 0,98); las de estructura no.
 - **Errores y su corrección:**
   1. `n_edges` solo estaba marcada como "trivial" en dos de las tres estrategias, así que con `low_confidence` contaba
-     como robusta. Se corrigió en **`38222a8`** y se agregó una prueba.
+     como robusta. Se corrigió en **`3820f6c`** y se agregó una prueba.
   2. Una nueva ejecución arrancó con documentos modificados (`git_dirty: true`). El bucle de espera había leído el
      **log viejo** y los archivos guardados con `stash` se recuperaron demasiado pronto. Se detuvo y se repitió con
-     `stash` durante todo el cálculo. Resultado final: `38222a8`, `git_dirty: false`.
+     `stash` durante todo el cálculo. Resultado final: `3820f6c`, `git_dirty: false`.
   3. Un `pkill` coincidió con su propio comando y cortó la terminal. No se perdió nada.
-- **`eaf4acd`:** `docs/robustez_semana12.md`. Al agregar la sección de la semana 12, el contexto se renumeró
+- **`e6cc277`:** `docs/robustez_semana12.md`. Al agregar la sección de la semana 12, el contexto se renumeró
   (secciones 12 a 18).
 
 ---
@@ -135,14 +135,14 @@ El usuario pidió aplicar los cambios y arreglar los commits "para que no tengam
 - **Hallazgo:** `transfer_map` solo contiene pares elegibles y **todos** los hits están dentro. Eso corrigió una
   afirmación del contexto (sección 4.5). La variante "solo elegibles" daba lo mismo que la otra, así que se eliminó y
   se agregó `order_ceiling`.
-- **`7bb4940`:** módulo `atlas_baseline.py`, API `/atlas/baseline/*`, una sección en Validation.jsx y pruebas.
+- **`15ff15e`:** módulo `atlas_baseline.py`, API `/atlas/baseline/*`, una sección en Validation.jsx y pruebas.
 - **Hallazgos clave:**
   - **El pipeline externo es umbral de p + techo de tier + footprinting.** `no-footprint` se reproduce exactamente
     (Jaccard 1,0) y las otras redes están 100 % contenidas en su línea base.
   - El footprinting **duplica la precisión** de `balanced` (0,312 → 0,612).
   - Sin autoevaluación, la ventaja de las redes externas crece.
-- **`2df83a7`:** documentación. La sección se renombró como "análisis C" porque chocaba con "B" (submuestreo).
-- **Ampliación** (`251811b` y `3802d6e`), después de que el usuario pidió explicar la reconstrucción:
+- **`1bb3cec`:** documentación. La sección se renombró como "análisis C" porque chocaba con "B" (submuestreo).
+- **Ampliación** (`ba4e3ac` y `ea0813d`), después de que el usuario pidió explicar la reconstrucción:
   - la coincidencia también es exacta a nivel de **arista por motivo**, y `n_sites` coincide al 100 %;
   - `validated`, `high-precision` y `balanced` salen exactamente de su red "madre" aplicando el footprint mínimo;
   - `permissive` no se puede comprobar así;
@@ -171,18 +171,18 @@ Lo más importante que se encontró:
 
 El usuario aprobó aplicar todos los cambios.
 
-**Respaldo previo:** la rama `respaldo/pre-limpieza-semana12` y la etiqueta del mismo nombre, en `3802d6e`.
+**Respaldo previo:** la rama `respaldo/pre-limpieza-semana12` y la etiqueta del mismo nombre, en `ea0813d`.
 
 | Commit | Contenido |
 |---|---|
-| `1e3a35a` | `environment.yml` regenerado. **El primer intento falló** (`meme` choca con `icu`/`libxml2`); se corrigió con una sección pip, igual que en `bioinfo`, y `--dry-run` resolvió. También: se eliminaron los routers `/robustness` y `/graphs` y archivos sin uso; se actualizó `config.py` para Pydantic 2; se ordenó `.gitignore` (sigue ignorando lo mismo); se corrigió la frase sobre `environment.yml`. |
-| `3893d57` | `src/atlas_common.py` con las reglas comunes y 13 pruebas unitarias. **Verificado: los 20 archivos de resultados son idénticos.** |
-| `8978abd` | `legacy/` (ingesta y pipeline piloto, movidos con `git mv`) y `data/genomes/` fuera de git, sin borrarlo del disco. |
-| `e228f2f` | ESLint en `make check`. Las reglas del React Compiler quedan como advertencia, con su razón documentada. |
-| `9b2f4c4` | Dashboard, Organisms, OrganismDetail y Header con datos del atlas. Eliminados la API del MVP (`/metrics`, `results.py`) y `comparisonGenomes.js`. La API ya no depende de `src/pipeline`. |
-| `0a10f90` | `utils/metrics.js` (nombres únicos por métrica), carga diferida (1.278 → 254 kB) y Validation.jsx dividido (764 → 500 líneas). |
-| `1cec481` | Makefile con `make help`, `make atlas` y `make web`. |
-| `6d216bb` | `docs/limpieza_semana12.md`, README reescrito, contexto (12.1), `CLAUDE.md` e índice. |
+| `5ba1fd4` | `environment.yml` regenerado. **El primer intento falló** (`meme` choca con `icu`/`libxml2`); se corrigió con una sección pip, igual que en `bioinfo`, y `--dry-run` resolvió. También: se eliminaron los routers `/robustness` y `/graphs` y archivos sin uso; se actualizó `config.py` para Pydantic 2; se ordenó `.gitignore` (sigue ignorando lo mismo); se corrigió la frase sobre `environment.yml`. |
+| `fca1c9f` | `src/atlas_common.py` con las reglas comunes y 13 pruebas unitarias. **Verificado: los 20 archivos de resultados son idénticos.** |
+| `c59f1c4` | `legacy/` (ingesta y pipeline piloto, movidos con `git mv`) y `data/genomes/` fuera de git, sin borrarlo del disco. |
+| `43e3f96` | ESLint en `make check`. Las reglas del React Compiler quedan como advertencia, con su razón documentada. |
+| `36ac56c` | Dashboard, Organisms, OrganismDetail y Header con datos del atlas. Eliminados la API del MVP (`/metrics`, `results.py`) y `comparisonGenomes.js`. La API ya no depende de `src/pipeline`. |
+| `459f238` | `utils/metrics.js` (nombres únicos por métrica), carga diferida (1.278 → 254 kB) y Validation.jsx dividido (764 → 500 líneas). |
+| `b69b874` | Makefile con `make help`, `make atlas` y `make web`. |
+| `a9fa8cf` | `docs/limpieza_semana12.md`, README reescrito, contexto (12.1), `CLAUDE.md` e índice. |
 
 - **El hook bloqueó dos commits parciales** de la etapa 4: uno con un `git rm` sin el archivo que lo reemplazaba y otro
   sin la configuración nueva de ESLint. Se rehicieron en orden (por eso la 5 quedó antes que la 4).
@@ -219,14 +219,14 @@ El usuario aprobó aplicar todos los cambios.
 
 ## 10. Cierre de la semana 12 (26-10)
 
-- **Pruebas de aceptación del MVP** (`db6c33e`): CA1–CA6 sobre la etiqueta `mvp-semana8` desde un clon limpio, sin
+- **Pruebas de aceptación del MVP** (`9bb869a`): CA1–CA6 sobre la etiqueta `mvp-semana8` desde un clon limpio, sin
   modificar el código. 6 aprobadas (CA3 con observaciones). Se descubrió que la etiqueta apunta a `d056fc9`, no a
   `b628e54` como decía la bitácora del proyecto; se corrigió el texto, no la etiqueta.
 - **El usuario revisó un plan antes de ejecutar** y decidió, punto por punto:
   - la evidencia de las pruebas (capturas, registros, scripts) **no se sube a GitHub**; solo el registro formal;
   - **todo el desarrollo queda en `dev`**; nada a `main` hasta que él lo indique (regla en `CLAUDE.md`).
-- `ef15c4d`: cierre documentado. Verificado: los 5 manifiestos con `git_dirty: false`; los 32 endpoints responden.
-- `cd5fa71`: el usuario revisó las vistas en el navegador (todo funcionaba) y corrigió él mismo la línea 8 del `.env`
+- `84168ec`: cierre documentado. Verificado: los 5 manifiestos con `git_dirty: false`; los 32 endpoints responden.
+- `a69aed6`: el usuario revisó las vistas en el navegador (todo funcionaba) y corrigió él mismo la línea 8 del `.env`
   (un espacio). **Claude no leyó el archivo**, por la regla de credenciales.
 
 ---
@@ -237,9 +237,9 @@ El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data
 
 | Commit | Contenido |
 |---|---|
-| `65e9ace` | `scripts/explore_status.py` (exploración), `src/atlas_status.py` y `GET /api/v1/atlas/status`: 8 etapas (3 de caché, 5 de resultados) con commit, `git_dirty`, si el commit sigue en el historial, archivos y si cada resultado está al día con su entrada. 7 pruebas (53 en total) |
-| `fbce952` | `DataProvenance.jsx` reescrita con datos reales. El prototipo llamaba a endpoints inexistentes y listaba fuentes que el atlas no usa (KEGG, RegulonDB) |
-| `fd3f3a5` | `docs/sistema_semana13.md` |
+| `42c41de` | `scripts/explore_status.py` (exploración), `src/atlas_status.py` y `GET /api/v1/atlas/status`: 8 etapas (3 de caché, 5 de resultados) con commit, `git_dirty`, si el commit sigue en el historial, archivos y si cada resultado está al día con su entrada. 7 pruebas (53 en total) |
+| `2e44975` | `DataProvenance.jsx` reescrita con datos reales. El prototipo llamaba a endpoints inexistentes y listaba fuentes que el atlas no usa (KEGG, RegulonDB) |
+| `589ad50` | `docs/sistema_semana13.md` |
 
 - **Observación registrada, sin cambiar nada:** la base dice RegPrecise 3.0; el MVP decía 3.2 (luego pregunta P7).
 
@@ -250,20 +250,20 @@ El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data
 - El usuario preguntó si las vistas tenían relleno. Claude separó resultado principal, evidencia de apoyo y relleno, sin
   cambiar nada.
 - El usuario pidió **un respaldo y luego la corrección**, para poder volver atrás: rama y etiqueta
-  `respaldo-pre-presentacion-semana13` (`fd3f3a5`), subidas a GitHub.
-- Cuatro commits (`3edeff6` a `fd2abb1`): Validation y Robustness con el resultado
+  `respaldo-pre-presentacion-semana13` (`589ad50`), subidas a GitHub.
+- Cuatro commits (`cb7572c` a `eccdcfd`): Validation y Robustness con el resultado
   arriba y el detalle en secciones plegables con su resumen **calculado con los datos**; columnas superpuestas y una
   leyenda corregidas. Alto de Validation 2.962 → 1.780 px, sin cambiar ningún dato.
-- Capturas antes y después con Chrome sin interfaz. El usuario **aprobó** la pasada (`06acaca`).
+- Capturas antes y después con Chrome sin interfaz. El usuario **aprobó** la pasada (`9300152`).
 
 ---
 
 ## 13. Vista Pipeline, prototipos y orden de Organisms (29-10)
 
-- `9f55796`: `Pipeline.jsx` con el flujo real en 7 etapas, **la autoría de cada parte** (pipeline externo o este
+- `6ff6c27`: `Pipeline.jsx` con el flujo real en 7 etapas, **la autoría de cada parte** (pipeline externo o este
   proyecto), el estado de cada etapa propia y enlaces a las vistas. Sin backend nuevo.
-- `6dd5b18`: se eliminó `MVP.jsx`. El usuario **descartó también Settings**, que nunca existió como archivo.
-- `e32b0b2`: el usuario notó que Organisms no estaba en orden alfabético. Ahora abre por organismo de A a Z, ignorando
+- `88eac60`: se eliminó `MVP.jsx`. El usuario **descartó también Settings**, que nunca existió como archivo.
+- `bc1ee55`: el usuario notó que Organisms no estaba en orden alfabético. Ahora abre por organismo de A a Z, ignorando
   signos ("[Enterobacter]" en la E) y con números como números.
 
 ---
@@ -272,11 +272,11 @@ El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data
 
 - **Error de Claude:** al proponer el plan, afirmó que `make atlas` no incluía la línea base, y lo dejó escrito en la
   vista Pipeline. Al leer el Makefile completo vio que sí la incluía y lo informó antes de seguir.
-- `71ead39`: `make all` pasa a correr todo el atlas; el MVP de 8 genomas queda solo en `make mvp`. Se corrigió la vista.
-- `65e079f`: nombre del proyecto unificado en todos los archivos.
-- `7521118`: `make atlas-ready`, una revisión previa que detiene `make all` en el primer segundo si falta la caché o hay
+- `5d5f3c0`: `make all` pasa a correr todo el atlas; el MVP de 8 genomas queda solo en `make mvp`. Se corrigió la vista.
+- `8494a77`: nombre del proyecto unificado en todos los archivos.
+- `26a5e00`: `make atlas-ready`, una revisión previa que detiene `make all` en el primer segundo si falta la caché o hay
   cambios sin commit. 5 pruebas (58 en total).
-- **Prueba de reproducibilidad** (`0a6a618`), pedida por el usuario con la condición de **no tocar los resultados que
+- **Prueba de reproducibilidad** (`463ace9`), pedida por el usuario con la condición de **no tocar los resultados que
   muestra el software**:
   - clon limpio desde GitHub, caché enlazada solo para lectura, `make all` en 8 min 17 s;
   - **20 de 20 archivos de datos idénticos byte a byte**; manifiestos iguales salvo fecha y commit; 5/5 valores de
@@ -287,11 +287,11 @@ El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data
 
 ## 15. Revisión completa y correcciones (29-10)
 
-- **Revisión sin corregir nada** (`74bc6bf`): 35 endpoints, las 10 vistas a 1440 y 900 px, la API apagada y una API
+- **Revisión sin corregir nada** (`fe0b76e`): 35 endpoints, las 10 vistas a 1440 y 900 px, la API apagada y una API
   sin resultados (en copias temporales), teclado, código y documentación. Sin errores graves: 1 error menor, 6 mejoras,
   6 detalles y 19 advertencias de ESLint.
 - **El usuario eligió corregir todo**, salvo 18 advertencias de ESLint que se mantienen por riesgo (patrón de carga de
-  las vistas y dibujo de las redes). Un commit por hallazgo (`95375a7` a `ffa5266`). Los cambios más visibles:
+  las vistas y dibujo de las redes). Un commit por hallazgo (`269c7a7` a `80f69bf`). Los cambios más visibles:
   - tablas anchas legibles en pantalla angosta (`ScrollX.jsx`, con aviso de más columnas);
   - filas y encabezados clicables usables con teclado (`utils/a11y.js`);
   - "—" en vez de "Networks 0" con la API apagada;
@@ -301,17 +301,17 @@ El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data
 
 ## 16. Congelamiento de funciones (29-10 y 04-11)
 
-- `ce540b6`: `docs/congelamiento_v1.md` con la lista cerrada de la v1.0, lo que queda fuera, las reglas (solo
+- `0d69319`: `docs/congelamiento_v1.md` con la lista cerrada de la v1.0, lo que queda fuera, las reglas (solo
   correcciones, pruebas, documentación y redacción; funciones nuevas solo con aprobación y registradas como excepción)
   y las limitaciones. La regla también quedó en `CLAUDE.md`. RegulonDB, excepción prevista si el profesor la exige.
-- `d9bcf58`: cierre de la semana 13, tras la revisión del usuario.
-- 04-11: etiqueta **`congelamiento-v1`** sobre `d9bcf58` (solo en `dev`), pedida por el usuario (`bfd42ec`).
+- `786710f`: cierre de la semana 13, tras la revisión del usuario.
+- 04-11: etiqueta **`congelamiento-v1`** sobre `786710f` (solo en `dev`), pedida por el usuario (`ae30eb2`).
 
 ---
 
 ## 17. Estado al 04-11
 
-- `dev` limpio y en GitHub; `main` sin cambios desde la semana 11 (`f2d5df3`).
+- `dev` limpio y en GitHub; `main` sin cambios desde la semana 11 (`a0f974a`).
 - 58 pruebas; 8 de 8 etapas del pipeline al día; funciones congeladas.
 - **Pendiente del usuario:** enviar los mensajes al investigador y al profesor (borradores con P1–P7 y Q1–Q4).
 - **Lo que sigue:** semana 14 (prueba desde cero con `conda env create`, revisar la cobertura de pruebas y `v1.0` cuando
@@ -341,15 +341,15 @@ El usuario pidió avanzar por partes: solo el endpoint de estado y la vista Data
 
 | Error | Corrección |
 |---|---|
-| `environment.yml` "no versionado" | `1e3a35a` |
-| `n_edges` marcada como robusta en `low_confidence` | `38222a8` |
+| `environment.yml` "no versionado" | `5ba1fd4` |
+| `n_edges` marcada como robusta en `low_confidence` | `3820f6c` |
 | Ejecución de robustez con `git_dirty: true` | Repetida con `stash` |
 | `pkill` que cortó la propia terminal | Sin consecuencias |
 | Conflicto de nombres B/C en el documento de la semana 12 | Renombrado |
 | Afirmaciones sin verificar (cobertura de motivos, cifras del segundo análisis) | Marcadas como hipótesis o reemplazadas por mediciones |
-| "`make atlas` no incluye la línea base" (leyó solo parte de la regla del Makefile), escrito en la vista Pipeline | Informado al usuario; corregido en `71ead39` |
-| Fecha "30-10-2026" en vez de 29-10 en la documentación de `make all` | Corregido en `0a6a618` |
+| "`make atlas` no incluye la línea base" (leyó solo parte de la regla del Makefile), escrito en la vista Pipeline | Informado al usuario; corregido en `5d5f3c0` |
+| Fecha "30-10-2026" en vez de 29-10 en la documentación de `make all` | Corregido en `463ace9` |
 | La primera versión de `StatusBadge.jsx` exportaba una función junto al componente (error de ESLint) | Movida a `utils/atlas.js` antes del commit |
 | Script de valores de control con nombres de nivel taxonómico equivocados | Corregido y probado contra los resultados actuales antes de usarlo |
-| Tabla de enlaces del índice apuntaba a `docs/pruebas_aceptacion_mvp.md`, que estaba en `evidencia_mvp/` | Corregido en `db6c33e` |
+| Tabla de enlaces del índice apuntaba a `docs/pruebas_aceptacion_mvp.md`, que estaba en `evidencia_mvp/` | Corregido en `9bb869a` |
 | `pkill` que cortó la propia terminal (otra vez) | Sin consecuencias; se repitió el paso |

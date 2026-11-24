@@ -288,8 +288,8 @@ make comparison-atlas    # PYTHONPATH=. python src/networks/atlas_comparison.py
 make check               # incluye tests/test_api_atlas_metrics.py y tests/test_api_atlas_comparison.py
 ```
 
-Ambas se ejecutaron con el árbol limpio. El manifiesto de las métricas apunta a `ceeb831` y el de la comparación a
-`3ce0f17`, los dos con `git_dirty: false`.
+Ambas se ejecutaron con el árbol limpio. El manifiesto de las métricas apunta a `d14814e` y el de la comparación a
+`2287c0f`, los dos con `git_dirty: false`.
 
 | Archivo | Contenido |
 |---|---|

@@ -1,6 +1,6 @@
 # Revisión completa del sistema (semana 13)
 
-*Realizada el 29-10-2026 sobre el commit `0a6a618` (rama `dev`), con asistencia de Claude Code, a pedido del
+*Realizada el 29-10-2026 sobre el commit `463ace9` (rama `dev`), con asistencia de Claude Code, a pedido del
 estudiante.* Durante la revisión **no se corrigió nada**: solo se midió y se anotó. Las correcciones las decide el
 estudiante, hallazgo por hallazgo. La evidencia (registros, capturas de las 10 vistas en tres escenarios y scripts)
 está en `docs/evidencia_revision_semana13/` y queda solo en el servidor.
@@ -96,20 +96,20 @@ corrección va en su propio commit, con la verificación del hook pre-commit. No
 
 | ID | Commit | Corrección |
 |---|---|---|
-| ESLint | `95375a7` | Fingerprints: la familia se calcula con su propio `useMemo`; advertencias 19 → 18 |
-| E1 | `13f53f1` | Dashboard: la tarjeta Networks muestra "—" sin datos |
-| M6 | `49fa69b` | Dashboard: tarjetas de Pipeline y Data Provenance (9 accesos) |
-| M1 | `85bb0e6` | `components/ScrollX.jsx` (nuevo): scroll horizontal con degradado y aviso "Scroll sideways to see more columns" solo cuando la tabla no cabe. Tablas de redes de Dashboard y Validation sin partir celdas y con separación entre columnas |
-| M2 | `24fc4db` | `ScrollX` en Robustness (submuestreo), Fingerprints (familia) y Data Provenance (Results, con ancho mínimo para la columna Result) |
-| M3 | `1a067ef` | `utils/a11y.js` (nuevo): `clickable()` y `FOCUS_RING`. Los 8 elementos se alcanzan con Tab y se activan con Enter o Espacio; los encabezados de Metrics llevan `aria-sort` |
-| C1 | `bb3c245` | Validation, Pipeline y Data Provenance: "… could not be loaded. Check that the backend is running."; Validation en el recuadro rojo común |
-| C2 | `66491eb` | Cabecera: sin salto de línea en pantalla angosta |
-| C3 | `220b930` | Data Provenance: "—" en Files cuando falta el resultado |
-| C4 | `0049aa0` | `api.js`: 6 métodos sin uso eliminados (30 → 24); los endpoints siguen en la API |
-| C5 | `01e3846` | `clsx` deja de ser dependencia directa (sigue como dependencia interna de Recharts) |
-| M4 | `e190abc` | README: tabla de las 10 vistas |
-| M5 | `80f7e45` | `preguntas_pendientes.md`: P7 (versión de RegPrecise) y el punto (7) en el borrador al investigador |
-| C6 | `ffa5266` | Contexto, sección 13: vistas, `make all` y `make atlas-ready`; P7 en la sección 16 |
+| ESLint | `269c7a7` | Fingerprints: la familia se calcula con su propio `useMemo`; advertencias 19 → 18 |
+| E1 | `7372d43` | Dashboard: la tarjeta Networks muestra "—" sin datos |
+| M6 | `990f5cc` | Dashboard: tarjetas de Pipeline y Data Provenance (9 accesos) |
+| M1 | `ddf50b4` | `components/ScrollX.jsx` (nuevo): scroll horizontal con degradado y aviso "Scroll sideways to see more columns" solo cuando la tabla no cabe. Tablas de redes de Dashboard y Validation sin partir celdas y con separación entre columnas |
+| M2 | `cb88fdc` | `ScrollX` en Robustness (submuestreo), Fingerprints (familia) y Data Provenance (Results, con ancho mínimo para la columna Result) |
+| M3 | `35f2e8e` | `utils/a11y.js` (nuevo): `clickable()` y `FOCUS_RING`. Los 8 elementos se alcanzan con Tab y se activan con Enter o Espacio; los encabezados de Metrics llevan `aria-sort` |
+| C1 | `d6e44ba` | Validation, Pipeline y Data Provenance: "… could not be loaded. Check that the backend is running."; Validation en el recuadro rojo común |
+| C2 | `b268b1a` | Cabecera: sin salto de línea en pantalla angosta |
+| C3 | `e2e1df9` | Data Provenance: "—" en Files cuando falta el resultado |
+| C4 | `b20679c` | `api.js`: 6 métodos sin uso eliminados (30 → 24); los endpoints siguen en la API |
+| C5 | `3d2fcf9` | `clsx` deja de ser dependencia directa (sigue como dependencia interna de Recharts) |
+| M4 | `fdfa44d` | README: tabla de las 10 vistas |
+| M5 | `0b09f41` | `preguntas_pendientes.md`: P7 (versión de RegPrecise) y el punto (7) en el borrador al investigador |
+| C6 | `80f69bf` | Contexto, sección 13: vistas, `make all` y `make atlas-ready`; P7 en la sección 16 |
 
 **Verificación final:** `make check` (58 pruebas, 0 errores, 18 advertencias de ESLint); las 10 vistas a 1440 y 900 px
 sin errores de consola ni respuestas fallidas; tablas de M1 y M2 revisadas a 900 px; con teclado, Tab hasta una fila

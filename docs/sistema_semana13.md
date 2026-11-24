@@ -8,14 +8,14 @@ El 27-10-2026 el estudiante pidió avanzar por partes, una a la vez:
 
 | Bloque | Estado |
 |---|---|
-| Endpoint de estado del pipeline (`/api/v1/atlas/status`) | Hecho (`65e9ace`, `fbce952`) |
-| Vista Data Provenance | Hecho (`fbce952`) |
-| Pasada de presentación de las vistas (sección 5) | Hecho y aprobada (`3edeff6`–`fd2abb1`) |
-| Vista Pipeline (sección 6) | Hecho (`9f55796`, 29-10-2026) |
-| Vista MVP | **Descartada** por el estudiante (26-10-2026); `MVP.jsx` eliminado (`6dd5b18`) |
+| Endpoint de estado del pipeline (`/api/v1/atlas/status`) | Hecho (`42c41de`, `2e44975`) |
+| Vista Data Provenance | Hecho (`2e44975`) |
+| Pasada de presentación de las vistas (sección 5) | Hecho y aprobada (`cb7572c`–`eccdcfd`) |
+| Vista Pipeline (sección 6) | Hecho (`6ff6c27`, 29-10-2026) |
+| Vista MVP | **Descartada** por el estudiante (26-10-2026); `MVP.jsx` eliminado (`88eac60`) |
 | Vista Settings | **Descartada** por el estudiante (29-10-2026); nunca existió como archivo |
 | `make all` corre todo el análisis del atlas | Hecho (29-10-2026); el MVP solo con `make mvp` |
-| Revisión previa de `make all` (`make atlas-ready`) | Hecho (`7521118`, 29-10-2026) |
+| Revisión previa de `make all` (`make atlas-ready`) | Hecho (`26a5e00`, 29-10-2026) |
 | Prueba de reproducibilidad en un clon aparte | Hecho (29-10-2026): 20/20 archivos idénticos → `evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md` |
 | Revisión completa | Hecha y corregida (29-10-2026): los 13 hallazgos y 1 advertencia de ESLint → `revision_semana13.md`, secciones 2 y 5 |
 | Congelamiento de funciones | Hecho (29-10-2026) → `congelamiento_v1.md` |
@@ -110,7 +110,7 @@ poder volver atrás si no convence. **No cambia ningún dato ni cálculo:** solo
 
 ### 5.1 Respaldo
 
-Rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13`, ambas en `fd3f3a5` y subidas a
+Rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13`, ambas en `589ad50` y subidas a
 GitHub antes del primer cambio.
 
 ### 5.2 Criterio
@@ -123,10 +123,10 @@ muestran el resultado en una línea **calculado con los datos** (no texto fijo).
 
 | Commit | Vista | Cambio | Alto (px), antes → después |
 |---|---|---|---|
-| `3edeff6` | Dashboard, Metrics, Fingerprints, RegulatoryNetwork | Nombre del proyecto unificado en los textos visibles (5 lugares) | — |
-| `91605a5` | Validation | Recuadro con el resultado de la red elegida (precisión, recall, fracción evaluable). Desglose por tier y por origen del motivo plegado con su resumen (solo tiers con ≥ 1 % de los pares). Línea base plegada con su resumen. Corregido: columnas de la tabla de desglose que se superponían | 2.962 → 1.780 |
-| `dd7661c` | Robustness | Leyendas arriba (la etiqueta del eje X se montaba sobre ellas). Ficha del genoma y efecto del footprinting plegados con su resumen | 2.894 → 2.014 |
-| `fd2abb1` | Metrics, Data Provenance | Metrics: se quita el pie que repetía la definición del grafo. Data Provenance: conteos de la caché plegados; el detalle "al día" solo aparece si un resultado está desactualizado | 2.059 → 2.031; 1.733 → 1.367 |
+| `cb7572c` | Dashboard, Metrics, Fingerprints, RegulatoryNetwork | Nombre del proyecto unificado en los textos visibles (5 lugares) | — |
+| `85cc2c5` | Validation | Recuadro con el resultado de la red elegida (precisión, recall, fracción evaluable). Desglose por tier y por origen del motivo plegado con su resumen (solo tiers con ≥ 1 % de los pares). Línea base plegada con su resumen. Corregido: columnas de la tabla de desglose que se superponían | 2.962 → 1.780 |
+| `d55b673` | Robustness | Leyendas arriba (la etiqueta del eje X se montaba sobre ellas). Ficha del genoma y efecto del footprinting plegados con su resumen | 2.894 → 2.014 |
+| `eccdcfd` | Metrics, Data Provenance | Metrics: se quita el pie que repetía la definición del grafo. Data Provenance: conteos de la caché plegados; el detalle "al día" solo aparece si un resultado está desactualizado | 2.059 → 2.031; 1.733 → 1.367 |
 
 Sin cambios: Organisms, Regulatory Networks, Fingerprints (su recuadro explica los percentiles, propio de esa vista),
 Taxon Comparison y Dashboard (su tabla de redes es el resumen de entrada, no una duplicación).
@@ -150,9 +150,9 @@ por trazabilidad.
 
 ### 5.5 Cómo volver atrás
 
-- **Todo:** `git revert --no-edit 3edeff6^..fd2abb1` (crea commits que deshacen los 4 cambios, sin reescribir el
+- **Todo:** `git revert --no-edit cb7572c^..eccdcfd` (crea commits que deshacen los 4 cambios, sin reescribir el
   historial) y `make check`.
-- **Un bloque:** `git revert --no-edit <commit>` con el commit de la tabla (por ejemplo, solo Robustness: `dd7661c`).
+- **Un bloque:** `git revert --no-edit <commit>` con el commit de la tabla (por ejemplo, solo Robustness: `d55b673`).
 - **Solo mirar el estado anterior:** `git switch respaldo/pre-presentacion-semana13` (y volver con `git switch dev`).
 
 ## 6. Vista Pipeline y limpieza de prototipos (29-10-2026)
@@ -160,7 +160,7 @@ por trazabilidad.
 **Pedido del estudiante:** hacer la vista Pipeline y descartar las vistas MVP y Settings. Lo demás de la semana 13
 (pipeline propio en `make all`, revisión completa, congelamiento) queda para cuando él lo pida.
 
-### 6.1 Vista Pipeline (`9f55796`)
+### 6.1 Vista Pipeline (`6ff6c27`)
 
 Reemplaza al prototipo, que llamaba a un endpoint inexistente (`getPipelineStatus`). No necesita backend nuevo: usa
 `/atlas/status` (sección 2) y `/atlas/provenance`.
@@ -182,7 +182,7 @@ incluía la línea base.)*
 Lo único fijo en el código es qué vista muestra cada resultado y la descripción del pipeline externo. El indicador de
 estado pasó a `components/StatusBadge.jsx`, compartido con Data Provenance (sin cambio visible).
 
-### 6.2 Prototipos eliminados (`6dd5b18`)
+### 6.2 Prototipos eliminados (`88eac60`)
 
 - `frontend/src/pages/MVP.jsx`: no estaba en el menú y llamaba a un endpoint inexistente. Sigue en el historial de git.
 - Settings: nunca existió como archivo, solo una mención en `Sidebar.jsx`, que se quitó.
@@ -193,7 +193,7 @@ estado pasó a `components/StatusBadge.jsx`, compartido con Data Provenance (sin
 fallidas; los botones de la vista llevan a la vista correcta (probado con Taxon Comparison y Robustness). Estado al
 29-10-2026: 8 de 8 etapas al día.
 
-### 6.4 Corrección: orden de Organisms (`e32b0b2`)
+### 6.4 Corrección: orden de Organisms (`bc1ee55`)
 
 Observación del estudiante al revisar: la vista Organisms no mostraba los genomas en orden alfabético (abría ordenada
 por pares TF–operón, de mayor a menor, y el primer clic en una columna de texto ordenaba de Z a A). Ahora abre por

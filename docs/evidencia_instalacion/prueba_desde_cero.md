@@ -36,7 +36,7 @@ y verificar cada función del software (análisis, API y dashboard) sobre esa in
 
 | Elemento | Valor |
 |---|---|
-| Versión probada | Etiqueta `congelamiento-v1`, commit `d9bcf58`, clonada desde `git@github.com:Yerko-Moscoso/Proyecto_Bioinfo.git`; 0 cambios al clonar |
+| Versión probada | Etiqueta `congelamiento-v1`, commit `786710f`, clonada desde `git@github.com:Yerko-Moscoso/Proyecto_Bioinfo.git`; 0 cambios al clonar |
 | Entorno Python | Nuevo, creado en una carpeta temporal con `conda env create -p <carpeta> -f environment.yml` (22 s; 1,2 GB). No se tocó `bioinfo` |
 | Caché | `~/proyecto/data/cache/atlas` (18 archivos), enlazada en el clon y solo leída |
 | Servidor | `devastator`, Ubuntu 22.04, 48 CPU |
@@ -132,7 +132,7 @@ hoja **Resumen** se calcula con fórmulas sobre esa hoja.
 |---|---|---|---|
 | Instalación | INS-01 a 06 | Clonar, crear el entorno, instalar el frontend (`npm install` y `npm ci`), `make help`, `make check` sin resultados | **5 de 6** (falla INS-03) |
 | Revisión previa | REV-01 a 03 | `make all` se detiene sin caché o con cambios sin commit, y sigue cuando todo está listo | 3 de 3 |
-| Análisis | ANA-01 a 06 | `make all` y cada uno de los 5 análisis, con sus archivos y manifiesto (`git_dirty: false`, commit `d9bcf58`) | 6 de 6 |
+| Análisis | ANA-01 a 06 | `make all` y cada uno de los 5 análisis, con sus archivos y manifiesto (`git_dirty: false`, commit `786710f`) | 6 de 6 |
 | Comparación | CMP-01 a 05 | Resultados de cada análisis iguales a los del dashboard | 5 de 5 |
 | Valores de control | CTL-01 a 05 | Las 5 cifras de control | 5 de 5 |
 | Calidad | CAL-01 a 03 | `make check`, 58 pruebas, ESLint sin errores | 3 de 3 |
@@ -153,7 +153,7 @@ hoja **Resumen** se calcula con fórmulas sobre esa hoja.
 | H3 | Observación | 4 archivos difieren en bytes con los mismos valores (versión de pyarrow en los Parquet; 17.º dígito de algunos decimales). | Ninguna: no cambia ningún resultado. |
 | H4 | Observación | Recién instalado, `make check` pasa con 23 pruebas y 35 omitidas (necesitan resultados); tras `make all` pasan las 58. | Indicar en el README que la batería completa requiere `make all` antes. |
 | H5 | Observación | `npm` informa 10 vulnerabilidades conocidas (4 moderadas, 6 altas) en dependencias del frontend. | Revisar con `npm audit` cuáles afectan al dashboard; corregirlas sin `--force` sería mantenimiento permitido, con aprobación. |
-| H6 | Observación (ya atendida) | En el servidor ya existe `bioinfo`; `conda env create -f environment.yml` fallaría por el nombre. | Ya mencionado en el README (`324deb3`). |
+| H6 | Observación (ya atendida) | En el servidor ya existe `bioinfo`; `conda env create -f environment.yml` fallaría por el nombre. | Ya mencionado en el README (`cdebe7f`). |
 
 ## 8. Aislamiento: lo que no se tocó
 

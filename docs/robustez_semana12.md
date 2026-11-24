@@ -202,10 +202,10 @@ make baseline-atlas      # PYTHONPATH=. python src/networks/atlas_baseline.py   
 make check               # incluye tests/test_api_atlas_robustness.py
 ```
 
-Se ejecutó con el árbol limpio sobre `38222a8` (`logs/robustness_atlas_semana12.log`): manifiesto con `git_dirty: false`,
+Se ejecutó con el árbol limpio sobre `3820f6c` (`logs/robustness_atlas_semana12.log`): manifiesto con `git_dirty: false`,
 creado el 19-10-2026 a las 12:40 UTC.
 
-**Corrección durante la semana (`38222a8`):** la primera versión marcaba `n_edges` como trivial solo con `random` y
+**Corrección durante la semana (`3820f6c`):** la primera versión marcaba `n_edges` como trivial solo con `random` y
 `degree_biased`. Con `low_confidence` también se elimina una fracción fija de pares, así que allí contaba como "robusta"
 sin serlo. Se corrigió, se repitió el cálculo y ahora lo comprueba `test_n_edges_is_trivial_in_every_strategy`. Los
 valores de Spearman no cambiaron (misma semilla); solo cambió la clase de `n_edges`.
@@ -222,7 +222,7 @@ valores de Spearman no cambiaron (misma semilla); solo cambió la clase de `n_ed
 | `data/results/baseline/vs_networks.tsv` | Línea base y redes externas en una tabla (pares contados en los genomas validables) |
 | `data/results/baseline/reproduction.tsv` | Cada red externa frente a la línea base con su umbral y tier (pares TF–operón) |
 | `data/results/baseline/reproduction_edges.tsv` | Reproducción a nivel de arista (genoma, motivo, operón), sección 8.4 |
-| `data/results/baseline/manifest.json` | Definición, alcance (312 genomas), `hits_in_transfer_map`, commit `251811b`, `git_dirty: false` |
+| `data/results/baseline/manifest.json` | Definición, alcance (312 genomas), `hits_in_transfer_map`, commit `ba4e3ac`, `git_dirty: false` |
 
 ## 8. Análisis C: línea base del pipeline propio desde `fimo_hits`
 

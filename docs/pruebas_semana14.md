@@ -11,9 +11,9 @@ salida de `make check`.
 de **58 a 123 pruebas**. Al principio quedaron 121 aprobadas y 2 marcadas como *falla esperada* (`xfail`) por el
 hallazgo H2; el estudiante aprobó corregirlo el mismo día y ahora pasan **123 de 123**. `make check` pasa.
 
-| | Antes (`6b2867c`) | Después (`fb11872`) |
+| | Antes (`9bbe038`) | Después (`157245b`) |
 |---|---|---|
-| Pruebas en el proyecto | 58 aprobadas | 123 aprobadas (121 + 2 fallas esperadas hasta la corrección de H2, `71771e2`) |
+| Pruebas en el proyecto | 58 aprobadas | 123 aprobadas (121 + 2 fallas esperadas hasta la corrección de H2, `25fe8e7`) |
 | Pruebas que corren en un clon sin `data/` | 23 (35 se omiten) | **88** (las mismas 35 se omiten) |
 | Funciones de cálculo con prueba propia | normalización, métricas, submuestreo, `safe_div`, `f1` | además: toda la cadena de la validación, la línea base, la comparación y la robustez |
 | Comportamiento de la API sin datos | revisado a mano (semana 13) | 32 endpoints comprobados en cada `make check` |
@@ -23,7 +23,7 @@ las 58 pruebas anteriores siguen pasando, y los 75 archivos de `data/results/` y
 (sha256 antes y después).
 
 **Hallazgo H2:** sin la caché, `/atlas/networks` y `/atlas/provenance` respondían 500 (error interno) en lugar de 503
-con la instrucción `make cache-atlas`. Corregido con aprobación del estudiante en `71771e2`, el único cambio en `src/`
+con la instrucción `make cache-atlas`. Corregido con aprobación del estudiante en `25fe8e7`, el único cambio en `src/`
 (sección 7).
 
 ## 2. Objetivo y alcance
@@ -43,7 +43,7 @@ comportamiento de la API sin datos quede comprobado en cada commit.
 
 | Elemento | Valor |
 |---|---|
-| Código | Rama `dev`, desde `6b2867c` (equivalente a `congelamiento-v1` más correcciones de documentación) |
+| Código | Rama `dev`, desde `9bbe038` (equivalente a `congelamiento-v1` más correcciones de documentación) |
 | Entorno | `bioinfo`: Python 3.11.15, pandas 3.0.5, numpy 2.4.6, scipy 1.17.1, FastAPI 0.141.1, Starlette 1.3.1, pytest 9.1.1 |
 | Servidor | `devastator`, Ubuntu 22.04 |
 
@@ -131,7 +131,7 @@ La numeración sigue la de la prueba desde cero (H1, `evidencia_instalacion/prue
 
 | ID | Tipo | Descripción | Estado |
 |---|---|---|---|
-| H2 | Error menor | Sin `data/cache/atlas/`, `GET /api/v1/atlas/networks` y `GET /api/v1/atlas/provenance` leían `manifest.json` sin comprobar si existe y respondían **500** sin mensaje, en vez de **503** con `make cache-atlas` como los otros 30 endpoints. Solo ocurría si faltaba la caché (no en el uso normal ni en la revisión de la semana 13, que retiró los resultados pero no la caché). El dashboard mostraba entonces su texto genérico (*"Check that the backend is running"*), engañoso porque la API sí estaba corriendo. | **Corregido el 09-11-2026** (`71771e2`), con aprobación del estudiante |
+| H2 | Error menor | Sin `data/cache/atlas/`, `GET /api/v1/atlas/networks` y `GET /api/v1/atlas/provenance` leían `manifest.json` sin comprobar si existe y respondían **500** sin mensaje, en vez de **503** con `make cache-atlas` como los otros 30 endpoints. Solo ocurría si faltaba la caché (no en el uso normal ni en la revisión de la semana 13, que retiró los resultados pero no la caché). El dashboard mostraba entonces su texto genérico (*"Check that the backend is running"*), engañoso porque la API sí estaba corriendo. | **Corregido el 09-11-2026** (`25fe8e7`), con aprobación del estudiante |
 
 ### 7.1 Corrección de H2
 
@@ -146,7 +146,7 @@ nueva ni cambia ningún dato.
 - **Verificación:** con la caché presente, las respuestas de `/atlas/networks` y `/atlas/provenance` son idénticas
   byte a byte a las de antes del cambio; los 75 archivos de `data/results/` y `data/cache/` quedaron idénticos (sha256);
   `make check` pasa. No hay que recalcular ningún resultado.
-- **Cómo revertirla:** `git revert 71771e2` (vuelve el 500 y la prueba con `xfail`).
+- **Cómo revertirla:** `git revert 25fe8e7` (vuelve el 500 y la prueba con `xfail`).
 
 ## 8. Limitaciones
 
@@ -160,11 +160,11 @@ nueva ni cambia ningún dato.
 
 | Commit | Contenido |
 |---|---|
-| `9586f67` | Bloque A: `tests/test_unit_validation.py` (12 pruebas) |
-| `6a77bfa` | Bloque B: `tests/test_unit_baseline_comparison.py` (19 pruebas) |
-| `fb11872` | Bloque C: `tests/test_api_sin_resultados.py` (34 pruebas, 2 con falla esperada) |
-| `8b819a1` | Este documento, índice y bitácora en `docs/README.md` y contexto |
-| `71771e2` | Corrección de H2 en `src/api/routers/atlas.py`; se quita el `xfail` |
+| `17b505d` | Bloque A: `tests/test_unit_validation.py` (12 pruebas) |
+| `50649f7` | Bloque B: `tests/test_unit_baseline_comparison.py` (19 pruebas) |
+| `157245b` | Bloque C: `tests/test_api_sin_resultados.py` (34 pruebas, 2 con falla esperada) |
+| `f8e6baa` | Este documento, índice y bitácora en `docs/README.md` y contexto |
+| `25fe8e7` | Corrección de H2 en `src/api/routers/atlas.py`; se quita el `xfail` |
 
 ## 10. Cómo repetirla
 

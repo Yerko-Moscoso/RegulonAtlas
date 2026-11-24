@@ -44,7 +44,7 @@ registra ahí, y al terminar una tarea se le dice al usuario dónde quedó docum
 - `legacy/` es código histórico: no se importa ni se modifica salvo para consultarlo (ver `legacy/README.md`).
 - Nombres visibles de las métricas en el frontend: `frontend/src/utils/metrics.js` (`METRIC_LABELS`).
 - Commits y push solo en `dev`. **No fusionar ni subir nada a `main`** hasta que el usuario lo indique (decisión del
-  26-10-2026; `main` quedó en la semana 11, `f2d5df3`). Cuando lo indique, la fusión va con una etiqueta (`semanaNN-tema`).
+  26-10-2026; `main` quedó en la semana 11, `a0f974a`). Cuando lo indique, la fusión va con una etiqueta (`semanaNN-tema`).
 - **Antes de cada commit**: `make check` (la API importa, sin `get_db` en `src/api`, el frontend compila y pasan
   las pruebas de `tests/` y de interfaz en `frontend/tests/ui/`, con los puertos 18000 y 15173). El hook `pre-commit` (`make hooks`, una vez por clon) revisa el **índice**, no la copia
   de trabajo. No usar `--no-verify` sin avisar.

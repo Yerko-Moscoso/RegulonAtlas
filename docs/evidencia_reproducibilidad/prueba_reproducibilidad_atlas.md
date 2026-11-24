@@ -21,7 +21,7 @@ cinco manifiestos coinciden en todo salvo la fecha y el commit, como se esperaba
 
 | Elemento | Valor |
 |---|---|
-| Código | Rama `dev`, commit `7521118`, clonada desde `git@github.com:Yerko-Moscoso/Proyecto_Bioinfo.git` en un directorio temporal; 0 cambios en el clon |
+| Código | Rama `dev`, commit `26a5e00`, clonada desde `git@github.com:Yerko-Moscoso/Proyecto_Bioinfo.git` en un directorio temporal; 0 cambios en el clon |
 | Caché | `~/proyecto/data/cache/atlas` (18 archivos, 273 MB), enlazada en el clon y solo leída. No se usó MariaDB |
 | Servidor | `devastator`, 48 CPU |
 | Python y paquetes (conda `bioinfo`) | Python 3.11.15, pandas 3.0.5, numpy 2.4.6, networkx 3.6.1, pyarrow 23.0.1, scipy 1.17.1 |
@@ -34,7 +34,7 @@ Evidencia: `registros/00_inicio.txt`, `registros/03_entorno.txt`, `registros/04_
    de las 8 etapas del pipeline (`src/atlas_status.py`, el mismo que usa `/atlas/status`). → `registros/01_antes.*`,
    `registros/02_status_antes.json`.
 2. **Clon limpio** de la rama `dev` desde GitHub en un directorio temporal.
-3. **Revisión previa** (`make atlas-ready`, nueva en `7521118`) en el clon: sin caché, con un cambio sin commit y con todo
+3. **Revisión previa** (`make atlas-ready`, nueva en `26a5e00`) en el clon: sin caché, con un cambio sin commit y con todo
    listo. → `registros/04_*`, `registros/05_*`.
 4. **Caché enlazada** (`data/cache/atlas` → la del proyecto). Las rutas de salida son relativas, así que los resultados
    se escriben en el clon.
@@ -54,7 +54,7 @@ Evidencia: `registros/00_inicio.txt`, `registros/03_entorno.txt`, `registros/04_
 |---|---|---|
 | Clon sin caché | Se detiene y nombra lo que falta por regla | Se detuvo en el primer segundo: indicó los 14 archivos de `make cache-atlas`, 1 de `make cache-genes` y 3 de `make cache-fimo` |
 | Caché enlazada y un cambio sin commit (`Makefile`) | Se detiene | Se detuvo y nombró `Makefile` |
-| Caché enlazada y árbol limpio | Continúa | "Caché completa y árbol limpio (7521118)" |
+| Caché enlazada y árbol limpio | Continúa | "Caché completa y árbol limpio (26a5e00)" |
 
 ## 6. Comparación de resultados
 
@@ -66,9 +66,9 @@ con `git_dirty: false` en el nuevo. Se excluyen dos registros `*.log` de ejecuci
 |---|---|---|---|
 | Validación (`validation/regprecise`) | `by_genome`, `by_origin`, `by_tier`, `locus_mapping`, `pr_curve`, `summary` (.tsv) | 6 idénticos | Igual salvo fecha/commit y la nota de abajo |
 | Métricas (`metrics`) | `atlas_metrics.parquet`, `atlas_metrics.tsv`, `metrics_vs_external.tsv` | 3 idénticos | Igual salvo fecha/commit y la nota de abajo |
-| Comparación (`comparison`) | `by_taxon.tsv`, `taxon_tests.tsv` | 2 idénticos | Igual salvo fecha y commits (`3ce0f17` → `7521118`) |
-| Robustez (`robustness`) | `footprint_effect`, `nesting`, `rank_between_networks`, `subsampling_summary` (.tsv), `subsampling_genomes.parquet` | 5 idénticos | Igual salvo fecha y commits (`38222a8` → `7521118`) |
-| Línea base (`baseline`) | `reproduction`, `reproduction_edges`, `summary`, `vs_networks` (.tsv) | 4 idénticos | Igual salvo fecha y commit (`251811b` → `7521118`) |
+| Comparación (`comparison`) | `by_taxon.tsv`, `taxon_tests.tsv` | 2 idénticos | Igual salvo fecha y commits (`2287c0f` → `26a5e00`) |
+| Robustez (`robustness`) | `footprint_effect`, `nesting`, `rank_between_networks`, `subsampling_summary` (.tsv), `subsampling_genomes.parquet` | 5 idénticos | Igual salvo fecha y commits (`3820f6c` → `26a5e00`) |
+| Línea base (`baseline`) | `reproduction`, `reproduction_edges`, `summary`, `vs_networks` (.tsv) | 4 idénticos | Igual salvo fecha y commit (`ba4e3ac` → `26a5e00`) |
 | **Total** | **20** | **20 idénticos byte a byte** | **5 sin diferencias de contenido** |
 
 **Nota sobre los manifiestos de validación y métricas.** Guardan una copia del manifiesto de la caché. La copia nueva

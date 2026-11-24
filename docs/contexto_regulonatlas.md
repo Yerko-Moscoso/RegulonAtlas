@@ -45,9 +45,9 @@ La documentación interactiva de la API queda en `http://localhost:8000/docs`.
 ## 3. Repositorio y control de versiones
 
 - **Repositorio:** `github.com/Yerko-Moscoso/RegulonAtlas` (antes `Proyecto_Bioinfo`). Los registros de pruebas anteriores conservan la URL antigua porque documentan lo ejecutado en esa fecha.
-- **Versión `v1.0`:** etiqueta anotada, publicada en GitHub, y versión prevista para la máquina virtual. El 23-11-2026, por decisión del estudiante, se movió de `a6afa54` al commit que corrige `frontend/package-lock.json`, porque `npm ci` fallaba (`Missing: @emnapi/runtime@1.11.3`). La corrección agrega 3 entradas opcionales y npm recalcula la marca `peer` de 17 paquetes; no cambia ninguna versión, URL ni hash de integridad. Entre `a6afa54` y la etiqueta solo cambian documentación y ese lock.
-- **`main`:** llega hasta la semana 11 (`f2d5df3`, etiqueta `semana11-metricas`). La etiqueta **`mvp-semana8`** (`d056fc9`) marca la entrega del MVP.
-- **`dev`:** rama de trabajo desde la semana 9. Hasta la semana 11, los bloques terminados se fusionaron a `main` y se etiquetaron: `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. **Desde el 26-10-2026, todo el desarrollo queda solo en `dev`**: no se fusiona ni se sube nada a `main` hasta que el estudiante lo indique. Respaldo antes de la limpieza de la semana 12: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12`. Etiqueta **`congelamiento-v1`** (`d9bcf58`, solo en `dev`): funciones congeladas al cierre de la semana 13.
+- **Versión `v1.0`:** etiqueta anotada, publicada en GitHub, y versión prevista para la máquina virtual. El 23-11-2026, por decisión del estudiante, se movió de `439b4a3` al commit que corrige `frontend/package-lock.json`, porque `npm ci` fallaba (`Missing: @emnapi/runtime@1.11.3`). La corrección agrega 3 entradas opcionales y npm recalcula la marca `peer` de 17 paquetes; no cambia ninguna versión, URL ni hash de integridad. Entre `439b4a3` y la etiqueta solo cambian documentación y ese lock.
+- **`main`:** llega hasta la semana 11 (`a0f974a`, etiqueta `semana11-metricas`). La etiqueta **`mvp-semana8`** (`d056fc9`) marca la entrega del MVP.
+- **`dev`:** rama de trabajo desde la semana 9. Hasta la semana 11, los bloques terminados se fusionaron a `main` y se etiquetaron: `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`. **Desde el 26-10-2026, todo el desarrollo queda solo en `dev`**: no se fusiona ni se sube nada a `main` hasta que el estudiante lo indique. Respaldo antes de la limpieza de la semana 12: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12`. Etiqueta **`congelamiento-v1`** (`786710f`, solo en `dev`): funciones congeladas al cierre de la semana 13.
 - **No se versionan** datos generados (`data/cache/`, `data/audit/*.tsv`, `data/results/`), solo código, SQL y documentación.
 
 ---
@@ -393,8 +393,8 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 
 ### 11.4 Correcciones y control de calidad
 
-- **El commit `06e5140` dejó la API sin arrancar** (`main.py` importaba `atlas_metrics_router`). Se corrigió en `73c7a34`.
-- **El genoma `replacement` (*Gordonia iterans*, `GCF_002993285.1`) quedaba fuera del atlas** porque `selection` lleva una nota; se compara la primera palabra (`a1b5dfc`). El atlas vuelve a tener 2.224 genomas en las métricas.
+- **El commit `06e5140` dejó la API sin arrancar** (`main.py` importaba `atlas_metrics_router`). Se corrigió en `b79dbe6`.
+- **El genoma `replacement` (*Gordonia iterans*, `GCF_002993285.1`) quedaba fuera del atlas** porque `selection` lleva una nota; se compara la primera palabra (`4ad2652`). El atlas vuelve a tener 2.224 genomas en las métricas.
 - **Trazabilidad:** los manifiestos de métricas, validación y comparación guardan `git_dirty`; los resultados se generan con el árbol limpio.
 - **`make check` y hook `pre-commit` versionado** (`make hooks`): verifican sobre el índice que la API importa, que `src/api` no usa `get_db` y que el frontend compila; `make check` además ejecuta `pytest` (`tests/test_api_atlas_metrics.py`, `tests/test_api_atlas_comparison.py`, `tests/test_api_atlas_validation.py`; 22 pruebas). Se instalaron `pytest` y `httpx` en `bioinfo`.
 
@@ -404,7 +404,7 @@ Detalle completo en `docs/metricas_semana11.md` y `docs/correcciones_semana11.md
 
 Detalle completo en `docs/robustez_semana12.md`.
 
-- **Cierre de la semana 11:** `main` avanzó (fast-forward) hasta `f2d5df3`, con la etiqueta `semana11-metricas`. `main` seguía en la semana 8; ahora incluye las semanas 9 a 11. La etiqueta antigua `semana10-sweep` apunta al MVP (`b628e54`) y no se tocó.
+- **Cierre de la semana 11:** `main` avanzó (fast-forward) hasta `a0f974a`, con la etiqueta `semana11-metricas`. `main` seguía en la semana 8; ahora incluye las semanas 9 a 11. La etiqueta antigua `semana10-sweep` apunta al MVP (`b628e54`) y no se tocó.
 - **Dos análisis de robustez:** (A) entre redes, que es el plan original, y (B) submuestreo de aristas, que es lo que proponía el prototipo de `Robustness.jsx`.
 - **Exploración:** `scripts/explore_robustness.py`. **Módulo:** `src/networks/atlas_robustness.py` (`make robustness-atlas`, 24 procesos, ~8 min) → `data/results/robustness/`.
 - **Resultados A:**
@@ -419,7 +419,7 @@ Detalle completo en `docs/robustez_semana12.md`.
 - **Conclusión para la tesis:** las métricas que coinciden con el pipeline externo (semana 11) son las mismas que resultan robustas.
 - **API:** `/api/v1/atlas/robustness/{manifest, nesting, between, footprint, subsampling, subsampling/genome}`. Métodos `getAtlasRobustness*` en `api.js`.
 - **Vista:** `Robustness.jsx` reescrita y en el menú. El router antiguo `/robustness` del MVP sigue respondiendo "pending".
-- **Corrección:** `n_edges` es trivial en las tres estrategias (`38222a8`). El cálculo se repitió con el árbol limpio.
+- **Corrección:** `n_edges` es trivial en las tres estrategias (`3820f6c`). El cálculo se repitió con el árbol limpio.
 - **Pruebas:** 28 (`tests/test_api_atlas_robustness.py`).
 - **Línea base del pipeline propio (análisis C).** El usuario aprobó hacerla solo en los 312 genomas validables, porque es una red de prueba.
   - **Datos:** `scripts/export_fimo_cache.py` (`make cache-fimo`) → `fimo_hits_validation.parquet` (7.376.281 hits) y `transfer_map_validation.parquet` (320.938 pares), verificados con `COUNT(*)` por lote.
@@ -430,7 +430,7 @@ Detalle completo en `docs/robustez_semana12.md`.
 
 ### 12.1 Limpieza del proyecto
 
-Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limpieza-semana12` (`3802d6e`).
+Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limpieza-semana12` (`ea0813d`).
 
 - **Entorno:** `environment.yml` regenerado desde `bioinfo`; resuelve con `conda env create --dry-run`.
 - **Eliminado:** routers `/robustness`, `/graphs` y `/metrics` del MVP, `src/api/results.py`, `comparisonGenomes.js`, métodos antiguos de `api.js` y archivos sin uso. La API ya no depende de `src/pipeline`.
@@ -443,7 +443,7 @@ Detalle en `docs/limpieza_semana12.md`. Respaldo previo: rama `respaldo/pre-limp
 ### 12.2 Cierre de la semana 12 (20 al 26 de octubre)
 
 - **Bitácora de Claude Code** (20-10): `docs/bitacora_claude_code.md`, recorrido del 15 al 20-10-2026 para la memoria.
-- **Pruebas de aceptación del MVP** (26-10, `db6c33e`): CA1–CA6 sobre la etiqueta `mvp-semana8` (`d056fc9`) desde un clon limpio. 6 aprobadas (CA3 con observaciones), 0 fallidas. `make mvp` tarda 19 s y es determinista salvo fechas; E. coli coincide con lo informado. Registro en `docs/evidencia_mvp/pruebas_aceptacion_mvp.md`; la evidencia (registros, capturas, scripts, Excel) queda solo en el servidor (`.gitignore`).
+- **Pruebas de aceptación del MVP** (26-10, `9bb869a`): CA1–CA6 sobre la etiqueta `mvp-semana8` (`d056fc9`) desde un clon limpio. 6 aprobadas (CA3 con observaciones), 0 fallidas. `make mvp` tarda 19 s y es determinista salvo fechas; E. coli coincide con lo informado. Registro en `docs/evidencia_mvp/pruebas_aceptacion_mvp.md`; la evidencia (registros, capturas, scripts, Excel) queda solo en el servidor (`.gitignore`).
 - **Corrección:** la entrega `mvp-semana8` es `d056fc9`, no `b628e54` como decía la bitácora.
 - **Verificación del cierre:** los 5 `manifest.json` de resultados tienen `git_dirty: false`; `make check` pasa (46 pruebas); los 32 endpoints GET de la API responden 200 y los valores de control coinciden (E. coli en balanced: 118 TF, 342 operones, 485 pares; validación balanced P = 0,612, R = 0,332, F1 = 0,431). Revisión visual del estudiante (26-10-2026): Robustness, la línea base de Validation, Dashboard, Organisms, OrganismDetail, Fingerprints y Comparison funcionan.
 - **`.env`:** el estudiante borró el espacio de la línea 8 (26-10-2026). Claude no leyó el archivo.
@@ -498,8 +498,8 @@ legacy/ ── ingesta (semanas 1–7) y pipeline piloto: no se usan; ver legacy
 | 10 | Validación propia de las 5 redes contra RegPrecise, modo independiente, curva P/R, API y `Validation.jsx`; `Metrics.jsx` y `Fingerprints.jsx` con datos reales (hecho). Pendiente: punto del MVP en la curva y RegulonDB si se aprueba |
 | 11 | Métricas propias con NetworkX para los 2.644 genomas y las 5 redes, comparadas con `network_metrics`; comparación por filo/clase/orden/familia; `Metrics`, `Fingerprints` y `Comparison` sobre las métricas propias; `make check` y pruebas (hecho). No se hizo el enriquecimiento funcional opcional |
 | 12 | Robustez entre las 5 redes y frente a submuestreo de aristas; componente `Robustness`; línea base del pipeline propio desde `fimo_hits` (1e-5 a 1e-8, sin footprinting) en los 312 genomas validables, contra las redes externas; limpieza; pruebas de aceptación del MVP (hecho, cerrada el 26-10-2026 en `dev`) |
-| 13 | **Cerrada el 29-10-2026** (`docs/sistema_semana13.md`). Hecho: endpoint `/atlas/status` y vista `DataProvenance`; pasada de presentación de las vistas, aprobada por el estudiante (respaldo `respaldo-pre-presentacion-semana13`) (27-10-2026). Vista `Pipeline` (29-10-2026). Vistas `MVP` y `Settings` descartadas por el estudiante. `make all` corre todo el análisis del atlas (29-10-2026; el MVP solo con `make mvp`). Revisión previa de `make all` y prueba de reproducibilidad en un clon aparte: 20/20 archivos idénticos (29-10-2026, `docs/evidencia_reproducibilidad/`). Revisión completa (29-10-2026, `docs/revision_semana13.md`): sin errores graves; los 13 hallazgos (1 error menor, 6 mejoras, 6 detalles) y 1 advertencia de ESLint corregidos el mismo día. **Funciones congeladas (v1.0)** el 29-10-2026 → `docs/congelamiento_v1.md`; etiqueta `congelamiento-v1` (`d9bcf58`) |
-| 14 | En curso. **Prueba desde cero hecha el 04-11-2026** (`docs/evidencia_instalacion/prueba_desde_cero.md`): entorno nuevo, 20/20 resultados con los mismos valores, 108 de 109 casos aprobados; hallazgo H1 corregido el mismo día (README: `npm ci` en vez de `npm install`). **Pruebas ampliadas el 09-11-2026** (`docs/pruebas_semana14.md`): de 58 a 123; el hallazgo H2 (500 sin caché en `/atlas/networks` y `/atlas/provenance`) se corrigió el mismo día (`71771e2`) y pasan 123 de 123; 88 corren en un clon sin `data/`. **Ampliaciones E1–E7 el 23-11-2026** (`docs/ampliaciones_semana14.md`, `make extensions`, fuera de `make all`): intervalos de confianza, modos lado a lado, comparación ajustada, precisión esperada por genoma, RegulonDB, MVP frente al atlas y avisos de cobertura; 147 pruebas. **Para el informe:** `balanced` está entre las mejores redes, pero no siempre se distingue de la segunda. Falta: etiqueta `v1.0`, cuando el estudiante lo indique. El README ya se reescribió en la semana 12 |
+| 13 | **Cerrada el 29-10-2026** (`docs/sistema_semana13.md`). Hecho: endpoint `/atlas/status` y vista `DataProvenance`; pasada de presentación de las vistas, aprobada por el estudiante (respaldo `respaldo-pre-presentacion-semana13`) (27-10-2026). Vista `Pipeline` (29-10-2026). Vistas `MVP` y `Settings` descartadas por el estudiante. `make all` corre todo el análisis del atlas (29-10-2026; el MVP solo con `make mvp`). Revisión previa de `make all` y prueba de reproducibilidad en un clon aparte: 20/20 archivos idénticos (29-10-2026, `docs/evidencia_reproducibilidad/`). Revisión completa (29-10-2026, `docs/revision_semana13.md`): sin errores graves; los 13 hallazgos (1 error menor, 6 mejoras, 6 detalles) y 1 advertencia de ESLint corregidos el mismo día. **Funciones congeladas (v1.0)** el 29-10-2026 → `docs/congelamiento_v1.md`; etiqueta `congelamiento-v1` (`786710f`) |
+| 14 | En curso. **Prueba desde cero hecha el 04-11-2026** (`docs/evidencia_instalacion/prueba_desde_cero.md`): entorno nuevo, 20/20 resultados con los mismos valores, 108 de 109 casos aprobados; hallazgo H1 corregido el mismo día (README: `npm ci` en vez de `npm install`). **Pruebas ampliadas el 09-11-2026** (`docs/pruebas_semana14.md`): de 58 a 123; el hallazgo H2 (500 sin caché en `/atlas/networks` y `/atlas/provenance`) se corrigió el mismo día (`25fe8e7`) y pasan 123 de 123; 88 corren en un clon sin `data/`. **Ampliaciones E1–E7 el 23-11-2026** (`docs/ampliaciones_semana14.md`, `make extensions`, fuera de `make all`): intervalos de confianza, modos lado a lado, comparación ajustada, precisión esperada por genoma, RegulonDB, MVP frente al atlas y avisos de cobertura; 147 pruebas. **Para el informe:** `balanced` está entre las mejores redes, pero no siempre se distingue de la segunda. Falta: etiqueta `v1.0`, cuando el estudiante lo indique. El README ya se reescribió en la semana 12 |
 | 15 | Redacción de resultados y discusión, con figuras exportadas del sistema; sección de limitaciones |
 | 16 | Preparación de la defensa, guion de demo con capturas de respaldo y holgura |
 

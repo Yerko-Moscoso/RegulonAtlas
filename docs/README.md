@@ -75,39 +75,48 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
 
+### 24-11-2026: historial reescrito sin líneas de coautoría
+
+- Por decisión del estudiante se reescribió el historial (`dev`, `main`, ramas y etiquetas de respaldo, `congelamiento-v1`,
+  `semana11-metricas` y `v1.0`) para quitar de 96 mensajes de commit las líneas `Co-Authored-By` agregadas automáticamente.
+  El contenido, los autores, las fechas y el resto de cada mensaje no cambian; los hashes sí.
+- Los 259 hashes citados en la documentación se actualizaron a los nuevos. Los resultados de `data/results/` se regeneran
+  después de este commit (`make all` y `make extensions`) para que sus manifiestos apunten a commits existentes.
+- Respaldo del historial anterior, solo en el servidor: `~/respaldos/regulonatlas_antes_reescritura_20261124.bundle`.
+
 ### 23-11-2026: repositorio RegulonAtlas y ensayo de despliegue de la v1.0
 
-- El repositorio en GitHub ahora se llama `Yerko-Moscoso/RegulonAtlas`; `v1.0` (`a6afa54`) está publicada. Los registros de
+- El repositorio en GitHub ahora se llama `Yerko-Moscoso/RegulonAtlas`; `v1.0` (`439b4a3`) está publicada. Los registros de
   pruebas anteriores conservan la URL antigua.
 - Ensayo local de la v1.0 sin `.git`, `.env`, MariaDB ni `data/raw/`, con `data/cache/atlas/` y `data/results/` (313 MB): el
   frontend compila con `VITE_API_URL=/api/v1`, las rutas GET de la API responden y la API usó 521 MB de RAM.
-- **Hallazgo:** `npm ci` fallaba sobre la v1.0 original (`a6afa54`) porque el `package-lock.json` estaba incompleto
+- **Hallazgo:** `npm ci` fallaba sobre la v1.0 original (`439b4a3`) porque el `package-lock.json` estaba incompleto
   (`@emnapi/runtime@1.11.3`). El ensayo compiló con las dependencias ya instaladas en `devastator`.
 - **Corrección:** por decisión del estudiante, el lock se completó (3 entradas opcionales y marcas `peer` de 17 paquetes, sin
   cambios de versión, URL ni integridad) y la etiqueta `v1.0` se movió a ese commit. → `contexto_regulonatlas.md`, sección 3.
 
 ### 23-11-2026: semana 14, cierre previo a la v1.0 (E9–E12)
 
-- **E9, Excel:** descarga desde Organisms (5 redes) y Regulatory Networks, con las imágenes del dashboard. `b5a0fd9`, `9ea6dbc`.
+- **E9, Excel:** descarga desde Organisms (5 redes) y Regulatory Networks, con las imágenes del dashboard. `a56da41`, `aca23d6`.
 - **E10, idioma:** botón inglés/español en el menú; el Excel sale en el idioma activo; no se traducen datos ni identificadores.
-  `frontend/src/i18n/` y `src/api/export_i18n.py`. `b5a0fd9`, `9ea6dbc`.
-- **E11, interfaz:** 8 pruebas con Playwright dentro de `make check` (`scripts/check_ui.sh`, puertos 18000 y 15173). `942eb3b`, `bd924be`.
+  `frontend/src/i18n/` y `src/api/export_i18n.py`. `a56da41`, `aca23d6`.
+- **E11, interfaz:** 8 pruebas con Playwright dentro de `make check` (`scripts/check_ui.sh`, puertos 18000 y 15173). `e293a45`, `5a06dab`.
 - **E12, repaso general:** cobertura separada (`balanced`: 9,7 % en todos los genomas y 1,8 % en el atlas; 57 de 312 genomas validables
   en el atlas), encuadre de la red, leyenda fuera del dibujo, Data Provenance sin códigos de decisión, "Pairs used", trazabilidad de
-  E1–E6, título y logo de RegulonAtlas, accesibilidad y 404 en validación. `c031735`, `9ea6dbc`.
+  E1–E6, título y logo de RegulonAtlas, accesibilidad y 404 en validación. `211d154`, `aca23d6`.
 - Frontend `regulonatlas` 1.0.0, con `axios`, `vite`, `follow-redirects` y `source-map-js` actualizados: `npm audit` sin vulnerabilidades.
-  `942eb3b`. No se recalculó ningún resultado. **173 pruebas de API y unitarias y 8 de interfaz.** → `congelamiento_v1.md`, secciones 2, 5 y 6.
+  `e293a45`. No se recalculó ningún resultado. **173 pruebas de API y unitarias y 8 de interfaz.** → `congelamiento_v1.md`, secciones 2, 5 y 6.
 
 ### 23-11-2026: semana 14, solo información explícita (E8)
 
 - A pedido del estudiante, el sistema deja de mostrar valores externos que remiten a un registro de decisiones inaccesible; en su
-  lugar muestra los filtros de cada red. `9892032` (dashboard) y `147fea2` (API, validación y pruebas). Sin regenerar resultados:
+  lugar muestra los filtros de cada red. `1305636` (dashboard) y `f88b0c2` (API, validación y pruebas). Sin regenerar resultados:
   72 archivos con sha256 idéntico; en 97 consultas a la API solo desaparecen esos valores; **149 de 149 pruebas**.
   → `ampliaciones_semana14.md`, sección 10.
 
 ### 23-11-2026: semana 14, ampliaciones E1–E7
 
-- Aprobadas por el estudiante como excepciones al congelamiento. Commits `6300436` a `400764d`; salidas nuevas con `make extensions`
+- Aprobadas por el estudiante como excepciones al congelamiento. Commits `c0f4e52` a `80f3974`; salidas nuevas con `make extensions`
   (fuera de `make all`). Resultados congelados intactos (sha256); **147 de 147 pruebas**; vistas revisadas en navegador.
 - Hallazgos: `balanced` no siempre se distingue de la segunda red (IC por familia); la precisión de `balanced` se sostiene en
   RegulonDB (0,578), aunque su recall es de 6 %; sin autoevaluación, el MVP casi iguala a `balanced` en sus 8 genomas (F1 0,307
@@ -115,7 +124,7 @@ quedó documentado.
 
 ### 09-11-2026: semana 14, corrección de H2
 
-- Con aprobación del estudiante, `71771e2`: `/atlas/networks` y `/atlas/provenance` responden 503 con
+- Con aprobación del estudiante, `25fe8e7`: `/atlas/networks` y `/atlas/provenance` responden 503 con
   `make cache-atlas` cuando falta la caché (antes, 500 sin mensaje). Función `_manifest()` en
   `src/api/routers/atlas.py`; se quita el `xfail`. Corrección de error, permitida por el congelamiento.
 - Verificado: con la caché, las respuestas son idénticas a las de antes; `data/results/` y `data/cache/` idénticos
@@ -124,8 +133,8 @@ quedó documentado.
 ### 09-11-2026: semana 14, ampliación de las pruebas
 
 - Aprobado por el estudiante (bloques A, B y C, sin afectar lo existente). Tres archivos nuevos en `tests/`, un commit
-  cada uno: `9586f67` (A, validación contra RegPrecise, 12), `6a77bfa` (B, línea base, comparación y robustez, 19) y
-  `fb11872` (C, la API sin resultados ni caché, 34). Suite: de 58 a **123 pruebas** (121 aprobadas y 2 fallas
+  cada uno: `17b505d` (A, validación contra RegPrecise, 12), `50649f7` (B, línea base, comparación y robustez, 19) y
+  `157245b` (C, la API sin resultados ni caché, 34). Suite: de 58 a **123 pruebas** (121 aprobadas y 2 fallas
   esperadas); en un clon sin `data/` corren 86 (antes 23). Sin cambios en `src/` ni en el frontend; `data/results/` y
   `data/cache/` idénticos (sha256).
 - **Hallazgo H2:** sin la caché, `/atlas/networks` y `/atlas/provenance` responden 500 en vez de 503. Registrado con
@@ -164,13 +173,13 @@ quedó documentado.
 
 ### 04-11-2026: etiqueta `congelamiento-v1`
 
-- Etiqueta anotada `congelamiento-v1` sobre `d9bcf58` (cierre de la semana 13), subida a GitHub. Solo en `dev`; `main` sin
+- Etiqueta anotada `congelamiento-v1` sobre `786710f` (cierre de la semana 13), subida a GitHub. Solo en `dev`; `main` sin
   cambios. → `congelamiento_v1.md`.
 
 ### 29-10-2026: cierre de la semana 13
 
-- El estudiante revisó el software congelado y cerró la semana. Estado al cerrar: `dev` en `ce540b6` (más este commit),
-  limpio y en GitHub; `main` sin cambios (`f2d5df3`); 58 pruebas; 8 de 8 etapas al día; `data/results/` intacto.
+- El estudiante revisó el software congelado y cerró la semana. Estado al cerrar: `dev` en `0d69319` (más este commit),
+  limpio y en GitHub; `main` sin cambios (`a0f974a`); 58 pruebas; 8 de 8 etapas al día; `data/results/` intacto.
 - Hecho en la semana 13: estado del pipeline (`/atlas/status`), vistas Pipeline y Data Provenance, pasada de
   presentación, orden alfabético de Organisms, `make all` = atlas con revisión previa, nombre RegulonAtlas, prueba de
   reproducibilidad (20/20 idénticos), revisión completa con sus 13 correcciones y congelamiento de funciones.
@@ -185,14 +194,14 @@ quedó documentado.
 
 ### 29-10-2026: semana 13, correcciones de la revisión
 
-- Se corrigieron todos los hallazgos (E1, M1–M6, C1–C6), un commit cada uno (`13f53f1` a `ffa5266`), y la advertencia
-  de ESLint de Fingerprints (`95375a7`; quedan 18, que se mantienen). Nuevos: `components/ScrollX.jsx` (tablas anchas)
+- Se corrigieron todos los hallazgos (E1, M1–M6, C1–C6), un commit cada uno (`7372d43` a `80f69bf`), y la advertencia
+  de ESLint de Fingerprints (`269c7a7`; quedan 18, que se mantienen). Nuevos: `components/ScrollX.jsx` (tablas anchas)
   y `utils/a11y.js` (teclado). No cambia ningún dato. Verificado: `make check`, 10 vistas a 1440/900 px, teclado y API
   apagada; `data/results/` intacto. → `revision_semana13.md`, sección 5.
 
 ### 29-10-2026: semana 13, revisión completa del sistema
 
-- Revisión sin correcciones sobre `0a6a618`: 35/35 endpoints 200 (< 250 ms); sin resultados, 24 endpoints dan 503 con el
+- Revisión sin correcciones sobre `463ace9`: 35/35 endpoints 200 (< 250 ms); sin resultados, 24 endpoints dan 503 con el
   `make` a correr; 10/10 vistas sin errores a 1440 y 900 px; con la API apagada o sin resultados todas avisan; 0 enlaces
   rotos. Hallazgos: 1 error menor (Dashboard muestra "Networks 0" con la API apagada), 6 mejoras (tablas a 900 px,
   accesibilidad con teclado, README sin las vistas, pregunta de la versión de RegPrecise, tarjetas del Dashboard) y 6
@@ -201,9 +210,9 @@ quedó documentado.
 
 ### 29-10-2026: semana 13, revisión previa de `make all` y prueba de reproducibilidad
 
-- `7521118`: `scripts/check_atlas_ready.sh` (`make atlas-ready`): `make atlas`/`make all` se detienen en el primer
+- `26a5e00`: `scripts/check_atlas_ready.sh` (`make atlas-ready`): `make atlas`/`make all` se detienen en el primer
   segundo si falta un archivo de la caché (indica la regla) o si hay cambios sin commit. 5 pruebas nuevas (58 en total).
-- Prueba: `make all` en un clon limpio de `7521118` desde GitHub, con la caché enlazada y solo leída. 8 min 17 s.
+- Prueba: `make all` en un clon limpio de `26a5e00` desde GitHub, con la caché enlazada y solo leída. 8 min 17 s.
   **Los 20 archivos de datos salieron idénticos byte a byte** a los que muestra el dashboard; los manifiestos solo
   cambian en fecha y commit; 5/5 valores de control y 58/58 pruebas pasan. Resultados y caché del proyecto intactos
   (sha256 antes y después). Clon borrado. → `evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`.
@@ -217,17 +226,17 @@ quedó documentado.
 
 ### 29-10-2026: semana 13, vista Pipeline y limpieza de prototipos
 
-- `9f55796`: `Pipeline.jsx` con el flujo real en 7 etapas, la autoría de cada parte, el estado de cada etapa propia
+- `6ff6c27`: `Pipeline.jsx` con el flujo real en 7 etapas, la autoría de cada parte, el estado de cada etapa propia
   (de `/atlas/status`) y enlaces a las vistas; `StatusBadge.jsx` compartido con Data Provenance. En el menú bajo SYSTEM.
-- `6dd5b18`: se elimina `MVP.jsx` (descartada); Settings descartada (nunca existió como archivo).
-- `e32b0b2`: Organisms abre en orden alfabético por organismo (observación del estudiante).
+- `88eac60`: se elimina `MVP.jsx` (descartada); Settings descartada (nunca existió como archivo).
+- `bc1ee55`: Organisms abre en orden alfabético por organismo (observación del estudiante).
 - Pendiente, cuando el estudiante lo pida: revisión completa y congelamiento.
   → `sistema_semana13.md`, sección 6.
 
 ### 27-10-2026: semana 13, pasada de presentación de las vistas
 
-- Respaldo previo: rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13` (`fd3f3a5`).
-- `3edeff6` (nombre del proyecto unificado en los textos visibles), `91605a5` (Validation), `dd7661c` (Robustness), `fd2abb1` (Metrics y Data
+- Respaldo previo: rama `respaldo/pre-presentacion-semana13` y etiqueta `respaldo-pre-presentacion-semana13` (`589ad50`).
+- `cb7572c` (nombre del proyecto unificado en los textos visibles), `85cc2c5` (Validation), `d55b673` (Robustness), `eccdcfd` (Metrics y Data
   Provenance): resultado clave arriba y detalle en secciones plegables con su resumen calculado; corregidas las columnas
   superpuestas de Validation y la leyenda de Robustness. No cambia ningún dato. **Aprobada por el estudiante el 27-10-2026**; el respaldo se conserva.
   → `sistema_semana13.md`, sección 5 (incluye cómo revertir).
@@ -235,21 +244,21 @@ quedó documentado.
 ### 27-10-2026: semana 13, estado del pipeline y Data Provenance
 
 - Alcance pedido por el estudiante: solo el endpoint de estado y la vista Data Provenance; la vista MVP se descarta.
-- `65e9ace`: `scripts/explore_status.py`, `src/atlas_status.py` (8 etapas: commit, `git_dirty`, commit en el
+- `42c41de`: `scripts/explore_status.py`, `src/atlas_status.py` (8 etapas: commit, `git_dirty`, commit en el
   historial, archivos y si cada resultado está al día con su entrada), `GET /api/v1/atlas/status` y
   `tests/test_api_atlas_status.py` (7 pruebas; 53 en total).
-- `fbce952`: `DataProvenance.jsx` reescrita con datos reales (fuentes externas, caché, resultados y limitaciones), en el
+- `2e44975`: `DataProvenance.jsx` reescrita con datos reales (fuentes externas, caché, resultados y limitaciones), en el
   menú bajo SYSTEM. Estado actual: 8/8 etapas en `ok`, 5/5 resultados trazables y al día.
 - Observación: `provenance` registra RegPrecise 3.0; el manifiesto del MVP decía 3.2. → `sistema_semana13.md`.
 
 ### 26-10-2026: cierre de la semana 12
 
 - **Ramas:** por decisión del estudiante, todo el desarrollo queda solo en `dev`; no se fusiona ni se sube nada a `main`
-  hasta que él lo indique (`main` sigue en `f2d5df3`, semana 11). No se creó etiqueta de la semana 12. La regla quedó en
+  hasta que él lo indique (`main` sigue en `a0f974a`, semana 11). No se creó etiqueta de la semana 12. La regla quedó en
   `../CLAUDE.md` y en el contexto, sección 3.
-- **Pruebas del MVP:** registro versionado en `db6c33e`; la evidencia queda solo en el servidor (`.gitignore`).
+- **Pruebas del MVP:** registro versionado en `9bb869a`; la evidencia queda solo en el servidor (`.gitignore`).
 - **Verificación:** `make check` pasa (46 pruebas); los 5 `manifest.json` de `data/results/` tienen `git_dirty: false`
-  (validation `63469d5`, metrics `ceeb831`, comparison `3ce0f17`, robustness `38222a8`, baseline `251811b`); los 32
+  (validation `6fb7f0a`, metrics `d14814e`, comparison `2287c0f`, robustness `3820f6c`, baseline `ba4e3ac`); los 32
   endpoints GET de la API responden 200 y los valores de control coinciden. Registro de la API y del frontend en
   `logs/api_cierre_semana12.log` y `logs/web_cierre_semana12.log`. Revisión visual del estudiante: Robustness, la línea base de Validation, Dashboard, Organisms,
   OrganismDetail, Fingerprints y Comparison funcionan.
@@ -275,24 +284,24 @@ quedó documentado.
 
 ### 19-10-2026: limpieza del proyecto
 
-- Respaldo: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12` (`3802d6e`).
-- `1e3a35a` (entorno y código sin uso), `3893d57` (`src/atlas_common.py` y pruebas unitarias), `8978abd` (`legacy/` y
-  genomas fuera de git), `e228f2f` (ESLint), `9b2f4c4` (vistas del MVP migradas al atlas), `0a10f90` (nombres de
-  métricas, carga diferida, Validation dividida), `1cec481` (Makefile). El hook bloqueó dos commits parciales.
+- Respaldo: rama `respaldo/pre-limpieza-semana12` y etiqueta `respaldo-pre-limpieza-semana12` (`ea0813d`).
+- `5ba1fd4` (entorno y código sin uso), `fca1c9f` (`src/atlas_common.py` y pruebas unitarias), `c59f1c4` (`legacy/` y
+  genomas fuera de git), `43e3f96` (ESLint), `36ac56c` (vistas del MVP migradas al atlas), `459f238` (nombres de
+  métricas, carga diferida, Validation dividida), `b69b874` (Makefile). El hook bloqueó dos commits parciales.
 - Verificación: los 20 archivos de resultados son idénticos antes y después; `make mvp` funciona; 46 pruebas pasan;
   0 errores de ESLint. Etiquetas `semana09-auditoria` y `semana10-validacion` creadas; `semana10-sweep` eliminada.
   → `limpieza_semana12.md`; contexto, sección 12.1; `README.md`.
 
 ### 19-10-2026: reproducción a nivel de arista
 
-- `251811b`: `reproduction_edges.tsv`, endpoint `/atlas/baseline/reproduction-edges` y
+- `ba4e3ac`: `reproduction_edges.tsv`, endpoint `/atlas/baseline/reproduction-edges` y
   `test_edge_level_reproduction_is_exact` (33 pruebas). `no-footprint` sale exactamente de los hits (con `n_sites`);
   `validated`, `high-precision` y `balanced`, exactamente de su red madre con el mínimo de footprint.
   → `robustez_semana12.md`, sección 8.4.
 
 ### 19-10-2026: semana 12, línea base del pipeline propio
 
-- `7bb4940`: `scripts/export_fimo_cache.py` (`make cache-fimo`; 7.376.281 hits y 320.938 pares de `transfer_map`, solo de
+- `15ff15e`: `scripts/export_fimo_cache.py` (`make cache-fimo`; 7.376.281 hits y 320.938 pares de `transfer_map`, solo de
   los 312 genomas validables, verificados con `COUNT(*)`), `src/networks/atlas_baseline.py` (`make baseline-atlas`), API
   `/atlas/baseline/*`, sección nueva en `Validation.jsx`, `tests/test_api_atlas_baseline.py` (32 pruebas).
 - Resultado: el pipeline externo es umbral + tier + footprinting; `no-footprint` se reproduce exactamente; el
@@ -301,26 +310,26 @@ quedó documentado.
 
 ### 19-10-2026: semana 12, robustez de las métricas
 
-- `e304236`: `scripts/explore_robustness.py`, `src/networks/atlas_robustness.py` (`make robustness-atlas`), API
+- `9febf65`: `scripts/explore_robustness.py`, `src/networks/atlas_robustness.py` (`make robustness-atlas`), API
   `/atlas/robustness/*`, `Robustness.jsx` reescrita y en el menú, `tests/test_api_atlas_robustness.py`.
-- `38222a8`: corrección, `n_edges` es trivial en las tres estrategias. El cálculo se repitió con el árbol limpio
-  (manifiesto `38222a8`, `git_dirty: false`); hay 28 pruebas.
+- `3820f6c`: corrección, `n_edges` es trivial en las tres estrategias. El cálculo se repitió con el árbol limpio
+  (manifiesto `3820f6c`, `git_dirty: false`); hay 28 pruebas.
 - Resultado: las métricas de tamaño son robustas entre redes vecinas y frente a perder la mitad de las aristas; las de
   estructura no lo son. → `robustez_semana12.md`; contexto, sección 12.
 - Pendiente: línea base desde `fimo_hits` (requiere aprobar la exportación). → `robustez_semana12.md`, sección 8.
 
 ### 19-10-2026: cierre de la semana 11
 
-- `main` avanzó (fast-forward) hasta `f2d5df3` y se creó la etiqueta **`semana11-metricas`**. `main` estaba en la semana 8:
+- `main` avanzó (fast-forward) hasta `a0f974a` y se creó la etiqueta **`semana11-metricas`**. `main` estaba en la semana 8:
   la fusión incluye también las semanas 9 y 10. La etiqueta antigua `semana10-sweep` apunta a `b628e54` (MVP), así que su
   nombre no corresponde a lo que contiene; no se tocó.
 
 ### 19-10-2026: pendientes de la semana 11
 
-Commits: `90a3f23` (código y pruebas) y `df454c6` (documentación).
+Commits: `8860fd3` (código y pruebas) y `5b80cab` (documentación).
 
 - **Validación repetida con el árbol limpio.** Resultados idénticos a los de la semana 10 (diferencia 0,0). Manifiesto en
-  `63469d5`, `git_dirty: false`. Nueva prueba `tests/test_api_atlas_validation.py` (22 pruebas en total).
+  `6fb7f0a`, `git_dirty: false`. Nueva prueba `tests/test_api_atlas_validation.py` (22 pruebas en total).
   → `correcciones_semana11.md`, C3.
 - **Hipótesis del origen de los motivos comprobada** (`scripts/explore_motif_origin.py`). En `balanced`, el tamaño del
   genoma y la oferta de motivos cercanos explican el 88 % del efecto del filo sobre el número de TF. `Comparison.jsx`
@@ -331,15 +340,15 @@ Commits: `90a3f23` (código y pruebas) y `df454c6` (documentación).
 
 ### 19-10-2026: comparación entre taxones y documentación de la semana 11
 
-- `3ce0f17`: `scripts/explore_comparison.py`, `src/networks/atlas_comparison.py` (`make comparison-atlas`), API
+- `2287c0f`: `scripts/explore_comparison.py`, `src/networks/atlas_comparison.py` (`make comparison-atlas`), API
   `/atlas/comparison/*`, `Comparison.jsx` reescrita, `Fingerprints` y `Comparison` en el menú.
-- `63469d5`: `metricas_semana11.md`, contexto actualizado con la sección 11, preguntas al investigador y al profesor.
-- `f46562d`: se agregó `contexto_regulonatlas.md`.
+- `6fb7f0a`: `metricas_semana11.md`, contexto actualizado con la sección 11, preguntas al investigador y al profesor.
+- `33c0162`: se agregó `contexto_regulonatlas.md`.
 
 ### 15-10-2026: verificación y correcciones de la semana 11
 
-- `73c7a34`: import roto en `main.py`. `a1b5dfc`: genoma replacement y `git_dirty`. `ceeb831`: `make check`, hook
-  pre-commit y pruebas. `9801b4f`: `correcciones_semana11.md` y `preguntas_pendientes.md`.
+- `b79dbe6`: import roto en `main.py`. `4ad2652`: genoma replacement y `git_dirty`. `d14814e`: `make check`, hook
+  pre-commit y pruebas. `2352b3b`: `correcciones_semana11.md` y `preguntas_pendientes.md`.
 - `06e5140`: métricas propias (`src/networks/atlas_metrics.py`), vistas Metrics y Fingerprints.
 
 ### 14 y 15-10-2026: semana 10

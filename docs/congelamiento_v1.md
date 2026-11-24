@@ -1,7 +1,7 @@
 # Congelamiento de funciones de RegulonAtlas v1.0
 
 *Congelado el 29-10-2026, al cierre de la semana 13, a pedido del estudiante. La etiqueta **`congelamiento-v1`** (creada
-el 04-11-2026, en `dev` y en GitHub; no en `main`) marca el estado congelado: commit `d9bcf58`.* El sistema se congela después de la revisión completa y sus correcciones
+el 04-11-2026, en `dev` y en GitHub; no en `main`) marca el estado congelado: commit `786710f`.* El sistema se congela después de la revisión completa y sus correcciones
 (`revision_semana13.md`) y de la prueba de reproducibilidad (`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`).
 
 ## 1. Qué significa
@@ -92,18 +92,18 @@ Tres resultados (comparación ajustada, precisión esperada y MVP) registran su 
 
 | Fecha | Función | Motivo | Aprobación | Commit |
 |---|---|---|---|---|
-| 23-11-2026 | E1. Intervalos de confianza (bootstrap) de P, R y F1 | Saber si las diferencias entre redes son reales | Estudiante, 23-11-2026 (punto 1) | `a14b0ea`, `400764d` |
-| 23-11-2026 | E2. Validation: modos `all` e `independent` lado a lado | No mostrar solo la cifra más favorable | Estudiante, 23-11-2026 (punto 2) | `400764d` |
-| 23-11-2026 | E3. Comparación entre taxones ajustada por tamaño del genoma y oferta de motivos | Separar el efecto metodológico del taxón | Estudiante, 23-11-2026 (punto 3) | `2c2b60a`, `a14b0ea`, `400764d` |
-| 23-11-2026 | E4. Indicador de confiabilidad por genoma | Orientar en los genomas sin gold standard | Estudiante, 23-11-2026 (punto 4) | `a14b0ea`, `400764d` |
-| 23-11-2026 | E5. Validación con RegulonDB (*E. coli* K-12) | Segundo gold standard, con evidencia experimental | Estudiante, 23-11-2026 (punto 6) | `362e98e`, `400764d` |
-| 23-11-2026 | E6. Red del MVP frente a las redes del atlas | Pendiente desde la semana 10 | Estudiante, 23-11-2026 (punto 7) | `a14b0ea`, `400764d` |
-| 23-11-2026 | E7. Avisos de cobertura junto a las cifras | Evitar leer las cifras como cobertura total | Estudiante, 23-11-2026 (punto 8) | `400764d` |
-| 23-11-2026 | E8. Solo información explícita: se quitan las referencias a una decisión externa sin registro disponible | Que quien replique el proyecto no dependa de un documento inaccesible. No cambia ningún resultado propio | Estudiante, 23-11-2026 | `9892032`, `147fea2` |
-| 23-11-2026 | E9. Reporte Excel por organismo (5 redes) y por red, con las imágenes del dashboard | Descargar la información y la red de un organismo | Estudiante, 23-11-2026 | `b5a0fd9`, `9ea6dbc` |
-| 23-11-2026 | E10. Botón de idioma inglés/español en el dashboard y Excel en el idioma activo | Usar el sistema en ambos idiomas, sin traducir datos ni identificadores | Estudiante, 23-11-2026 | `b5a0fd9`, `9ea6dbc` |
-| 23-11-2026 | E11. Pruebas de interfaz con Playwright en `make check` | Comprobar las vistas reales en un navegador | Estudiante, 23-11-2026 | `942eb3b`, `bd924be` |
-| 23-11-2026 | E12. Repaso general: cobertura separada entre todos los genomas y el atlas, trazabilidad de E1–E6 y correcciones visibles | No presentar la cobertura de todos los genomas como cobertura del atlas | Estudiante, 23-11-2026 | `c031735`, `9ea6dbc` |
+| 23-11-2026 | E1. Intervalos de confianza (bootstrap) de P, R y F1 | Saber si las diferencias entre redes son reales | Estudiante, 23-11-2026 (punto 1) | `6845b68`, `80f3974` |
+| 23-11-2026 | E2. Validation: modos `all` e `independent` lado a lado | No mostrar solo la cifra más favorable | Estudiante, 23-11-2026 (punto 2) | `80f3974` |
+| 23-11-2026 | E3. Comparación entre taxones ajustada por tamaño del genoma y oferta de motivos | Separar el efecto metodológico del taxón | Estudiante, 23-11-2026 (punto 3) | `548a306`, `6845b68`, `80f3974` |
+| 23-11-2026 | E4. Indicador de confiabilidad por genoma | Orientar en los genomas sin gold standard | Estudiante, 23-11-2026 (punto 4) | `6845b68`, `80f3974` |
+| 23-11-2026 | E5. Validación con RegulonDB (*E. coli* K-12) | Segundo gold standard, con evidencia experimental | Estudiante, 23-11-2026 (punto 6) | `b2550dc`, `80f3974` |
+| 23-11-2026 | E6. Red del MVP frente a las redes del atlas | Pendiente desde la semana 10 | Estudiante, 23-11-2026 (punto 7) | `6845b68`, `80f3974` |
+| 23-11-2026 | E7. Avisos de cobertura junto a las cifras | Evitar leer las cifras como cobertura total | Estudiante, 23-11-2026 (punto 8) | `80f3974` |
+| 23-11-2026 | E8. Solo información explícita: se quitan las referencias a una decisión externa sin registro disponible | Que quien replique el proyecto no dependa de un documento inaccesible. No cambia ningún resultado propio | Estudiante, 23-11-2026 | `1305636`, `f88b0c2` |
+| 23-11-2026 | E9. Reporte Excel por organismo (5 redes) y por red, con las imágenes del dashboard | Descargar la información y la red de un organismo | Estudiante, 23-11-2026 | `a56da41`, `aca23d6` |
+| 23-11-2026 | E10. Botón de idioma inglés/español en el dashboard y Excel en el idioma activo | Usar el sistema en ambos idiomas, sin traducir datos ni identificadores | Estudiante, 23-11-2026 | `a56da41`, `aca23d6` |
+| 23-11-2026 | E11. Pruebas de interfaz con Playwright en `make check` | Comprobar las vistas reales en un navegador | Estudiante, 23-11-2026 | `e293a45`, `5a06dab` |
+| 23-11-2026 | E12. Repaso general: cobertura separada entre todos los genomas y el atlas, trazabilidad de E1–E6 y correcciones visibles | No presentar la cobertura de todos los genomas como cobertura del atlas | Estudiante, 23-11-2026 | `211d154`, `aca23d6` |
 
 Detalle y resultados de E1 a E7: `ampliaciones_semana14.md`. No forman parte de `make all` (`make extensions`).
 

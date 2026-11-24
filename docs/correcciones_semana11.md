@@ -7,12 +7,12 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
 
 | # | Problema | Commit |
 |---|---|---|
-| C1 | La API no arrancaba desde una copia limpia de `dev` | `73c7a34` |
-| C2 | El genoma *replacement* quedaba fuera del atlas (2.223 en vez de 2.224) | `a1b5dfc` |
-| C3 | `manifest.json` apuntaba a un commit que no contenía el módulo | `a1b5dfc` + nueva ejecución |
-| C4 | No había ninguna verificación antes de hacer commit | `ceeb831` |
+| C1 | La API no arrancaba desde una copia limpia de `dev` | `b79dbe6` |
+| C2 | El genoma *replacement* quedaba fuera del atlas (2.223 en vez de 2.224) | `4ad2652` |
+| C3 | `manifest.json` apuntaba a un commit que no contenía el módulo | `4ad2652` + nueva ejecución |
+| C4 | No había ninguna verificación antes de hacer commit | `d14814e` |
 | C5 | `density` propia y externa parecían contradictorias | documentación |
-| C6 | Archivos de documentación faltantes o duplicados | `ceeb831` y este commit |
+| C6 | Archivos de documentación faltantes o duplicados | `d14814e` y este commit |
 
 ## C1. Import roto en `src/api/main.py`
 
@@ -58,12 +58,12 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
     `git status --porcelain --untracked-files=no`. El resultado se guarda como `git_dirty` en `manifest.json`
     y, si es `true`, se muestra un aviso al iniciar.
   - CLAUDE.md: `make metrics-atlas` y `make validate-atlas` se ejecutan con el árbol limpio.
-- **Nueva ejecución:** `make metrics-atlas` sobre `ceeb831` con el árbol limpio
+- **Nueva ejecución:** `make metrics-atlas` sobre `d14814e` con el árbol limpio
   (log en `logs/metrics_atlas_semana11.log`). El manifiesto queda así: `created_at 2026-10-15T13:42:38+00:00`,
-  `git_commit ceeb831`, `git_dirty false`.
+  `git_commit d14814e`, `git_dirty false`.
 - **Verificación:** `test_manifest_is_traceable`. Los valores de control de E. coli no cambiaron (118 / 342 / 485).
 - **Validación (19-10-2026):** se ejecutó `make validate-atlas` otra vez con el árbol limpio
-  (`logs/validate_atlas_semana11.log`). El manifiesto quedó con `git_commit 63469d5` y `git_dirty false`. `summary.tsv` es
+  (`logs/validate_atlas_semana11.log`). El manifiesto quedó con `git_commit 6fb7f0a` y `git_dirty false`. `summary.tsv` es
   **idéntico** al de la semana 10 (diferencia máxima 0,0 en las 20 filas), así que las cifras de `validacion_semana10.md`
   siguen valiendo. Ahora lo comprueba `tests/test_api_atlas_validation.py`: control de balanced 0,612 / 0,332 / 0,431,
   `balanced` como mejor F1 y manifiesto trazable.
@@ -72,7 +72,7 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
 
 - **Problema:** nada impedía hacer commit de un estado en que la API no arrancaba. La comprobación existía
   solo sobre la copia de trabajo, que es justamente donde el error no aparecía.
-- **Cambio (`ceeb831`):**
+- **Cambio (`d14814e`):**
   - `scripts/check_commit.sh`. Por defecto exporta el **índice** a un directorio temporal
     (`git checkout-index`) y comprueba ahí:
     1. que `src.api.main` importa;
@@ -93,7 +93,7 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
 - **Verificación:**
   - Con un índice temporal igual a `06e5140` (`GIT_INDEX_FILE=… git read-tree 06e5140`), el script falla con
     `ImportError: cannot import name 'atlas_metrics_router'` y código de salida 1. Habría bloqueado el commit roto.
-  - Sobre el estado actual da `OK`. El hook se ejecutó en el commit `ceeb831` y en el de este documento.
+  - Sobre el estado actual da `OK`. El hook se ejecutó en el commit `d14814e` y en el de este documento.
   - `pytest`: 11 pruebas pasan.
 
 ## C5. `density` propia frente a `network_metrics`
@@ -125,12 +125,12 @@ resultados de la semana (`metricas_semana11.md`) se escribe aparte.
 ## Estado final
 
 ```text
-73c7a34 fix(api): importar el router atlas_metrics con su nombre real
-a1b5dfc fix(metrics): contar el genoma replacement en el atlas; registrar git_dirty
-ceeb831 chore: make check, hook pre-commit versionado y pruebas de humo de la API
+b79dbe6 fix(api): importar el router atlas_metrics con su nombre real
+4ad2652 fix(metrics): contar el genoma replacement en el atlas; registrar git_dirty
+d14814e chore: make check, hook pre-commit versionado y pruebas de humo de la API
 (este)  docs: correcciones de la semana 11 y preguntas pendientes
 ```
 
 - `make check`: OK (API importa, sin `get_db`, frontend compila, 11 pruebas pasan).
-- `data/results/metrics/manifest.json`: `ceeb831`, `git_dirty false`.
+- `data/results/metrics/manifest.json`: `d14814e`, `git_dirty false`.
 - Rama `dev` publicada en `origin/dev` sin reescribir el historial.

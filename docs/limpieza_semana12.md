@@ -9,8 +9,8 @@ Antes de cambiar nada se guardó el estado completo en GitHub:
 
 | Referencia | Apunta a | Para volver |
 |---|---|---|
-| Rama `respaldo/pre-limpieza-semana12` | `3802d6e` | `git checkout respaldo/pre-limpieza-semana12` |
-| Etiqueta `respaldo-pre-limpieza-semana12` | `3802d6e` | `git checkout respaldo-pre-limpieza-semana12` |
+| Rama `respaldo/pre-limpieza-semana12` | `ea0813d` | `git checkout respaldo/pre-limpieza-semana12` |
+| Etiqueta `respaldo-pre-limpieza-semana12` | `ea0813d` | `git checkout respaldo-pre-limpieza-semana12` |
 
 Los datos del disco (`data/`) no se tocaron. Los genomas que salieron de git (sección 4) siguen en
 `data/genomes/`.
@@ -19,13 +19,13 @@ Los datos del disco (`data/`) no se tocaron. Los genomas que salieron de git (se
 
 | Commit | Etapa | Contenido |
 |---|---|---|
-| `1e3a35a` | Limpieza 1 | `environment.yml`, código sin uso, Pydantic, `.gitignore`, corrección documental |
-| `3893d57` | Limpieza 2 | `src/atlas_common.py` y pruebas unitarias |
-| `8978abd` | Limpieza 3 | Código histórico a `legacy/` y genomas fuera de git |
-| `e228f2f` | Limpieza 5 | ESLint en `make check` |
-| `9b2f4c4` | Limpieza 4 | Dashboard, Organisms y OrganismDetail con datos del atlas |
-| `0a10f90` | Limpieza 6 | Nombres de métricas compartidos, carga diferida y Validation dividida |
-| `1cec481` | Limpieza 7 | Makefile con `make help` y `make atlas` |
+| `5ba1fd4` | Limpieza 1 | `environment.yml`, código sin uso, Pydantic, `.gitignore`, corrección documental |
+| `fca1c9f` | Limpieza 2 | `src/atlas_common.py` y pruebas unitarias |
+| `c59f1c4` | Limpieza 3 | Código histórico a `legacy/` y genomas fuera de git |
+| `43e3f96` | Limpieza 5 | ESLint en `make check` |
+| `36ac56c` | Limpieza 4 | Dashboard, Organisms y OrganismDetail con datos del atlas |
+| `459f238` | Limpieza 6 | Nombres de métricas compartidos, carga diferida y Validation dividida |
+| `b69b874` | Limpieza 7 | Makefile con `make help` y `make atlas` |
 | (este) | Documentación | README, este documento, contexto, CLAUDE.md e índice |
 
 La 5 quedó antes que la 4 porque **el hook pre-commit bloqueó dos veces la limpieza 4**, y en las dos tenía razón:

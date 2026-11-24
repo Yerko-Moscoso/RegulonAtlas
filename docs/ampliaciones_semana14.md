@@ -1,7 +1,7 @@
 # Ampliaciones de la v1.0 (semana 14, 23-11-2026)
 
 *Excepciones E1 a E7 al congelamiento, aprobadas por el estudiante el 23-11-2026 (`congelamiento_v1.md`, sección 5).
-Código en los commits `2c2b60a` a `400764d`; todos los resultados se generaron con el árbol limpio en `400764d`.*
+Código en los commits `548a306` a `80f3974`; todos los resultados se generaron con el árbol limpio en `80f3974`.*
 
 ## 1. Resumen
 
@@ -134,7 +134,7 @@ la nota de las métricas jerárquicas ahora dice que el gen del TF se ubica en c
 ## 8. Verificación
 
 - `make check`: **147 de 147 pruebas** al cerrar E1–E7 (24 nuevas en `tests/test_extensions.py`; 149 tras E8), ESLint sin errores.
-- Los 6 manifiestos nuevos tienen `git_dirty: false` (commit `400764d`).
+- Los 6 manifiestos nuevos tienen `git_dirty: false` (commit `80f3974`).
 - `data/results/` congelado: sha256 idéntico en validación, métricas, comparación, robustez y línea base.
 - Navegador (Chromium) a 1440 y 900 px: Validation, Comparison, Fingerprints, Metrics, Regulatory Network y Organisms sin errores
   de consola, sin respuestas 4xx/5xx y sin desborde horizontal. OrganismDetail, comprobada a 1440 px.
@@ -145,13 +145,13 @@ la nota de las métricas jerárquicas ahora dice que el gen del TF se ubica en c
 - `make extensions` necesita los resultados de `make all`, de `make mvp` y la descarga de `make regulondb`. Como RegulonDB se
   actualiza, una descarga futura puede cambiar sus cifras; `data/raw/regulondb/manifest.json` guarda versión y sha256.
 - La API pasa de 35 a 43 rutas GET; la lista de la sección 2.2 del congelamiento describe la v1.0 original.
-- El mensaje del commit `400764d` dice "E1-E8"; son E1 a E7.
+- El mensaje del commit `80f3974` dice "E1-E8"; son E1 a E7.
 
 ## 10. E8: solo información explícita
 
 **Motivo.** Las notas de `networks.params.source` traen valores P/R/F1 que remiten a un registro de decisiones del investigador
 al que no tenemos acceso. Quien replique el proyecto tampoco lo tendría, así que el sistema muestra solo lo que consta en los datos
-o se calcula aquí (commits `9892032` y `147fea2`).
+o se calcula aquí (commits `1305636` y `f88b0c2`).
 
 | Antes | Ahora |
 |---|---|
