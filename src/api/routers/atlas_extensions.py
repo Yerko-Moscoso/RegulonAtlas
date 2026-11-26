@@ -1,6 +1,7 @@
-"""Ampliaciones de la v1.0 (excepciones E1, E3, E4 y E6 del congelamiento; solo lectura).
+"""Ampliaciones de la v1.0 (excepciones E1, E3 y E4 del congelamiento; solo lectura).
 
-Lee los resultados de make ci-atlas, adjusted-atlas, reliability-atlas y mvp-point. No calcula nada.
+Lee los resultados de make ci-atlas, adjusted-atlas y reliability-atlas. No calcula nada.
+La comparación MVP frente al atlas (E6) se quitó el 26-11-2026 (E13).
 RegulonDB (E5) se sirve con /atlas/validation/*?gold=regulondb: solo cifras agregadas, nunca sus interacciones.
 """
 import json
@@ -18,12 +19,11 @@ SOURCES = {
     "ci": ("validation_ci", "make ci-atlas"),
     "adjusted": ("comparison_adjusted", "make adjusted-atlas"),
     "reliability": ("reliability", "make reliability-atlas"),
-    "mvp": ("validation_mvp", "make mvp-point"),
 }
 LEVELS = {"phylum": "gtdb_phylum", "class": "gtdb_class", "order": "gtdb_order", "family": "gtdb_family"}
 Mode = Literal["all", "independent"]
 Scheme = Literal["genome", "family"]
-Source = Literal["ci", "adjusted", "reliability", "mvp"]
+Source = Literal["ci", "adjusted", "reliability"]
 
 
 @lru_cache(maxsize=16)
@@ -74,13 +74,6 @@ def f1_differences(scheme: Scheme = "family", mode: Optional[Mode] = None):
     df = _table("ci", "f1_differences.tsv")
     df = df[df["scheme"] == scheme]
     return {"scheme": scheme, "rows": _records(df if mode is None else df[df["mode"] == mode])}
-
-
-@router.get("/mvp-points")
-def mvp_points(mode: Mode = "all"):
-    """MVP thresholds and atlas networks scored on the same 8 genomes."""
-    df = _table("mvp", "points.tsv")
-    return {"mode": mode, "rows": _records(df[df["mode"] == mode])}
 
 
 @router.get("/adjusted/taxa")

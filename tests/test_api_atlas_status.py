@@ -15,7 +15,7 @@ from src.atlas_status import pipeline_status
 client = TestClient(app)
 STEP_IDS = ["cache-atlas", "cache-genes", "cache-fimo",
             "validation", "metrics", "comparison", "robustness", "baseline",
-            "regulondb", "regulondb-strong", "validation-ci", "comparison-adjusted", "reliability", "validation-mvp"]
+            "regulondb", "regulondb-strong", "validation-ci", "comparison-adjusted", "reliability"]
 HAS_RESULTS = all(Path(p).exists() for p in [
     "data/cache/atlas/manifest.json", "data/results/metrics/manifest.json",
     "data/results/validation/regprecise/manifest.json"])

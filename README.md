@@ -8,8 +8,8 @@ Las cinco redes las generó un pipeline externo del investigador del proyecto y 
 Este repositorio las audita, las valida contra RegPrecise, calcula métricas topológicas propias, compara los genomas
 entre taxones, mide la robustez de las métricas y las muestra en un dashboard web.
 
-**Documentación:** [`docs/README.md`](docs/README.md) es el índice. El documento maestro es
-[`docs/contexto_regulonatlas.md`](docs/contexto_regulonatlas.md).
+**Documentación:** este README y [`docs/requisitos_y_datos.md`](docs/requisitos_y_datos.md) (requisitos medidos,
+instalación sin base de datos y paquete de datos).
 
 ## Estructura
 
@@ -24,7 +24,7 @@ entre taxones, mide la robustez de las métricas y las muestra en un dashboard w
 | `src/pipeline/`, `config/` | Pipeline del MVP (semana 8) |
 | `legacy/` | Código histórico que ya no se usa (ingesta y pipeline piloto); ver `legacy/README.md` |
 | `tests/` | Pruebas unitarias y de humo de la API |
-| `docs/` | Documentación por semana, preguntas pendientes y bitácora |
+| `docs/` | Requisitos del sistema, instalación y paquete de datos (`requisitos_y_datos.md`) |
 
 ## Instalación
 
@@ -35,7 +35,7 @@ No hace falta acceso a MariaDB: la caché del atlas se descarga como archivo adj
 
 ```bash
 git clone https://github.com/Yerko-Moscoso/RegulonAtlas.git && cd RegulonAtlas
-git checkout v1.0                         # versión final (o la rama main, que es igual)
+                                          # rama main: versión actual (la etiqueta v1.0 es la versión final del 26-11-2026)
 
 conda env create -f environment.yml      # entorno "bioinfo"
 conda activate bioinfo
@@ -53,9 +53,8 @@ tar xzf regulonatlas_cache_v1.0.tar.gz    # crea data/cache/atlas/
 (cd data/cache/atlas && sha256sum -c SHA256SUMS)
 make atlas-ready                          # caché completa y árbol limpio
 make all                                  # ~8,5 min con 24 núcleos; ~47 min con 4
-make mvp && make regulondb && make extensions   # make check también prueba las vistas de las ampliaciones
+make regulondb && make extensions         # make check también prueba las vistas de las ampliaciones
 make check
-git checkout -- data/results/mvp          # make mvp reescribe 5 archivos versionados; así el árbol queda limpio
 ```
 
 `regulonatlas_results_v1.0.sha256` trae el sha256 de los resultados de la v1.0 para compararlos con los de `make all`
@@ -72,7 +71,7 @@ en una carpeta (`-p <carpeta>`), y se activa ese.
 make help                 # lista de comandos
 make api                  # backend en http://localhost:8000 (documentación en /docs)
 make web                  # frontend en http://localhost:5173
-make extensions  # ampliaciones E1-E7, fuera de make all (antes: make regulondb). Ver docs/ampliaciones_semana14.md
+make extensions           # ampliaciones (intervalos, comparación ajustada, precisión esperada, RegulonDB); fuera de make all; antes: make regulondb
 make check                # antes de cada commit: API, frontend, ESLint, pytest e interfaz
 make test-ui              # solo las pruebas de interfaz (Playwright, puertos 18000 y 15173)
 ```
@@ -109,13 +108,13 @@ inglés y español; los datos e identificadores no se traducen.
 
 ## Resultados principales
 
-| Tema | Resultado | Documento |
-|---|---|---|
-| Validación | `balanced` es la mejor red: F1 = 0,431 (0,318 sin autoevaluación) | `docs/validacion_semana10.md` |
-| Métricas propias | Las métricas de tamaño ordenan los taxones igual que la tabla externa (ρ ≥ 0,94) | `docs/metricas_semana11.md` |
-| Comparación entre taxones | El efecto del filo es en un 88 % metodológico (tamaño del genoma y origen de los motivos) | `docs/metricas_semana11.md`, 8.5 |
-| Robustez | Las métricas de tamaño resisten perder la mitad de las aristas; las de estructura no | `docs/robustez_semana12.md` |
-| Línea base | El pipeline externo es umbral + tier + footprinting; `no-footprint` se reproduce exactamente | `docs/robustez_semana12.md`, 8.4 |
+| Tema | Resultado |
+|---|---|
+| Validación | `balanced` es la mejor red: F1 = 0,431 (0,318 sin autoevaluación) |
+| Métricas propias | Las métricas de tamaño ordenan los taxones igual que la tabla externa (ρ ≥ 0,94) |
+| Comparación entre taxones | El efecto del filo es en un 88 % metodológico (tamaño del genoma y origen de los motivos) |
+| Robustez | Las métricas de tamaño resisten perder la mitad de las aristas; las de estructura no |
+| Línea base | El pipeline externo es umbral + tier + footprinting; `no-footprint` se reproduce exactamente |
 
 ## MVP (semana 8)
 
@@ -140,8 +139,10 @@ reanotación PGAP y no coinciden; la base solo guarda hits con p ≤ 1e-5.
 ## Etiquetas
 
 `mvp-semana8` (entrega del MVP), `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`, `congelamiento-v1`
-(funciones congeladas al cierre de la semana 13; `docs/congelamiento_v1.md`) y `v1.0` (versión final). `main` está al
-día con `dev` y ambas apuntan a `v1.0`.
+(funciones congeladas al cierre de la semana 13) y `v1.0` (versión final, 26-11-2026). `main` y `dev` están al día entre
+sí; después de `v1.0` solo se quitó la comparación MVP frente al atlas de la vista Validation (con eso `make extensions` ya
+no necesita `make mvp`) y la documentación interna salió del repositorio. En la etiqueta `v1.0`, `make extensions` también
+necesita `make mvp` antes.
 
 Respaldos (26-11-2026), por si hay que volver al estado anterior: rama `respaldo/main-semana11` y etiqueta
 `respaldo-main-semana11` (el `main` anterior, hasta la semana 11), y etiqueta `respaldo-v1.0-original` (la `v1.0` antes de

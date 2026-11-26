@@ -111,7 +111,6 @@ export const api = {
   getF1Differences: (scheme = 'family', mode) =>
     apiClient.get('/atlas/extensions/f1-differences', { params: { scheme, mode } }),
 
-  getMvpPoints: (mode = 'all') => apiClient.get('/atlas/extensions/mvp-points', { params: { mode } }),
 
   getAdjustedTaxa: (networkId, level, metric) =>
     apiClient.get('/atlas/extensions/adjusted/taxa', { params: { network_id: networkId, level, metric } }),

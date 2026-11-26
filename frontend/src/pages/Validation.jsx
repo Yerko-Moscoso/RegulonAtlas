@@ -16,7 +16,7 @@ import { DEFAULT_NETWORK, DEFAULT_GENOME, fmtInt, fmtP } from "../utils/atlas";
 import { pct, pctTick, dec, detail } from "../utils/validation";
 import { Section, Segmented, Stat, Spinner, ErrorMsg, BreakdownTable, CurveTooltip } from "../components/ValidationParts";
 import BaselineSection from "../components/BaselineSection";
-import { ModeComparison, RegulonDBSection, MvpSection } from "../components/ValidationExtras";
+import { ModeComparison, RegulonDBSection } from "../components/ValidationExtras";
 import Collapsible from "../components/Collapsible";
 import ScrollX from "../components/ScrollX";
 import { clickable, FOCUS_RING } from "../utils/a11y";
@@ -553,7 +553,6 @@ export default function Validation({ initialOrganism }) {
 
       <RegulonDBSection />
 
-      <MvpSection mode={mode} />
     </div>
   );
 }

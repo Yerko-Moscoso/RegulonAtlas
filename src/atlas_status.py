@@ -63,9 +63,6 @@ RESULT_STEPS = [
     {"id": "reliability", "label": "Expected precision", "make": "reliability-atlas",
      "dir": "data/results/reliability", "depends_on": ["cache-atlas"], "check": "unrecorded",
      "description": "Per-genome estimate from the transfer tiers of its edges."},
-    {"id": "validation-mvp", "label": "MVP vs atlas", "make": "mvp-point",
-     "dir": "data/results/validation_mvp", "depends_on": ["cache-atlas"], "check": "unrecorded",
-     "description": "MVP network and atlas networks evaluated on the same 8 genomes."},
 ]
 
 

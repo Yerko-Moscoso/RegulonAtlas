@@ -1,7 +1,8 @@
 # Requisitos del sistema y paquete de datos (v1.0)
 
 *Medido el 26-11-2026 sobre la rama `dev` (código de la etiqueta `v1.0`), en un clon limpio y con un entorno conda nuevo.
-Lo que no se pudo medir dice **Por confirmar**.*
+Lo que no se pudo medir dice **Por confirmar**. Después de `v1.0` se quitó la comparación MVP frente al atlas: en `main`,
+`make extensions` ya no necesita `make mvp` (en la etiqueta `v1.0`, sí). Las cifras de tiempo y memoria no cambian.*
 
 Este documento sirve para instalar y probar RegulonAtlas desde cero en otro computador **sin acceso a MariaDB**: qué equipo
 hace falta, cuánto tarda cada etapa, qué trae el paquete de datos y cómo descargarlo, verificarlo y descomprimirlo.
@@ -55,9 +56,9 @@ el mismo comando con `taskset -c 0-3`.
 | `make check` solo con `make all` | 56 s | 3,4 GB | — | Falla por las mismas 2 pruebas de interfaz |
 | `make mvp` | 17,3 s | 671 MB | 17,2 s | Informe generado; modifica 5 archivos versionados (ver sección 6) |
 | `make regulondb` | 4,1 s | 23 MB | — | Descarga 2,6 MB de RegulonDB a `data/raw/regulondb/` (uso académico; no se versiona ni se redistribuye) |
-| `make extensions` (después de `make mvp` y `make regulondb`) | 22,4 s | 1,4 GB | 22,2 s | — |
+| `make extensions` (después de `make regulondb`; en `v1.0`, también de `make mvp`) | 22,4 s | 1,4 GB | 22,2 s | — |
 | `make test-ui` con las ampliaciones | 43 s | 3,4 GB | 41 s | 8 de 8 aprobadas |
-| `make check` con las ampliaciones | 1 min 5 s | 3,4 GB | Por confirmar (no se midió entero; sus partes sí) | 173 pruebas de pytest y 8 de interfaz aprobadas |
+| `make check` con las ampliaciones | 1 min 5 s | 3,4 GB | Por confirmar (no se midió entero; sus partes sí) | 173 pruebas de pytest (170 en `main`, sin las de E6) y 8 de interfaz aprobadas |
 | API en reposo (`uvicorn`, sin `--reload`) | arranca en 0,7 s | 156 MB | arranca en 0,7 s, 155 MB | — |
 | API con el grafo más grande (red 4 `permissive`, `GCF_000012945.1`, `max_edges=5000`) | 0,35 s la 1.ª vez, 0,21–0,25 s después | 1,33 GB | 0,38 s / 0,21–0,25 s, 1,13 GB | 3.285 aristas (todas; no llega al tope de 5000), 729 KB de JSON |
 | `conda env create -f environment.yml` | 17 s (paquetes ya descargados en el servidor) | 390 MB | — | Desde cero: **Por confirmar** (depende de la red; ~270 MB de descarga) |
@@ -144,11 +145,9 @@ Después, en este orden:
 
 ```bash
 make all                       # ≈ 8,5 min en el servidor; ≈ 47 min con 4 núcleos
-make mvp                       # MVP de 8 genomas (lo necesita make extensions)
 make regulondb                 # descarga RegulonDB (2,6 MB, uso académico) para las ampliaciones
-make extensions                # ampliaciones E1-E7: sin ellas make check falla en 2 pruebas de interfaz
-make check                     # 173 pruebas de pytest y 8 de interfaz
-git checkout -- data/results/mvp   # deja el árbol limpio otra vez (make mvp modifica 5 archivos versionados)
+make extensions                # ampliaciones: sin ellas make check falla en 2 pruebas de interfaz
+make check                     # 170 pruebas de pytest y 8 de interfaz (173 en v1.0)
 make api                       # http://localhost:8000/docs
 make web                       # http://localhost:5173 (en otra terminal)
 ```
@@ -172,7 +171,8 @@ Resultado esperado de `make all` (verificado el 26-11-2026 en el clon limpio con
   la fecha y el commit de la línea "Generado"; el resto, idéntico.
 - Los resultados de `make extensions` y `make mvp` también están en el archivo, pero no los produce `make all`.
 
-Para comparar valor por valor, el procedimiento de `docs/evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`.
+Para comparar valor por valor: leer cada tabla con pandas y comparar columna a columna (texto igual; números con
+tolerancia de 1×10⁻¹²).
 
 ### 4.4 Fuentes y licencias
 
@@ -230,11 +230,11 @@ y Python 3.11.18 en vez de 3.11.17).
 - **`make check` necesita los resultados de las ampliaciones.** Con solo `make all`, 2 de las 8 pruebas de interfaz fallan
   ("las 10 vistas cargan sin errores" y "todas las vistas se traducen al español") porque la API responde 503 en
   `/atlas/extensions/*` y en la validación contra RegulonDB, y la prueba cuenta esas respuestas como errores. Se resuelve
-  corriendo `make mvp`, `make regulondb` y `make extensions` antes (sección 4.2). No se cambió el código: es un hallazgo
+  corriendo `make regulondb` y `make extensions` antes (sección 4.2; en la etiqueta `v1.0`, también `make mvp`). No se cambió el código: es un hallazgo
   para el plan de pruebas.
 - **`make mvp` deja el árbol con cambios:** reescribe 5 archivos versionados (`data/results/mvp/report.md` y los
   `*.provenance.json`, con fecha y commit nuevos). Después, `make atlas-ready` se detiene hasta hacer
-  `git checkout -- data/results/mvp`.
+  `git checkout -- data/results/mvp`. En `main` ya no hace falta correr `make mvp` para `make check`.
 - `environment.yml` fija versiones mínimas: un entorno creado más adelante puede traer versiones más nuevas y diferencias
   en el último decimal (sección 4.3).
 - El tiempo de instalación desde cero (descarga de conda, pip, npm y Chromium) depende de la conexión: **Por confirmar**.

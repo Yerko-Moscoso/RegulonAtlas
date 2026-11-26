@@ -38,5 +38,5 @@ def test_validation_genomes_unknown_network_is_404():
 
 def test_status_tracks_extensions():
     steps = {s["id"]: s for s in client.get("/api/v1/atlas/status").json()["steps"]}
-    for step in ["regulondb", "regulondb-strong", "validation-ci", "comparison-adjusted", "reliability", "validation-mvp"]:
+    for step in ["regulondb", "regulondb-strong", "validation-ci", "comparison-adjusted", "reliability"]:
         assert steps[step]["kind"] == "result"

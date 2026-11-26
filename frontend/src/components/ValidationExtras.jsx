@@ -1,12 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { fmtInt } from "../utils/atlas";
-import { dec, pctTick, detail } from "../utils/validation";
+import { dec, detail } from "../utils/validation";
 import { Section, Segmented, Spinner, ErrorMsg } from "./ValidationParts";
 import ScrollX from "./ScrollX";
 
-// Secciones ampliadas de Validation (excepciones E1, E2, E5 y E6 del congelamiento).
+// Secciones ampliadas de Validation (excepciones E1, E2 y E5 del congelamiento; E6 se quitó el 26-11-2026, E13).
 const SCHEMES = [
   { id: "family", label: "By family", hint: "Resamples whole GTDB families. Conservative: related genomes are not independent." },
   { id: "genome", label: "By genome", hint: "Resamples individual validable genomes." },
@@ -198,78 +197,6 @@ export function RegulonDBSection() {
             evidence with RegulonDB. RegulonDB is free for academic use; only aggregate scores are shown here. Cite:
             Salgado et al., Nucleic Acids Research, 2023 (doi:10.1093/nar/gkad1072).
           </p>
-        </>
-      )}
-    </Section>
-  );
-}
-
-// E6: MVP y redes del atlas en los mismos 8 genomas
-export function MvpSection({ mode }) {
-  const [rows, setRows] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError("");
-    api
-      .getMvpPoints(mode)
-      .then((res) => !cancelled && setRows(res.data.rows ?? []))
-      .catch((err) => !cancelled && setError(detail(err, "The MVP comparison could not be loaded.")))
-      .finally(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [mode]);
-
-  const mvp = useMemo(() => rows.filter((r) => r.source === "mvp"), [rows]);
-  const atlas = useMemo(() => rows.filter((r) => r.source === "atlas"), [rows]);
-  const bestMvp = mvp.reduce((m, r) => (m == null || r.f1 > m.f1 ? r : m), null);
-  const balanced = atlas.find((r) => r.network_id === 3);
-
-  return (
-    <Section
-      title="MVP network vs atlas networks (same 8 genomes)"
-      subtitle={`RegPrecise, TF → operon, curated TFs only, ${mode === "all" ? "all edges" : "independent edges"}. Kept apart from the curves above, which cover 312 genomes.`}
-    >
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <ErrorMsg>{error}</ErrorMsg>
-      ) : (
-        <>
-          <ResponsiveContainer width="100%" height={300}>
-            <ScatterChart margin={{ top: 10, right: 20, bottom: 25, left: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-              <XAxis type="number" dataKey="recall" name="Recall" domain={[0, 0.7]} tickFormatter={pctTick} fontSize={11}
-                label={{ value: "Recall", position: "insideBottom", offset: -15, fontSize: 12 }} />
-              <YAxis type="number" dataKey="precision" name="Precision" domain={[0, 1]} tickFormatter={pctTick} fontSize={11}
-                label={{ value: "Precision", angle: -90, position: "insideLeft", fontSize: 12 }} />
-              <ZAxis range={[70, 70]} />
-              <Tooltip
-                cursor={{ strokeDasharray: "3 3" }}
-                content={({ active, payload }) => {
-                  const r = active ? payload?.[0]?.payload : null;
-                  return r ? (
-                    <div className="bg-white border border-[#E2E8F0] rounded px-2 py-1 text-xs">
-                      <b>{r.label}</b>: P {dec(r.precision)} · R {dec(r.recall)} · F1 {dec(r.f1)}
-                    </div>
-                  ) : null;
-                }}
-              />
-              <Legend verticalAlign="top" height={28} wrapperStyle={{ fontSize: 12 }} />
-              <Scatter name="MVP (p-value thresholds)" data={mvp} fill="#D97706" line={{ stroke: "#D97706" }} isAnimationActive={false} />
-              <Scatter name="Atlas networks" data={atlas} fill="#2563EB" isAnimationActive={false} />
-            </ScatterChart>
-          </ResponsiveContainer>
-          {bestMvp && balanced && (
-            <p className="text-xs text-[#334155] mt-2">
-              Best MVP threshold ({bestMvp.label}): F1 <b>{dec(bestMvp.f1)}</b>, versus <b>{dec(balanced.f1)}</b> for balanced
-              on the same genomes. Eight related genomes: a reference point, not a general comparison.
-            </p>
-          )}
         </>
       )}
     </Section>

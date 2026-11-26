@@ -29,7 +29,6 @@ const SHOWN_IN = {
     { page: "organisms", label: "Organisms" },
     { page: "fingerprints", label: "Fingerprints" },
   ],
-  "validation-mvp": [{ page: "validation", label: "Validation" }],
 };
 
 const OWNER = {
@@ -270,7 +269,7 @@ export default function Pipeline({ navigate }) {
               <pre className="text-[11px] font-mono bg-[#0F172A] text-[#E2E8F0] rounded-lg p-3 overflow-x-auto">
 {`make cache-atlas cache-genes cache-fimo   # cache from MariaDB (needs database access)
 make all              # validation, metrics, taxon comparison, robustness and own baseline (~15 min)
-make extensions       # intervals, adjusted comparison, expected precision, RegulonDB and MVP
+make extensions       # intervals, adjusted comparison, expected precision and RegulonDB
 make check            # API, frontend and tests`}
               </pre>
             </div>

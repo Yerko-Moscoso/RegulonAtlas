@@ -482,13 +482,6 @@ export const EXACT = {
   "All evidence: P / R / F1": "Toda la evidencia: P / R / F1",
   "Strong + confirmed: P / R / F1": "Fuerte + confirmada: P / R / F1",
   "Recall is low because RegulonDB contains many TFs and interactions the atlas networks do not predict for this genome. Independent mode only removes RegPrecise self-evaluation; PRODORIC motifs from E. coli may still share evidence with RegulonDB. RegulonDB is free for academic use; only aggregate scores are shown here. Cite: Salgado et al., Nucleic Acids Research, 2023 (doi:10.1093/nar/gkad1072).": "El recall es bajo porque RegulonDB contiene muchos TF e interacciones que las redes del atlas no predicen para este genoma. El modo independiente solo quita la autoevaluación de RegPrecise; los motivos de PRODORIC de E. coli aún pueden compartir evidencia con RegulonDB. RegulonDB es de uso académico libre; aquí solo se muestran valores agregados. Citar: Salgado et al., Nucleic Acids Research, 2023 (doi:10.1093/nar/gkad1072).",
-  "The MVP comparison could not be loaded.": "No se pudo cargar la comparación con el MVP.",
-  "MVP network vs atlas networks (same 8 genomes)": "Red del MVP frente a las redes del atlas (mismos 8 genomas)",
-  "MVP (p-value thresholds)": "MVP (umbrales de p-valor)",
-  "Atlas networks": "Redes del atlas",
-  "Best MVP threshold (": "Mejor umbral del MVP (",
-  ", versus": ", frente a",
-  "for balanced on the same genomes. Eight related genomes: a reference point, not a general comparison.": "de balanced en los mismos genomas. Ocho genomas emparentados: un punto de referencia, no una comparación general.",
   "· confidence ≥": "· confianza ≥",
   "Scan only": "Solo barrido",
   "Baseline results could not be loaded (make baseline-atlas).": "No se pudieron cargar los resultados de la línea base (make baseline-atlas).",
@@ -539,8 +532,8 @@ export const EXACT = {
   "React views. Each analysis card above links to the views that show it.": "Vistas en React. Cada tarjeta de análisis enlaza a las vistas que la muestran.",
   "Regenerate the results": "Regenerar los resultados",
   "Run from the project root with the conda environment active. Each command writes a manifest with the git commit that produced it.": "Ejecutar desde la raíz del proyecto con el entorno conda activo. Cada comando escribe un manifiesto con el commit de git que lo produjo.",
-  "make cache-atlas cache-genes cache-fimo # cache from MariaDB (needs database access) make all # validation, metrics, taxon comparison, robustness and own baseline (~15 min) make extensions # intervals, adjusted comparison, expected precision, RegulonDB and MVP make check # API, frontend and tests":
-    "make cache-atlas cache-genes cache-fimo   # caché desde MariaDB (requiere acceso a la base)\nmake all              # validación, métricas, comparación de taxones, robustez y línea base propia (~15 min)\nmake extensions       # intervalos, comparación ajustada, precisión esperada, RegulonDB y MVP\nmake check            # API, frontend y pruebas",
+  "make cache-atlas cache-genes cache-fimo # cache from MariaDB (needs database access) make all # validation, metrics, taxon comparison, robustness and own baseline (~15 min) make extensions # intervals, adjusted comparison, expected precision and RegulonDB make check # API, frontend and tests":
+    "make cache-atlas cache-genes cache-fimo   # caché desde MariaDB (requiere acceso a la base)\nmake all              # validación, métricas, comparación de taxones, robustez y línea base propia (~15 min)\nmake extensions       # intervalos, comparación ajustada, precisión esperada y RegulonDB\nmake check            # API, frontend y pruebas",
 
   // Procedencia
   "Traceability goes back to the provenance table: the code of the external pipeline and the researcher's decision log are not accessible.": "La trazabilidad llega hasta la tabla provenance: el código del pipeline externo y el registro de decisiones del investigador no están accesibles.",
@@ -602,8 +595,6 @@ export const EXACT = {
   "Adjusted taxon comparison": "Comparación de taxones ajustada",
   "Taxon comparison adjusted for genome size and motif supply.": "Comparación de taxones ajustada por tamaño del genoma y oferta de motivos.",
   "Per-genome estimate from the transfer tiers of its edges.": "Estimación por genoma a partir de los tiers de transferencia de sus aristas.",
-  "MVP vs atlas": "MVP frente al atlas",
-  "MVP network and atlas networks evaluated on the same 8 genomes.": "Red del MVP y redes del atlas evaluadas en los mismos 8 genomas.",
   "The cache exports record the date and row counts, but not the git commit of the export script.": "Las exportaciones de la caché registran la fecha y las filas, pero no el commit de git del script de exportación.",
   "This result records its commit, but not the version of its input.": "Este resultado registra su commit, pero no la versión de su entrada.",
   "Generated with uncommitted changes (git_dirty: true).": "Generado con cambios sin commit (git_dirty: true).",

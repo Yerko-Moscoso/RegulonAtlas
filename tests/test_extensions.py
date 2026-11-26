@@ -1,4 +1,4 @@
-"""Pruebas de las ampliaciones de la v1.0 (excepciones E1-E7 de docs/congelamiento_v1.md)."""
+"""Pruebas de las ampliaciones de la v1.0 (excepciones E1-E5 y E7 del congelamiento; E6 se quitó, E13)."""
 from pathlib import Path
 
 import numpy as np
@@ -12,7 +12,6 @@ from src.networks.atlas_adjusted import r2_fit
 from src.networks.atlas_reliability import calibration_status, tier_precision
 from src.validation.atlas import REGULONDB_ALIASES, regulondb_tf_names
 from src.validation.atlas_ci import prf, replicate_weights
-from src.validation.atlas_mvp_point import has_independent_motif
 
 client = TestClient(app)
 R = Path("data/results")
@@ -57,15 +56,7 @@ def test_regulondb_aliases_keep_original_name():
     assert all(k == k.lower() for k in REGULONDB_ALIASES)
 
 
-def test_mvp_independent_motif():
-    own = {(10, 1)}
-    assert not has_independent_motif("RG10", 1, own)
-    assert has_independent_motif("RG10,RG11", 1, own)
-    assert has_independent_motif("MX000001", 1, own)
-    assert has_independent_motif("RG10", 2, own)
-
-
-@pytest.mark.parametrize("url", ["/manifest/ci", "/validation-ci", "/f1-differences", "/mvp-points",
+@pytest.mark.parametrize("url", ["/manifest/ci", "/validation-ci", "/f1-differences",
                                  "/adjusted/taxa", "/adjusted/tests", "/reliability?accession=GCF_000005845.2",
                                  "/reliability/calibration"])
 def test_missing_results_are_503(url, monkeypatch, tmp_path):
@@ -96,12 +87,6 @@ def test_reliability_ecoli_and_404():
     assert {r["network_id"] for r in rows} == {1, 2, 3, 4, 5}
     assert all(0 <= r["expected_precision"] <= 1 for r in rows)
     assert client.get(f"{BASE}/reliability", params={"accession": "NOPE"}).status_code == 404
-
-
-@pytest.mark.skipif(not (R / "validation_mvp/points.tsv").exists(), reason="Falta make mvp-point")
-def test_mvp_points_cover_thresholds_and_networks():
-    rows = client.get(f"{BASE}/mvp-points", params={"mode": "all"}).json()["rows"]
-    assert sum(r["source"] == "mvp" for r in rows) == 5 and sum(r["source"] == "atlas" for r in rows) == 5
 
 
 @pytest.mark.skipif(not (R / "validation/regulondb/summary.tsv").exists(), reason="Falta make validate-regulondb")
