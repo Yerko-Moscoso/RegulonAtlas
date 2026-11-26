@@ -28,14 +28,39 @@ entre taxones, mide la robustez de las métricas y las muestra en un dashboard w
 
 ## Instalación
 
+Requisitos (medidos; detalle en [`docs/requisitos_y_datos.md`](docs/requisitos_y_datos.md)): Linux x86_64 (o WSL2, por
+confirmar), 4 núcleos, 4 GB de RAM libres, 3,5 GB de disco, git, GNU make, bash, curl y conda (Miniforge).
+
+No hace falta acceso a MariaDB: la caché del atlas se descarga como archivo adjunto del release `v1.0`.
+
 ```bash
+git clone https://github.com/Yerko-Moscoso/RegulonAtlas.git && cd RegulonAtlas
+git checkout v1.0                         # versión final (o la rama main, que es igual)
+
 conda env create -f environment.yml      # entorno "bioinfo"
 conda activate bioinfo
 cd frontend && npm ci && cd ..           # instala exactamente lo de package-lock.json, sin modificarlo
 (cd frontend && npx playwright install chromium)  # navegador de las pruebas de interfaz de make check
-cp .env.example .env                      # credenciales de MariaDB (solo para regenerar la caché)
 make hooks                                # una vez por clon: verificación antes de cada commit
+
+# Caché del atlas (157 MB; 285 MB descomprimida en data/cache/atlas/)
+B=https://github.com/Yerko-Moscoso/RegulonAtlas/releases/download/v1.0
+curl -LO $B/regulonatlas_cache_v1.0.tar.gz
+curl -LO $B/regulonatlas_results_v1.0.sha256
+curl -LO $B/SHA256SUMS
+sha256sum -c SHA256SUMS                   # los 2 archivos deben coincidir
+tar xzf regulonatlas_cache_v1.0.tar.gz    # crea data/cache/atlas/
+(cd data/cache/atlas && sha256sum -c SHA256SUMS)
+make atlas-ready                          # caché completa y árbol limpio
+make all                                  # ~8,5 min con 24 núcleos; ~47 min con 4
+make mvp && make regulondb && make extensions   # make check también prueba las vistas de las ampliaciones
+make check
+git checkout -- data/results/mvp          # make mvp reescribe 5 archivos versionados; así el árbol queda limpio
 ```
+
+`regulonatlas_results_v1.0.sha256` trae el sha256 de los resultados de la v1.0 para compararlos con los de `make all`
+(diferencias esperadas en `docs/requisitos_y_datos.md`, sección 4.3). Solo quien tenga acceso a la base necesita
+`cp .env.example .env` (credenciales de MariaDB) para regenerar la caché.
 
 Si ya existe un entorno llamado `bioinfo` (por ejemplo, en el servidor `devastator`), `conda env create -f environment.yml`
 fallará por el nombre repetido. En ese caso se crea con otro nombre (`conda env create -n <nombre> -f environment.yml`) o
@@ -115,5 +140,9 @@ reanotación PGAP y no coinciden; la base solo guarda hits con p ≤ 1e-5.
 ## Etiquetas
 
 `mvp-semana8` (entrega del MVP), `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`, `congelamiento-v1`
-(funciones congeladas al cierre de la semana 13; `docs/congelamiento_v1.md`) y `v1.0` (versión final). El desarrollo está en `dev`; `main` llega
-hasta la semana 11 y no recibe cambios hasta que el estudiante lo indique.
+(funciones congeladas al cierre de la semana 13; `docs/congelamiento_v1.md`) y `v1.0` (versión final). `main` está al
+día con `dev` y ambas apuntan a `v1.0`.
+
+Respaldos (26-11-2026), por si hay que volver al estado anterior: rama `respaldo/main-semana11` y etiqueta
+`respaldo-main-semana11` (el `main` anterior, hasta la semana 11), y etiqueta `respaldo-v1.0-original` (la `v1.0` antes de
+moverla a la versión final). Quien haya descargado la `v1.0` anterior la actualiza con `git fetch --tags --force`.

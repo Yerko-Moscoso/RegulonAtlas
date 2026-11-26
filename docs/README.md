@@ -26,6 +26,7 @@ nuevo y cada bloque de trabajo terminado se registran aquí: el índice dice *qu
 | [`evidencia_mvp/pruebas_aceptacion_mvp.md`](evidencia_mvp/pruebas_aceptacion_mvp.md) | Registro formal de las pruebas de aceptación del MVP (CA1–CA6) sobre la etiqueta `mvp-semana8` (`d056fc9`): entorno, procedimiento, tabla por caso, resumen y limitaciones. Todo lo de las pruebas vive en `evidencia_mvp/`; en git solo está este registro. Los registros, las capturas, los scripts y la versión en Excel quedan solo en el servidor (`.gitignore`, decisión del 26-10-2026) | 26-10-2026 |
 | [`evidencia_instalacion/prueba_desde_cero.md`](evidencia_instalacion/prueba_desde_cero.md) | Prueba desde cero (semana 14): clon de `congelamiento-v1`, entorno nuevo desde `environment.yml`, comparación con los resultados del dashboard (20/20 con los mismos valores) y 109 casos de prueba (108 aprobados). El Excel `casos_de_prueba_v1.xlsx` y la evidencia quedan solo en el servidor | 04-11-2026 |
 | [`pruebas_semana14.md`](pruebas_semana14.md) | Ampliación de las pruebas automáticas (semana 14): 65 pruebas nuevas en 3 bloques (validación, línea base/comparación/robustez y API sin datos), de 58 a 123; cómo se aisló lo existente; hallazgo H2 (500 sin caché en 2 endpoints) y su corrección | 09-11-2026 |
+| [`requisitos_y_datos.md`](requisitos_y_datos.md) | Requisitos mínimos y recomendados **medidos** (sistema operativo, CPU, RAM, disco, software, puertos), tiempos y memoria de cada etapa con 4 núcleos y con los del servidor, paquete de datos `regulonatlas_cache_v1.0.tar.gz` (contenido, filas, descarga, `sha256sum -c`, comparación de resultados), fuentes y licencias, compatibilidad (macOS, WSL2, meme) y limitaciones | 26-11-2026 |
 | [`ampliaciones_semana14.md`](ampliaciones_semana14.md) | Excepciones E1–E8 (23-11-2026): intervalos de confianza, modos lado a lado, comparación ajustada, precisión esperada por genoma, RegulonDB, MVP frente al atlas, avisos de cobertura y solo información explícita; método, resultados, verificación y limitaciones | 23-11-2026 |
 | [`evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md`](evidencia_reproducibilidad/prueba_reproducibilidad_atlas.md) | Prueba de reproducibilidad de `make all` desde un clon limpio, comparada con los resultados del dashboard: 20 de 20 archivos idénticos, manifiestos, valores de control, tiempos y limitaciones. La evidencia queda solo en el servidor | 29-10-2026 |
 | [`preguntas_pendientes.md`](preguntas_pendientes.md) | Preguntas abiertas al investigador (P1–P6) y al profesor (Q1–Q4), preguntas resueltas (R1–R4) y borradores de mensaje (actualizados con la semana 12) | 26-10-2026 |
@@ -74,6 +75,24 @@ Cada carpeta de resultados tiene un `manifest.json` con el commit que la generó
 
 Una entrada por bloque de trabajo, la más reciente arriba. Al agregar una entrada se indica qué se hizo, el commit y dónde
 quedó documentado.
+
+### 26-11-2026: requisitos medidos, paquete de datos y `main` al día con `dev` (v1.0)
+
+- **Paquete de datos** `regulonatlas_cache_v1.0.tar.gz` (157 MB; 285 MB descomprimido): solo `data/cache/atlas/` con su
+  `SHA256SUMS`, sin RegulonDB ni `data/results/`. Aparte, `regulonatlas_results_v1.0.sha256` (70 resultados) y un
+  `SHA256SUMS` de ambos. Guardados fuera del repositorio, en `~/regulonatlas_release/` del servidor; se suben como archivos
+  adjuntos del release `v1.0` de GitHub.
+- **Verificación en un clon limpio de `dev`** con un entorno conda nuevo: `make atlas-ready` aprobado, `make test` sin
+  resultados (110 aprobadas, 63 omitidas), `make all` completo: 16 de 20 archivos idénticos byte a byte, 2 parquet con
+  contenido idéntico (otra versión de pyarrow) y 2 tsv con diferencias de redondeo (≤ 9×10⁻¹⁷). Ninguna etapa llamó a meme.
+- **Hallazgos (sin cambiar código):** con solo `make all`, `make check` falla en 2 de 8 pruebas de interfaz (503 en las
+  rutas de las ampliaciones); con `make mvp`, `make regulondb` y `make extensions` pasan las 173 + 8. `make mvp` reescribe 5
+  archivos versionados y deja el árbol con cambios.
+- **Requisitos medidos** con `/usr/bin/time -v` y la memoria PSS de todo el árbol de procesos, con los 48 hilos del servidor
+  y con 4 núcleos. Licencias de RegPrecise, PRODORIC y eggNOG: por confirmar.
+- **Ramas y etiquetas:** respaldos `respaldo/main-semana11` (rama), `respaldo-main-semana11` y `respaldo-v1.0-original`
+  (etiquetas); `main` avanzó hasta `dev` sin commit de fusión y `v1.0` se movió al commit final (el de esta entrada).
+- Documentado en `requisitos_y_datos.md`, el README (Instalación y Etiquetas) y `contexto_regulonatlas.md` (sección 3).
 
 ### 24-11-2026: historial reescrito sin líneas de coautoría
 
