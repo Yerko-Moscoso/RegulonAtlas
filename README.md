@@ -21,7 +21,6 @@ instalación sin base de datos y paquete de datos).
 | `src/api/` | API FastAPI, solo de lectura (no consulta MariaDB) |
 | `frontend/` | Dashboard: Vite + React + Tailwind + Recharts + Cytoscape.js |
 | `scripts/` | Exportación de la caché desde MariaDB (`export_*`), exploraciones previas (`explore_*`) y verificaciones |
-| `src/pipeline/`, `config/` | Pipeline del MVP (semana 8) |
 | `legacy/` | Código histórico que ya no se usa (ingesta y pipeline piloto); ver `legacy/README.md` |
 | `tests/` | Pruebas unitarias y de humo de la API |
 | `docs/` | Requisitos del sistema, instalación y paquete de datos (`requisitos_y_datos.md`) |
@@ -116,34 +115,12 @@ inglés y español; los datos e identificadores no se traducen.
 | Robustez | Las métricas de tamaño resisten perder la mitad de las aristas; las de estructura no |
 | Línea base | El pipeline externo es umbral + tier + footprinting; `no-footprint` se reproduce exactamente |
 
-## MVP (semana 8)
-
-El MVP es un corte vertical del pipeline propio sobre 8 genomas de Enterobacteriaceae (`config/mvp_genomes.txt`), con
-la caché versionada en `data/cache/mvp/`:
-
-Se ejecuta solo con `make mvp` (no forma parte de `make all`):
-
-```bash
-make mvp      # transfer_map -> redes con propagación por operones -> métricas -> validación -> informe
-```
-
-El informe queda en `data/results/mvp/report.md`; cada etapa escribe un `*.provenance.json` con los parámetros
-(`config/mvp_params.json`), el commit y el sha256 de sus entradas y salidas. Desde la semana 12 el dashboard muestra el
-atlas y no los resultados del MVP. El dashboard del MVP tal como se entregó está en la etiqueta `mvp-semana8`.
-
-Decisiones del MVP respecto de la propuesta: FastAPI + React en lugar de Streamlit; MariaDB en lugar de SQLite (volumen
-del atlas: ~10⁸ hits FIMO); hits FIMO de la base (p ≤ 1e-5); ortólogos por grupos de eggNOG en lugar de BLAST recíproco;
-gold standard RegPrecise. Limitaciones conocidas: en 6 de los 8 genomas los locus de RegPrecise son anteriores a la
-reanotación PGAP y no coinciden; la base solo guarda hits con p ≤ 1e-5.
-
 ## Etiquetas
 
-`mvp-semana8` (entrega del MVP), `semana09-auditoria`, `semana10-validacion`, `semana11-metricas`, `congelamiento-v1`
-(funciones congeladas al cierre de la semana 13) y `v1.0` (versión final, 26-11-2026). `main` y `dev` están al día entre
-sí; después de `v1.0` solo se quitó la comparación MVP frente al atlas de la vista Validation (con eso `make extensions` ya
-no necesita `make mvp`) y la documentación interna salió del repositorio. En la etiqueta `v1.0`, `make extensions` también
-necesita `make mvp` antes.
+`semana09-auditoria`, `semana10-validacion`, `semana11-metricas`, `congelamiento-v1` (funciones congeladas al cierre de la
+semana 13) y `v1.0` (versión final, 26-11-2026). `main`, `dev` y `v1.0` apuntan al mismo commit.
 
 Respaldos (26-11-2026), por si hay que volver al estado anterior: rama `respaldo/main-semana11` y etiqueta
-`respaldo-main-semana11` (el `main` anterior, hasta la semana 11), y etiqueta `respaldo-v1.0-original` (la `v1.0` antes de
-moverla a la versión final). Quien haya descargado la `v1.0` anterior la actualiza con `git fetch --tags --force`.
+`respaldo-main-semana11` (el `main` anterior, hasta la semana 11), y etiquetas `respaldo-v1.0-original` y
+`respaldo-v1.0-7371404` (posiciones anteriores de la `v1.0`). Quien haya descargado una `v1.0` anterior la actualiza con
+`git fetch --tags --force`.

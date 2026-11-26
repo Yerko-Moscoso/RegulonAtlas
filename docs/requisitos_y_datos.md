@@ -1,8 +1,7 @@
 # Requisitos del sistema y paquete de datos (v1.0)
 
 *Medido el 26-11-2026 sobre la rama `dev` (código de la etiqueta `v1.0`), en un clon limpio y con un entorno conda nuevo.
-Lo que no se pudo medir dice **Por confirmar**. Después de `v1.0` se quitó la comparación MVP frente al atlas: en `main`,
-`make extensions` ya no necesita `make mvp` (en la etiqueta `v1.0`, sí). Las cifras de tiempo y memoria no cambian.*
+Lo que no se pudo medir dice **Por confirmar**.*
 
 Este documento sirve para instalar y probar RegulonAtlas desde cero en otro computador **sin acceso a MariaDB**: qué equipo
 hace falta, cuánto tarda cada etapa, qué trae el paquete de datos y cómo descargarlo, verificarlo y descomprimirlo.
@@ -46,19 +45,18 @@ el mismo comando con `taskset -c 0-3`.
 `robustness-atlas` con `--workers 4` (llamando al script directamente; `make` no permite cambiarlo):
 **38 min 49 s** y 1,4 GB de RAM total (5 procesos), frente a 45 min 53 s y 3,0 GB con los 24 procesos fijos. Los resultados son idénticos byte a byte con 24 procesos en el servidor, con 24 procesos en 4 núcleos y con 4 procesos.
 
-### 2.2 Pruebas, MVP, API e instalación
+### 2.2 Pruebas, API e instalación
 
 | Etapa | Servidor: tiempo | RAM total (PSS) | 4 núcleos: tiempo | Resultado |
 |---|---|---|---|---|
-| `make test` sin `data/results/` (recién descomprimido) | 3,1 s | 241 MB | — | 110 aprobadas, 63 omitidas (necesitan resultados) |
-| `make test` (con los resultados de `make all`) | 4,5 s | 665 MB | 4,3 s | 150 aprobadas, 23 omitidas (las de RegulonDB y ampliaciones) |
+| `make test` sin `data/results/` (recién descomprimido) | 3,1 s | 241 MB | — | 108 aprobadas, 62 omitidas (necesitan resultados) |
+| `make test` (con los resultados de `make all`) | 4,5 s | 665 MB | 4,3 s | 149 aprobadas, 21 omitidas (las de RegulonDB y ampliaciones) |
 | `make test-ui` solo con `make all` | 46 s | 3,3 GB | 42 s | **2 de 8 fallan**: la API responde 503 en las rutas de las ampliaciones (ver sección 6) |
 | `make check` solo con `make all` | 56 s | 3,4 GB | — | Falla por las mismas 2 pruebas de interfaz |
-| `make mvp` | 17,3 s | 671 MB | 17,2 s | Informe generado; modifica 5 archivos versionados (ver sección 6) |
 | `make regulondb` | 4,1 s | 23 MB | — | Descarga 2,6 MB de RegulonDB a `data/raw/regulondb/` (uso académico; no se versiona ni se redistribuye) |
-| `make extensions` (después de `make regulondb`; en `v1.0`, también de `make mvp`) | 22,4 s | 1,4 GB | 22,2 s | — |
+| `make extensions` (después de `make regulondb`) | 22,4 s | 1,4 GB | 22,2 s | — |
 | `make test-ui` con las ampliaciones | 43 s | 3,4 GB | 41 s | 8 de 8 aprobadas |
-| `make check` con las ampliaciones | 1 min 5 s | 3,4 GB | Por confirmar (no se midió entero; sus partes sí) | 173 pruebas de pytest (170 en `main`, sin las de E6) y 8 de interfaz aprobadas |
+| `make check` con las ampliaciones | 1 min 5 s | 3,4 GB | Por confirmar (no se midió entero; sus partes sí) | 170 pruebas de pytest y 8 de interfaz aprobadas |
 | API en reposo (`uvicorn`, sin `--reload`) | arranca en 0,7 s | 156 MB | arranca en 0,7 s, 155 MB | — |
 | API con el grafo más grande (red 4 `permissive`, `GCF_000012945.1`, `max_edges=5000`) | 0,35 s la 1.ª vez, 0,21–0,25 s después | 1,33 GB | 0,38 s / 0,21–0,25 s, 1,13 GB | 3.285 aristas (todas; no llega al tope de 5000), 729 KB de JSON |
 | `conda env create -f environment.yml` | 17 s (paquetes ya descargados en el servidor) | 390 MB | — | Desde cero: **Por confirmar** (depende de la red; ~270 MB de descarga) |
@@ -79,7 +77,7 @@ con varias redes consultadas puede subir más (**Por confirmar**: no se midió l
 | Chromium de Playwright (`~/.cache/ms-playwright`: chromium, headless shell y ffmpeg) | 700 MB |
 | Paquete de datos comprimido (`regulonatlas_cache_v1.0.tar.gz`) | 157 MB (se puede borrar después de descomprimir) |
 | Caché descomprimida (`data/cache/atlas/`) | 273 MB (285,3 MB con los 2 archivos de control) |
-| Resultados (`data/results/`) | 22 MB con `make all`; 30 MB con `make mvp` y `make extensions` (+2,6 MB de `data/raw/regulondb/`) |
+| Resultados (`data/results/`) | 22 MB con `make all`; ≈ 30 MB con `make extensions` (+2,6 MB de `data/raw/regulondb/`) |
 | **Total** | **≈ 2,7 GB** (≈ 3 GB con el paquete y las cachés de descarga) |
 
 ## 4. Paquete de datos
@@ -93,7 +91,6 @@ con varias redes consultadas puede subir más (**Por confirmar**: no se midió l
   los 70 resultados actuales del servidor (sin los `.log`).
 - `data/raw/` (RegulonDB, RegPrecise, PRODORIC en bruto): no lo usa `make all`; RegulonDB solo lo usan las ampliaciones
   (`make extensions`, que lo descarga con `make regulondb`). **No se redistribuye nada de RegulonDB.**
-- `data/cache/mvp/`: ya está versionado en git (lo usa `make mvp`).
 
 | Archivo | Filas | Tamaño |
 |---|---|---|
@@ -147,7 +144,7 @@ Después, en este orden:
 make all                       # ≈ 8,5 min en el servidor; ≈ 47 min con 4 núcleos
 make regulondb                 # descarga RegulonDB (2,6 MB, uso académico) para las ampliaciones
 make extensions                # ampliaciones: sin ellas make check falla en 2 pruebas de interfaz
-make check                     # 170 pruebas de pytest y 8 de interfaz (173 en v1.0)
+make check                     # 170 pruebas de pytest y 8 de interfaz
 make api                       # http://localhost:8000/docs
 make web                       # http://localhost:5173 (en otra terminal)
 ```
@@ -167,9 +164,8 @@ Resultado esperado de `make all` (verificado el 26-11-2026 en el clon limpio con
 - `metrics/metrics_vs_external.tsv` (20 valores de `spearman`) y `baseline/vs_networks.tsv` (35 valores de precisión,
   sensibilidad y F1): diferencias en el último decimal, como máximo 9×10⁻¹⁷ en valor absoluto (6×10⁻¹⁵ relativo), por
   versiones más nuevas de numpy/pandas. No cambia ninguna conclusión.
-- Ampliaciones: `comparison_adjusted/*.tsv` con diferencias de redondeo (≤ 2×10⁻¹⁴ absoluto); `mvp/report.md` solo cambia
-  la fecha y el commit de la línea "Generado"; el resto, idéntico.
-- Los resultados de `make extensions` y `make mvp` también están en el archivo, pero no los produce `make all`.
+- Ampliaciones: `comparison_adjusted/*.tsv` con diferencias de redondeo (≤ 2×10⁻¹⁴ absoluto); el resto, idéntico.
+- Los resultados de `make extensions` también están en el archivo, pero no los produce `make all`.
 
 Para comparar valor por valor: leer cada tabla con pandas y comparar columna a columna (texto igual; números con
 tolerancia de 1×10⁻¹²).
@@ -209,8 +205,8 @@ los probadores.
 `robustness-atlas` (`fork`). `taskset` solo se usó para medir; el proyecto no lo necesita.
 
 **meme 5.5.9 (bioconda):** existe para linux-64, linux-aarch64, osx-64 y **osx-arm64** (consultado con `conda search` el
-26-11-2026). **Ni `make all`, ni `make check`, ni `make mvp` lo usan**: ningún archivo de `src/` ni de `scripts/` llama a
-FIMO; el MVP lee los hits de FIMO ya calculados de `data/cache/mvp/fimo_hits.tsv.gz`. Solo lo usa el código histórico
+26-11-2026). **Ni `make all` ni `make check` lo usan**: ningún archivo de `src/` ni de `scripts/` llama a FIMO. Solo lo usa el
+código histórico
 `legacy/pipeline_piloto/run_fimo.py`. Se comprobó ejecutando todas las mediciones con `fimo`, `meme`, `tomtom` y otros
 programas de MEME reemplazados por versiones falsas que registran cada llamada: no hubo ninguna.
 
@@ -230,11 +226,8 @@ y Python 3.11.18 en vez de 3.11.17).
 - **`make check` necesita los resultados de las ampliaciones.** Con solo `make all`, 2 de las 8 pruebas de interfaz fallan
   ("las 10 vistas cargan sin errores" y "todas las vistas se traducen al español") porque la API responde 503 en
   `/atlas/extensions/*` y en la validación contra RegulonDB, y la prueba cuenta esas respuestas como errores. Se resuelve
-  corriendo `make regulondb` y `make extensions` antes (sección 4.2; en la etiqueta `v1.0`, también `make mvp`). No se cambió el código: es un hallazgo
-  para el plan de pruebas.
-- **`make mvp` deja el árbol con cambios:** reescribe 5 archivos versionados (`data/results/mvp/report.md` y los
-  `*.provenance.json`, con fecha y commit nuevos). Después, `make atlas-ready` se detiene hasta hacer
-  `git checkout -- data/results/mvp`. En `main` ya no hace falta correr `make mvp` para `make check`.
+  corriendo `make regulondb` y `make extensions` antes (sección 4.2). No se cambió el código: es un hallazgo para el plan
+  de pruebas.
 - `environment.yml` fija versiones mínimas: un entorno creado más adelante puede traer versiones más nuevas y diferencias
   en el último decimal (sección 4.3).
 - El tiempo de instalación desde cero (descarga de conda, pip, npm y Chromium) depende de la conexión: **Por confirmar**.
